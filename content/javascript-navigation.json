@@ -1,0 +1,999 @@
+[
+  {
+    "id": "reference/javascript",
+    "title": "Introduction"
+  },
+  {
+    "id": "reference/javascript/installing",
+    "title": "Installing"
+  },
+  {
+    "id": "reference/javascript/initializing",
+    "title": "Initializing"
+  },
+  {
+    "id": "reference/javascript/typescript-support",
+    "title": "TypeScript support"
+  },
+  {
+    "children": [
+      {
+        "id": "reference/javascript/delete",
+        "title": "delete"
+      },
+      {
+        "id": "reference/javascript/from",
+        "title": "from"
+      },
+      {
+        "id": "reference/javascript/getopenapispec",
+        "title": "getOpenApiSpec"
+      },
+      {
+        "id": "reference/javascript/insert",
+        "title": "insert"
+      },
+      {
+        "id": "reference/javascript/rpc",
+        "title": "rpc"
+      },
+      {
+        "id": "reference/javascript/schema",
+        "title": "schema"
+      },
+      {
+        "id": "reference/javascript/select",
+        "title": "select"
+      },
+      {
+        "id": "reference/javascript/update",
+        "title": "update"
+      },
+      {
+        "id": "reference/javascript/upsert",
+        "title": "upsert"
+      },
+      {
+        "branch": true,
+        "title": "Using filters",
+        "children": [
+          {
+            "id": "reference/javascript/using-filters",
+            "title": "Using Filters"
+          },
+          {
+            "id": "reference/javascript/using-filters-containedby",
+            "title": "containedBy"
+          },
+          {
+            "id": "reference/javascript/using-filters-contains",
+            "title": "contains"
+          },
+          {
+            "id": "reference/javascript/using-filters-eq",
+            "title": "eq"
+          },
+          {
+            "id": "reference/javascript/using-filters-filter",
+            "title": "filter"
+          },
+          {
+            "id": "reference/javascript/using-filters-gt",
+            "title": "gt"
+          },
+          {
+            "id": "reference/javascript/using-filters-gte",
+            "title": "gte"
+          },
+          {
+            "id": "reference/javascript/using-filters-ilike",
+            "title": "ilike"
+          },
+          {
+            "id": "reference/javascript/using-filters-ilikeallof",
+            "title": "ilikeAllOf"
+          },
+          {
+            "id": "reference/javascript/using-filters-ilikeanyof",
+            "title": "ilikeAnyOf"
+          },
+          {
+            "id": "reference/javascript/using-filters-in",
+            "title": "in"
+          },
+          {
+            "id": "reference/javascript/using-filters-is",
+            "title": "is"
+          },
+          {
+            "id": "reference/javascript/using-filters-like",
+            "title": "like"
+          },
+          {
+            "id": "reference/javascript/using-filters-likeallof",
+            "title": "likeAllOf"
+          },
+          {
+            "id": "reference/javascript/using-filters-likeanyof",
+            "title": "likeAnyOf"
+          },
+          {
+            "id": "reference/javascript/using-filters-lt",
+            "title": "lt"
+          },
+          {
+            "id": "reference/javascript/using-filters-lte",
+            "title": "lte"
+          },
+          {
+            "id": "reference/javascript/using-filters-match",
+            "title": "match"
+          },
+          {
+            "id": "reference/javascript/using-filters-neq",
+            "title": "neq"
+          },
+          {
+            "id": "reference/javascript/using-filters-not",
+            "title": "not"
+          },
+          {
+            "id": "reference/javascript/using-filters-or",
+            "title": "or"
+          },
+          {
+            "id": "reference/javascript/using-filters-overlaps",
+            "title": "overlaps"
+          },
+          {
+            "id": "reference/javascript/using-filters-rangeadjacent",
+            "title": "rangeAdjacent"
+          },
+          {
+            "id": "reference/javascript/using-filters-rangegt",
+            "title": "rangeGt"
+          },
+          {
+            "id": "reference/javascript/using-filters-rangegte",
+            "title": "rangeGte"
+          },
+          {
+            "id": "reference/javascript/using-filters-rangelt",
+            "title": "rangeLt"
+          },
+          {
+            "id": "reference/javascript/using-filters-rangelte",
+            "title": "rangeLte"
+          },
+          {
+            "id": "reference/javascript/using-filters-textsearch",
+            "title": "textSearch"
+          }
+        ]
+      },
+      {
+        "branch": true,
+        "title": "Using modifiers",
+        "children": [
+          {
+            "id": "reference/javascript/using-modifiers",
+            "title": "Using modifiers"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-abortsignal",
+            "title": "abortSignal"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-csv",
+            "title": "csv"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-explain",
+            "title": "explain"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-geojson",
+            "title": "geojson"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-limit",
+            "title": "limit"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-maxaffected",
+            "title": "maxAffected"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-maybesingle",
+            "title": "maybeSingle"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-order",
+            "title": "order"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-overridetypes",
+            "title": "overrideTypes"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-range",
+            "title": "range"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-retry",
+            "title": "retry"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-returns",
+            "title": "returns"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-rollback",
+            "title": "rollback"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-select",
+            "title": "select"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-setheader",
+            "title": "setHeader"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-single",
+            "title": "single"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-stripnulls",
+            "title": "stripNulls"
+          },
+          {
+            "id": "reference/javascript/using-modifiers-throwonerror",
+            "title": "throwOnError"
+          }
+        ]
+      }
+    ],
+    "title": "Database"
+  },
+  {
+    "children": [
+      {
+        "id": "reference/javascript/auth",
+        "title": "Overview"
+      },
+      {
+        "id": "reference/javascript/auth-dispose",
+        "title": "dispose"
+      },
+      {
+        "id": "reference/javascript/auth-exchangecodeforsession",
+        "title": "exchangeCodeForSession"
+      },
+      {
+        "id": "reference/javascript/auth-getclaims",
+        "title": "getClaims"
+      },
+      {
+        "id": "reference/javascript/auth-getsession",
+        "title": "getSession"
+      },
+      {
+        "id": "reference/javascript/auth-getuser",
+        "title": "getUser"
+      },
+      {
+        "id": "reference/javascript/auth-getuseridentities",
+        "title": "getUserIdentities"
+      },
+      {
+        "id": "reference/javascript/auth-initialize",
+        "title": "initialize"
+      },
+      {
+        "id": "reference/javascript/auth-linkidentity",
+        "title": "linkIdentity"
+      },
+      {
+        "id": "reference/javascript/auth-onauthstatechange",
+        "title": "onAuthStateChange"
+      },
+      {
+        "id": "reference/javascript/auth-reauthenticate",
+        "title": "reauthenticate"
+      },
+      {
+        "id": "reference/javascript/auth-refreshsession",
+        "title": "refreshSession"
+      },
+      {
+        "id": "reference/javascript/auth-registerpasskey",
+        "title": "registerPasskey"
+      },
+      {
+        "id": "reference/javascript/auth-resend",
+        "title": "resend"
+      },
+      {
+        "id": "reference/javascript/auth-resetpasswordforemail",
+        "title": "resetPasswordForEmail"
+      },
+      {
+        "id": "reference/javascript/auth-setsession",
+        "title": "setSession"
+      },
+      {
+        "id": "reference/javascript/auth-signinanonymously",
+        "title": "signInAnonymously"
+      },
+      {
+        "id": "reference/javascript/auth-signinwithidtoken",
+        "title": "signInWithIdToken"
+      },
+      {
+        "id": "reference/javascript/auth-signinwithoauth",
+        "title": "signInWithOAuth"
+      },
+      {
+        "id": "reference/javascript/auth-signinwithotp",
+        "title": "signInWithOtp"
+      },
+      {
+        "id": "reference/javascript/auth-signinwithpasskey",
+        "title": "signInWithPasskey"
+      },
+      {
+        "id": "reference/javascript/auth-signinwithpassword",
+        "title": "signInWithPassword"
+      },
+      {
+        "id": "reference/javascript/auth-signinwithsso",
+        "title": "signInWithSSO"
+      },
+      {
+        "id": "reference/javascript/auth-signinwithweb3",
+        "title": "signInWithWeb3"
+      },
+      {
+        "id": "reference/javascript/auth-signout",
+        "title": "signOut"
+      },
+      {
+        "id": "reference/javascript/auth-signup",
+        "title": "signUp"
+      },
+      {
+        "id": "reference/javascript/auth-startautorefresh",
+        "title": "startAutoRefresh"
+      },
+      {
+        "id": "reference/javascript/auth-stopautorefresh",
+        "title": "stopAutoRefresh"
+      },
+      {
+        "id": "reference/javascript/auth-unlinkidentity",
+        "title": "unlinkIdentity"
+      },
+      {
+        "id": "reference/javascript/auth-updateuser",
+        "title": "updateUser"
+      },
+      {
+        "id": "reference/javascript/auth-verifyotp",
+        "title": "verifyOtp"
+      },
+      {
+        "branch": true,
+        "title": "Auth Admin",
+        "children": [
+          {
+            "id": "reference/javascript/auth-admin",
+            "title": "Overview"
+          },
+          {
+            "id": "reference/javascript/auth-admin-createprovider",
+            "title": "createProvider"
+          },
+          {
+            "id": "reference/javascript/auth-admin-createuser",
+            "title": "createUser"
+          },
+          {
+            "id": "reference/javascript/auth-admin-deletefactor",
+            "title": "deleteFactor"
+          },
+          {
+            "id": "reference/javascript/auth-admin-deleteprovider",
+            "title": "deleteProvider"
+          },
+          {
+            "id": "reference/javascript/auth-admin-deleteuser",
+            "title": "deleteUser"
+          },
+          {
+            "id": "reference/javascript/auth-admin-generatelink",
+            "title": "generateLink"
+          },
+          {
+            "id": "reference/javascript/auth-admin-getprovider",
+            "title": "getProvider"
+          },
+          {
+            "id": "reference/javascript/auth-admin-getuserbyid",
+            "title": "getUserById"
+          },
+          {
+            "id": "reference/javascript/auth-admin-inviteuserbyemail",
+            "title": "inviteUserByEmail"
+          },
+          {
+            "id": "reference/javascript/auth-admin-listfactors",
+            "title": "listFactors"
+          },
+          {
+            "id": "reference/javascript/auth-admin-listproviders",
+            "title": "listProviders"
+          },
+          {
+            "id": "reference/javascript/auth-admin-listusers",
+            "title": "listUsers"
+          },
+          {
+            "id": "reference/javascript/auth-admin-signout",
+            "title": "signOut"
+          },
+          {
+            "id": "reference/javascript/auth-admin-updateprovider",
+            "title": "updateProvider"
+          },
+          {
+            "id": "reference/javascript/auth-admin-updateuserbyid",
+            "title": "updateUserById"
+          }
+        ]
+      },
+      {
+        "branch": true,
+        "title": "Auth MFA",
+        "children": [
+          {
+            "id": "reference/javascript/auth-mfa",
+            "title": "Auth MFA"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-challenge",
+            "title": "challenge"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-challengeandverify",
+            "title": "challengeAndVerify"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-enroll",
+            "title": "enroll"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-getauthenticatorassurancelevel",
+            "title": "getAuthenticatorAssuranceLevel"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-listfactors",
+            "title": "listFactors"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-unenroll",
+            "title": "unenroll"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-verify",
+            "title": "verify"
+          }
+        ]
+      },
+      {
+        "branch": true,
+        "title": "Auth MFA Recovery Codes",
+        "children": [
+          {
+            "id": "reference/javascript/auth-mfa-recovery-codes-generate",
+            "title": "generate"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-recovery-codes-getstatus",
+            "title": "getStatus"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-recovery-codes-regenerate",
+            "title": "regenerate"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-recovery-codes-unenroll",
+            "title": "unenroll"
+          },
+          {
+            "id": "reference/javascript/auth-mfa-recovery-codes-verify",
+            "title": "verify"
+          }
+        ]
+      },
+      {
+        "branch": true,
+        "title": "Auth Passkey",
+        "children": [
+          {
+            "id": "reference/javascript/auth-passkey",
+            "title": "Auth Passkey"
+          },
+          {
+            "id": "reference/javascript/auth-passkey-delete",
+            "title": "delete"
+          },
+          {
+            "id": "reference/javascript/auth-passkey-list",
+            "title": "list"
+          },
+          {
+            "id": "reference/javascript/auth-passkey-startauthentication",
+            "title": "startAuthentication"
+          },
+          {
+            "id": "reference/javascript/auth-passkey-startregistration",
+            "title": "startRegistration"
+          },
+          {
+            "id": "reference/javascript/auth-passkey-update",
+            "title": "update"
+          },
+          {
+            "id": "reference/javascript/auth-passkey-verifyauthentication",
+            "title": "verifyAuthentication"
+          },
+          {
+            "id": "reference/javascript/auth-passkey-verifyregistration",
+            "title": "verifyRegistration"
+          }
+        ]
+      },
+      {
+        "branch": true,
+        "title": "OAuth Admin",
+        "children": [
+          {
+            "id": "reference/javascript/oauth-admin",
+            "title": "OAuth Admin"
+          },
+          {
+            "id": "reference/javascript/oauth-admin-createclient",
+            "title": "createClient"
+          },
+          {
+            "id": "reference/javascript/oauth-admin-deleteclient",
+            "title": "deleteClient"
+          },
+          {
+            "id": "reference/javascript/oauth-admin-getclient",
+            "title": "getClient"
+          },
+          {
+            "id": "reference/javascript/oauth-admin-listclients",
+            "title": "listClients"
+          },
+          {
+            "id": "reference/javascript/oauth-admin-regenerateclientsecret",
+            "title": "regenerateClientSecret"
+          },
+          {
+            "id": "reference/javascript/oauth-admin-updateclient",
+            "title": "updateClient"
+          }
+        ]
+      },
+      {
+        "branch": true,
+        "title": "OAuth Server",
+        "children": [
+          {
+            "id": "reference/javascript/oauth-server",
+            "title": "OAuth Server"
+          },
+          {
+            "id": "reference/javascript/oauth-server-approveauthorization",
+            "title": "approveAuthorization"
+          },
+          {
+            "id": "reference/javascript/oauth-server-denyauthorization",
+            "title": "denyAuthorization"
+          },
+          {
+            "id": "reference/javascript/oauth-server-getauthorizationdetails",
+            "title": "getAuthorizationDetails"
+          },
+          {
+            "id": "reference/javascript/oauth-server-listgrants",
+            "title": "listGrants"
+          },
+          {
+            "id": "reference/javascript/oauth-server-revokegrant",
+            "title": "revokeGrant"
+          }
+        ]
+      },
+      {
+        "branch": true,
+        "title": "Passkey Admin",
+        "children": [
+          {
+            "id": "reference/javascript/passkey-admin",
+            "title": "Passkey admin"
+          },
+          {
+            "id": "reference/javascript/passkey-admin-deletepasskey",
+            "title": "deletePasskey"
+          },
+          {
+            "id": "reference/javascript/passkey-admin-listpasskeys",
+            "title": "listPasskeys"
+          }
+        ]
+      }
+    ],
+    "title": "Auth"
+  },
+  {
+    "children": [
+      {
+        "id": "reference/javascript/functions-corsheaders",
+        "title": "corsHeaders"
+      },
+      {
+        "id": "reference/javascript/functions-invoke",
+        "title": "invoke"
+      },
+      {
+        "id": "reference/javascript/functions-setauth",
+        "title": "setAuth"
+      }
+    ],
+    "title": "Edge Functions"
+  },
+  {
+    "children": [
+      {
+        "id": "reference/javascript/channel",
+        "title": "channel"
+      },
+      {
+        "id": "reference/javascript/connect",
+        "title": "connect"
+      },
+      {
+        "id": "reference/javascript/connectionstate",
+        "title": "connectionState"
+      },
+      {
+        "id": "reference/javascript/disconnect",
+        "title": "disconnect"
+      },
+      {
+        "id": "reference/javascript/endpointurl",
+        "title": "endpointURL"
+      },
+      {
+        "id": "reference/javascript/getchannels",
+        "title": "getChannels"
+      },
+      {
+        "id": "reference/javascript/getwebsocketconstructor",
+        "title": "getWebSocketConstructor"
+      },
+      {
+        "id": "reference/javascript/haslogger",
+        "title": "hasLogger"
+      },
+      {
+        "id": "reference/javascript/httpsend",
+        "title": "httpSend"
+      },
+      {
+        "id": "reference/javascript/isconnected",
+        "title": "isConnected"
+      },
+      {
+        "id": "reference/javascript/isconnecting",
+        "title": "isConnecting"
+      },
+      {
+        "id": "reference/javascript/isdisconnecting",
+        "title": "isDisconnecting"
+      },
+      {
+        "id": "reference/javascript/iswebsocketsupported",
+        "title": "isWebSocketSupported"
+      },
+      {
+        "id": "reference/javascript/log",
+        "title": "log"
+      },
+      {
+        "id": "reference/javascript/on",
+        "title": "on"
+      },
+      {
+        "id": "reference/javascript/onheartbeat",
+        "title": "onHeartbeat"
+      },
+      {
+        "id": "reference/javascript/presencestate",
+        "title": "presenceState"
+      },
+      {
+        "id": "reference/javascript/push",
+        "title": "push"
+      },
+      {
+        "id": "reference/javascript/removeallchannels",
+        "title": "removeAllChannels"
+      },
+      {
+        "id": "reference/javascript/removechannel",
+        "title": "removeChannel"
+      },
+      {
+        "id": "reference/javascript/send",
+        "title": "send"
+      },
+      {
+        "id": "reference/javascript/sendheartbeat",
+        "title": "sendHeartbeat"
+      },
+      {
+        "id": "reference/javascript/setauth",
+        "title": "setAuth"
+      },
+      {
+        "id": "reference/javascript/subscribe",
+        "title": "subscribe"
+      },
+      {
+        "id": "reference/javascript/teardown",
+        "title": "teardown"
+      },
+      {
+        "id": "reference/javascript/track",
+        "title": "track"
+      },
+      {
+        "id": "reference/javascript/unsubscribe",
+        "title": "unsubscribe"
+      },
+      {
+        "id": "reference/javascript/untrack",
+        "title": "untrack"
+      },
+      {
+        "id": "reference/javascript/updatejoinpayload",
+        "title": "updateJoinPayload"
+      }
+    ],
+    "title": "Realtime"
+  },
+  {
+    "children": [
+      {
+        "branch": true,
+        "title": "Analytics Buckets",
+        "children": [
+          {
+            "id": "reference/javascript/analytics-buckets",
+            "title": "Analytics Buckets"
+          },
+          {
+            "id": "reference/javascript/analytics-buckets-createbucket",
+            "title": "createBucket"
+          },
+          {
+            "id": "reference/javascript/analytics-buckets-deletebucket",
+            "title": "deleteBucket"
+          },
+          {
+            "id": "reference/javascript/analytics-buckets-from",
+            "title": "from"
+          },
+          {
+            "id": "reference/javascript/analytics-buckets-listbuckets",
+            "title": "listBuckets"
+          }
+        ]
+      },
+      {
+        "branch": true,
+        "title": "File Buckets",
+        "children": [
+          {
+            "id": "reference/javascript/file-buckets",
+            "title": "File Buckets"
+          },
+          {
+            "id": "reference/javascript/file-buckets-copy",
+            "title": "copy"
+          },
+          {
+            "id": "reference/javascript/file-buckets-createbucket",
+            "title": "createBucket"
+          },
+          {
+            "id": "reference/javascript/file-buckets-createsigneduploadurl",
+            "title": "createSignedUploadUrl"
+          },
+          {
+            "id": "reference/javascript/file-buckets-createsignedurl",
+            "title": "createSignedUrl"
+          },
+          {
+            "id": "reference/javascript/file-buckets-createsignedurls",
+            "title": "createSignedUrls"
+          },
+          {
+            "id": "reference/javascript/file-buckets-deletebucket",
+            "title": "deleteBucket"
+          },
+          {
+            "id": "reference/javascript/file-buckets-deletebucketlifecycle",
+            "title": "deleteBucketLifecycle"
+          },
+          {
+            "id": "reference/javascript/file-buckets-download",
+            "title": "download"
+          },
+          {
+            "id": "reference/javascript/file-buckets-emptybucket",
+            "title": "emptyBucket"
+          },
+          {
+            "id": "reference/javascript/file-buckets-exists",
+            "title": "exists"
+          },
+          {
+            "id": "reference/javascript/file-buckets-from",
+            "title": "from"
+          },
+          {
+            "id": "reference/javascript/file-buckets-getbucket",
+            "title": "getBucket"
+          },
+          {
+            "id": "reference/javascript/file-buckets-getbucketlifecycle",
+            "title": "getBucketLifecycle"
+          },
+          {
+            "id": "reference/javascript/file-buckets-getpublicurl",
+            "title": "getPublicUrl"
+          },
+          {
+            "id": "reference/javascript/file-buckets-info",
+            "title": "info"
+          },
+          {
+            "id": "reference/javascript/file-buckets-list",
+            "title": "list"
+          },
+          {
+            "id": "reference/javascript/file-buckets-listbuckets",
+            "title": "listBuckets"
+          },
+          {
+            "id": "reference/javascript/file-buckets-listv2",
+            "title": "listV2"
+          },
+          {
+            "id": "reference/javascript/file-buckets-move",
+            "title": "move"
+          },
+          {
+            "id": "reference/javascript/file-buckets-purgebucketcache",
+            "title": "purgeBucketCache"
+          },
+          {
+            "id": "reference/javascript/file-buckets-purgecache",
+            "title": "purgeCache"
+          },
+          {
+            "id": "reference/javascript/file-buckets-remove",
+            "title": "remove"
+          },
+          {
+            "id": "reference/javascript/file-buckets-update",
+            "title": "update"
+          },
+          {
+            "id": "reference/javascript/file-buckets-updatebucket",
+            "title": "updateBucket"
+          },
+          {
+            "id": "reference/javascript/file-buckets-updatebucketlifecycle",
+            "title": "updateBucketLifecycle"
+          },
+          {
+            "id": "reference/javascript/file-buckets-upload",
+            "title": "upload"
+          },
+          {
+            "id": "reference/javascript/file-buckets-uploadtosignedurl",
+            "title": "uploadToSignedUrl"
+          }
+        ]
+      },
+      {
+        "branch": true,
+        "title": "Vector Buckets",
+        "children": [
+          {
+            "id": "reference/javascript/vector-buckets",
+            "title": "Vector Buckets"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-createbucket",
+            "title": "createBucket"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-createindex",
+            "title": "createIndex"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-deletebucket",
+            "title": "deleteBucket"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-deleteindex",
+            "title": "deleteIndex"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-deletevectors",
+            "title": "deleteVectors"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-from",
+            "title": "from"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-getbucket",
+            "title": "getBucket"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-getindex",
+            "title": "getIndex"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-getvectors",
+            "title": "getVectors"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-index",
+            "title": "index"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-listbuckets",
+            "title": "listBuckets"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-listindexes",
+            "title": "listIndexes"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-listvectors",
+            "title": "listVectors"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-putvectors",
+            "title": "putVectors"
+          },
+          {
+            "id": "reference/javascript/vector-buckets-queryvectors",
+            "title": "queryVectors"
+          }
+        ]
+      }
+    ],
+    "title": "Storage"
+  }
+]

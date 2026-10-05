@@ -1,0 +1,1508 @@
+{
+  "navigation": [
+    {
+      "id": "reference/javascript/introduction",
+      "title": "Introduction"
+    },
+    {
+      "id": "reference/javascript/installing",
+      "title": "Installing"
+    },
+    {
+      "id": "reference/javascript/initializing",
+      "title": "Initializing"
+    },
+    {
+      "id": "reference/javascript/typescript-support",
+      "title": "TypeScript support"
+    },
+    {
+      "children": [
+        {
+          "id": "reference/javascript/delete",
+          "title": "delete"
+        },
+        {
+          "id": "reference/javascript/from",
+          "title": "from"
+        },
+        {
+          "id": "reference/javascript/getopenapispec",
+          "title": "getOpenApiSpec"
+        },
+        {
+          "id": "reference/javascript/insert",
+          "title": "insert"
+        },
+        {
+          "id": "reference/javascript/rpc",
+          "title": "rpc"
+        },
+        {
+          "id": "reference/javascript/schema",
+          "title": "schema"
+        },
+        {
+          "id": "reference/javascript/select",
+          "title": "select"
+        },
+        {
+          "id": "reference/javascript/update",
+          "title": "update"
+        },
+        {
+          "id": "reference/javascript/upsert",
+          "title": "upsert"
+        },
+        {
+          "branch": true,
+          "title": "Using filters"
+        },
+        {
+          "branch": true,
+          "title": "Using modifiers"
+        }
+      ],
+      "title": "Database"
+    },
+    {
+      "children": [
+        {
+          "id": "reference/javascript/auth",
+          "title": "Overview"
+        },
+        {
+          "id": "reference/javascript/auth-dispose",
+          "title": "dispose"
+        },
+        {
+          "id": "reference/javascript/auth-exchangecodeforsession",
+          "title": "exchangeCodeForSession"
+        },
+        {
+          "id": "reference/javascript/auth-getclaims",
+          "title": "getClaims"
+        },
+        {
+          "id": "reference/javascript/auth-getsession",
+          "title": "getSession"
+        },
+        {
+          "id": "reference/javascript/auth-getuser",
+          "title": "getUser"
+        },
+        {
+          "id": "reference/javascript/auth-getuseridentities",
+          "title": "getUserIdentities"
+        },
+        {
+          "id": "reference/javascript/auth-initialize",
+          "title": "initialize"
+        },
+        {
+          "id": "reference/javascript/auth-linkidentity",
+          "title": "linkIdentity"
+        },
+        {
+          "id": "reference/javascript/auth-onauthstatechange",
+          "title": "onAuthStateChange"
+        },
+        {
+          "id": "reference/javascript/auth-reauthenticate",
+          "title": "reauthenticate"
+        },
+        {
+          "id": "reference/javascript/auth-refreshsession",
+          "title": "refreshSession"
+        },
+        {
+          "id": "reference/javascript/auth-registerpasskey",
+          "title": "registerPasskey"
+        },
+        {
+          "id": "reference/javascript/auth-resend",
+          "title": "resend"
+        },
+        {
+          "id": "reference/javascript/auth-resetpasswordforemail",
+          "title": "resetPasswordForEmail"
+        },
+        {
+          "id": "reference/javascript/auth-setsession",
+          "title": "setSession"
+        },
+        {
+          "id": "reference/javascript/auth-signinanonymously",
+          "title": "signInAnonymously"
+        },
+        {
+          "id": "reference/javascript/auth-signinwithidtoken",
+          "title": "signInWithIdToken"
+        },
+        {
+          "id": "reference/javascript/auth-signinwithoauth",
+          "title": "signInWithOAuth"
+        },
+        {
+          "id": "reference/javascript/auth-signinwithotp",
+          "title": "signInWithOtp"
+        },
+        {
+          "id": "reference/javascript/auth-signinwithpasskey",
+          "title": "signInWithPasskey"
+        },
+        {
+          "id": "reference/javascript/auth-signinwithpassword",
+          "title": "signInWithPassword"
+        },
+        {
+          "id": "reference/javascript/auth-signinwithsso",
+          "title": "signInWithSSO"
+        },
+        {
+          "id": "reference/javascript/auth-signinwithweb3",
+          "title": "signInWithWeb3"
+        },
+        {
+          "id": "reference/javascript/auth-signout",
+          "title": "signOut"
+        },
+        {
+          "id": "reference/javascript/auth-signup",
+          "title": "signUp"
+        },
+        {
+          "id": "reference/javascript/auth-startautorefresh",
+          "title": "startAutoRefresh"
+        },
+        {
+          "id": "reference/javascript/auth-stopautorefresh",
+          "title": "stopAutoRefresh"
+        },
+        {
+          "id": "reference/javascript/auth-unlinkidentity",
+          "title": "unlinkIdentity"
+        },
+        {
+          "id": "reference/javascript/auth-updateuser",
+          "title": "updateUser"
+        },
+        {
+          "id": "reference/javascript/auth-verifyotp",
+          "title": "verifyOtp"
+        },
+        {
+          "branch": true,
+          "title": "Auth Admin"
+        },
+        {
+          "branch": true,
+          "title": "Auth MFA"
+        },
+        {
+          "branch": true,
+          "title": "Auth MFA Recovery Codes"
+        },
+        {
+          "branch": true,
+          "title": "Auth Passkey"
+        },
+        {
+          "branch": true,
+          "title": "OAuth Admin"
+        },
+        {
+          "branch": true,
+          "title": "OAuth Server"
+        },
+        {
+          "branch": true,
+          "title": "Passkey Admin"
+        }
+      ],
+      "title": "Auth"
+    },
+    {
+      "children": [
+        {
+          "id": "reference/javascript/functions-corsheaders",
+          "title": "corsHeaders"
+        },
+        {
+          "id": "reference/javascript/functions-invoke",
+          "title": "invoke"
+        },
+        {
+          "id": "reference/javascript/functions-setauth",
+          "title": "setAuth"
+        }
+      ],
+      "title": "Edge Functions"
+    },
+    {
+      "children": [
+        {
+          "id": "reference/javascript/channel",
+          "title": "channel"
+        },
+        {
+          "id": "reference/javascript/connect",
+          "title": "connect"
+        },
+        {
+          "id": "reference/javascript/connectionstate",
+          "title": "connectionState"
+        },
+        {
+          "id": "reference/javascript/disconnect",
+          "title": "disconnect"
+        },
+        {
+          "id": "reference/javascript/endpointurl",
+          "title": "endpointURL"
+        },
+        {
+          "id": "reference/javascript/getchannels",
+          "title": "getChannels"
+        },
+        {
+          "id": "reference/javascript/getwebsocketconstructor",
+          "title": "getWebSocketConstructor"
+        },
+        {
+          "id": "reference/javascript/haslogger",
+          "title": "hasLogger"
+        },
+        {
+          "id": "reference/javascript/httpsend",
+          "title": "httpSend"
+        },
+        {
+          "id": "reference/javascript/isconnected",
+          "title": "isConnected"
+        },
+        {
+          "id": "reference/javascript/isconnecting",
+          "title": "isConnecting"
+        },
+        {
+          "id": "reference/javascript/isdisconnecting",
+          "title": "isDisconnecting"
+        },
+        {
+          "id": "reference/javascript/iswebsocketsupported",
+          "title": "isWebSocketSupported"
+        },
+        {
+          "id": "reference/javascript/log",
+          "title": "log"
+        },
+        {
+          "id": "reference/javascript/on",
+          "title": "on"
+        },
+        {
+          "id": "reference/javascript/onheartbeat",
+          "title": "onHeartbeat"
+        },
+        {
+          "id": "reference/javascript/presencestate",
+          "title": "presenceState"
+        },
+        {
+          "id": "reference/javascript/push",
+          "title": "push"
+        },
+        {
+          "id": "reference/javascript/removeallchannels",
+          "title": "removeAllChannels"
+        },
+        {
+          "id": "reference/javascript/removechannel",
+          "title": "removeChannel"
+        },
+        {
+          "id": "reference/javascript/send",
+          "title": "send"
+        },
+        {
+          "id": "reference/javascript/sendheartbeat",
+          "title": "sendHeartbeat"
+        },
+        {
+          "id": "reference/javascript/setauth",
+          "title": "setAuth"
+        },
+        {
+          "id": "reference/javascript/subscribe",
+          "title": "subscribe"
+        },
+        {
+          "id": "reference/javascript/teardown",
+          "title": "teardown"
+        },
+        {
+          "id": "reference/javascript/track",
+          "title": "track"
+        },
+        {
+          "id": "reference/javascript/unsubscribe",
+          "title": "unsubscribe"
+        },
+        {
+          "id": "reference/javascript/untrack",
+          "title": "untrack"
+        },
+        {
+          "id": "reference/javascript/updatejoinpayload",
+          "title": "updateJoinPayload"
+        }
+      ],
+      "title": "Realtime"
+    },
+    {
+      "children": [
+        {
+          "branch": true,
+          "title": "Analytics Buckets"
+        },
+        {
+          "branch": true,
+          "title": "File Buckets"
+        },
+        {
+          "branch": true,
+          "title": "Vector Buckets"
+        }
+      ],
+      "title": "Storage"
+    }
+  ],
+  "sections": [
+    {
+      "id": "introduction",
+      "markdown": "This reference documents every object and method available in Supabase's isomorphic JavaScript library, `supabase-js`. You can use `supabase-js` to interact with your Postgres database, listen to database changes, invoke Deno Edge Functions, build login and user management functionality, and manage large files.\n\nTo convert SQL queries to `supabase-js` calls, use the [SQL to REST API translator](/docs/guides/api/sql-to-rest).\n\nUsing `supabase-js` on the server? See [which package to use](/docs/guides/auth/choosing-a-server-package) to decide between `supabase-js`, `@supabase/ssr`, and `@supabase/server`.",
+      "title": "introduction"
+    },
+    {
+      "id": "installing",
+      "markdown": "## Install as package\n\nYou can install @supabase/supabase-js via the terminal.\n\n```typescript\nnpm install @supabase/supabase-js\n```\n\n## Install via CDN\n\nYou can install @supabase/supabase-js via CDN links.\n\n```typescript\n<script src=\"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2\"></script>\n//or\n<script src=\"https://unpkg.com/@supabase/supabase-js@2\"></script>\n```\n\n## Use at runtime in Deno\n\nYou can use supabase-js in the Deno runtime via [JSR](https://jsr.io/@supabase/supabase-js):\n\n```typescript\nimport { createClient } from 'npm:@supabase/supabase-js@2'\n```\n\n## Enable Data API access\n\nsupabase-js uses the Data API to query and mutate your Postgres data. You first need to grant Data API roles permissions to access your tables and functions.\n\nIn [Data API integrations settings](/dashboard/project/_/integrations/data_api/settings), expose the specific tables and functions you want to access. To automatically grant access for new tables and functions in `public`, enable **Default privileges for new entities**.\n\nAlternatively, use SQL to grant the required permissions:\n\n```typescript\n-- Before granting access to client roles, make sure RLS is enabled\n-- and create the policies required for each role's allowed operations.\nalter table public.your_table enable row level security;\n-- create policy ... on public.your_table ...;\n\n-- Grant least-privilege access to tables after RLS and policies are in place\ngrant select on public.your_table to anon;\ngrant select, insert, update, delete on public.your_table to authenticated;\ngrant all on public.your_table to service_role;\n\n-- Grant execute on functions after verifying any table access they rely on\ngrant execute on function public.your_function to authenticated, service_role;\n```",
+      "title": "Installing"
+    },
+    {
+      "id": "initializing",
+      "markdown": "Create a new client for use in the browser.\n\n## Parameters\n\n- supabaseUrlstring\n\nThe unique Supabase URL which is supplied when you create a new project in your project dashboard.\n\n- supabaseKeystring\n\nThe unique Supabase Key which is supplied when you create a new project in your project dashboard.\n\n- optionsOptionalSupabaseClientOptions\n\nOptional configuration for the client:\n\n- `db.schema` — You can switch in between schemas. The schema needs to be on the list of exposed schemas inside Supabase.\n\n- `auth.autoRefreshToken` — Set to `true` if you want to automatically refresh the token before expiring.\n\n- `auth.persistSession` — Set to `true` if you want to automatically save the user session into local storage.\n\n- `auth.detectSessionInUrl` — Set to `true` if you want to automatically detect OAuth grants in the URL and sign in the user.\n\n- `realtime` — Options passed along to the realtime-js constructor.\n\n- `storage` — Options passed along to the storage-js constructor.\n\n- `global.fetch` — A custom fetch implementation.\n\n- `global.headers` — Any additional headers to send with each network request.\n\n```typescript\nimport { createClient } from '@supabase/supabase-js'\n\n// Create a single supabase client for interacting with your database\nconst supabase = createClient('https://xyzcompany.supabase.co', 'your-publishable-key')\n```",
+      "title": "Initializing"
+    },
+    {
+      "id": "typescript-support",
+      "markdown": "`supabase-js` has TypeScript support for type inference, autocompletion, type-safe queries, and more.\n\nWith TypeScript, `supabase-js` detects things like `not null` constraints and [generated columns](https://www.postgresql.org/docs/current/ddl-generated-columns.html). Nullable columns are typed as `T | null` when you select the column. Generated columns will show a type error when you insert to it.\n\n`supabase-js` also detects relationships between tables. A referenced table with one-to-many relationship is typed as `T[]`. Likewise, a referenced table with many-to-one relationship is typed as `T | null`.\n\n## Generating TypeScript Types\n\nYou can use the Supabase CLI to [generate the types](/docs/reference/cli/supabase-gen-types). You can also generate the types [from the dashboard](https://supabase.com/dashboard/project/_/api?page=tables-intro).\n\n```typescript\nsupabase gen types typescript --project-id abcdefghijklmnopqrst > database.types.ts\n```\n\nThese types are generated from your database schema. Given a table `public.movies`, the generated types will look like:\n\n```typescript\ncreate table public.movies (\n  id bigint generated always as identity primary key,\n  name text not null,\n  data jsonb null\n);\n```\n\n```typescript\nexport type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]\n\nexport interface Database {\n  public: {\n    Tables: {\n      movies: {\n        Row: {               // the data expected from .select()\n          id: number\n          name: string\n          data: Json | null\n        }\n        Insert: {            // the data to be passed to .insert()\n          id?: never         // generated columns must not be supplied\n          name: string       // `not null` columns with no default must be supplied\n          data?: Json | null // nullable columns can be omitted\n        }\n        Update: {            // the data to be passed to .update()\n          id?: never\n          name?: string      // `not null` columns are optional on .update()\n          data?: Json | null\n        }\n      }\n    }\n  }\n}\n```\n\n## Using TypeScript type definitions\n\nYou can supply the type definitions to `supabase-js` like so:\n\n```typescript\nimport { createClient } from '@supabase/supabase-js'\nimport { Database } from './database.types'\n\nconst supabase = createClient<Database>(\n  process.env.SUPABASE_URL,\n  process.env.SUPABASE_PUBLISHABLE_KEY\n)\n```\n\n## Helper types for Tables and Joins\n\nYou can use the following helper types to make the generated TypeScript types easier to use.\n\nSometimes the generated types are not what you expect. For example, a view's column may show up as nullable when you expect it to be `not null`. Using [type-fest](https://github.com/sindresorhus/type-fest), you can override the types like so:\n\n```typescript\nexport type Json = // ...\n\nexport interface Database {\n  // ...\n}\n```\n\n```typescript\nimport { MergeDeep } from 'type-fest'\nimport { Database as DatabaseGenerated } from './database-generated.types'\nexport { Json } from './database-generated.types'\n\n// Override the type for a specific column in a view:\nexport type Database = MergeDeep<\n  DatabaseGenerated,\n  {\n    public: {\n      Views: {\n        movies_view: {\n          Row: {\n            // id is a primary key in public.movies, so it must be `not null`\n            id: number\n          }\n        }\n      }\n    }\n  }\n>\n```\n\nYou can also override the type of an individual successful response if needed:\n\n```typescript\n// Partial type override allows you to only override some of the properties in your results\nconst { data } = await supabase.from('countries').select().overrideTypes<Array<{ id: string }>>()\n// For a full replacement of the original return type use the `{ merge: false }` property as second argument\nconst { data } = await supabase\n  .from('countries')\n  .select()\n  .overrideTypes<Array<{ id: string }>, { merge: false }>()\n// Use it with `maybeSingle` or `single`\nconst { data } = await supabase.from('countries').select().single().overrideTypes<{ id: string }>()\n```\n\nThe generated types provide shorthands for accessing tables and enums.\n\n```typescript\nimport { Database, Tables, Enums } from \"./database.types.ts\";\n\n// Before 😕\nlet movie: Database['public']['Tables']['movies']['Row'] = // ...\n\n// After 😍\nlet movie: Tables<'movies'>\n```\n\n## Response types for complex queries\n\n`supabase-js` always returns a `data` object (for success), and an `error` object (for unsuccessful requests).\n\nThese helper types provide the result types from any query, including nested types for database joins.\n\nGiven the following schema with a relation between cities and countries, we can get the nested `CountriesWithCities` type:\n\n```typescript\ncreate table countries (\n  \"id\" serial primary key,\n  \"name\" text\n);\n\ncreate table cities (\n  \"id\" serial primary key,\n  \"name\" text,\n  \"country_id\" int references \"countries\"\n);\n```\n\n```typescript\nimport { QueryResult, QueryData, QueryError } from '@supabase/supabase-js'\n\nconst countriesWithCitiesQuery = supabase\n  .from(\"countries\")\n  .select(`\n    id,\n    name,\n    cities (\n      id,\n      name\n    )\n  `);\ntype CountriesWithCities = QueryData<typeof countriesWithCitiesQuery>;\n\nconst { data, error } = await countriesWithCitiesQuery;\nif (error) throw error;\nconst countriesWithCities: CountriesWithCities = data;\n```",
+      "title": "TypeScript support"
+    },
+    {
+      "id": "delete",
+      "markdown": "`delete(options)`\n\nPerform a DELETE on the table or view.\n\nBy default, deleted rows are not returned. To return it, chain the call with `.select()` after filters.\n\n- `delete()` should always be combined with [filters](/docs/reference/javascript/using-filters) to target the item(s) you wish to delete.\n\n- If you use `delete()` with filters and you have [RLS](/docs/learn/auth-deep-dive/auth-row-level-security) enabled, only rows visible through `SELECT` policies are deleted. Note that by default no rows are visible, so you need at least one `SELECT`/`ALL` policy that makes the rows visible.\n\n- When using `delete().in()`, specify an array of values to target multiple rows with a single query. This is particularly useful for batch deleting entries that share common criteria, such as deleting users by their IDs. Ensure that the array you provide accurately represents all records you intend to delete to avoid unintended data removal.\n\n## Parameters\n\n- optionsobject\n\nNamed parameters\n\n```typescript\nconst response = await supabase\n  .from('countries')\n  .delete()\n  .eq('id', 1)\n```",
+      "title": "delete"
+    },
+    {
+      "id": "from",
+      "markdown": "`from(relation)`\n\nPerform a query on a table or a view.\n\n## Parameters\n\n- relationOne of the following options\n\nThe table or view name to query\n\n- Option 1TableName\n\n- Option 2ViewName",
+      "title": "from"
+    },
+    {
+      "id": "getopenapispec",
+      "markdown": "`getOpenApiSpec()`\n\nFetch the OpenAPI description PostgREST publishes for this client's schema.\n\nThe document lists only the tables, views and functions the caller's role holds privileges on; PostgREST applies that filtering server-side. The schema is the one this client was created with, so call `.schema()` first to describe a different one. Transient failures are retried according to the client's `retry` option, like any other idempotent request.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1PostgrestResponseSuccess\n\n- Option 2PostgrestResponseFailure\n\n```typescript\nconst { data, error } = await supabase.getOpenApiSpec()\n```",
+      "title": "getOpenApiSpec"
+    },
+    {
+      "id": "insert",
+      "markdown": "`insert(values, options)`\n\nPerform an INSERT into the table or view.\n\nBy default, inserted rows are not returned. To return it, chain the call with `.select()`.\n\n## Parameters\n\n- valuesOne of the following options\n\nThe values to insert. Pass an object to insert a single row or an array to insert multiple rows.\n\n- Option 1RejectExcessProperties\n\n- Option 2Array<RejectExcessProperties>\n\n- optionsobject\n\nNamed parameters\n\n```typescript\nconst { error } = await supabase\n  .from('countries')\n  .insert({ id: 1, name: 'Mordor' })\n```",
+      "title": "insert"
+    },
+    {
+      "id": "rpc",
+      "markdown": "`rpc(fn, args, options)`\n\nPerform a function call.\n\n## Parameters\n\n- fnFnName\n\nThe function name to call\n\n- argsArgs\n\nThe arguments to pass to the function call\n\n- optionsobject\n\nNamed parameters\n\n```typescript\n// For cross-schema functions where type inference fails, use overrideTypes:\nconst { data } = await supabase\n  .schema('schema_b')\n  .rpc('function_a', {})\n  .overrideTypes<{ id: string; user_id: string }[]>()\n```",
+      "title": "rpc"
+    },
+    {
+      "id": "schema",
+      "markdown": "`schema(schema)`\n\nSelect a schema to query or perform an function (rpc) call.\n\nThe schema needs to be on the list of exposed schemas inside Supabase.\n\n## Parameters\n\n- schemaDynamicSchema\n\nThe schema to query",
+      "title": "schema"
+    },
+    {
+      "id": "select",
+      "markdown": "`select(columns?, options?)`\n\nPerform a SELECT query on the table or view.\n\nWhen using `count` with `.range()` or `.limit()`, the returned `count` is the total number of rows that match your filters, not the number of rows in the current page. Use this to build pagination UI.\n\n- By default, Supabase projects return a maximum of 1,000 rows. This setting can be changed in your project's [API settings](/dashboard/project/_/settings/api). It's recommended that you keep it low to limit the payload size of accidental or malicious requests. You can use `range()` queries to paginate through your data.\n\n- `select()` can be combined with [Filters](/docs/reference/javascript/using-filters)\n\n- `select()` can be combined with [Modifiers](/docs/reference/javascript/using-modifiers)\n\n- `apikey` is a reserved keyword if you're using the [Supabase Platform](/docs/guides/platform) and [should be avoided as a column name](https://github.com/supabase/supabase/issues/5465). *\n\n## Parameters\n\n- columnsOptionalQuery\n\nThe columns to retrieve, separated by commas. Columns can be renamed when returned with `customName:columnName`\n\n- optionsOptionalobject\n\nNamed parameters\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n```",
+      "title": "select"
+    },
+    {
+      "id": "update",
+      "markdown": "`update(values, options)`\n\nPerform an UPDATE on the table or view.\n\nBy default, updated rows are not returned. To return it, chain the call with `.select()` after filters.\n\n- `update()` should always be combined with [Filters](/docs/reference/javascript/using-filters) to target the item(s) you wish to update.\n\n## Parameters\n\n- valuesRejectExcessProperties\n\nThe values to update with\n\n- optionsobject\n\nNamed parameters\n\n```typescript\nconst { error } = await supabase\n  .from('instruments')\n  .update({ name: 'piano' })\n  .eq('id', 1)\n```",
+      "title": "update"
+    },
+    {
+      "id": "upsert",
+      "markdown": "`upsert(values, options)`\n\nPerform an UPSERT on the table or view. Depending on the column(s) passed to `onConflict`, `.upsert()` allows you to perform the equivalent of `.insert()` if a row with the corresponding `onConflict` columns doesn't exist, or if it does exist, perform an alternative action depending on `ignoreDuplicates`.\n\nBy default, upserted rows are not returned. To return it, chain the call with `.select()`.\n\n- Primary keys must be included in `values` to use upsert.\n\n## Parameters\n\n- valuesOne of the following options\n\nThe values to upsert with. Pass an object to upsert a single row or an array to upsert multiple rows.\n\n- Option 1RejectExcessProperties\n\n- Option 2Array<RejectExcessProperties>\n\n- optionsobject\n\nNamed parameters\n\n```typescript\n// Upserting a single row, overwriting based on the 'username' unique column\nconst { data, error } = await supabase\n  .from('users')\n  .upsert({ username: 'supabot' }, { onConflict: 'username' })\n\n// Example response:\n// {\n//   data: [\n//     { id: 4, message: 'bar', username: 'supabot' }\n//   ],\n//   error: null\n// }\n```",
+      "title": "upsert"
+    },
+    {
+      "id": "using-filters",
+      "markdown": "Filters allow you to only return rows that match certain conditions.\n\nFilters can be used on `select()`, `update()`, `upsert()`, and `delete()` queries.\n\nIf a Postgres function returns a table response, you can also apply filters.\n\n```typescript\nconst { data, error } = await supabase\n  .from('instruments')\n  .select('name, section_id')\n  .eq('name', 'violin')    // Correct\n\nconst { data, error } = await supabase\n  .from('instruments')\n  .eq('name', 'violin')    // Incorrect\n  .select('name, section_id')\n```",
+      "title": "Using Filters"
+    },
+    {
+      "id": "using-filters-containedby",
+      "markdown": "`containedBy(column, value)`\n\nOnly relevant for jsonb, array, and range columns. Match only rows where every element appearing in `column` is contained by `value`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe jsonb, array, or range column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- valueOne of the following options\n\nThe jsonb, array, or range value to filter with\n\n- Option 1string\n\n- Option 2Record<string, unknown>\n\n- Option 3Array<Row['ColumnName']>\n\n- Option 4Array<unknown>\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('classes')\n  .select('name')\n  .containedBy('days', ['monday', 'tuesday', 'wednesday', 'friday'])\n```",
+      "title": "containedBy"
+    },
+    {
+      "id": "using-filters-contains",
+      "markdown": "`contains(column, value)`\n\nOnly relevant for jsonb, array, and range columns. Match only rows where `column` contains every element appearing in `value`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe jsonb, array, or range column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- valueOne of the following options\n\nThe jsonb, array, or range value to filter with\n\n- Option 1string\n\n- Option 2Record<string, unknown>\n\n- Option 3Array<Row['ColumnName']>\n\n- Option 4Array<unknown>\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('issues')\n  .select()\n  .contains('tags', ['is:open', 'priority:low'])\n```",
+      "title": "contains"
+    },
+    {
+      "id": "using-filters-eq",
+      "markdown": "`eq(column, value)`\n\nMatch only rows where `column` is equal to `value`.\n\nTo check if the value of `column` is NULL, you should use `.is()` instead.\n\n## Parameters\n\n- column\n\nThe column to filter on\n\n- value\n\nThe value to filter with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .eq('name', 'Leia')\n```",
+      "title": "eq"
+    },
+    {
+      "id": "using-filters-filter",
+      "markdown": "`filter(column, operator, value)`\n\nMatch only rows which satisfy the filter. This is an escape hatch - you should use the specific filter methods wherever possible.\n\nUnlike most filters, `opearator` and `value` are used as-is and need to follow [PostgREST syntax](https://postgrest.org/en/stable/api.html#operators). You also need to make sure they are properly sanitized.\n\nfilter() expects you to use the raw PostgREST syntax for the filter values.\n\n```typescript\n.filter('id', 'in', '(5,6,7)')  // Use `()` for `in` filter\n.filter('arraycol', 'cs', '{\"a\",\"b\"}')  // Use `cs` for `contains()`, `{}` for array values\n```\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- operatorOne of the following options\n\nThe operator to filter with, following PostgREST syntax\n\n- Option 1FilterOperator\n\n- Option 2\"not.match\"\n\n- Option 3\"not.is\"\n\n- Option 4\"not.eq\"\n\n- Option 5\"not.neq\"\n\n- Option 6\"not.gt\"\n\n- Option 7\"not.gte\"\n\n- Option 8\"not.lt\"\n\n- Option 9\"not.lte\"\n\n- Option 10\"not.like\"\n\n- Option 11\"not.ilike\"\n\n- Option 12\"not.isdistinct\"\n\n- Option 13\"not.in\"\n\n- Option 14\"not.cs\"\n\n- Option 15\"not.cd\"\n\n- Option 16\"not.sl\"\n\n- Option 17\"not.sr\"\n\n- Option 18\"not.nxl\"\n\n- Option 19\"not.nxr\"\n\n- Option 20\"not.adj\"\n\n- Option 21\"not.ov\"\n\n- Option 22\"not.fts\"\n\n- Option 23\"not.plfts\"\n\n- Option 24\"not.phfts\"\n\n- Option 25\"not.wfts\"\n\n- Option 26\"not.imatch\"\n\n- Option 27string\n\n- valueunknown\n\nThe value to filter with, following PostgREST syntax\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .filter('name', 'in', '(\"Han\",\"Yoda\")')\n```",
+      "title": "filter"
+    },
+    {
+      "id": "using-filters-gt",
+      "markdown": "`gt(column, value)`\n\nMatch only rows where `column` is greater than `value`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- valueOne of the following options\n\nThe value to filter with\n\n- Option 1Row['ColumnName']\n\n- Option 2unknown\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .gt('id', 2)\n```",
+      "title": "gt"
+    },
+    {
+      "id": "using-filters-gte",
+      "markdown": "`gte(column, value)`\n\nMatch only rows where `column` is greater than or equal to `value`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- valueOne of the following options\n\nThe value to filter with\n\n- Option 1Row['ColumnName']\n\n- Option 2unknown\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .gte('id', 2)\n```",
+      "title": "gte"
+    },
+    {
+      "id": "using-filters-ilike",
+      "markdown": "`ilike(column, pattern)`\n\nMatch only rows where `column` matches `pattern` case-insensitively.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- patternstring\n\nThe pattern to match with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .ilike('name', '%lu%')\n```",
+      "title": "ilike"
+    },
+    {
+      "id": "using-filters-ilikeallof",
+      "markdown": "`ilikeAllOf(column, patterns)`\n\nMatch only rows where `column` matches all of `patterns` case-insensitively.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- patternsArray<string>\n\nThe patterns to match with\n\n## Return Type\n\nthis",
+      "title": "ilikeAllOf"
+    },
+    {
+      "id": "using-filters-ilikeanyof",
+      "markdown": "`ilikeAnyOf(column, patterns)`\n\nMatch only rows where `column` matches any of `patterns` case-insensitively.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- patternsArray<string>\n\nThe patterns to match with\n\n## Return Type\n\nthis",
+      "title": "ilikeAnyOf"
+    },
+    {
+      "id": "using-filters-in",
+      "markdown": "`in(column, values)`\n\nMatch only rows where `column` is included in the `values` array.\n\n## Parameters\n\n- columnColumnName\n\nThe column to filter on\n\n- valuesArray\n\nThe values array to filter with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .in('name', ['Leia', 'Han'])\n```",
+      "title": "in"
+    },
+    {
+      "id": "using-filters-is",
+      "markdown": "`is(column, value)`\n\nMatch only rows where `column` IS `value`.\n\nFor non-boolean columns, this is only relevant for checking if the value of `column` is NULL by setting `value` to `null`.\n\nFor boolean columns, you can also set `value` to `true` or `false` and it will behave the same way as `.eq()`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- valueOne of the following options\n\nThe value to filter with\n\n- Option 1null\n\n- Option 2boolean\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('countries')\n  .select()\n  .is('name', null)\n```",
+      "title": "is"
+    },
+    {
+      "id": "using-filters-like",
+      "markdown": "`like(column, pattern)`\n\nMatch only rows where `column` matches `pattern` case-sensitively.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- patternstring\n\nThe pattern to match with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .like('name', '%Lu%')\n```",
+      "title": "like"
+    },
+    {
+      "id": "using-filters-likeallof",
+      "markdown": "`likeAllOf(column, patterns)`\n\nMatch only rows where `column` matches all of `patterns` case-sensitively.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- patternsArray<string>\n\nThe patterns to match with\n\n## Return Type\n\nthis",
+      "title": "likeAllOf"
+    },
+    {
+      "id": "using-filters-likeanyof",
+      "markdown": "`likeAnyOf(column, patterns)`\n\nMatch only rows where `column` matches any of `patterns` case-sensitively.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- patternsArray<string>\n\nThe patterns to match with\n\n## Return Type\n\nthis",
+      "title": "likeAnyOf"
+    },
+    {
+      "id": "using-filters-lt",
+      "markdown": "`lt(column, value)`\n\nMatch only rows where `column` is less than `value`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- valueOne of the following options\n\nThe value to filter with\n\n- Option 1Row['ColumnName']\n\n- Option 2unknown\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .lt('id', 2)\n```",
+      "title": "lt"
+    },
+    {
+      "id": "using-filters-lte",
+      "markdown": "`lte(column, value)`\n\nMatch only rows where `column` is less than or equal to `value`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- valueOne of the following options\n\nThe value to filter with\n\n- Option 1Row['ColumnName']\n\n- Option 2unknown\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .lte('id', 2)\n```",
+      "title": "lte"
+    },
+    {
+      "id": "using-filters-match",
+      "markdown": "`match(query)`\n\nMatch only rows where each column in `query` keys is equal to its associated value. Shorthand for multiple `.eq()`s.\n\n## Parameters\n\n- queryOne of the following options\n\nThe object to filter with, with column names as keys mapped to their filter values\n\n- Option 1Record<ColumnName, Row['ColumnName']>\n\n- Option 2Record<string, unknown>\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select('name')\n  .match({ id: 2, name: 'Leia' })\n```",
+      "title": "match"
+    },
+    {
+      "id": "using-filters-neq",
+      "markdown": "`neq(column, value)`\n\nMatch only rows where `column` is not equal to `value`.\n\nThis filter does not include rows where `column` is `NULL`. To match null values, use `.is(column, null)` instead.\n\n## Parameters\n\n- column\n\nThe column to filter on\n\n- value\n\nThe value to filter with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .neq('name', 'Leia')\n```",
+      "title": "neq"
+    },
+    {
+      "id": "using-filters-not",
+      "markdown": "`not(column, operator, value)`\n\nMatch only rows which doesn't satisfy the filter.\n\nUnlike most filters, `opearator` and `value` are used as-is and need to follow [PostgREST syntax](https://postgrest.org/en/stable/api.html#operators). You also need to make sure they are properly sanitized.\n\nnot() expects you to use the raw PostgREST syntax for the filter values.\n\n```typescript\n.not('id', 'in', '(5,6,7)')  // Use `()` for `in` filter\n.not('arraycol', 'cs', '{\"a\",\"b\"}')  // Use `cs` for `contains()`, `{}` for array values\n```\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- operatorOne of the following options\n\nThe operator to be negated to filter with, following PostgREST syntax\n\n- Option 1\"is\"\n\n- Option 2FilterOperator\n\n- Option 3string\n\n- valueOne of the following options\n\nThe value to filter with, following PostgREST syntax\n\n- Option 1null\n\n- Option 2Row['ColumnName']\n\n- Option 3unknown\n\n```typescript\nconst { data, error } = await supabase\n  .from('countries')\n  .select()\n  .not('name', 'is', null)\n```",
+      "title": "not"
+    },
+    {
+      "id": "using-filters-or",
+      "markdown": "`or(filters, options)`\n\nMatch only rows which satisfy at least one of the filters.\n\nUnlike most filters, `filters` is used as-is and needs to follow [PostgREST syntax](https://postgrest.org/en/stable/api.html#operators). You also need to make sure it's properly sanitized.\n\nIt's currently not possible to do an `.or()` filter across multiple tables.\n\nor() expects you to use the raw PostgREST syntax for the filter names and values.\n\n```typescript\n.or('id.in.(5,6,7), arraycol.cs.{\"a\",\"b\"}')  // Use `()` for `in` filter, `{}` for array values and `cs` for `contains()`.\n.or('id.in.(5,6,7), arraycol.cd.{\"a\",\"b\"}')  // Use `cd` for `containedBy()`\n```\n\n## Parameters\n\n- filtersstring\n\nThe filters to use, following PostgREST syntax\n\n- optionsobject\n\nNamed parameters\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select('name')\n  .or('id.eq.2,name.eq.Han')\n```",
+      "title": "or"
+    },
+    {
+      "id": "using-filters-overlaps",
+      "markdown": "`overlaps(column, value)`\n\nOnly relevant for array and range columns. Match only rows where `column` and `value` have an element in common.\n\n## Parameters\n\n- columnOne of the following options\n\nThe array or range column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- valueOne of the following options\n\nThe array or range value to filter with\n\n- Option 1string\n\n- Option 2Array<Row['ColumnName']>\n\n- Option 3Array<unknown>\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('issues')\n  .select('title')\n  .overlaps('tags', ['is:closed', 'severity:high'])\n```",
+      "title": "overlaps"
+    },
+    {
+      "id": "using-filters-rangeadjacent",
+      "markdown": "`rangeAdjacent(column, range)`\n\nOnly relevant for range columns. Match only rows where `column` is mutually exclusive to `range` and there can be no element between the two ranges.\n\n## Parameters\n\n- columnOne of the following options\n\nThe range column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- rangestring\n\nThe range to filter with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('reservations')\n  .select()\n  .rangeAdjacent('during', '[2000-01-01 12:00, 2000-01-01 13:00)')\n```",
+      "title": "rangeAdjacent"
+    },
+    {
+      "id": "using-filters-rangegt",
+      "markdown": "`rangeGt(column, range)`\n\nOnly relevant for range columns. Match only rows where every element in `column` is greater than any element in `range`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe range column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- rangestring\n\nThe range to filter with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('reservations')\n  .select()\n  .rangeGt('during', '[2000-01-02 08:00, 2000-01-02 09:00)')\n```",
+      "title": "rangeGt"
+    },
+    {
+      "id": "using-filters-rangegte",
+      "markdown": "`rangeGte(column, range)`\n\nOnly relevant for range columns. Match only rows where every element in `column` is either contained in `range` or greater than any element in `range`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe range column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- rangestring\n\nThe range to filter with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('reservations')\n  .select()\n  .rangeGte('during', '[2000-01-02 08:30, 2000-01-02 09:30)')\n```",
+      "title": "rangeGte"
+    },
+    {
+      "id": "using-filters-rangelt",
+      "markdown": "`rangeLt(column, range)`\n\nOnly relevant for range columns. Match only rows where every element in `column` is less than any element in `range`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe range column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- rangestring\n\nThe range to filter with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('reservations')\n  .select()\n  .rangeLt('during', '[2000-01-01 15:00, 2000-01-01 16:00)')\n```",
+      "title": "rangeLt"
+    },
+    {
+      "id": "using-filters-rangelte",
+      "markdown": "`rangeLte(column, range)`\n\nOnly relevant for range columns. Match only rows where every element in `column` is either contained in `range` or less than any element in `range`.\n\n## Parameters\n\n- columnOne of the following options\n\nThe range column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- rangestring\n\nThe range to filter with\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('reservations')\n  .select()\n  .rangeLte('during', '[2000-01-01 14:00, 2000-01-01 16:00)')\n```",
+      "title": "rangeLte"
+    },
+    {
+      "id": "using-filters-textsearch",
+      "markdown": "`textSearch(column, query, options?)`\n\nOnly relevant for text and tsvector columns. Match only rows where `column` matches the query string in `query`.\n\n- For more information, see [Postgres full text search](/docs/guides/database/full-text-search).\n\n## Parameters\n\n- columnOne of the following options\n\nThe text or tsvector column to filter on\n\n- Option 1ColumnName\n\n- Option 2string\n\n- querystring\n\nThe query text to match with\n\n- optionsOptionalobject\n\nNamed parameters\n\n## Return Type\n\nthis\n\n```typescript\nconst result = await supabase\n  .from(\"texts\")\n  .select(\"content\")\n  .textSearch(\"content\", `'eggs' & 'ham'`, {\n    config: \"english\",\n  });\n```",
+      "title": "textSearch"
+    },
+    {
+      "id": "using-modifiers",
+      "markdown": "Filters work on the row level—they allow you to return rows that only match certain conditions without changing the shape of the rows. Modifiers are everything that don't fit that definition—allowing you to change the format of the response (e.g., returning a CSV string).\n\nModifiers must be specified after filters. Some modifiers only apply for queries that return rows (e.g., `select()` or `rpc()` on a function that returns a table response).",
+      "title": "Using modifiers"
+    },
+    {
+      "id": "using-modifiers-abortsignal",
+      "markdown": "`abortSignal(signal)`\n\nSet the AbortSignal for the fetch request.\n\nYou can use this to set a timeout for the request.\n\n## Parameters\n\n- signalAbortSignal\n\nThe AbortSignal to use for the fetch request\n\n## Return Type\n\nthis\n\n```typescript\nconst ac = new AbortController()\n\nconst { data, error } = await supabase\n  .from('very_big_table')\n  .select()\n  .abortSignal(ac.signal)\n\n// Abort the request after 100 ms\nsetTimeout(() => ac.abort(), 100)\n```",
+      "title": "abortSignal"
+    },
+    {
+      "id": "using-modifiers-csv",
+      "markdown": "`csv()`\n\nReturn `data` as a string in CSV format.\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .csv()\n```",
+      "title": "csv"
+    },
+    {
+      "id": "using-modifiers-explain",
+      "markdown": "`explain(options)`\n\nReturn `data` as the EXPLAIN plan for the query.\n\nYou need to enable the [db_plan_enabled](https://supabase.com/docs/guides/database/debugging-performance#enabling-explain) setting before using this method.\n\n## Parameters\n\n- optionsobject\n\nNamed parameters\n\n## Return Type\n\nOne of the following options\n- Option 1PostgrestBuilder\n\n- Option 2PostgrestBuilder\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .explain()\n```",
+      "title": "explain"
+    },
+    {
+      "id": "using-modifiers-geojson",
+      "markdown": "`geojson()`\n\nReturn `data` as an object in [GeoJSON](https://geojson.org) format.",
+      "title": "geojson"
+    },
+    {
+      "id": "using-modifiers-limit",
+      "markdown": "`limit(rows, options)`\n\nLimit the query result by `rows`.\n\n## Parameters\n\n- rowsnumber\n\nThe maximum number of rows to return\n\n- optionsobject\n\nNamed parameters\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select('name')\n  .limit(1)\n```",
+      "title": "limit"
+    },
+    {
+      "id": "using-modifiers-maxaffected",
+      "markdown": "`maxAffected(rows)`\n\nSet the maximum number of rows that can be affected by the query. Only available in PostgREST v13+ and only works with PATCH and DELETE methods.\n\n## Parameters\n\n- rowsnumber\n\nThe maximum number of rows that can be affected",
+      "title": "maxAffected"
+    },
+    {
+      "id": "using-modifiers-maybesingle",
+      "markdown": "`maybeSingle()`\n\nReturn `data` as a single object instead of an array of objects.\n\nQuery result must be zero or one row (e.g. using `.limit(1)`), otherwise this returns an error.\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .eq('name', 'Katniss')\n  .maybeSingle()\n```",
+      "title": "maybeSingle"
+    },
+    {
+      "id": "using-modifiers-order",
+      "markdown": "`order(column, options?)`\n\nOrder the query result by `column`.\n\nYou can call this method multiple times to order by multiple columns.\n\nYou can order referenced tables, but it only affects the ordering of the parent table if you use `!inner` in the query.\n\n## Parameters\n\n- columnOne of the following options\n\nThe column to order by\n\n- Option 1ColumnName\n\n- Option 2string\n\n- optionsOptionalobject\n\nNamed parameters\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select('id, name')\n  .order('id', { ascending: false })\n```",
+      "title": "order"
+    },
+    {
+      "id": "using-modifiers-overridetypes",
+      "markdown": "`overrideTypes()`\n\nOverride the type of the returned `data` field in the response.\n\n```typescript\n// Merge with existing types (default behavior)\nconst query = supabase\n  .from('users')\n  .select()\n  .overrideTypes<{ custom_field: string }>()\n\n// Replace existing types completely\nconst replaceQuery = supabase\n  .from('users')\n  .select()\n  .overrideTypes<{ id: number; name: string }, { merge: false }>()\n```",
+      "title": "overrideTypes"
+    },
+    {
+      "id": "using-modifiers-range",
+      "markdown": "`range(from, to, options)`\n\nLimit the query result by starting at an offset `from` and ending at the offset `to`. Only records within this range are returned. This respects the query order and if there is no order clause the range could behave unexpectedly. The `from` and `to` values are 0-based and inclusive: `range(1, 3)` will include the second, third and fourth rows of the query.\n\n## Parameters\n\n- fromnumber\n\nThe starting index from which to limit the result\n\n- tonumber\n\nThe last index to which to limit the result\n\n- optionsobject\n\nNamed parameters\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select('name')\n  .range(0, 1)\n```",
+      "title": "range"
+    },
+    {
+      "id": "using-modifiers-retry",
+      "markdown": "`retry(enabled)`\n\n## Parameters\n\n- enabledboolean\n\nWhether to enable retries for this request\n\n## Return Type\n\nthis\n\n```typescript\n// Disable retries for a specific query\nconst { data, error } = await supabase\n  .from('users')\n  .select()\n  .retry(false)\n```",
+      "title": "retry"
+    },
+    {
+      "id": "using-modifiers-returns",
+      "markdown": "`returns()`\n\nOverride the type of the returned `data`.\n\n**Deprecated.** Use overrideTypes<yourType, { merge: false }>() method at the end of your call chain instead",
+      "title": "returns"
+    },
+    {
+      "id": "using-modifiers-rollback",
+      "markdown": "`rollback()`\n\nDry-run this request: execute the query but discard the changes.\n\nServer-side, PostgREST runs the query inside a transaction and rolls it back instead of committing. The response still contains the data that would have been returned — `RETURNING` clauses execute and RLS, triggers, and constraints are all evaluated — but no row is actually inserted, updated, or deleted.\n\nThis affects only the single request it is chained to. The JS caller has no handle on the transaction: supabase-js does not group multiple queries into one transaction. For multi-statement transactional logic, use a database function (`supabase.rpc(...)`).\n\nSets the `Prefer: tx=rollback` header. See PostgREST's docs on transaction preferences for the underlying mechanism.\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('countries')\n  .insert({ name: 'France' })\n  .select()\n  .rollback()\n// `data` shows what would have been inserted; nothing is saved.\n```",
+      "title": "rollback"
+    },
+    {
+      "id": "using-modifiers-select",
+      "markdown": "`select(columns?)`\n\nPerform a SELECT on the query result.\n\nBy default, `.insert()`, `.update()`, `.upsert()`, and `.delete()` do not return modified rows. By calling this method, modified rows are returned in `data`.\n\n## Parameters\n\n- columnsOptionalQuery\n\nThe columns to retrieve, separated by commas\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .upsert({ id: 1, name: 'Han Solo' })\n  .select()\n```",
+      "title": "select"
+    },
+    {
+      "id": "using-modifiers-setheader",
+      "markdown": "`setHeader(name, value)`\n\nSet an HTTP header on this single PostgREST request, overriding any header with the same name set on the client.\n\nThis is an advanced escape hatch for one-off needs (passing a custom `Authorization` for a single query, attaching a tracing header, etc.). Most callers do not need it: configure client-wide headers via the `headers` option when constructing the client, and authentication via Supabase Auth.\n\n## Parameters\n\n- namestring\n\nHTTP header name\n\n- valuestring\n\nHTTP header value\n\n## Return Type\n\nthis",
+      "title": "setHeader"
+    },
+    {
+      "id": "using-modifiers-single",
+      "markdown": "`single()`\n\nReturn `data` as a single object instead of an array of objects.\n\nQuery result must be one row (e.g. using `.limit(1)`), otherwise this returns an error.\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select('name')\n  .limit(1)\n  .single()\n```",
+      "title": "single"
+    },
+    {
+      "id": "using-modifiers-stripnulls",
+      "markdown": "`stripNulls()`\n\nStrip null values from the response data. Properties with `null` values will be omitted from the returned JSON objects.\n\nRequires PostgREST 11.2.0+.\n\n[https://docs.postgrest.org/en/stable/references/api/resource\\_representation.html#stripped-nulls](https://docs.postgrest.org/en/stable/references/api/resource%5C_representation.html#stripped-nulls)\n\n## Return Type\n\nthis\n\n```typescript\nconst { data, error } = await supabase\n  .from('characters')\n  .select()\n  .stripNulls()\n```",
+      "title": "stripNulls"
+    },
+    {
+      "id": "using-modifiers-throwonerror",
+      "markdown": "`throwOnError()`\n\nIf there's an error with the query, throwOnError will reject the promise by throwing the error instead of returning it as part of a successful response.\n\n[https://github.com/supabase/supabase-js/issues/92](https://github.com/supabase/supabase-js/issues/92)",
+      "title": "throwOnError"
+    },
+    {
+      "id": "auth",
+      "markdown": "- The auth methods can be accessed via the `supabase.auth` namespace.\n\n- By default, the supabase client sets `persistSession` to true and attempts to store the session in local storage. When using the supabase client in an environment that doesn't support local storage, you might notice the following warning message being logged:\n\nNo storage option exists to persist the session, which may result in unexpected behavior when using auth. If you want to set `persistSession` to true, please provide a storage option or you may set `persistSession` to false to disable this warning.\n\nThis warning message can be safely ignored if you're not using auth on the server-side. If you are using auth and you want to set `persistSession` to true, you will need to provide a custom storage implementation that follows [this interface](https://github.com/supabase/supabase-js/blob/master/packages/core/auth-js/src/lib/types.ts#L1053).\n\n- Any email links and one-time passwords (OTPs) sent have a default expiry of 24 hours. We have the following [rate limits](/docs/guides/deployment/going-into-prod#auth-rate-limits) in place to guard against brute force attacks.\n\n- The expiry of an access token can be set in the \"JWT expiry limit\" field in [your project's auth settings](/dashboard/project/_/auth/providers). A refresh token never expires and can only be used once.\n\n```typescript\nimport { createClient } from '@supabase/supabase-js'\n\nconst supabase = createClient(supabase_url, publishable_key)\n```",
+      "title": "Overview"
+    },
+    {
+      "id": "auth-dispose",
+      "markdown": "`dispose()`\n\nTears down the client's background work: stops the auto-refresh interval, removes the `visibilitychange` listener, closes the cross-tab `BroadcastChannel`, and clears registered `onAuthStateChange` subscribers.\n\nCall this from cleanup hooks when the client is being replaced before its JS realm is destroyed. React Strict Mode and HMR are the common cases. Any in-flight `fetch` calls continue to completion and may still write to storage; dispose doesn't abort them or erase storage.\n\nLifecycle caveat: because in-flight refreshes are not aborted, a disposed instance can still persist a rotated session to storage after `dispose()` returns. A subsequent `createClient` against the same `storageKey` will pick up that session on its next read. If you need strict isolation between client lifecycles, await any pending auth operation before calling `dispose()` (or change the `storageKey` for the replacement client).\n\nSafe to call repeatedly.\n\n## Return Type\n\nPromise<void>\n\n```typescript\nuseEffect(() => {\n  const client = createClient(...)\n  return () => { client.auth.dispose() }\n}, [])\n```",
+      "title": "dispose"
+    },
+    {
+      "id": "auth-exchangecodeforsession",
+      "markdown": "`exchangeCodeForSession(authCode, options?)`\n\nLog in an existing user by exchanging an Auth Code issued during the PKCE flow.\n\n- Used when `flowType` is set to `pkce` in client options.\n\n- When several PKCE flows are in flight at once, pass `options.flowId` so the code is exchanged with the verifier created by that specific flow. The flow id is returned by `signInWithOAuth`, and with `experimental.appendPkceFlowIdToRedirects` enabled it also arrives on your callback URL as the reserved `sb_flow_id` query parameter (read automatically in a browser).\n\n- When a flow id is present but its stored verifier is gone (evicted, already used, or from another device), the call fails with a verifier missing error instead of trying another flow's verifier — a mismatched verifier would consume the single-use code. Without any flow id the most recently stored verifier is used, as before.\n\n## Parameters\n\n- authCodestring\n\n- optionsOptionalobject\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nsupabase.auth.exchangeCodeForSession('34e770dd-9ff9-416c-87fa-43b31d7ef225')\n```",
+      "title": "exchangeCodeForSession"
+    },
+    {
+      "id": "auth-getclaims",
+      "markdown": "`getClaims(jwt?, options)`\n\nExtracts the JWT claims present in the access token by first verifying the JWT against the server's JSON Web Key Set endpoint `/.well-known/jwks.json` which is often cached, resulting in significantly faster responses. Prefer this method over GoTrueClient.getUser which always sends a request to the Auth server for each JWT.\n\nIf the project is not using an asymmetric JWT signing key (like ECC or RSA) it always sends a request to the Auth server (similar to GoTrueClient.getUser) to verify the JWT.\n\n- Parses the user's [access token](/docs/guides/auth/sessions#access-token-jwt-claims) as a [JSON Web Token (JWT)](/docs/guides/auth/jwts) and returns its components if valid and not expired.\n\n- If your project is using asymmetric JWT signing keys, then the verification is done locally usually without a network request using the [WebCrypto API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API).\n\n- A network request is sent to your project's JWT signing key discovery endpoint `https://project-id.supabase.co/auth/v1/.well-known/jwks.json`, which is cached locally. If your environment is ephemeral, such as a Lambda function that is destroyed after every request, a network request will be sent for each new invocation. Supabase provides a network-edge cache providing fast responses for these situations.\n\n- If the user's access token is about to expire when calling this function, the user's session will first be refreshed before validating the JWT.\n\n- If your project is using a symmetric secret to sign the JWT, it always sends a request similar to `getUser()` to validate the JWT at the server before returning the decoded token. This is also used if the WebCrypto API is not available in the environment. Make sure you polyfill it in such situations.\n\n- The returned claims can be customized per project using the [Custom Access Token Hook](/docs/guides/auth/auth-hooks/custom-access-token-hook).\n\n## Parameters\n\n- jwtOptionalstring\n\nAn optional specific JWT you wish to verify, not the one you can obtain from GoTrueClient.getSession.\n\n- optionsobject\n\nVarious additional options that allow you to customize the behavior of this method.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n- Option 3object\n\n```typescript\nconst { data, error } = await supabase.auth.getClaims()\n```",
+      "title": "getClaims"
+    },
+    {
+      "id": "auth-getsession",
+      "markdown": "`getSession()`\n\nReturns the session, refreshing it if necessary.\n\nThe session returned can be null if the session is not detected which can happen in the event a user is not signed-in or has logged out.\n\n**IMPORTANT:** This method loads values directly from the storage attached to the client. If that storage is based on request cookies for example, the values in it may not be authentic and therefore it's strongly advised against using this method and its results in such circumstances. A warning will be emitted if this is detected. Use GoTrueClient.getUser instead.\n\n- Since the introduction of [asymmetric JWT signing keys](/docs/guides/auth/signing-keys), this method is considered low-level and we encourage you to use `getClaims()` or `getUser()` instead.\n\n- Retrieves the current [user session](/docs/guides/auth/sessions) from the storage medium (local storage, cookies).\n\n- The session contains an access token (signed JWT), a refresh token and the user object.\n\n- If the session's access token is expired or is about to expire, this method will use the refresh token to refresh the session.\n\n- When using in a browser, or you've called `startAutoRefresh()` in your environment (React Native, etc.) this function always returns a valid access token without refreshing the session itself, as this is done in the background. This function returns very fast.\n\n- **IMPORTANT SECURITY NOTICE:** If using an insecure storage medium, such as cookies or request headers, the user object returned by this function **must not be trusted**. Always verify the JWT using `getClaims()` or your own JWT verification library to securely establish the user's identity and access. You can also use `getUser()` to fetch the user object directly from the Auth server for this purpose.\n\n- Cross-tab refresh races are handled by the GoTrue server (the rotated token from the first tab is returned to subsequent tabs via the parent-of-active mechanism), so no client-side serialization is needed.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n- Option 3object\n\n```typescript\nconst { data, error } = await supabase.auth.getSession()\n```",
+      "title": "getSession"
+    },
+    {
+      "id": "auth-getuser",
+      "markdown": "`getUser(jwt?)`\n\nGets the current user details if there is an existing session. This method performs a network request to the Supabase Auth server, so the returned value is authentic and can be used to base authorization rules on.\n\n- This method fetches the user object from the database instead of local session.\n\n- This method is useful for checking if the user is authorized because it validates the user's access token JWT on the server.\n\n- Should always be used when checking for user authorization on the server. On the client, you can instead use `getSession().session.user` for faster results. `getSession` is insecure on the server.\n\n## Parameters\n\n- jwtOptionalstring\n\nTakes in an optional access token JWT. If no JWT is provided, the JWT from the current session is used.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data: { user } } = await supabase.auth.getUser()\n```",
+      "title": "getUser"
+    },
+    {
+      "id": "auth-getuseridentities",
+      "markdown": "`getUserIdentities()`\n\nGets all the identities linked to a user.\n\n- The user needs to be signed in to call `getUserIdentities()`.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.getUserIdentities()\n```",
+      "title": "getUserIdentities"
+    },
+    {
+      "id": "auth-initialize",
+      "markdown": "`initialize()`\n\nInitialize the auth client by loading the session from storage or detecting it from the URL after an OAuth, magic-link, or password-recovery redirect.\n\n**Most callers do not need to invoke this directly.** The client calls it automatically during construction, and to react to sign-in events (including post-redirect events) you should subscribe to `onAuthStateChange` rather than awaiting `initialize()`.\n\nYou only need to call it manually when you have opted out of the automatic call by passing `skipAutoInitialize: true` — for example, in an SSR context where you need to control initialization timing. In that case, awaiting `initialize()` returns the resolved session result (or any error encountered while detecting it from the URL).\n\n## Return Type\n\nPromise<InitializeResult>",
+      "title": "initialize"
+    },
+    {
+      "id": "auth-linkidentity",
+      "markdown": "`linkIdentity(credentials)`\n\nLinks an oauth identity to an existing user. This method supports the PKCE flow.\n\n- The **Enable Manual Linking** option must be enabled from your [project's authentication settings](/dashboard/project/_/auth/providers).\n\n- The user needs to be signed in to call `linkIdentity()`.\n\n- If the candidate identity is already linked to the existing user or another user, `linkIdentity()` will fail.\n\n- If `linkIdentity` is run in the browser, the user is automatically redirected to the returned URL. On the server, you should handle the redirect.\n\n## Parameters\n\n- credentialsOne of the following options\n- Option 1SignInWithOAuthCredentials\n\n- Option 2SignInWithIdTokenCredentials\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.linkIdentity({\n  provider: 'github'\n})\n```",
+      "title": "linkIdentity"
+    },
+    {
+      "id": "auth-onauthstatechange",
+      "markdown": "`onAuthStateChange(callback)`\n\nReceive a notification every time an auth event happens. Safe to use without an async function as callback.\n\n- Subscribes to important events occurring on the user's session.\n\n- Use on the frontend/client. It is less useful on the server.\n\n- Events are emitted across tabs to keep your application's UI up-to-date. Some events can fire very frequently, based on the number of tabs open. Use a quick and efficient callback function, and defer or debounce as many operations as you can to be performed outside of the callback.\n\n- Callbacks can be `async` and can safely call other Supabase auth methods (`getUser`, `setSession`, etc.) from inside the callback.\n\n- Keep callbacks quick. Events are awaited in order, so a slow callback delays subsequent events to subscribers in this tab.\n\n- Emitted events:\n\n- `INITIAL_SESSION`\n\n- Emitted right after the Supabase client is constructed and the initial session from storage is loaded.\n\n- `SIGNED_IN`\n\n- Emitted each time a user session is confirmed or re-established, including on user sign in and when refocusing a tab.\n\n- Avoid making assumptions as to when this event is fired, this may occur even when the user is already signed in. Instead, check the user object attached to the event to see if a new user has signed in and update your application's UI.\n\n- This event can fire very frequently depending on the number of tabs open in your application.\n\n- `SIGNED_OUT`\n\n- Emitted when the user signs out. This can be after:\n\n- A call to `supabase.auth.signOut()`.\n\n- After the user's session has expired for any reason:\n\n- User has signed out on another device.\n\n- The session has reached its timebox limit or inactivity timeout.\n\n- User has signed in on another device with single session per user enabled.\n\n- Check the [User Sessions](/docs/guides/auth/sessions) docs for more information.\n\n- Use this to clean up any local storage your application has associated with the user.\n\n- `TOKEN_REFRESHED`\n\n- Emitted each time a new access and refresh token are fetched for the signed in user.\n\n- It's best practice and highly recommended to extract the access token (JWT) and store it in memory for further use in your application.\n\n- Avoid frequent calls to `supabase.auth.getSession()` for the same purpose.\n\n- There is a background process that keeps track of when the session should be refreshed so you will always receive valid tokens by listening to this event.\n\n- The frequency of this event is related to the JWT expiry limit configured on your project.\n\n- `USER_UPDATED`\n\n- Emitted each time the `supabase.auth.updateUser()` method finishes successfully. Listen to it to update your application's UI based on new profile information.\n\n- `PASSWORD_RECOVERY`\n\n- Emitted instead of the `SIGNED_IN` event when the user lands on a page that includes a password recovery link in the URL.\n\n- Use it to show a UI to the user where they can [reset their password](/docs/guides/auth/passwords#resetting-a-users-password-forgot-password).\n\n## Parameters\n\n- callbackfunction\n\nA callback function to be invoked when an auth event happens.\n\n## Return Type\n\nobject\n\n```typescript\nconst { data } = supabase.auth.onAuthStateChange((event, session) => {\n  console.log(event, session)\n\n  if (event === 'INITIAL_SESSION') {\n    // handle initial session\n  } else if (event === 'SIGNED_IN') {\n    // handle sign in event\n  } else if (event === 'SIGNED_OUT') {\n    // handle sign out event\n  } else if (event === 'PASSWORD_RECOVERY') {\n    // handle password recovery event\n  } else if (event === 'TOKEN_REFRESHED') {\n    // handle token refreshed event\n  } else if (event === 'USER_UPDATED') {\n    // handle user updated event\n  }\n})\n\n// call unsubscribe to remove the callback\ndata.subscription.unsubscribe()\n```",
+      "title": "onAuthStateChange"
+    },
+    {
+      "id": "auth-reauthenticate",
+      "markdown": "`reauthenticate()`\n\nSends a reauthentication OTP to the user's email or phone number. Requires the user to be signed-in.\n\n- This method is used together with `updateUser()` when a user's password needs to be updated.\n\n- If you require your user to reauthenticate before updating their password, you need to enable the **Secure password change** option in your [project's email provider settings](/dashboard/project/_/auth/providers).\n\n- A user is only require to reauthenticate before updating their password if **Secure password change** is enabled and the user **hasn't recently signed in**. A user is deemed recently signed in if the session was created in the last 24 hours.\n\n- This method will send a nonce to the user's email. If the user doesn't have a confirmed email address, the method will send the nonce to the user's confirmed phone number instead.\n\n- After receiving the OTP, include it as the `nonce` in your `updateUser()` call to finalize the password change.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { error } = await supabase.auth.reauthenticate()\n```",
+      "title": "reauthenticate"
+    },
+    {
+      "id": "auth-refreshsession",
+      "markdown": "`refreshSession(currentSession?)`\n\nReturns a new session, regardless of expiry status. Takes in an optional current session. If not passed in, then refreshSession() will attempt to retrieve it from getSession(). If the current session's refresh token is invalid, an error will be thrown.\n\n- This method will refresh and return a new session whether the current one is expired or not.\n\n## Parameters\n\n- currentSessionOptionalobject\n\nThe current session. If passed in, it must contain a refresh token.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.refreshSession()\nconst { session, user } = data\n```",
+      "title": "refreshSession"
+    },
+    {
+      "id": "auth-registerpasskey",
+      "markdown": "`registerPasskey(credentials?)`\n\nRegister a passkey for the current authenticated user. Handles the full WebAuthn ceremony:\n\n- Fetches registration challenge from server\n\n- Prompts user via navigator.credentials.create()\n\n- Verifies credential with server\n\nRequires an active session.\n\n## Parameters\n\n- credentialsOptionalRegisterPasskeyCredentials\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "registerPasskey"
+    },
+    {
+      "id": "auth-resend",
+      "markdown": "`resend(credentials)`\n\nResends an existing signup confirmation email, email change email, SMS OTP or phone change OTP.\n\n- Resends a signup confirmation, email change or phone change email to the user.\n\n- Passwordless sign-ins can be resent by calling the `signInWithOtp()` method again.\n\n- Password recovery emails can be resent by calling the `resetPasswordForEmail()` method again.\n\n- This method will only resend an email or phone OTP to the user if there was an initial signup, email change or phone change request being made(note: For existing users signing in with OTP, you should use `signInWithOtp()` again to resend the OTP).\n\n- You can specify a redirect url when you resend an email link using the `emailRedirectTo` option.\n\n## Parameters\n\n- credentialsOne of the following options\n- Option 1object\n\n- Option 2object\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { error } = await supabase.auth.resend({\n  type: 'signup',\n  email: 'email@example.com',\n  options: {\n    emailRedirectTo: 'https://example.com/welcome'\n  }\n})\n```",
+      "title": "resend"
+    },
+    {
+      "id": "auth-resetpasswordforemail",
+      "markdown": "`resetPasswordForEmail(email, options)`\n\nSends a password reset request to an email address. This method supports the PKCE flow.\n\n- The password reset flow consist of 2 broad steps: (i) Allow the user to login via the password reset link; (ii) Update the user's password.\n\n- The `resetPasswordForEmail()` only sends a password reset link to the user's email. To update the user's password, see [`updateUser()`](/docs/reference/javascript/auth-updateuser).\n\n- A `PASSWORD_RECOVERY` event will be emitted when the password recovery link is clicked. You can use [`onAuthStateChange()`](/docs/reference/javascript/auth-onauthstatechange) to listen and invoke a callback function on these events.\n\n- When the user clicks the reset link in the email they are redirected back to your application. You can configure the URL that the user is redirected to with the `redirectTo` parameter. See [redirect URLs and wildcards](/docs/guides/auth/redirect-urls#use-wildcards-in-redirect-urls) to add additional redirect URLs to your project.\n\n- After the user has been redirected successfully, prompt them for a new password and call `updateUser()`:\n\n```typescript\nconst { data, error } = await supabase.auth.updateUser({\n  password: new_password\n})\n```\n\n## Parameters\n\n- emailstring\n\nThe email address of the user.\n\n- optionsobject\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.resetPasswordForEmail(email, {\n  redirectTo: 'https://example.com/update-password',\n})\n```",
+      "title": "resetPasswordForEmail"
+    },
+    {
+      "id": "auth-setsession",
+      "markdown": "`setSession(currentSession)`\n\nSets the session data from the current session. If the current session is expired, setSession will take care of refreshing it to obtain a new session. If the refresh token or access token in the current session is invalid, an error will be thrown.\n\n- This method sets the session using an `access_token` and `refresh_token`.\n\n- If successful, a `SIGNED_IN` event is emitted.\n\n## Parameters\n\n- currentSessionobject\n\nThe current session that minimally contains an access token and refresh token.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.setSession({\n    access_token,\n    refresh_token\n  })\n```",
+      "title": "setSession"
+    },
+    {
+      "id": "auth-signinanonymously",
+      "markdown": "`signInAnonymously(credentials?)`\n\nCreates a new anonymous user.\n\n- Returns an anonymous user\n\n- It is recommended to set up captcha for anonymous sign-ins to prevent abuse. You can pass in the captcha token in the `options` param.\n\n## Parameters\n\n- credentialsOptionalSignInAnonymouslyCredentials\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.signInAnonymously({\n  options: {\n    captchaToken\n  }\n});\n```",
+      "title": "signInAnonymously"
+    },
+    {
+      "id": "auth-signinwithidtoken",
+      "markdown": "`signInWithIdToken(credentials)`\n\nAllows signing in with an OIDC ID token. The authentication provider used should be enabled and configured.\n\n- Use an ID token to sign in.\n\n- Especially useful when implementing sign in using native platform dialogs in mobile or desktop apps using Sign in with Apple or Sign in with Google on iOS and Android.\n\n- You can also use Google's [One Tap](https://developers.google.com/identity/gsi/web/guides/display-google-one-tap) and [Automatic sign-in](https://developers.google.com/identity/gsi/web/guides/automatic-sign-in-sign-out) via this API.\n\n## Parameters\n\n- credentialsSignInWithIdTokenCredentials\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.signInWithIdToken({\n  provider: 'google',\n  token: 'your-id-token'\n})\n```",
+      "title": "signInWithIdToken"
+    },
+    {
+      "id": "auth-signinwithoauth",
+      "markdown": "`signInWithOAuth(credentials)`\n\nLog in an existing user via a third-party provider. This method supports the PKCE flow.\n\n- This method is used for signing in using [Social Login (OAuth) providers](/docs/guides/auth#configure-third-party-providers).\n\n- It works by redirecting your application to the provider's authorization screen, before bringing back the user to your app.\n\n## Parameters\n\n- credentialsSignInWithOAuthCredentials\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.signInWithOAuth({\n  provider: 'github'\n})\n```",
+      "title": "signInWithOAuth"
+    },
+    {
+      "id": "auth-signinwithotp",
+      "markdown": "`signInWithOtp(credentials)`\n\nLog in a user using magiclink or a one-time password (OTP).\n\nIf the `{{ .ConfirmationURL }}` variable is specified in the email template, a magiclink will be sent. If the `{{ .Token }}` variable is specified in the email template, an OTP will be sent. If you're using phone sign-ins, only an OTP will be sent. You won't be able to send a magiclink for phone sign-ins.\n\nBe aware that you may get back an error message that will not distinguish between the cases where the account does not exist or, that the account can only be accessed via social login.\n\nDo note that you will need to configure a Whatsapp sender on Twilio if you are using phone sign in with the 'whatsapp' channel. The whatsapp channel is not supported on other providers at this time. This method supports PKCE when an email is passed.\n\n- Requires either an email or phone number.\n\n- This method is used for passwordless sign-ins where a OTP is sent to the user's email or phone number.\n\n- If the user doesn't exist, `signInWithOtp()` will signup the user instead. To restrict this behavior, you can set `shouldCreateUser` in `SignInWithPasswordlessCredentials.options` to `false`.\n\n- If you're using an email, you can configure whether you want the user to receive a magiclink or a OTP.\n\n- If you're using phone, you can configure whether you want the user to receive a OTP.\n\n- The magic link's destination URL is determined by the [`SITE_URL`](/docs/guides/auth/redirect-urls#use-wildcards-in-redirect-urls).\n\n- See [redirect URLs and wildcards](/docs/guides/auth/redirect-urls#use-wildcards-in-redirect-urls) to add additional redirect URLs to your project.\n\n- Magic links and OTPs share the same implementation. To send users a one-time code instead of a magic link, [modify the magic link email template](/dashboard/project/_/auth/templates) to include `{{ .Token }}` instead of `{{ .ConfirmationURL }}`.\n\n- See our [Twilio Phone Auth Guide](/docs/guides/auth/phone-login?showSMSProvider=Twilio) for details about configuring WhatsApp sign in.\n\n## Parameters\n\n- credentialsOne of the following options\n- Option 1object\n\n- Option 2object\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.signInWithOtp({\n  email: 'example@email.com',\n  options: {\n    emailRedirectTo: 'https://example.com/welcome'\n  }\n})\n```",
+      "title": "signInWithOtp"
+    },
+    {
+      "id": "auth-signinwithpasskey",
+      "markdown": "`signInWithPasskey(credentials?)`\n\nSign in with a passkey. Handles the full WebAuthn ceremony:\n\n- Fetches authentication challenge from server\n\n- Prompts user via navigator.credentials.get()\n\n- Verifies credential with server and creates session\n\nPass `options.mediation: 'conditional'` to use WebAuthn Conditional UI (passkey autofill) instead of the modal picker; the value is forwarded to `navigator.credentials.get()` unchanged.\n\nThe challenge fetched in step 1 expires after the server's GOTRUE_WEBAUTHN_CHALLENGE_EXPIRY_DURATION (5 minutes by default). With `mediation: 'conditional'` the autofill prompt can stay pending for longer than that: the browser ceremony then still succeeds, but verification fails with `error_code: \"webauthn_challenge_expired\"`. Recover by calling `signInWithPasskey()` again. It fetches a fresh challenge and, unless you passed your own `options.signal`, cancels the pending ceremony first, so the browser never sees two concurrent WebAuthn requests; the earlier call resolves with a `WebAuthnError` whose code is `ERROR_CEREMONY_ABORTED`. If you pass your own `signal`, abort it before retrying.\n\n## Parameters\n\n- credentialsOptionalSignInWithPasskeyCredentials\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\n// <input autocomplete=\"username webauthn\" /> somewhere on the page\nconst { data, error } = await supabase.auth.signInWithPasskey({\n  options: {\n    mediation: 'conditional'\n  }\n});\n```",
+      "title": "signInWithPasskey"
+    },
+    {
+      "id": "auth-signinwithpassword",
+      "markdown": "`signInWithPassword(credentials)`\n\nLog in an existing user with an email and password or phone and password.\n\nBe aware that you may get back an error message that will not distinguish between the cases where the account does not exist or that the email/phone and password combination is wrong or that the account can only be accessed via social login.\n\n- Requires either an email and password or a phone number and password.\n\n## Parameters\n\n- credentialsSignInWithPasswordCredentials\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.signInWithPassword({\n  email: 'example@email.com',\n  password: 'example-password',\n})\n```",
+      "title": "signInWithPassword"
+    },
+    {
+      "id": "auth-signinwithsso",
+      "markdown": "`signInWithSSO(params)`\n\nAttempts a single-sign on using an enterprise Identity Provider. A successful SSO attempt will redirect the current page to the identity provider authorization page. The redirect URL is implementation and SSO protocol specific.\n\nYou can use it by providing a SSO domain. Typically you can extract this domain by asking users for their email address. If this domain is registered on the Auth instance the redirect will use that organization's currently active SSO Identity Provider for the login.\n\nIf you have built an organization-specific login page, you can use the organization's SSO Identity Provider UUID directly instead.\n\n- Before you can call this method you need to [establish a connection](/docs/guides/auth/sso/auth-sso-saml#managing-saml-20-connections) to an identity provider. Use the [CLI commands](/docs/reference/cli/supabase-sso) to do this.\n\n- If you've associated an email domain to the identity provider, you can use the `domain` property to start a sign-in flow.\n\n- In case you need to use a different way to start the authentication flow with an identity provider, you can use the `providerId` property. For example:\n\n- Mapping specific user email addresses with an identity provider.\n\n- Using different hints to identity the identity provider to be used by the user, like a company-specific page, IP address or other tracking information.\n\n## Parameters\n\n- paramsOne of the following options\n- Option 1object\n\n- Option 2object\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\n// You can extract the user's email domain and use it to trigger the\n  // authentication flow with the correct identity provider.\n\n  const { data, error } = await supabase.auth.signInWithSSO({\n    domain: 'company.com'\n  })\n\n  if (data?.url) {\n    // redirect the user to the identity provider's authentication flow\n    window.location.href = data.url\n  }\n```",
+      "title": "signInWithSSO"
+    },
+    {
+      "id": "auth-signinwithweb3",
+      "markdown": "`signInWithWeb3(credentials)`\n\nSigns in a user by verifying a message signed by the user's private key. Supports Ethereum (via Sign-In-With-Ethereum) & Solana (Sign-In-With-Solana) standards, both of which derive from the EIP-4361 standard With slight variation on Solana's side.\n\n- Uses a Web3 (Ethereum, Solana) wallet to sign a user in.\n\n- Read up on the [potential for abuse](/docs/guides/auth/auth-web3#potential-for-abuse) before using it.\n\n## Parameters\n\n- credentialsOne of the following options\n- Option 1One of the following options\n- Option 1object\n\n- Option 2object\n\n- Option 2One of the following options\n- Option 1object\n\n- Option 2object\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\n// uses window.ethereum for the wallet\n  const { data, error } = await supabase.auth.signInWithWeb3({\n    chain: 'ethereum',\n    statement: 'I accept the Terms of Service at https://example.com/tos'\n  })\n\n  // uses window.solana for the wallet\n  const { data, error } = await supabase.auth.signInWithWeb3({\n    chain: 'solana',\n    statement: 'I accept the Terms of Service at https://example.com/tos'\n  })\n```",
+      "title": "signInWithWeb3"
+    },
+    {
+      "id": "auth-signout",
+      "markdown": "`signOut(options)`\n\nInside a browser context, `signOut()` will remove the logged in user from the browser session and log them out - removing all items from localstorage and then trigger a `\"SIGNED_OUT\"` event.\n\nFor server-side management, you can revoke all refresh tokens for a user by passing a user's JWT through to `auth.api.signOut(JWT: string)`. There is no way to revoke a user's access token jwt until it expires. It is recommended to set a shorter expiry on the jwt for this reason.\n\nIf using `others` scope, no `SIGNED_OUT` event is fired!\n\n**Warning:** the default `scope` is `'global'`. This signs the user out of **every device they are currently signed in on**, not just the current tab/session. If you only want to sign the user out of the current session (the behavior most other auth libraries default to), pass `{ scope: 'local' }` explicitly.\n\n- In order to use the `signOut()` method, the user needs to be signed in first.\n\n- By default, `signOut()` uses the **global** scope, which signs out the user on every device they are signed in on (not just the current one). Pass `{ scope: 'local' }` to only sign out the current session. This is usually what apps want on a \"Sign out\" button, especially when users sign in from multiple devices and do not expect signing out of one to terminate the others.\n\n- Since Supabase Auth uses JWTs for authentication, the access token JWT will be valid until it's expired. When the user signs out, Supabase revokes the refresh token and deletes the JWT from the client-side. This does not revoke the JWT and it will still be valid until it expires.\n\n## Parameters\n\n- optionsSignOut\n\n## Return Type\n\nPromise<object>\n\n```typescript\nconst { error } = await supabase.auth.signOut()\n```",
+      "title": "signOut"
+    },
+    {
+      "id": "auth-signup",
+      "markdown": "`signUp(credentials)`\n\nCreates a new user.\n\nBe aware that if a user account exists in the system you may get back an error message that attempts to hide this information from the user. This method has support for PKCE via email signups. The PKCE flow cannot be used when autoconfirm is enabled.\n\n- By default, the user needs to verify their email address before logging in. To turn this off, disable **Confirm email** in [your project](/dashboard/project/_/auth/providers).\n\n- **Confirm email** determines if users need to confirm their email address after signing up.\n\n- If **Confirm email** is enabled, a `user` is returned but `session` is null.\n\n- If **Confirm email** is disabled, both a `user` and a `session` are returned.\n\n- When the user confirms their email address, they are redirected to the [`SITE_URL`](/docs/guides/auth/redirect-urls#use-wildcards-in-redirect-urls) by default. You can modify your `SITE_URL` or add additional redirect URLs in [your project](/dashboard/project/_/auth/url-configuration).\n\n- If signUp() is called for an existing confirmed user:\n\n- When both **Confirm email** and **Confirm phone** (even when phone provider is disabled) are enabled in [your project](/dashboard/project/_/auth/providers), an obfuscated/fake user object is returned.\n\n- When either **Confirm email** or **Confirm phone** (even when phone provider is disabled) is disabled, the error message, `User already registered` is returned.\n\n- To fetch the currently logged-in user, refer to [`getUser()`](/docs/reference/javascript/auth-getuser).\n\n## Parameters\n\n- credentialsSignUpWithPasswordCredentials\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.signUp({\n  email: 'example@email.com',\n  password: 'example-password',\n})\n```",
+      "title": "signUp"
+    },
+    {
+      "id": "auth-startautorefresh",
+      "markdown": "`startAutoRefresh()`\n\nStarts an auto-refresh process in the background. The session is checked every few seconds. Close to the time of expiration a process is started to refresh the session. If refreshing fails it will be retried for as long as necessary.\n\nIf you set the GoTrueClientOptions#autoRefreshToken you don't need to call this function, it will be called for you.\n\nOn browsers the refresh process works only when the tab/window is in the foreground to conserve resources as well as prevent race conditions and flooding auth with requests. If you call this method any managed visibility change callback will be removed and you must manage visibility changes on your own.\n\nOn non-browser platforms the refresh process works continuously in the background, which may not be desirable. You should hook into your platform's foreground indication mechanism and call these methods appropriately to conserve resources.\n\nGoTrueClient.stopAutoRefresh\n\n- Only useful in non-browser environments such as React Native or Electron.\n\n- The Supabase Auth library automatically starts and stops proactively refreshing the session when a tab is focused or not.\n\n- On non-browser platforms, such as mobile or desktop apps built with web technologies, the library is not able to effectively determine whether the application is focused or not.\n\n- To give this hint to the application, you should be calling this method when the app is in focus and calling `supabase.auth.stopAutoRefresh()` when it's out of focus.\n\n## Return Type\n\nPromise<void>\n\n```typescript\nimport { AppState } from 'react-native'\n\n// make sure you register this only once!\nAppState.addEventListener('change', (state) => {\n  if (state === 'active') {\n    supabase.auth.startAutoRefresh()\n  } else {\n    supabase.auth.stopAutoRefresh()\n  }\n})\n```",
+      "title": "startAutoRefresh"
+    },
+    {
+      "id": "auth-stopautorefresh",
+      "markdown": "`stopAutoRefresh()`\n\nStops an active auto refresh process running in the background (if any).\n\nIf you call this method any managed visibility change callback will be removed and you must manage visibility changes on your own.\n\nSee GoTrueClient.startAutoRefresh for more details.\n\n- Only useful in non-browser environments such as React Native or Electron.\n\n- The Supabase Auth library automatically starts and stops proactively refreshing the session when a tab is focused or not.\n\n- On non-browser platforms, such as mobile or desktop apps built with web technologies, the library is not able to effectively determine whether the application is focused or not.\n\n- When your application goes in the background or out of focus, call this method to stop the proactive refreshing of the session.\n\n## Return Type\n\nPromise<void>\n\n```typescript\nimport { AppState } from 'react-native'\n\n// make sure you register this only once!\nAppState.addEventListener('change', (state) => {\n  if (state === 'active') {\n    supabase.auth.startAutoRefresh()\n  } else {\n    supabase.auth.stopAutoRefresh()\n  }\n})\n```",
+      "title": "stopAutoRefresh"
+    },
+    {
+      "id": "auth-unlinkidentity",
+      "markdown": "`unlinkIdentity(identity)`\n\nUnlinks an identity from a user by deleting it. The user will no longer be able to sign in with that identity once it's unlinked.\n\n- The **Enable Manual Linking** option must be enabled from your [project's authentication settings](/dashboard/project/_/auth/providers).\n\n- The user needs to be signed in to call `unlinkIdentity()`.\n\n- The user must have at least 2 identities in order to unlink an identity.\n\n- The identity to be unlinked must belong to the user.\n\n## Parameters\n\n- identityUserIdentity\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\n// retrieve all identities linked to a user\nconst identities = await supabase.auth.getUserIdentities()\n\n// find the google identity\nconst googleIdentity = identities.find(\n  identity => identity.provider === 'google'\n)\n\n// unlink the google identity\nconst { error } = await supabase.auth.unlinkIdentity(googleIdentity)\n```",
+      "title": "unlinkIdentity"
+    },
+    {
+      "id": "auth-updateuser",
+      "markdown": "`updateUser(attributes, options)`\n\nUpdates user data for a logged in user.\n\n- In order to use the `updateUser()` method, the user needs to be signed in first.\n\n- By default, email updates sends a confirmation link to both the user's current and new email. To only send a confirmation link to the user's new email, disable **Secure email change** in your project's [email auth provider settings](/dashboard/project/_/auth/providers).\n\n## Parameters\n\n- attributesUserAttributes\n\n- optionsobject\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.updateUser({\n  email: 'new@email.com'\n})\n```",
+      "title": "updateUser"
+    },
+    {
+      "id": "auth-verifyotp",
+      "markdown": "`verifyOtp(params)`\n\nLog in a user given a User supplied OTP or TokenHash received through mobile or email.\n\n- The `verifyOtp` method takes in different verification types.\n\n- If a phone number is used, the type can either be:\n\n- `sms` – Used when verifying a one-time password (OTP) sent via SMS during sign-up or sign-in.\n\n- `phone_change` – Used when verifying an OTP sent to a new phone number during a phone number update process.\n\n- If an email address is used, the type can be one of the following (note: `signup` and `magiclink` types are deprecated):\n\n- `email` – Used when verifying an OTP sent to the user's email during sign-up or sign-in.\n\n- `recovery` – Used when verifying an OTP sent for account recovery, typically after a password reset request.\n\n- `invite` – Used when verifying an OTP sent as part of an invitation to join a project or organization.\n\n- `email_change` – Used when verifying an OTP sent to a new email address during an email update process.\n\n- The verification type used should be determined based on the corresponding auth method called before `verifyOtp` to sign up / sign-in a user.\n\n- The `TokenHash` is contained in the [email templates](/docs/guides/auth/auth-email-templates) and can be used to sign in.  You may wish to use the hash for the PKCE flow for Server Side Auth. Read [the Password-based Auth guide](/docs/guides/auth/passwords) for more details.\n\n## Parameters\n\n- paramsOne of the following options\n- Option 1VerifyMobileOtpParams\n\n- Option 2VerifyEmailOtpParams\n\n- Option 3VerifyTokenHashParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.verifyOtp({ email, token, type: 'email'})\n```",
+      "title": "verifyOtp"
+    },
+    {
+      "id": "auth-admin",
+      "markdown": "- Any method under the `supabase.auth.admin` namespace requires a `secret` key.\n\n- These methods are considered admin methods and should be called on a trusted server. Never expose your `secret` key in the browser.\n\n```typescript\nimport { createClient } from '@supabase/supabase-js'\n\nconst supabase = createClient(supabase_url, secret_key, {\n  auth: {\n    autoRefreshToken: false,\n    persistSession: false\n  }\n})\n\n// Access auth admin api\nconst adminAuthClient = supabase.auth.admin\n```",
+      "title": "Overview"
+    },
+    {
+      "id": "auth-admin-createprovider",
+      "markdown": "`createProvider(params)`\n\nCreates a new custom OIDC/OAuth provider.\n\nFor OIDC providers, the server fetches and validates the OpenID Connect discovery document from the issuer's well-known endpoint (or the provided `discovery_url`) at creation time. This may return a validation error (`error_code: \"validation_failed\"`) if the discovery document is unreachable, not valid JSON, missing required fields, or if the issuer in the document does not match the expected issuer.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- paramsCreateCustomProviderParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "createProvider"
+    },
+    {
+      "id": "auth-admin-createuser",
+      "markdown": "`createUser(attributes)`\n\nCreates a new user. This function should only be called on a server. Never expose your `service_role` key in the browser.\n\n- To confirm the user's email address or phone number, set `email_confirm` or `phone_confirm` to true. Both arguments default to false.\n\n- `createUser()` will not send a confirmation email to the user. You can use [`inviteUserByEmail()`](/docs/reference/javascript/auth-admin-inviteuserbyemail) if you want to send them an email invite instead.\n\n- If you are sure that the created user's email or phone number is legitimate and verified, you can set the `email_confirm` or `phone_confirm` param to `true`.\n\n## Parameters\n\n- attributesAdminUserAttributes\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.admin.createUser({\n  email: 'user@email.com',\n  password: 'password',\n  user_metadata: { name: 'Yoda' }\n})\n```",
+      "title": "createUser"
+    },
+    {
+      "id": "auth-admin-deletefactor",
+      "markdown": "`deleteFactor(params)`\n\nDeletes a factor on a user. This will log the user out of all active sessions if the deleted factor was verified.\n\n## Parameters\n\n- paramsAuthMFAAdminDeleteFactorParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.admin.mfa.deleteFactor({\n  id: '34e770dd-9ff9-416c-87fa-43b31d7ef225',\n  userId: 'a89baba7-b1b7-440f-b4bb-91026967f66b',\n})\n```",
+      "title": "deleteFactor"
+    },
+    {
+      "id": "auth-admin-deleteprovider",
+      "markdown": "`deleteProvider(identifier)`\n\nDeletes a custom provider.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- identifierstring\n\n## Return Type\n\nPromise<object>",
+      "title": "deleteProvider"
+    },
+    {
+      "id": "auth-admin-deleteuser",
+      "markdown": "`deleteUser(id, shouldSoftDelete)`\n\nDelete a user. Requires a `service_role` key.\n\n- The `deleteUser()` method requires the user's ID, which maps to the `auth.users.id` column.\n\n## Parameters\n\n- idstring\n\nThe user id you want to remove.\n\n- shouldSoftDeleteboolean\n\nIf true, then the user will be soft-deleted from the auth schema. Soft deletion allows user identification from the hashed user ID but is not reversible. Defaults to false for backward compatibility.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.admin.deleteUser(\n  '715ed5db-f090-4b8c-a067-640ecee36aa0'\n)\n```",
+      "title": "deleteUser"
+    },
+    {
+      "id": "auth-admin-generatelink",
+      "markdown": "`generateLink(params)`\n\nGenerates email links and OTPs to be sent via a custom email provider.\n\n- The following types can be passed into `generateLink()`: `signup`, `magiclink`, `invite`, `recovery`, `email_change_current`, `email_change_new`, `phone_change`.\n\n- `generateLink()` only generates the email link for `email_change_email` if the **Secure email change** is enabled in your project's [email auth provider settings](/dashboard/project/_/auth/providers).\n\n- `generateLink()` handles the creation of the user for `signup`, `invite` and `magiclink`.\n\n## Parameters\n\n- paramsOne of the following options\n\nThe parameters for generating the link, including the link `type`, the user's `email`, and type-specific options such as `password`, `data`, and `redirectTo`.\n\n- Option 1GenerateSignupLinkParams\n\n- Option 2GenerateInviteOrMagiclinkParams\n\n- Option 3GenerateRecoveryLinkParams\n\n- Option 4GenerateEmailChangeLinkParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.admin.generateLink({\n  type: 'signup',\n  email: 'email@example.com',\n  password: 'secret'\n})\n```",
+      "title": "generateLink"
+    },
+    {
+      "id": "auth-admin-getprovider",
+      "markdown": "`getProvider(identifier)`\n\nGets details of a specific custom provider by identifier.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- identifierstring\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "getProvider"
+    },
+    {
+      "id": "auth-admin-getuserbyid",
+      "markdown": "`getUserById(uid)`\n\nGet user by id.\n\n- Fetches the user object from the database based on the user's id.\n\n- The `getUserById()` method requires the user's id which maps to the `auth.users.id` column.\n\n## Parameters\n\n- uidstring\n\nThe user's unique identifier\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.admin.getUserById(1)\n```",
+      "title": "getUserById"
+    },
+    {
+      "id": "auth-admin-inviteuserbyemail",
+      "markdown": "`inviteUserByEmail(email, options)`\n\nSends an invite link to an email address.\n\n- Sends an invite link to the user's email address.\n\n- The `inviteUserByEmail()` method is typically used by administrators to invite users to join the application.\n\n- Note that PKCE is not supported when using `inviteUserByEmail`. This is because the browser initiating the invite is often different from the browser accepting the invite which makes it difficult to provide the security guarantees required of the PKCE flow.\n\n## Parameters\n\n- emailstring\n\nThe email address of the user.\n\n- optionsobject\n\nAdditional options to be included when inviting.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.admin.inviteUserByEmail('email@example.com')\n```",
+      "title": "inviteUserByEmail"
+    },
+    {
+      "id": "auth-admin-listfactors",
+      "markdown": "`listFactors(params)`\n\nLists all factors associated to a user.\n\n## Parameters\n\n- paramsAuthMFAAdminListFactorsParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.admin.mfa.listFactors()\n```",
+      "title": "listFactors"
+    },
+    {
+      "id": "auth-admin-listproviders",
+      "markdown": "`listProviders(params?)`\n\nLists all custom providers with optional type filter.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- paramsOptionalListCustomProvidersParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "listProviders"
+    },
+    {
+      "id": "auth-admin-listusers",
+      "markdown": "`listUsers(params?)`\n\nGet a list of users.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n- Defaults to return 50 users per page.\n\n## Parameters\n\n- paramsOptionalPageParams\n\nAn object which supports `page` and `perPage` as numbers, to alter the paginated results.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data: { users }, error } = await supabase.auth.admin.listUsers()\n```",
+      "title": "listUsers"
+    },
+    {
+      "id": "auth-admin-signout",
+      "markdown": "`signOut(jwt, scope)`\n\nRemoves a logged-in session.\n\n## Parameters\n\n- jwtstring\n\nA valid, logged-in JWT.\n\n- scopeOne of the following options\n\nThe logout sope.\n\n- Option 1\"global\"\n\n- Option 2\"local\"\n\n- Option 3\"others\"\n\n## Return Type\n\nPromise<object>",
+      "title": "signOut"
+    },
+    {
+      "id": "auth-admin-updateprovider",
+      "markdown": "`updateProvider(identifier, params)`\n\nUpdates an existing custom provider.\n\nWhen `issuer` or `discovery_url` is changed on an OIDC provider, the server re-fetches and validates the discovery document before persisting. This may return a validation error (`error_code: \"validation_failed\"`) if the discovery document is unreachable, invalid, or the issuer does not match.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- identifierstring\n\n- paramsUpdateCustomProviderParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "updateProvider"
+    },
+    {
+      "id": "auth-admin-updateuserbyid",
+      "markdown": "`updateUserById(uid, attributes)`\n\nUpdates the user data. Changes are applied directly without confirmation flows.\n\n**Important:** This is a server-side operation and does **not** trigger client-side `onAuthStateChange` listeners. The admin API has no connection to client state.\n\nTo sync changes to the client after calling this method:\n\n- On the client, call `supabase.auth.refreshSession()` to fetch the updated user data\n\n- This will trigger the `TOKEN_REFRESHED` event and notify all listeners\n\n## Parameters\n\n- uidstring\n\nThe user's unique identifier\n\n- attributesAdminUserAttributes\n\nThe data you want to update.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\n// Server-side (Edge Function)\nconst { data, error } = await supabase.auth.admin.updateUserById(\n  userId,\n  { user_metadata: { preferences: { theme: 'dark' } } }\n)\n\n// Client-side (to sync the changes)\nconst { data, error } = await supabase.auth.refreshSession()\n// onAuthStateChange listeners will now be notified with updated user\n```",
+      "title": "updateUserById"
+    },
+    {
+      "id": "auth-mfa",
+      "markdown": "This section contains methods commonly used for Multi-Factor Authentication (MFA) and are invoked behind the `supabase.auth.mfa` namespace.\n\nCurrently, there is support for time-based one-time password (TOTP) and phone verification code as the 2nd factor. Recovery codes are not supported but users can enroll multiple factors, with an upper limit of 10.\n\nHaving a 2nd factor for recovery frees the user of the burden of having to store their recovery codes somewhere. It also reduces the attack surface since multiple recovery codes are usually generated compared to just having 1 backup factor.\n\nLearn more about implementing MFA in your application [in the MFA guide](https://supabase.com/docs/guides/auth/auth-mfa#overview).",
+      "title": "Auth MFA"
+    },
+    {
+      "id": "auth-mfa-challenge",
+      "markdown": "`challenge(params)`\n\nPrepares a challenge used to verify that a user has access to a MFA factor.\n\n- An [enrolled factor](/docs/reference/javascript/auth-mfa-enroll) is required before creating a challenge.\n\n- To verify a challenge, see [`mfa.verify()`](/docs/reference/javascript/auth-mfa-verify).\n\n- A phone factor sends a code to the user upon challenge. The channel defaults to `sms` unless otherwise specified.\n\n## Parameters\n\n- paramsOne of the following options\n- Option 1MFAChallengeParamsBase\n\n- Option 2MFAChallengePhoneParams\n\n- Option 3MFAChallengeWebauthnParams\n\n- Option 4MFAChallengeTOTPParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.challenge({\n  factorId: '34e770dd-9ff9-416c-87fa-43b31d7ef225'\n})\n```",
+      "title": "challenge"
+    },
+    {
+      "id": "auth-mfa-challengeandverify",
+      "markdown": "`challengeAndVerify(params)`\n\nHelper method which creates a challenge and immediately uses the given code to verify against it thereafter. The verification code is provided by the user by entering a code seen in their authenticator app.\n\n- Intended for use with only TOTP factors.\n\n- An [enrolled factor](/docs/reference/javascript/auth-mfa-enroll) is required before invoking `challengeAndVerify()`.\n\n- Executes [`mfa.challenge()`](/docs/reference/javascript/auth-mfa-challenge) and [`mfa.verify()`](/docs/reference/javascript/auth-mfa-verify) in a single step.\n\n## Parameters\n\n- paramsMFAChallengeAndVerifyTOTPParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.challengeAndVerify({\n  factorId: '34e770dd-9ff9-416c-87fa-43b31d7ef225',\n  code: '123456'\n})\n```",
+      "title": "challengeAndVerify"
+    },
+    {
+      "id": "auth-mfa-enroll",
+      "markdown": "`enroll(params)`\n\nStarts the enrollment process for a new Multi-Factor Authentication (MFA) factor. This method creates a new `unverified` factor. To verify a factor, present the QR code or secret to the user and ask them to add it to their authenticator app. The user has to enter the code from their authenticator app to verify it.\n\nUpon verifying a factor, all other sessions are logged out and the current session's authenticator level is promoted to `aal2`.\n\n- Use `totp` or `phone` as the `factorType` and use the returned `id` to create a challenge.\n\n- To create a challenge, see [`mfa.challenge()`](/docs/reference/javascript/auth-mfa-challenge).\n\n- To verify a challenge, see [`mfa.verify()`](/docs/reference/javascript/auth-mfa-verify).\n\n- To create and verify a TOTP challenge in a single step, see [`mfa.challengeAndVerify()`](/docs/reference/javascript/auth-mfa-challengeandverify).\n\n- To generate a QR code for the `totp` secret in Next.js, you can do the following:\n\n```typescript\n<Image src={data.totp.qr_code} alt={data.totp.uri} layout=\"fill\"></Image>\n```\n\n- The `challenge` and `verify` steps are separated when using Phone factors as the user will need time to receive and input the code obtained from the SMS in challenge.\n\n## Parameters\n\n- paramsOne of the following options\n- Option 1MFAEnrollTOTPParams\n\n- Option 2MFAEnrollPhoneParams\n\n- Option 3MFAEnrollParamsBase\n\n- Option 4MFAEnrollWebauthnParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.enroll({\n  factorType: 'totp',\n  friendlyName: 'your_friendly_name'\n})\n\n// Use the id to create a challenge.\n// The challenge can be verified by entering the code generated from the authenticator app.\n// The code will be generated upon scanning the qr_code or entering the secret into the authenticator app.\nconst { id, type, totp: { qr_code, secret, uri }, friendly_name } = data\nconst challenge = await supabase.auth.mfa.challenge({ factorId: id });\n```",
+      "title": "enroll"
+    },
+    {
+      "id": "auth-mfa-getauthenticatorassurancelevel",
+      "markdown": "`getAuthenticatorAssuranceLevel(jwt?)`\n\nReturns the Authenticator Assurance Level (AAL) for the active session.\n\n- `aal1` (or `null`) means that the user's identity has been verified only with a conventional login (email+password, OTP, magic link, social login, etc.).\n\n- `aal2` means that the user's identity has been verified both with a conventional login and at least one MFA factor.\n\nWhen called without a JWT parameter, this method is fairly quick (microseconds) and rarely uses the network. When a JWT is provided (useful in server-side environments like Edge Functions where no session is stored), this method will make a network request to validate the user and fetch their MFA factors.\n\n- Authenticator Assurance Level (AAL) is the measure of the strength of an authentication mechanism.\n\n- In Supabase, having an AAL of `aal1` refers to having the 1st factor of authentication such as an email and password or OAuth sign-in while `aal2` refers to the 2nd factor of authentication such as a time-based, one-time-password (TOTP) or Phone factor.\n\n- If the user has a verified factor, the `nextLevel` field will return `aal2`, else, it will return `aal1`.\n\n- An optional `jwt` parameter can be passed to check the AAL level of a specific JWT instead of the current session.\n\n## Parameters\n\n- jwtOptionalstring\n\nTakes in an optional access token JWT. If no JWT is provided, the JWT from the current session is used.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()\nconst { currentLevel, nextLevel, currentAuthenticationMethods } = data\n```",
+      "title": "getAuthenticatorAssuranceLevel"
+    },
+    {
+      "id": "auth-mfa-listfactors",
+      "markdown": "`listFactors()`\n\nReturns the list of MFA factors enabled for this user.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "listFactors"
+    },
+    {
+      "id": "auth-mfa-unenroll",
+      "markdown": "`unenroll(params)`\n\nUnenroll removes a MFA factor. A user has to have an `aal2` authenticator level in order to unenroll a `verified` factor.\n\n## Parameters\n\n- paramsMFAUnenrollParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.unenroll({\n  factorId: '34e770dd-9ff9-416c-87fa-43b31d7ef225',\n})\n```",
+      "title": "unenroll"
+    },
+    {
+      "id": "auth-mfa-verify",
+      "markdown": "`verify(params)`\n\nVerifies a code against a challenge. The verification code is provided by the user by entering a code seen in their authenticator app.\n\n- To verify a challenge, please [create a challenge](/docs/reference/javascript/auth-mfa-challenge) first.\n\n## Parameters\n\n- paramsOne of the following options\n- Option 1MFAVerifyTOTPParams\n\n- Option 2MFAVerifyPhoneParams\n\n- Option 3MFAVerifyWebauthnParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.verify({\n  factorId: '34e770dd-9ff9-416c-87fa-43b31d7ef225',\n  challengeId: '4034ae6f-a8ce-4fb5-8ee5-69a5863a7c15',\n  code: '123456'\n})\n```",
+      "title": "verify"
+    },
+    {
+      "id": "auth-mfa-recovery-codes-generate",
+      "markdown": "`generate(params?)`\n\nGenerates the user's set of recovery codes. The plaintext codes are returned exactly once in the response and cannot be retrieved again, so show them to the user and ask them to store the codes safely.\n\nRequires `auth.experimental.recoveryCodes: true`.\n\n- The session must be at `aal2` (verify another factor first), otherwise an error with code `insufficient_aal` is returned.\n\n- The user must already have another verified factor (for example a TOTP factor): recovery codes can never be the only factor. Otherwise an error with code `mfa_recovery_codes_sole_factor` is returned.\n\n- A user can only have one set of recovery codes. If one already exists, an error with code `mfa_verified_factor_exists` is returned; use `mfa.recoveryCodes.regenerate()` to replace it.\n\n- The codes are returned in canonical form (lowercase, no separators). For display you can group them, for example in blocks of four characters. Avoid logging them to the console.\n\n- Returns an error with code `mfa_recovery_codes_enroll_not_enabled` when recovery codes are disabled on the server.\n\n## Parameters\n\n- paramsOptionalMFARecoveryCodesGenerateParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst supabase = createClient(supabaseUrl, supabaseKey, {\n  auth: { experimental: { recoveryCodes: true } },\n})\n\nconst { data, error } = await supabase.auth.mfa.recoveryCodes.generate({\n  friendlyName: 'Backup codes',\n})\n\n// Show the codes once, for example grouped in blocks of four characters\nconst formatted = data.codes.map((code) => code.match(/.{1,4}/g).join('-'))\n```",
+      "title": "generate"
+    },
+    {
+      "id": "auth-mfa-recovery-codes-getstatus",
+      "markdown": "`getStatus()`\n\nReturns the enrollment status of the user's recovery codes: the total number of codes in the current set and how many are still unused. Never returns the codes themselves.\n\nRequires `auth.experimental.recoveryCodes: true`.\n\n- Works at any authenticator assurance level (`aal1` or `aal2`).\n\n- Returns an error with code `mfa_factor_not_found` when the user has not generated recovery codes yet.\n\n- `remaining` can be `0` once every code has been used; prompt the user to call `mfa.recoveryCodes.regenerate()`.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.recoveryCodes.getStatus()\n```",
+      "title": "getStatus"
+    },
+    {
+      "id": "auth-mfa-recovery-codes-regenerate",
+      "markdown": "`regenerate()`\n\nReplaces the user's recovery codes with a brand new set. All remaining codes from the previous set stop working immediately. The new plaintext codes are returned exactly once.\n\nRequires `auth.experimental.recoveryCodes: true`.\n\n- The session must be at `aal2`, otherwise an error with code `insufficient_aal` is returned.\n\n- The factor `id` and `friendly_name` are preserved; only the codes change.\n\n- Also clears any verification lockout on the recovery codes.\n\n- Returns an error with code `mfa_factor_not_found` when the user has no recovery codes to regenerate; use `mfa.recoveryCodes.generate()` instead.\n\n- Returns an error with code `mfa_recovery_codes_enroll_not_enabled` when recovery codes are disabled on the server.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.recoveryCodes.regenerate()\n```",
+      "title": "regenerate"
+    },
+    {
+      "id": "auth-mfa-recovery-codes-unenroll",
+      "markdown": "`unenroll()`\n\nRemoves the user's recovery codes factor together with all of its codes.\n\nRequires `auth.experimental.recoveryCodes: true`.\n\n- The session must be at `aal2`, otherwise an error with code `insufficient_aal` is returned.\n\n- Returns an error with code `mfa_factor_not_found` when the user has no recovery codes.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.recoveryCodes.unenroll()\n```",
+      "title": "unenroll"
+    },
+    {
+      "id": "auth-mfa-recovery-codes-verify",
+      "markdown": "`verify(params)`\n\nVerifies one of the user's recovery codes and upgrades the current session to `aal2`. Each code can be used only once.\n\nRequires `auth.experimental.recoveryCodes: true`.\n\n- On success the current session is upgraded to `aal2` in place and persisted, and the `MFA_CHALLENGE_VERIFIED` event is emitted. The user's other `aal1` sessions are signed out.\n\n- The new access token includes `mfa/recovery_code` in its `amr` claim.\n\n- The code can be passed exactly as the user typed it: letter case, whitespace and `-` separators are ignored.\n\n- A wrong, already used, or missing code returns an error with code `mfa_verification_failed`.\n\n- After too many failed attempts, verification is locked for a period and an error with code `mfa_recovery_codes_locked` (status `429`) is returned. Ask the user to wait or to use another factor.\n\n- Returns an error with code `mfa_recovery_codes_verify_not_enabled` when recovery code verification is disabled on the server.\n\n## Parameters\n\n- paramsMFARecoveryCodesVerifyParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase.auth.mfa.recoveryCodes.verify({\n  code: 'K4M9-X7QP-2AB8-HT3Z',\n})\n```",
+      "title": "verify"
+    },
+    {
+      "id": "auth-passkey",
+      "markdown": "This section contains methods for WebAuthn passkey registration, authentication, and management. Methods are invoked behind the `supabase.auth.passkey` namespace.\n\nPasskey support is an experimental feature. Enable it when creating the client:",
+      "title": "Auth Passkey"
+    },
+    {
+      "id": "auth-passkey-delete",
+      "markdown": "`delete(params)`\n\nDeletes a passkey for the currently signed-in user.\n\n## Parameters\n\n- paramsPasskeyDeleteParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "delete"
+    },
+    {
+      "id": "auth-passkey-list",
+      "markdown": "`list()`\n\nLists all passkeys registered for the currently signed-in user.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "list"
+    },
+    {
+      "id": "auth-passkey-startauthentication",
+      "markdown": "`startAuthentication(params?)`\n\nStarts the passkey authentication ceremony. Fetches an authentication challenge and credential request options from the server. Used as the first step of a two-step sign-in flow when the caller wants to handle `navigator.credentials.get()` themselves.\n\n## Parameters\n\n- paramsOptionalStartPasskeyAuthenticationParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "startAuthentication"
+    },
+    {
+      "id": "auth-passkey-startregistration",
+      "markdown": "`startRegistration()`\n\nStarts the passkey registration ceremony. Fetches a registration challenge and credential creation options from the server. Used as the first step of a two-step registration flow when the caller wants to handle `navigator.credentials.create()` themselves.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "startRegistration"
+    },
+    {
+      "id": "auth-passkey-update",
+      "markdown": "`update(params)`\n\nUpdates a passkey's friendly name.\n\n## Parameters\n\n- paramsPasskeyUpdateParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "update"
+    },
+    {
+      "id": "auth-passkey-verifyauthentication",
+      "markdown": "`verifyAuthentication(params)`\n\nVerifies a passkey authentication credential against a previously issued challenge. Used as the second step of a two-step sign-in flow.\n\n## Parameters\n\n- paramsVerifyPasskeyAuthenticationParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "verifyAuthentication"
+    },
+    {
+      "id": "auth-passkey-verifyregistration",
+      "markdown": "`verifyRegistration(params)`\n\nVerifies a passkey registration credential against a previously issued challenge. Used as the second step of a two-step registration flow.\n\n## Parameters\n\n- paramsVerifyPasskeyRegistrationParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "verifyRegistration"
+    },
+    {
+      "id": "oauth-admin",
+      "markdown": "The OAuth Admin API allows you to manage OAuth clients programmatically. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth. These functions should only be called on a server. Never expose your `secret` key in the browser.",
+      "title": "OAuth Admin"
+    },
+    {
+      "id": "oauth-admin-createclient",
+      "markdown": "`createClient(params)`\n\nCreates a new OAuth client. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- paramsCreateOAuthClientParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "createClient"
+    },
+    {
+      "id": "oauth-admin-deleteclient",
+      "markdown": "`deleteClient(clientId)`\n\nDeletes an OAuth client. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- clientIdstring\n\n## Return Type\n\nPromise<object>",
+      "title": "deleteClient"
+    },
+    {
+      "id": "oauth-admin-getclient",
+      "markdown": "`getClient(clientId)`\n\nGets details of a specific OAuth client. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- clientIdstring\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "getClient"
+    },
+    {
+      "id": "oauth-admin-listclients",
+      "markdown": "`listClients(params?)`\n\nLists all OAuth clients with optional pagination. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- paramsOptionalPageParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "listClients"
+    },
+    {
+      "id": "oauth-admin-regenerateclientsecret",
+      "markdown": "`regenerateClientSecret(clientId)`\n\nRegenerates the secret for an OAuth client. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- clientIdstring\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "regenerateClientSecret"
+    },
+    {
+      "id": "oauth-admin-updateclient",
+      "markdown": "`updateClient(clientId, params)`\n\nUpdates an existing OAuth client. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- clientIdstring\n\n- paramsUpdateOAuthClientParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "updateClient"
+    },
+    {
+      "id": "oauth-server",
+      "markdown": "The OAuth Server API allows you to build custom OAuth consent screens for your application. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.",
+      "title": "OAuth Server"
+    },
+    {
+      "id": "oauth-server-approveauthorization",
+      "markdown": "`approveAuthorization(authorizationId, options?)`\n\nApproves an OAuth authorization request. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nAfter approval, the user's consent is stored and an authorization code is generated. The response contains a complete redirect URL with the authorization code and state.\n\n## Parameters\n\n- authorizationIdstring\n\nThe authorization ID to approve\n\n- optionsOptionalobject\n\nOptional parameters\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "approveAuthorization"
+    },
+    {
+      "id": "oauth-server-denyauthorization",
+      "markdown": "`denyAuthorization(authorizationId, options?)`\n\nDenies an OAuth authorization request. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nAfter denial, the response contains a redirect URL with an OAuth error (access_denied) to inform the OAuth client that the user rejected the request.\n\n## Parameters\n\n- authorizationIdstring\n\nThe authorization ID to deny\n\n- optionsOptionalobject\n\nOptional parameters\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "denyAuthorization"
+    },
+    {
+      "id": "oauth-server-getauthorizationdetails",
+      "markdown": "`getAuthorizationDetails(authorizationId)`\n\nRetrieves details about an OAuth authorization request. Used to display consent information to the user. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nThis method returns one of two response types:\n\n- `OAuthAuthorizationDetails`: User needs to consent - show consent page with client info\n\n- `OAuthRedirect`: User already consented - redirect immediately to the OAuth client\n\nUse type narrowing to distinguish between the responses:\n\n```typescript\nif ('authorization_id' in data) {\n  // Show consent page\n} else {\n  // Redirect to data.redirect_url\n}\n```\n\n## Parameters\n\n- authorizationIdstring\n\nThe authorization ID from the authorization request\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "getAuthorizationDetails"
+    },
+    {
+      "id": "oauth-server-listgrants",
+      "markdown": "`listGrants()`\n\nLists all OAuth grants that the authenticated user has authorized. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "listGrants"
+    },
+    {
+      "id": "oauth-server-revokegrant",
+      "markdown": "`revokeGrant(options)`\n\nRevokes a user's OAuth grant for a specific client. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.\n\nRevocation marks consent as revoked, deletes active sessions for that OAuth client, and invalidates associated refresh tokens.\n\n## Parameters\n\n- optionsobject\n\nRevocation options\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "revokeGrant"
+    },
+    {
+      "id": "passkey-admin",
+      "markdown": "Contains passkey administration methods. Requires a secret key.",
+      "title": "Passkey admin"
+    },
+    {
+      "id": "passkey-admin-deletepasskey",
+      "markdown": "`deletePasskey(params)`\n\nDeletes a specific passkey for a specific user.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- paramsAuthPasskeyAdminDeleteParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "deletePasskey"
+    },
+    {
+      "id": "passkey-admin-listpasskeys",
+      "markdown": "`listPasskeys(params)`\n\nLists all passkeys registered for a specific user.\n\nThis function should only be called on a server. Never expose your `service_role` key in the browser.\n\n## Parameters\n\n- paramsAuthPasskeyAdminListParams\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "listPasskeys"
+    },
+    {
+      "id": "functions-corsheaders",
+      "markdown": "Default CORS headers for Supabase Edge Functions.\n\nIncludes all headers sent by Supabase client libraries and allows all standard HTTP methods. Use this for simple CORS configurations with wildcard origin.\n\n```typescript\nimport { corsHeaders } from '@supabase/supabase-js/cors'\n\nDeno.serve(async (req) => {\n  if (req.method === 'OPTIONS') {\n    return new Response('ok', { headers: corsHeaders })\n  }\n\n  return new Response(\n    JSON.stringify({ data: 'Hello' }),\n    { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }\n  )\n})\n```",
+      "title": "corsHeaders"
+    },
+    {
+      "id": "functions-invoke",
+      "markdown": "`invoke(functionName, options)`\n\nInvokes a function\n\n- The API key is sent in the `apikey` header. The `Authorization` header is reserved for the signed-in user's JWT (or a custom auth token) — when there is no session, a new-format API key (`sb_publishable_…` / `sb_secret_…`) is not sent as a Bearer token.\n\n- Invoke params generally match the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) spec.\n\n- When you pass in a body to your function, we automatically attach the Content-Type header for `Blob`, `ArrayBuffer`, `File`, `FormData` and `String`. If it doesn't match any of these types we assume the payload is `json`, serialize it and attach the `Content-Type` header as `application/json`. You can override this behavior by passing in a `Content-Type` header of your own.\n\n- Responses are automatically parsed as `json`, `blob` and `form-data` depending on the `Content-Type` header sent by your function. Responses are parsed as `text` by default.\n\n## Parameters\n\n- functionNamestring\n\nThe name of the Function to invoke.\n\n- optionsFunctionInvokeOptions\n\nOptions for invoking the Function.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1FunctionsResponseSuccess\n\n- Option 2FunctionsResponseFailure\n\n```typescript\nconst { data, error } = await functions.invoke('hello-world', {\n  body: { name: 'Ada' },\n})\n```",
+      "title": "invoke"
+    },
+    {
+      "id": "functions-setauth",
+      "markdown": "`setAuth(token)`\n\nUpdates the authorization header\n\n## Parameters\n\n- tokenstring\n\nthe new jwt token sent in the authorisation header\n\n## Return Type\n\nvoid\n\n```typescript\nfunctions.setAuth(session.access_token)\n```",
+      "title": "setAuth"
+    },
+    {
+      "id": "channel",
+      "markdown": "`channel(topic, params)`\n\nCreates (or reuses) a RealtimeChannel for the provided topic.\n\nTopics are automatically prefixed with `realtime:` to match the Realtime service. If a channel with the same topic already exists it will be returned instead of creating a duplicate connection.\n\n## Parameters\n\n- topicstring\n\n- paramsRealtimeChannelOptions",
+      "title": "channel"
+    },
+    {
+      "id": "connect",
+      "markdown": "`connect()`\n\nConnects the socket, unless already connected.\n\n## Return Type\n\nvoid",
+      "title": "connect"
+    },
+    {
+      "id": "connectionstate",
+      "markdown": "`connectionState()`\n\nReturns the current state of the socket.",
+      "title": "connectionState"
+    },
+    {
+      "id": "disconnect",
+      "markdown": "`disconnect(code?, reason?)`\n\nDisconnects the socket.\n\n## Parameters\n\n- codeOptionalnumber\n\nA numeric status code to send on disconnect.\n\n- reasonOptionalstring\n\nA custom reason for the disconnect.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1\"ok\"\n\n- Option 2\"timeout\"",
+      "title": "disconnect"
+    },
+    {
+      "id": "endpointurl",
+      "markdown": "`endpointURL()`\n\nReturns the URL of the websocket.\n\n## Return Type\n\nstring",
+      "title": "endpointURL"
+    },
+    {
+      "id": "getchannels",
+      "markdown": "`getChannels()`\n\nReturns all created channels\n\n## Return Type\n\nArray<RealtimeChannel>",
+      "title": "getChannels"
+    },
+    {
+      "id": "getwebsocketconstructor",
+      "markdown": "`getWebSocketConstructor()`\n\nReturns the best available WebSocket constructor for the current runtime.\n\n## Return Type\n\nfunction\n\n```typescript\ntry {\n  const WS = WebSocketFactory.getWebSocketConstructor()\n  const socket = new WS('wss://example.com/socket')\n} catch (error) {\n  console.error('WebSocket not available in this environment.', error)\n}\n```",
+      "title": "getWebSocketConstructor"
+    },
+    {
+      "id": "haslogger",
+      "markdown": "`hasLogger()`\n\nReturns true if a custom `logger` has been configured on this client.\n\n## Return Type\n\nboolean",
+      "title": "hasLogger"
+    },
+    {
+      "id": "httpsend",
+      "markdown": "`httpSend(event, payload, opts)`\n\nSends a broadcast message explicitly via REST API.\n\nThis method always uses the REST API endpoint regardless of WebSocket connection state. Useful when you want to guarantee REST delivery or when gradually migrating from implicit REST fallback.\n\nPayloads that are `ArrayBuffer` or `ArrayBufferView` (e.g. `Uint8Array`) are sent as `application/octet-stream`; all other payloads are JSON-encoded.\n\n## Parameters\n\n- eventstring\n\nThe name of the broadcast event\n\n- payloadany\n\nPayload to be sent (required)\n\n- optsobject\n\nOptions including timeout\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object",
+      "title": "httpSend"
+    },
+    {
+      "id": "isconnected",
+      "markdown": "`isConnected()`\n\nReturns `true` is the connection is open.\n\n## Return Type\n\nboolean",
+      "title": "isConnected"
+    },
+    {
+      "id": "isconnecting",
+      "markdown": "`isConnecting()`\n\nReturns `true` if the connection is currently connecting.\n\n## Return Type\n\nboolean",
+      "title": "isConnecting"
+    },
+    {
+      "id": "isdisconnecting",
+      "markdown": "`isDisconnecting()`\n\nReturns `true` if the connection is currently disconnecting.\n\n## Return Type\n\nboolean",
+      "title": "isDisconnecting"
+    },
+    {
+      "id": "iswebsocketsupported",
+      "markdown": "`isWebSocketSupported()`\n\nDetects whether the runtime can establish WebSocket connections.\n\n## Return Type\n\nboolean\n\n```typescript\nif (!WebSocketFactory.isWebSocketSupported()) {\n  console.error('WebSockets are required for this script.')\n  process.exitCode = 1\n}\n```",
+      "title": "isWebSocketSupported"
+    },
+    {
+      "id": "log",
+      "markdown": "`log(kind, msg, data?)`\n\nLogs the message.\n\nFor customized logging, `this.logger` can be overridden in Client constructor.\n\n## Parameters\n\n- kindstring\n\n- msgstring\n\n- dataOptionalany\n\n## Return Type\n\nvoid",
+      "title": "log"
+    },
+    {
+      "id": "on",
+      "markdown": "`on(type, filter, callback)`\n\nListen for presence events on this channel — when peers join, leave, or sync presence state.\n\n- By default, Broadcast and Presence are enabled for all projects.\n\n- By default, listening to database changes is disabled for new projects due to database performance and security concerns. You can turn it on by managing Realtime's [replication](/docs/guides/api#realtime-api-overview).\n\n- You can receive the \"previous\" data for updates and deletes by setting the table's `REPLICA IDENTITY` to `FULL` (e.g., `ALTER TABLE your_table REPLICA IDENTITY FULL;`).\n\n- Row level security is not applied to delete statements. When RLS is enabled and replica identity is set to full, only the primary key is sent to clients.\n\n## Parameters\n\n- typeOne of the following options\n- Option 1\"presence\"\n\n- Option 2\"postgres_changes\"\n\n- Option 3\"broadcast\"\n\n- Option 4\"system\"\n\n- filterOne of the following options\n- Option 1object\n\n- Option 2object\n\n- Option 3object\n\n- Option 4object\n\n- Option 5RealtimePostgresChangesFilter\n\n- Option 6RealtimePostgresChangesFilter\n\n- Option 7RealtimePostgresChangesFilter\n\n- Option 8RealtimePostgresChangesFilter\n\n- Option 9RealtimePostgresChangesFilter\n\n- Option 10object\n\n- Option 11object\n\n- Option 12object\n\n- Option 13object\n\n- Option 14object\n\n- callbackfunction\n\n```typescript\nconst channel = supabase.channel(\"room1\")\n\nchannel.on(\"broadcast\", { event: \"cursor-pos\" }, (payload) => {\n  console.log(\"Cursor position received!\", payload);\n}).subscribe((status) => {\n  if (status === \"SUBSCRIBED\") {\n    channel.send({\n      type: \"broadcast\",\n      event: \"cursor-pos\",\n      payload: { x: Math.random(), y: Math.random() },\n    });\n  }\n});\n```",
+      "title": "on"
+    },
+    {
+      "id": "onheartbeat",
+      "markdown": "`onHeartbeat(callback)`\n\nSets a callback that receives lifecycle events for internal heartbeat messages. Useful for instrumenting connection health (e.g. sent/ok/timeout).\n\n## Parameters\n\n- callbackHeartbeatCallback\n\n## Return Type\n\nvoid",
+      "title": "onHeartbeat"
+    },
+    {
+      "id": "presencestate",
+      "markdown": "`presenceState()`\n\nReturns the current presence state for this channel.\n\nThe shape is a map keyed by presence key (for example a user id) where each entry contains the tracked metadata for that user.\n\n## Return Type\n\n{ [key: string]: Array<Presence> }",
+      "title": "presenceState"
+    },
+    {
+      "id": "push",
+      "markdown": "`push(data)`\n\nPush out a message if the socket is connected.\n\nIf the socket is not connected, the message gets enqueued within a local buffer, and sent out when a connection is next established.\n\n## Parameters\n\n- dataRealtimeMessage\n\n## Return Type\n\nvoid",
+      "title": "push"
+    },
+    {
+      "id": "removeallchannels",
+      "markdown": "`removeAllChannels()`\n\nUnsubscribes, removes and tears down all channels\n\n## Return Type\n\nPromise<Array<One of the following options>>",
+      "title": "removeAllChannels"
+    },
+    {
+      "id": "removechannel",
+      "markdown": "`removeChannel(channel)`\n\nUnsubscribes, removes and tears down a single channel\n\n## Parameters\n\n- channelRealtimeChannel\n\nA RealtimeChannel instance\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1\"ok\"\n\n- Option 2\"timed out\"\n\n- Option 3\"error\"\n\n- Option 4",
+      "title": "removeChannel"
+    },
+    {
+      "id": "send",
+      "markdown": "`send(args, opts)`\n\nSends a message into the channel.\n\n- When using REST you don't need to subscribe to the channel\n\n- REST calls are only available from 2.37.0 onwards\n\n- If you create a channel only to send a REST broadcast, remove it from the client when the send completes\n\n## Parameters\n\n- argsobject\n\nArguments to send to channel\n\n- opts{ [key: string]: any }\n\nOptions to be used during the send process\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1\"ok\"\n\n- Option 2\"timed out\"\n\n- Option 3\"error\"\n\n- Option 4\n\n```typescript\nconst channel = supabase.channel('room1')\n\nchannel.subscribe((status) => {\n  if (status === 'SUBSCRIBED') {\n    channel.send({\n      type: 'broadcast',\n      event: 'cursor-pos',\n      payload: { x: Math.random(), y: Math.random() },\n    })\n  }\n})\n```",
+      "title": "send"
+    },
+    {
+      "id": "sendheartbeat",
+      "markdown": "`sendHeartbeat()`\n\nSends a heartbeat message if the socket is connected.\n\n## Return Type\n\nPromise<void>",
+      "title": "sendHeartbeat"
+    },
+    {
+      "id": "setauth",
+      "markdown": "`setAuth(token)`\n\nSets the JWT access token used for channel subscription authorization and Realtime RLS.\n\nIf param is null it will use the `accessToken` callback function or the token set on the client.\n\nOn callback used, it will set the value of the token internal to the client.\n\nWhen a token is explicitly provided AND no `accessToken` callback is configured, it will be preserved across channel operations (including removeChannel and resubscribe) and the client stays in manual-token mode.\n\nWhen an `accessToken` callback IS configured, the callback is the source of truth: the client remains in callback mode and continues to refresh from it on heartbeat, even after a bootstrap/override `setAuth(token)` call.\n\nThe callback is called on connect and on every heartbeat (`heartbeatIntervalMs`, default 25000ms). Its token must stay valid past the next call, or the server closes the channel at expiry with no automatic resubscribe.\n\n## Parameters\n\n- tokenOne of the following options\n\nA JWT string to override the token set on the client.\n\n- Option 1null\n\n- Option 2string\n\n## Return Type\n\nPromise<void>\n\n```typescript\nSetting the authorization header\n// Use a manual token (preserved across resubscribes when no accessToken callback is set)\nclient.realtime.setAuth('my-custom-jwt')\n\n// Switch back to using the accessToken callback\nclient.realtime.setAuth()\n```",
+      "title": "setAuth"
+    },
+    {
+      "id": "subscribe",
+      "markdown": "`subscribe(callback?, timeout)`\n\nSubscribe registers your client with the server.\n\nThe optional `callback` receives a `status` and, on failure, an `err` argument. Log the full `err` so its `cause`, `name`, and any structured fields aren't hidden behind `err.message`.\n\n## Parameters\n\n- callbackOptionalfunction\n\n- timeoutnumber\n\n```typescript\nsupabase.channel('room1').subscribe((status, err) => {\n  if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {\n    // Log the full error: its `cause` often holds the underlying reason.\n    console.error(status, err)\n  }\n})\n```",
+      "title": "subscribe"
+    },
+    {
+      "id": "teardown",
+      "markdown": "`teardown()`\n\nDestroys and stops related timers.\n\n## Return Type\n\nvoid",
+      "title": "teardown"
+    },
+    {
+      "id": "track",
+      "markdown": "`track(payload, opts)`\n\nSends the supplied payload to the presence tracker so other subscribers can see that this client is online. Use `untrack` to stop broadcasting presence for the same key.\n\nTracking makes this client visible to other subscribers immediately, regardless of this channel's `config.presence.enabled` setting or whether it has a `presence` listener — that flag only affects whether this client receives presence updates from others (and, on RLS-protected channels, whether it's authorized to do so).\n\n## Parameters\n\n- payload{ [key: string]: any }\n\n- opts{ [key: string]: any }\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1\"ok\"\n\n- Option 2\"timed out\"\n\n- Option 3\"error\"\n\n- Option 4",
+      "title": "track"
+    },
+    {
+      "id": "unsubscribe",
+      "markdown": "`unsubscribe(timeout)`\n\nLeaves the channel.\n\nUnsubscribes from server events, and instructs channel to terminate on server. Triggers onClose() hooks.\n\nTo receive leave acknowledgements, use the a `receive` hook to bind to the server ack, ie: channel.unsubscribe().receive(\"ok\", () => alert(\"left!\") )\n\n## Parameters\n\n- timeoutnumber\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1\"ok\"\n\n- Option 2\"timed out\"\n\n- Option 3\"error\"\n\n- Option 4",
+      "title": "unsubscribe"
+    },
+    {
+      "id": "untrack",
+      "markdown": "`untrack(opts)`\n\nRemoves the current presence state for this client.\n\n## Parameters\n\n- opts{ [key: string]: any }\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1\"ok\"\n\n- Option 2\"timed out\"\n\n- Option 3\"error\"\n\n- Option 4",
+      "title": "untrack"
+    },
+    {
+      "id": "updatejoinpayload",
+      "markdown": "`updateJoinPayload(payload)`\n\nUpdates the payload that will be sent the next time the channel joins (reconnects). Useful for rotating access tokens or updating config without re-creating the channel.\n\n## Parameters\n\n- payloadRecord<string, any>\n\n## Return Type\n\nvoid",
+      "title": "updateJoinPayload"
+    },
+    {
+      "id": "analytics-buckets",
+      "markdown": "This section contains methods for working with Analytics Buckets.",
+      "title": "Analytics Buckets"
+    },
+    {
+      "id": "analytics-buckets-createbucket",
+      "markdown": "`createBucket(name)`\n\nCreates a new analytics bucket using Iceberg tables Analytics buckets are optimized for analytical queries and data processing\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n- Creates a new analytics bucket using Iceberg tables\n\n- Analytics buckets are optimized for analytical queries and data processing\n\n## Parameters\n\n- namestring\n\nA unique name for the bucket you are creating\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .analytics\n  .createBucket('analytics-data')\n```",
+      "title": "createBucket"
+    },
+    {
+      "id": "analytics-buckets-deletebucket",
+      "markdown": "`deleteBucket(bucketName)`\n\nDeletes an existing analytics bucket A bucket can't be deleted with existing objects inside it You must first empty the bucket before deletion\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n- Deletes an analytics bucket\n\n## Parameters\n\n- bucketNamestring\n\nThe unique identifier of the bucket you would like to delete\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .analytics\n  .deleteBucket('analytics-data')\n```",
+      "title": "deleteBucket"
+    },
+    {
+      "id": "analytics-buckets-from",
+      "markdown": "`from(bucketName)`\n\nGet an Iceberg REST Catalog client configured for a specific analytics bucket Use this to perform advanced table and namespace operations within the bucket The returned client provides full access to the Apache Iceberg REST Catalog API with the Supabase `{ data, error }` pattern for consistent error handling on all operations.\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\nThis method provides a bridge between Supabase's bucket management and the standard Apache Iceberg REST Catalog API. The bucket name maps to the Iceberg warehouse parameter. All authentication and configuration is handled automatically using your Supabase credentials.\n\n**Error Handling**: Invalid bucket names throw immediately. All catalog operations return `{ data, error }` where errors are `IcebergError` instances from iceberg-js. Use helper methods like `error.isNotFound()` or check `error.status` for specific error handling. Use `.throwOnError()` on the analytics client if you prefer exceptions for catalog operations.\n\n**Cleanup Operations**: When using `dropTable`, the `purge: true` option permanently deletes all table data. Without it, the table is marked as deleted but data remains.\n\n**Library Dependency**: The returned catalog wraps `IcebergRestCatalog` from iceberg-js. For complete API documentation and advanced usage, refer to the [iceberg-js documentation](https://supabase.github.io/iceberg-js/).\n\n## Parameters\n\n- bucketNamestring\n\nThe name of the analytics bucket (warehouse) to connect to\n\n```typescript\n// First, create an analytics bucket\nconst { data: bucket, error: bucketError } = await supabase\n  .storage\n  .analytics\n  .createBucket('analytics-data')\n\n// Get the Iceberg catalog for that bucket\nconst catalog = supabase.storage.analytics.from('analytics-data')\n\n// Create a namespace\nconst { error: nsError } = await catalog.createNamespace({ namespace: ['default'] })\n\n// Create a table with schema\nconst { data: tableMetadata, error: tableError } = await catalog.createTable(\n  { namespace: ['default'] },\n  {\n    name: 'events',\n    schema: {\n      type: 'struct',\n      fields: [\n        { id: 1, name: 'id', type: 'long', required: true },\n        { id: 2, name: 'timestamp', type: 'timestamp', required: true },\n        { id: 3, name: 'user_id', type: 'string', required: false }\n      ],\n      'schema-id': 0,\n      'identifier-field-ids': [1]\n    },\n    'partition-spec': {\n      'spec-id': 0,\n      fields: []\n    },\n    'write-order': {\n      'order-id': 0,\n      fields: []\n    },\n    properties: {\n      'write.format.default': 'parquet'\n    }\n  }\n)\n```",
+      "title": "from"
+    },
+    {
+      "id": "analytics-buckets-listbuckets",
+      "markdown": "`listBuckets(options?)`\n\nRetrieves the details of all Analytics Storage buckets within an existing project Only returns buckets of type 'ANALYTICS'\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n- Retrieves the details of all Analytics Storage buckets within an existing project\n\n- Only returns buckets of type 'ANALYTICS'\n\n## Parameters\n\n- optionsOptionalobject\n\nQuery parameters for listing buckets\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .analytics\n  .listBuckets({\n    limit: 10,\n    offset: 0,\n    sortColumn: 'created_at',\n    sortOrder: 'desc'\n  })\n```",
+      "title": "listBuckets"
+    },
+    {
+      "id": "file-buckets",
+      "markdown": "This section contains methods for working with File Buckets.",
+      "title": "File Buckets"
+    },
+    {
+      "id": "file-buckets-copy",
+      "markdown": "`copy(fromPath, toPath, options?)`\n\nCopies an existing file to a new path in the same bucket.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: `insert` and `select`\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- fromPathstring\n\nThe original file path, including the current file name. For example `folder/image.png`.\n\n- toPathstring\n\nThe new file path, including the new file name. For example `folder/image-copy.png`.\n\n- optionsOptionalDestinationOptions\n\nThe destination options.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .copy('public/avatar1.png', 'private/avatar2.png')\n```",
+      "title": "copy"
+    },
+    {
+      "id": "file-buckets-createbucket",
+      "markdown": "`createBucket(id, options)`\n\nCreates a new Storage bucket\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: `insert`\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- idstring\n\nA unique identifier for the bucket you are creating.\n\n- optionsobject\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .createBucket('avatars', {\n    public: false,\n    allowedMimeTypes: ['image/png'],\n    fileSizeLimit: 1024\n  })\n```",
+      "title": "createBucket"
+    },
+    {
+      "id": "file-buckets-createsigneduploadurl",
+      "markdown": "`createSignedUploadUrl(path, options?)`\n\nCreates a signed upload URL. Signed upload URLs can be used to upload files to the bucket without further authentication. They are valid for 2 hours.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: `insert`\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- pathstring\n\nThe file path, including the current file name. For example `folder/image.png`.\n\n- optionsOptionalobject\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .createSignedUploadUrl('folder/cat.jpg')\n```",
+      "title": "createSignedUploadUrl"
+    },
+    {
+      "id": "file-buckets-createsignedurl",
+      "markdown": "`createSignedUrl(path, expiresIn, options?)`\n\nCreates a signed URL. Use a signed URL to share a file for a fixed amount of time.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: `select`\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- pathstring\n\nThe file path, including the current file name. For example `folder/image.png`.\n\n- expiresInnumber\n\nThe number of seconds until the signed URL expires. For example, `60` for a URL which is valid for one minute.\n\n- optionsOptionalobject\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .createSignedUrl('folder/avatar1.png', 60)\n```",
+      "title": "createSignedUrl"
+    },
+    {
+      "id": "file-buckets-createsignedurls",
+      "markdown": "`createSignedUrls(paths, expiresIn, options?)`\n\nCreates multiple signed URLs. Use a signed URL to share a file for a fixed amount of time.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: `select`\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- pathsArray<string>\n\nThe file paths to be downloaded, including the current file names. For example `['folder/image.png', 'folder2/image2.png']`.\n\n- expiresInnumber\n\nThe number of seconds until the signed URLs expire. For example, `60` for URLs which are valid for one minute.\n\n- optionsOptionalobject\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .createSignedUrls(['folder/avatar1.png', 'folder/avatar2.png'], 60)\n```",
+      "title": "createSignedUrls"
+    },
+    {
+      "id": "file-buckets-deletebucket",
+      "markdown": "`deleteBucket(id)`\n\nDeletes an existing bucket. A bucket can't be deleted with existing objects inside it. You must first `empty()` the bucket.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: `select` and `delete`\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- idstring\n\nThe unique identifier of the bucket you would like to delete.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .deleteBucket('avatars')\n```",
+      "title": "deleteBucket"
+    },
+    {
+      "id": "file-buckets-deletebucketlifecycle",
+      "markdown": "`deleteBucketLifecycle(id)`\n\nRemoves the lifecycle policy from a bucket.\n\nSafe to call when no policy is stored. The response is still success. Standard buckets only. Returns `FeatureNotEnabled` if lifecycle is off for the project.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: `select` and `update`\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- idstring\n\nThe unique identifier of the bucket.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .deleteBucketLifecycle('avatars')\n```",
+      "title": "deleteBucketLifecycle"
+    },
+    {
+      "id": "file-buckets-download",
+      "markdown": "`download(path, options?, parameters?)`\n\nDownloads a file from a private bucket. For public buckets, make a request to the URL returned from `getPublicUrl` instead.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: `select`\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- pathstring\n\nThe full path and file name of the file to be downloaded. For example `folder/image.png`.\n\n- optionsOptionalOptions\n\nOptional settings: `transform` to transform the asset before serving it to the client, `cacheNonce` to append a cache nonce parameter to the URL to invalidate the cache, and `versionId` to download a specific object version.\n\n- parametersOptionalFetchParameters\n\nAdditional fetch parameters like signal for cancellation. Supports standard fetch options including cache control.\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .download('folder/avatar1.png')\n```",
+      "title": "download"
+    },
+    {
+      "id": "file-buckets-emptybucket",
+      "markdown": "`emptyBucket(id)`\n\nRemoves all objects inside a single bucket.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: `select`\n\n- `objects` table permissions: `select` and `delete`\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- idstring\n\nThe unique identifier of the bucket you would like to empty.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .emptyBucket('avatars')\n```",
+      "title": "emptyBucket"
+    },
+    {
+      "id": "file-buckets-exists",
+      "markdown": "`exists(path)`\n\nChecks the existence of a file.\n\n## Parameters\n\n- pathstring\n\nThe file path, including the file name. For example `folder/image.png`.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .exists('folder/avatar1.png')\n```",
+      "title": "exists"
+    },
+    {
+      "id": "file-buckets-from",
+      "markdown": "`from(id)`\n\nPerform file operation in a bucket.\n\n## Parameters\n\n- idstring\n\nThe bucket id to operate on.\n\n```typescript\nconst avatars = supabase.storage.from('avatars')\n```",
+      "title": "from"
+    },
+    {
+      "id": "file-buckets-getbucket",
+      "markdown": "`getBucket(id)`\n\nRetrieves the details of an existing Storage bucket.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: `select`\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- idstring\n\nThe unique identifier of the bucket you would like to retrieve.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .getBucket('avatars')\n```",
+      "title": "getBucket"
+    },
+    {
+      "id": "file-buckets-getbucketlifecycle",
+      "markdown": "`getBucketLifecycle(id)`\n\nReturns the lifecycle policy stored on a bucket.\n\nFails with `NoSuchLifecycleConfiguration` when the bucket has no policy.\n\nThese rules expire previous versions of objects, not the current one. Turn versioning on or there is nothing for the policy to act on. Standard buckets only. Returns `FeatureNotEnabled` if lifecycle is off for the project.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: `select`\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- idstring\n\nThe unique identifier of the bucket.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .getBucketLifecycle('avatars')\n```",
+      "title": "getBucketLifecycle"
+    },
+    {
+      "id": "file-buckets-getpublicurl",
+      "markdown": "`getPublicUrl(path, options?)`\n\nA simple convenience function to get the URL for an asset in a public bucket. If you do not want to use this function, you can construct the public URL by concatenating the bucket URL with the path to the asset. This function does not verify if the bucket is public. If a public URL is created for a bucket which is not public, you will not be able to download the asset.\n\n- The bucket needs to be set to public, either via [updateBucket()](/docs/reference/javascript/storage-updatebucket) or by going to Storage on [supabase.com/dashboard](https://supabase.com/dashboard), clicking the overflow menu on a bucket and choosing \"Make public\"\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- pathstring\n\nThe path and name of the file to generate the public URL for. For example `folder/image.png`.\n\n- optionsOptionalobject\n\n## Return Type\n\nobject\n\n```typescript\nconst { data } = supabase\n  .storage\n  .from('public-bucket')\n  .getPublicUrl('folder/avatar1.png')\n```",
+      "title": "getPublicUrl"
+    },
+    {
+      "id": "file-buckets-info",
+      "markdown": "`info(path, options?)`\n\nRetrieves the details of an existing file.\n\nReturns detailed file metadata including size, content type, and timestamps. Note: The API returns `last_modified` field, not `updated_at`.\n\n## Parameters\n\n- pathstring\n\nThe file path, including the file name. For example `folder/image.png`.\n\n- optionsOptionalobject\n\nOptional settings, including `versionId` to retrieve a specific object version.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .info('folder/avatar1.png')\n\nif (data) {\n  console.log('Last modified:', data.lastModified)\n  console.log('Size:', data.size)\n}\n```",
+      "title": "info"
+    },
+    {
+      "id": "file-buckets-list",
+      "markdown": "`list(path?, options?, parameters?)`\n\nLists all the files and folders within a path of the bucket.\n\n**Important:** For folder entries, fields like `id`, `updated_at`, `created_at`, `last_accessed_at`, and `metadata` will be `null`. Only files have these fields populated. Additionally, deprecated fields like `bucket_id`, `owner`, and `buckets` are NOT returned by this method.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: `select`\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- pathOptionalstring\n\nThe folder path.\n\n- optionsOptionalSearchOptions\n\nSearch options including limit (defaults to 100), offset, sortBy, and search\n\n- parametersOptionalFetchParameters\n\nOptional fetch parameters including signal for cancellation\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .list('folder', {\n    limit: 100,\n    offset: 0,\n    sortBy: { column: 'name', order: 'asc' },\n  })\n\n// Handle files vs folders\ndata?.forEach(item => {\n  if (item.id !== null) {\n    // It's a file\n    console.log('File:', item.name, 'Size:', item.metadata?.size)\n  } else {\n    // It's a folder\n    console.log('Folder:', item.name)\n  }\n})\n```",
+      "title": "list"
+    },
+    {
+      "id": "file-buckets-listbuckets",
+      "markdown": "`listBuckets(options?)`\n\nRetrieves the details of all Storage buckets within an existing project.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: `select`\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- optionsOptionalListBucketOptions\n\nQuery parameters for listing buckets\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .listBuckets()\n```",
+      "title": "listBuckets"
+    },
+    {
+      "id": "file-buckets-listv2",
+      "markdown": "`listV2(options?, parameters?)`\n\nLists all the files and folders within a bucket using the V2 API with pagination support.\n\n**Important:** Folder entries in the `folders` array only contain `name` and optionally `key` — they have no `id`, timestamps, or `metadata` fields. Full file metadata is only available on entries in the `objects` array.\n\nthis method signature might change in the future\n\n## Parameters\n\n- optionsOptionalSearchV2Options\n\nSearch options including prefix, cursor for pagination, limit, with_delimiter\n\n- parametersOptionalFetchParameters\n\nOptional fetch parameters including signal for cancellation\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .listV2({\n    prefix: 'folder/',\n    limit: 100,\n  })\n\n// Handle pagination\nif (data?.hasNext) {\n  const nextPage = await supabase\n    .storage\n    .from('avatars')\n    .listV2({\n      prefix: 'folder/',\n      cursor: data.nextCursor,\n    })\n}\n\n// Handle files vs folders\ndata?.objects.forEach(file => {\n  if (file.id !== null) {\n    console.log('File:', file.name, 'Size:', file.metadata?.size)\n  }\n})\ndata?.folders.forEach(folder => {\n  console.log('Folder:', folder.name)\n})\n```",
+      "title": "listV2"
+    },
+    {
+      "id": "file-buckets-move",
+      "markdown": "`move(fromPath, toPath, options?)`\n\nMoves an existing file to a new path in the same bucket.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: `update` and `select`\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- fromPathstring\n\nThe original file path, including the current file name. For example `folder/image.png`.\n\n- toPathstring\n\nThe new file path, including the new file name. For example `folder/image-new.png`.\n\n- optionsOptionalDestinationOptions\n\nThe destination options.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .move('public/avatar1.png', 'private/avatar2.png')\n```",
+      "title": "move"
+    },
+    {
+      "id": "file-buckets-purgebucketcache",
+      "markdown": "`purgeBucketCache(id, options?, parameters?)`\n\nPurges the CDN cache for an entire bucket.\n\nMaps to `DELETE /cdn/{bucket}` on the Storage API. The server issues a CDN invalidation for the bucket and returns `{ message: 'success' }`.\n\n**Requires the `service_role` key.** The underlying endpoint enforces `service_role` JWT — calls made with the anon key or a user JWT will be rejected by the server.\n\n**Hosted CDN feature.** On self-hosted Supabase, the Storage service must have `CDN_PURGE_ENDPOINT_URL` configured and the `purgeCache` tenant feature enabled, otherwise the server returns an error.\n\n## Parameters\n\n- idstring\n\nThe unique identifier of the bucket you would like to purge from cache.\n\n- optionsOptionalPurgeCacheOptions\n\nOptional purge cache options.\n\n- parametersOptionalFetchParameters\n\nOptional fetch parameters such as an `AbortController` signal.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .purgeBucketCache('avatars')\n```",
+      "title": "purgeBucketCache"
+    },
+    {
+      "id": "file-buckets-purgecache",
+      "markdown": "`purgeCache(path, options?, parameters?)`\n\nPurges the CDN cache for a single object in this bucket.\n\nMaps to `DELETE /cdn/{bucket}/{path}` on the Storage API. The server issues a CDN invalidation for the object and returns `{ message: 'success' }`.\n\n**Requires the `service_role` key.** The underlying endpoint enforces `service_role` JWT — calls made with the anon key or a user JWT will be rejected by the server.\n\n**Hosted CDN feature.** On self-hosted Supabase, the Storage service must have `CDN_PURGE_ENDPOINT_URL` configured and the `purgeCache` tenant feature enabled, otherwise the server returns an error.\n\nOperates on a single object path. There is no wildcard or recursion: pass the exact path of the object you want invalidated.\n\n## Parameters\n\n- pathstring\n\nThe path (relative to the bucket) of the object to purge, e.g. `folder/avatar.png`.\n\n- optionsOptionalPurgeCacheOptions\n\nOptional purge cache options.\n\n- parametersOptionalFetchParameters\n\nOptional fetch parameters such as an `AbortController` signal.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .purgeCache('folder/avatar1.png')\n```",
+      "title": "purgeCache"
+    },
+    {
+      "id": "file-buckets-remove",
+      "markdown": "`remove(paths)`\n\nDeletes files within the same bucket\n\nReturns an array of FileObject entries for the deleted files. Note that deprecated fields like `bucket_id` may or may not be present in the response - do not rely on them.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: `delete` and `select`\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- pathsArray<One of the following options>\n\nAn array of files to delete. Each entry is either a path (deletes whichever version is currently at that path, e.g. `'folder/image.png'`), or `{ path, versionId }` to delete an exact version current or archived (e.g. `{ path: 'folder/image.png', versionId: '...' }`).\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .remove(['folder/avatar1.png'])\n```",
+      "title": "remove"
+    },
+    {
+      "id": "file-buckets-update",
+      "markdown": "`update(path, fileBody, fileOptions?)`\n\nReplaces an existing file at the specified path with a new one.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: `update` and `select`\n\n- `update()` always replaces the file at the given path regardless of the `upsert` option.\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n- For React Native, using either `Blob`, `File` or `FormData` does not work as intended. Update file using `ArrayBuffer` from base64 file data instead, see example below.\n\n## Parameters\n\n- pathstring\n\nThe relative file path. Should be of the format `folder/subfolder/filename.png`. The bucket must already exist before attempting to update.\n\n- fileBodyOne of the following options\n\nThe body of the file to be stored in the bucket.\n\n- Option 1string\n\n- Option 2ArrayBuffer\n\n- Option 3ReadableStream\n\n- Option 4Blob\n\n- Option 5File\n\n- Option 6FormData\n\n- Option 7@types/node.__global.NodeJS.ReadableStream\n\n- Option 8URLSearchParams\n\n- Option 9ArrayBufferView\n\n- Option 10@types/node.__global.Buffer\n\n- fileOptionsOptionalFileOptions\n\nOptional file upload options including cacheControl, contentType, and metadata. **Note:** The `upsert` option has no effect here. `update()` always replaces the file at the given path, so the `x-upsert` header is not sent. To control upsert behavior, use `upload()` instead.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst avatarFile = event.target.files[0]\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .update('public/avatar1.png', avatarFile, {\n    cacheControl: '3600'\n  })\n```",
+      "title": "update"
+    },
+    {
+      "id": "file-buckets-updatebucket",
+      "markdown": "`updateBucket(id, options)`\n\nUpdates a Storage bucket\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: `select` and `update`\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- idstring\n\nA unique identifier for the bucket you are updating.\n\n- optionsobject\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .updateBucket('avatars', {\n    public: false,\n    allowedMimeTypes: ['image/png'],\n    fileSizeLimit: 1024\n  })\n```",
+      "title": "updateBucket"
+    },
+    {
+      "id": "file-buckets-updatebucketlifecycle",
+      "markdown": "`updateBucketLifecycle(id, configuration)`\n\nReplaces the lifecycle policy on a bucket.\n\nThe `rules` array you send is the whole policy. Anything previously stored is overwritten. Send at least one rule. Call deleteBucketLifecycle to remove the policy.\n\nEach rule currently supports only `noncurrentVersionExpiration`. `filter` is required and must be `{}`. Prefix filters, tag filters, and current-object expiration are rejected. Rule IDs must be unique. Omit `id` and the server generates one.\n\nStandard buckets only. Returns `FeatureNotEnabled` if lifecycle is off for the project.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: `select` and `update`\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- idstring\n\nThe unique identifier of the bucket.\n\n- configurationBucketLifecycleConfiguration\n\nThe full lifecycle configuration to store.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .updateBucketLifecycle('avatars', {\n    rules: [\n      {\n        id: 'expire-history',\n        status: 'Enabled',\n        filter: {},\n        noncurrentVersionExpiration: {\n          noncurrentDays: 30,\n          newerNoncurrentVersions: 2,\n        },\n      },\n    ],\n  })\n```",
+      "title": "updateBucketLifecycle"
+    },
+    {
+      "id": "file-buckets-upload",
+      "markdown": "`upload(path, fileBody, fileOptions?)`\n\nUploads a file to an existing bucket.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: only `insert` when you are uploading new files and `select`, `insert` and `update` when you are upserting files\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n- For React Native, using either `Blob`, `File` or `FormData` does not work as intended. Upload file using `ArrayBuffer` from base64 file data instead, see example below.\n\n## Parameters\n\n- pathstring\n\nThe file path, including the file name. Should be of the format `folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.\n\n- fileBodyFileBody\n\nThe body of the file to be stored in the bucket.\n\n- fileOptionsOptionalFileOptions\n\nOptional file upload options including cacheControl, contentType, upsert, and metadata.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst avatarFile = event.target.files[0]\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .upload('public/avatar1.png', avatarFile, {\n    cacheControl: '3600',\n    upsert: false\n  })\n```",
+      "title": "upload"
+    },
+    {
+      "id": "file-buckets-uploadtosignedurl",
+      "markdown": "`uploadToSignedUrl(path, token, fileBody, fileOptions?)`\n\nUpload a file with a token generated from `createSignedUploadUrl`.\n\n- RLS policy permissions required:\n\n- `buckets` table permissions: none\n\n- `objects` table permissions: none\n\n- Refer to the [Storage guide](/docs/guides/storage/security/access-control) on how access control works\n\n## Parameters\n\n- pathstring\n\nThe file path, including the file name. Should be of the format `folder/subfolder/filename.png`. The bucket must already exist before attempting to upload.\n\n- tokenstring\n\nThe token generated from `createSignedUploadUrl`\n\n- fileBodyFileBody\n\nThe body of the file to be stored in the bucket.\n\n- fileOptionsOptionalFileOptions\n\nHTTP headers (cacheControl, contentType, etc.). **Note:** The `upsert` option has no effect here. To enable upsert behavior, pass `{ upsert: true }` when calling `createSignedUploadUrl()` instead.\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1object\n\n- Option 2object\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .from('avatars')\n  .uploadToSignedUrl('folder/cat.jpg', 'token-from-createSignedUploadUrl', file)\n```",
+      "title": "uploadToSignedUrl"
+    },
+    {
+      "id": "vector-buckets",
+      "markdown": "This section contains methods for working with Vector Buckets.",
+      "title": "Vector Buckets"
+    },
+    {
+      "id": "vector-buckets-createbucket",
+      "markdown": "`createBucket(vectorBucketName)`\n\nCreates a new vector bucket Vector buckets are containers for vector indexes and their data\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- vectorBucketNamestring\n\nUnique name for the vector bucket\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .vectors\n  .createBucket('embeddings-prod')\n```",
+      "title": "createBucket"
+    },
+    {
+      "id": "vector-buckets-createindex",
+      "markdown": "`createIndex(options)`\n\nCreates a new vector index in this bucket Convenience method that automatically includes the bucket name\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- optionsOmit\n\nIndex configuration (vectorBucketName is automatically set)\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst bucket = supabase.storage.vectors.from('embeddings-prod')\nawait bucket.createIndex({\n  indexName: 'documents-openai',\n  dataType: 'float32',\n  dimension: 1536,\n  distanceMetric: 'cosine',\n  metadataConfiguration: {\n    nonFilterableMetadataKeys: ['raw_text']\n  }\n})\n```",
+      "title": "createIndex"
+    },
+    {
+      "id": "vector-buckets-deletebucket",
+      "markdown": "`deleteBucket(vectorBucketName)`\n\nDeletes a vector bucket (bucket must be empty) All indexes must be deleted before deleting the bucket\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- vectorBucketNamestring\n\nName of the vector bucket to delete\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .vectors\n  .deleteBucket('embeddings-old')\n```",
+      "title": "deleteBucket"
+    },
+    {
+      "id": "vector-buckets-deleteindex",
+      "markdown": "`deleteIndex(indexName)`\n\nDeletes an index from this bucket Convenience method that automatically includes the bucket name\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- indexNamestring\n\nName of the index to delete\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst bucket = supabase.storage.vectors.from('embeddings-prod')\nawait bucket.deleteIndex('old-index')\n```",
+      "title": "deleteIndex"
+    },
+    {
+      "id": "vector-buckets-deletevectors",
+      "markdown": "`deleteVectors(options)`\n\nDeletes vectors by keys from this index Convenience method that automatically includes bucket and index names\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- optionsOmit\n\nDeletion options (bucket and index names automatically set)\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst index = supabase.storage.vectors.from('embeddings-prod').index('documents-openai')\nawait index.deleteVectors({\n  keys: ['doc-1', 'doc-2', 'doc-3']\n})\n```",
+      "title": "deleteVectors"
+    },
+    {
+      "id": "vector-buckets-from",
+      "markdown": "`from(vectorBucketName)`\n\nAccess operations for a specific vector bucket Returns a scoped client for index and vector operations within the bucket\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- vectorBucketNamestring\n\nName of the vector bucket\n\n```typescript\nconst bucket = supabase.storage.vectors.from('embeddings-prod')\n```",
+      "title": "from"
+    },
+    {
+      "id": "vector-buckets-getbucket",
+      "markdown": "`getBucket(vectorBucketName)`\n\nRetrieves metadata for a specific vector bucket\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- vectorBucketNamestring\n\nName of the vector bucket\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .vectors\n  .getBucket('embeddings-prod')\n\nconsole.log('Bucket created:', data?.vectorBucket.creationTime)\n```",
+      "title": "getBucket"
+    },
+    {
+      "id": "vector-buckets-getindex",
+      "markdown": "`getIndex(indexName)`\n\nRetrieves metadata for a specific index in this bucket Convenience method that automatically includes the bucket name\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- indexNamestring\n\nName of the index to retrieve\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst bucket = supabase.storage.vectors.from('embeddings-prod')\nconst { data } = await bucket.getIndex('documents-openai')\nconsole.log('Dimension:', data?.index.dimension)\n```",
+      "title": "getIndex"
+    },
+    {
+      "id": "vector-buckets-getvectors",
+      "markdown": "`getVectors(options)`\n\nRetrieves vectors by keys from this index Convenience method that automatically includes bucket and index names\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- optionsOmit\n\nVector retrieval options (bucket and index names automatically set)\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst index = supabase.storage.vectors.from('embeddings-prod').index('documents-openai')\nconst { data } = await index.getVectors({\n  keys: ['doc-1', 'doc-2'],\n  returnMetadata: true\n})\n```",
+      "title": "getVectors"
+    },
+    {
+      "id": "vector-buckets-index",
+      "markdown": "`VectorBucketScope(indexName)`\n\nAccess operations for a specific index within this bucket Returns a scoped client for vector data operations\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- indexNamestring\n\nName of the index\n\n```typescript\nconst index = supabase.storage.vectors.from('embeddings-prod').index('documents-openai')\n\n// Insert vectors\nawait index.putVectors({\n  vectors: [\n    { key: 'doc-1', data: { float32: [...] }, metadata: { title: 'Intro' } }\n  ]\n})\n\n// Query similar vectors\nconst { data } = await index.queryVectors({\n  queryVector: { float32: [...] },\n  topK: 5\n})\n```",
+      "title": "index"
+    },
+    {
+      "id": "vector-buckets-listbuckets",
+      "markdown": "`listBuckets(options)`\n\nLists all vector buckets with optional filtering and pagination\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- optionsListVectorBucketsOptions\n\nOptional filters (prefix, maxResults, nextToken)\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst { data, error } = await supabase\n  .storage\n  .vectors\n  .listBuckets({ prefix: 'embeddings-' })\n\ndata?.vectorBuckets.forEach(bucket => {\n  console.log(bucket.vectorBucketName)\n})\n```",
+      "title": "listBuckets"
+    },
+    {
+      "id": "vector-buckets-listindexes",
+      "markdown": "`listIndexes(options)`\n\nLists indexes in this bucket Convenience method that automatically includes the bucket name\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- optionsOmit\n\nListing options (vectorBucketName is automatically set)\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst bucket = supabase.storage.vectors.from('embeddings-prod')\nconst { data } = await bucket.listIndexes({ prefix: 'documents-' })\n```",
+      "title": "listIndexes"
+    },
+    {
+      "id": "vector-buckets-listvectors",
+      "markdown": "`listVectors(options)`\n\nLists vectors in this index with pagination Convenience method that automatically includes bucket and index names\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- optionsOmit\n\nListing options (bucket and index names automatically set)\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst index = supabase.storage.vectors.from('embeddings-prod').index('documents-openai')\nconst { data } = await index.listVectors({\n  maxResults: 500,\n  returnMetadata: true\n})\n```",
+      "title": "listVectors"
+    },
+    {
+      "id": "vector-buckets-putvectors",
+      "markdown": "`putVectors(options)`\n\nInserts or updates vectors in this index Convenience method that automatically includes bucket and index names\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- optionsOmit\n\nVector insertion options (bucket and index names automatically set)\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst index = supabase.storage.vectors.from('embeddings-prod').index('documents-openai')\nawait index.putVectors({\n  vectors: [\n    {\n      key: 'doc-1',\n      data: { float32: [0.1, 0.2, ...] },\n      metadata: { title: 'Introduction', page: 1 }\n    }\n  ]\n})\n```",
+      "title": "putVectors"
+    },
+    {
+      "id": "vector-buckets-queryvectors",
+      "markdown": "`queryVectors(options)`\n\nQueries for similar vectors in this index Convenience method that automatically includes bucket and index names\n\n**Public alpha:** This API is part of a public alpha release and may not be available to your account type.\n\n## Parameters\n\n- optionsOmit\n\nQuery options (bucket and index names automatically set)\n\n## Return Type\n\nPromise<One of the following options>\n- Option 1SuccessResponse\n\n- Option 2ErrorResponse\n\n```typescript\nconst index = supabase.storage.vectors.from('embeddings-prod').index('documents-openai')\nconst { data } = await index.queryVectors({\n  queryVector: { float32: [0.1, 0.2, ...] },\n  topK: 5,\n  filter: { category: 'technical' },\n  returnDistance: true,\n  returnMetadata: true\n})\n```",
+      "title": "queryVectors"
+    }
+  ]
+}

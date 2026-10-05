@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#121212" />
+    <title>Supabase Docs — Documentation</title>
+    <link rel="icon" href="assets/supabase-dark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="variables.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="main.js" defer></script>
+  </head>
+  <body>
+    <a class="docs-skip" href="#main">Skip to content</a>
+    <header class="docs-header">
+      <div class="docs-header-inner">
+        <a class="docs-brand" href="./" aria-label="Supabase Docs home">
+          <img src="assets/supabase-dark.svg" alt="supabase" />
+          <span>DOCS</span>
+        </a>
+        <nav class="docs-nav" aria-label="Main navigation">
+          <a href="pages/guides/getting-started/">Start</a>
+          <details class="docs-nav-menu"><summary>Products</summary><div class="docs-nav-popover"><a href="pages/guides/database/">Database</a><a href="pages/guides/auth/">Auth</a><a href="pages/guides/storage/">Storage</a><a href="pages/guides/realtime/">Realtime</a><a href="pages/guides/functions/">Edge Functions</a></div></details>
+          <details class="docs-nav-menu"><summary>Build</summary><div class="docs-nav-popover"><a href="pages/guides/local-development/">Local development</a><a href="pages/guides/migrations/">Migrations</a></div></details>
+          <details class="docs-nav-menu"><summary>Manage</summary><div class="docs-nav-popover"><a href="pages/guides/platform/">Platform guides</a><a href="pages/guides/organizations/">Organizations</a></div></details>
+          <details class="docs-nav-menu"><summary>Reference</summary><div class="docs-nav-popover"><a href="pages/reference/javascript/">JavaScript</a><a href="pages/reference/cli/">Supabase CLI</a></div></details>
+          <details class="docs-nav-menu"><summary>Resources</summary><div class="docs-nav-popover"><a href="pages/guides/troubleshooting/">Troubleshooting</a><a href="pages/guides/self-hosting/">Self-host Supabase</a></div></details>
+        </nav>
+        <div class="docs-header-actions">
+          <button class="docs-search-trigger" type="button" aria-label="Search docs"><span class="docs-search-icon" aria-hidden="true"></span><span>Search docs...</span><kbd>⌘K</kbd></button>
+          <a class="docs-signup" href="https://supabase.com/dashboard">Sign up</a>
+          <button class="docs-mobile-trigger" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+        </div>
+      </div>
+      <nav class="docs-mobile-nav" aria-label="Mobile navigation" hidden>
+        <a href="pages/guides/getting-started/">Start</a><a href="pages/guides/database/">Products</a><a href="pages/guides/local-development/">Build</a><a href="pages/guides/platform/">Manage</a><a href="pages/reference/javascript/">Reference</a><a href="pages/guides/troubleshooting/">Resources</a>
+      </nav>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="docs-hero docs-home" aria-labelledby="hero-title">
+        <div class="docs-shell docs-hero-inner">
+          <div class="docs-hero-copy">
+            <div class="docs-hero-mark" aria-hidden="true"><img src="assets/ui/hero.svg" alt="" /></div>
+            <div><h1 id="hero-title">Supabase Documentation</h1><p>Learn how to get up and running with Supabase through tutorials, APIs and platform resources.</p></div>
+          </div>
+          <div class="docs-command-card">
+            <div class="docs-command-head"><div class="docs-tabs" role="tablist" aria-label="Setup instructions"><button type="button" role="tab" aria-selected="true" data-tab="prompt">Agent Prompt</button><button type="button" role="tab" aria-selected="false" data-tab="cli">CLI</button></div><button class="docs-copy" type="button" aria-label="Copy Agent Prompt" title="Copy to clipboard"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></button></div>
+            <div class="docs-command-body" id="command-content" role="tabpanel"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="docs-shell docs-sections docs-home">
+        <section class="docs-section" id="connect-a-framework"><div class="docs-section-copy"><h2>Connect a framework</h2><p>Start with a quickstart guide to connect your project in minutes.</p></div><div class="docs-section-content docs-link-grid" id="frameworks"></div></section>
+        <section class="docs-section" id="products"><div class="docs-section-copy"><h2>Build your backend</h2><p>Build with a complete backend platform, from your database to your application logic.</p></div><div class="docs-section-content docs-product-grid" id="backend"></div></section>
+        <section class="docs-section" id="postgres-integrations"><div class="docs-section-copy"><h2>Extend your database</h2><p>Extend your database with built-in tools for AI, APIs, scheduled jobs, and queues.</p></div><div class="docs-section-content docs-link-grid" id="extensions"></div></section>
+        <section class="docs-section" id="client-libraries"><div class="docs-section-copy"><h2>Use a client library</h2><p>Use Supabase from the language and framework your application is built with.</p></div><div class="docs-section-content docs-link-grid" id="libraries"></div></section>
+        <section class="docs-section" id="migrate-to-supabase"><div class="docs-section-copy"><h2>Migrate to Supabase</h2><p>Bring your existing data, auth and storage to Supabase following our migration guides.</p><a class="docs-more-link" href="pages/guides/resources/">Explore more resources ↗</a></div><div class="docs-section-content docs-link-grid" id="migrations"></div></section>
+        <section class="docs-section" id="additional-resources"><div class="docs-section-copy"><h2>Explore more</h2><p>Explore the tools, integrations, and guides that help you get more from Supabase.</p></div><div class="docs-section-content docs-resource-grid" id="resources"></div></section>
+        <section class="docs-section" id="self-hosting"><div class="docs-section-copy"><h2>Self-host Supabase</h2><p>Get started with self-hosting Supabase.</p><a class="docs-more-link" href="pages/guides/self-hosting/">More on self-hosting ↗</a></div><div class="docs-section-content docs-link-grid" id="self-hosted"></div></section>
+      </div>
+    </main>
+
+    <footer class="docs-footer"><div class="docs-shell"><div class="docs-footer-help"><div><img src="assets/ui/help.svg" alt="" />Need some help? <a href="https://supabase.com/support">Contact support</a></div><div><img src="assets/ui/updates.svg" alt="" />Latest product updates? <a href="https://supabase.com/changelog">See Changelog</a></div><div><img src="assets/ui/status.svg" alt="" />Something's not right? <a href="https://status.supabase.com/">Check system status</a></div></div><div class="docs-footer-links"><div class="docs-footer-meta"><a href="https://supabase.com/">© Supabase Inc</a><span>—</span><a href="https://github.com/supabase/supabase/blob/master/apps/docs/DEVELOPERS.md">Contributing</a><a href="https://github.com/supabase/supabase/blob/master/apps/docs/CONTRIBUTING.md">Author Styleguide</a><a href="https://supabase.com/open-source">Open Source</a><a href="https://supabase.com/supasquad">SupaSquad</a><button type="button" class="docs-privacy-trigger">Privacy Settings</button></div><div class="docs-social"><a href="https://twitter.com/supabase" aria-label="Twitter"><img src="assets/ui/twitter.svg" alt="" /></a><a href="https://github.com/supabase" aria-label="GitHub"><img src="assets/ui/github.svg" alt="" /></a><a href="https://discord.supabase.com/" aria-label="Discord"><img src="assets/ui/discord.svg" alt="" /></a><a href="https://youtube.com/c/supabase" aria-label="YouTube"><img src="assets/ui/youtube.svg" alt="" /></a></div></div></div></footer>
+
+    <dialog class="docs-search-dialog" aria-label="Search documentation"><div class="docs-search-dialog-head"><span class="docs-search-icon" aria-hidden="true"></span><input type="search" placeholder="Search docs..." aria-label="Search docs" /><button type="button" class="docs-search-close" aria-label="Close search">Esc</button></div><div class="docs-search-results" role="listbox"></div></dialog>
+    <dialog class="docs-privacy-dialog" aria-label="Privacy settings"><h2>Privacy Settings</h2><p>Choose whether this local preview may save optional preferences in this browser.</p><label><input type="checkbox" checked disabled /> Necessary storage</label><label><input type="checkbox" id="optional-storage" /> Optional preferences</label><div><button type="button" class="docs-privacy-cancel">Cancel</button><button type="button" class="docs-privacy-save">Save settings</button></div></dialog>
+  </body>
+</html>
