@@ -42,7 +42,6 @@ npm run check:product     # 계약 테스트
 sections:
   - id: hero
     type: hero
-    icon: { src: /assets/hero-logo-things-io90.png, alt: 로고 }
     video: { src: /media/intro.mp4, poster: /media/poster.png, title: 소개 영상 }
     action: { label: 영상 보기 }
   - id: projects
@@ -54,13 +53,12 @@ sections:
 
           빈 줄로 나누면 둘째 문단.
         link: { label: 자세히 보기, href: https://example.com }
-        icon: { src: /theme/assets/illustrations/project-placeholder-icon.svg }
+        icon: project
         image: { src: /media/project.png, alt: 화면 모음 }
   - source: tech.md
   - source: interviews.md
   - id: contact
     type: contact
-    mode: email
     email: me@example.com
 ---
 
@@ -75,22 +73,23 @@ sections:
 
 ## 섹션
 
+머리 `icon`은 공통 카탈로그 이름(`mail`, `chat-quote`) 또는 `{src, alt}` 이미지다. 공통 이름은 정본 `iconFile()`로 경로를 해석한다. 홈 히어로는 아이콘을 생략하고 원고의 이름을 표시한다.
+
 | 종류 | 필드 |
 |---|---|
 | hero | 홈 본문의 제목과 소개를 사용한다. 제목은 페이지 제목과 아이콘 대체 글이며 `icon`이 없으면 화면에 표시한다. 나머지 속성: `icon`, `image`(`{src, alt}`), `video`(`{src, title}` 필수, `poster` 선택), `action`(`{label, href}`) |
 | projects | `items` 목록. 항목마다 `title`, `description` 필수와 `enabled`, `link`(`{label, href}`), `icon`, `image` |
 | technologies | 본문의 제목·소개와 머리 `icon`. `items`는 아이콘 카탈로그 이름 목록이며 같은 이름의 태그 글로 연결 |
 | interviews | 본문의 제목·소개와 머리 `icon`, `links`(`{label, href?, icon?}`). `items`: `id`, `summary` 필수, `profile`(`{image?, title, subtitle?}`), `url`, `example` 선택 |
-| contact | `mode`: `email` 또는 `newsletter` |
+| contact | `email` 필수. `icon`, `title`, `description`, `button` 선택 |
 
 - hero: 영상이 있고 `action.href`가 없으면 재생 버튼(`action.label`은 처음 문구)이 된다. `href`를 쓰면 그 링크가 된다. 현재 홈은 사용자가 선택한 인터뷰 영상의 로컬 MP4를 사용한다. 프로젝트 영상 보기에서 같은 페이지 안의 영상 영역이 펼쳐지며 0초부터 재생한다. 출처와 웹 변환 정보는 `content/media/README.md`에 기록한다. `image`는 영상이 없을 때 소개 아래에 크게 보인다. 재생 버튼의 문구는 항상 `action.label`로 고정이고 아이콘만 재생과 일시정지 두 가지다. 영상이 끝나면 재생 아이콘으로 돌아가며 다시 누르면 처음부터 재생한다. 영상은 크롬 등에서 색이 어긋나지 않도록 `yuv420p`, BT.709 H.264로 둔다(변환 방법은 `content/media/README.md`).
-- projects: 링크 문구는 `link.label`, 이동 주소는 `link.href`이며 둘 다 직접 정한다(예: `label: 기능 보기`, `href: /docs/`). 기본 예시는 `자세히 보기`다. 항목 하나가 제목 → 소개 → 링크 → 큰 이미지 구간 하나다. 항목을 추가한 만큼 구간이 늘고, 목록이 비면 섹션이 없다. 기본값은 더미 2개이며 자체 placeholder 이미지(`project-placeholder.svg`)와 아이콘(`project-placeholder-icon.svg`)을 쓴다. 두 아이콘과 기술 섹션의 키캡 아이콘(`technology-keycap-icon.svg`)은 원본 PNG처럼 64px 안에서 그림 영역을 x11..53, y12..53(약 42x41)에 맞춘다. 공통 CSS가 투명 패딩을 전제로 마진을 주기 때문이다.
-- technologies, interviews, contact(newsletter)는 projects와 같은 머리(아이콘, 제목, 설명)를 쓰고 그 아래에 기술 로고 흐름, 인터뷰 카드 흐름, 구독 입력이 이어진다. 머리 바탕과 간격은 섹션 종류가 정한다.
+- projects: 링크 문구는 `link.label`, 이동 주소는 `link.href`이며 둘 다 직접 정한다(예: `label: 기능 보기`, `href: /docs/`). 기본 예시는 `자세히 보기`다. 항목 하나가 제목 → 소개 → 링크 → 큰 이미지 구간 하나다. 항목을 추가한 만큼 구간이 늘고, 목록이 비면 섹션이 없다. 기본 예시 두 항목은 큰 그림 `project-placeholder.svg`와 공통 `project` 아이콘을 쓴다.
+- technologies, interviews, contact는 projects와 같은 머리(아이콘, 제목, 설명)를 쓴다. 기술·인터뷰는 그 아래에 흐르는 목록을, contact는 이메일 연락 링크를 둔다. 머리 바탕과 간격은 공통 섹션이 정한다.
 - interviews: `links`는 제목 아래의 링크 행이다. `icon`은 내장 이름(`github`, `rss`, `linkedin`) 또는 이미지 파일이고 생략하면 `label`을 글자로 표시한다. 내장 아이콘은 `href`를 비워 둘 수 있으며 그러면 아이콘만 보이고 링크도 클릭도 없다(`aria-label`은 `<label> · 주소 준비 중`). 주소가 생기면 `href`만 채운다. 어떤 계정 주소도 추정해 넣지 않는다.
 - interviews 요약 링크: `summary` 안에서 `[@만난 곳](https://...)` 문법의 링크만 읽는다. 주소는 링크 `href`와 같은 규칙(HTTPS 또는 `/`로 시작하는 사이트 경로, `#` 페이지 안 연결)이고 `javascript:`, `data:`, `//host`는 설정 오류다. 라벨의 `@`는 글자 그대로이고 `@word`만 쓰면 링크도 주소 추정도 없다. 라벨 안의 `[`, `]`는 `\[`, `\]`로 쓰며 한 요약에 링크를 여러 개 넣을 수 있다. HTML, 이미지, 강조 등 다른 문법은 해석하지 않고 글자로 표시한다. 프로필 세 자리와 별개인 본문 기능이다.
 - interviews 카드: 요약 아래는 `profile`의 이미지, 제목, 부제목 세 자리뿐이다. 회사형이면 회사 아이콘, 회사명, 직무이고 플랫폼형이면 프로필 이미지, 아이디, 날짜처럼 같은 자리를 바꿔 쓴다. 두 값을 겹쳐 쌓지 않으며 `title`, `subtitle`은 의미가 없는 문자열이다. `url`(HTTPS)이 있으면 카드 전체가 그 주소로 연결된다. 회사명과 직무는 링크가 아닌 일반 글자로 표시하며 별도 줄은 생기지 않는다. 본문에 별도 링크가 있으면 그 링크는 자기 주소로 열린다. `url`이 없는 카드는 클릭해도 이동하지 않는다. `image`가 없으면 그 자리는 비지 않고 왼쪽 여백도 없으며, `profile`이 없으면 요약만 보인다. `image`는 `/assets/`, `/media/` 또는 HTTPS 이미지다. 표시할 `items`가 없으면 구간을 제외한다. 외부 계정을 읽어 오지 않으므로 값은 직접 적는다.
-- contact `email`: `email` 필수, `title`, `description`, `button` 선택.
-- contact `newsletter`: 위 필드에 `icon`, `endpoint`, `field`(입력 이름, 기본 `email`), `note`, `privacy`(`{label, href}`)가 더해지고 `email`은 직접 문의 대안으로 쓴다. `endpoint`(HTTPS)가 없으면 입력과 버튼이 비활성이고 `구독 서비스를 준비 중입니다`를 보이며 어떤 주소도 저장하거나 전송하지 않는다. `endpoint`가 있으면 이메일을 그 주소로 form POST할 뿐이며 사이트는 성공 화면을 만들지 않는다. 실제 수신과 발송은 구독 서비스가 맡는다. `privacy`와 `note`는 적은 경우에만 보인다.
+- contact: `email`의 주소를 `mailto:` 링크로 연결한다. 기본 제목은 `함께 만들어 볼까요?`, 설명은 `프로젝트와 협업에 관한 이야기를 기다립니다.`, 링크 문구는 `메일 보내기`이며 원고에서 바꿀 수 있다. 이메일을 입력받거나 전송하는 폼은 제공하지 않는다.
 
 ## 인터뷰 항목 예
 
@@ -119,4 +118,4 @@ items:
 
 ## 더미 자산 출처
 
-프로젝트 구간은 실제 내용을 채우기 전까지 꺼 둔다. 프로젝트 기본 그림은 공통 테마의 `assets/illustrations/`에서 가져온다. 사용 중인 외부 자산의 출처는 `config/assets.json`에 있다. 구간의 구조와 배치는 홈의 Simply Powerful, Things Newsletter 구간(2026-10-09 확인)을 따르고 공통 디자인의 `app-landing-*`, `app-newsletter` 규칙을 재사용한다.
+프로젝트 구간은 실제 내용을 채우기 전까지 꺼 둔다. 프로젝트 기본 그림은 공통 테마의 `assets/illustrations/`에서 가져온다. 사용 중인 외부 자산의 출처는 `config/assets.json`에 있다. 구간의 구조와 배치는 공통 `Section`, `SectionIntro` 구성 요소가 소유한다.

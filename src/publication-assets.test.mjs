@@ -9,17 +9,18 @@ test('publication_includes_nested_css_and_search_assets_without_shipping_authori
     '/theme/colors.css': '.row { background: url(../assets/arrow.svg?v=1) }',
     '/assets/arrow.svg': '<svg/>',
     '/theme/assets/font.woff2': 'font',
-    '/theme/assets/icons/small/document.svg': '<svg/>',
+    '/theme/assets/icons/documents/document.svg': '<svg/>',
     '/theme/assets/giscus.css': '',
     '/theme/tokens.json': 'authoring data',
     '/theme/styles.source.css': 'authoring source',
     '/media/unused.svg': '<svg/>',
   }));
   const pages = new Map([['/wiki/', '<link href="/theme/tokens.css?v=hash"><a href="/articles/example/">문서</a><img src="https://cdn.example/image.png">']]);
-  const assets = publicationAssets(pages, [{ iconUrl: '/theme/assets/icons/small/document.svg' }], path => {
+  const assets = publicationAssets(pages, [{ iconUrl: '/theme/assets/icons/documents/document.svg' }], path => {
+    if (path.startsWith('/theme/assets/icons/licenses/')) return '';
     assert.ok(source.has(path), path); return source.get(path);
   });
-  assert.deepEqual([...assets.keys()].sort(), [...source.keys()].filter(path => !['/theme/tokens.json', '/theme/styles.source.css', '/media/unused.svg'].includes(path)).sort());
+  assert.deepEqual([...assets.keys()].filter(path => !path.startsWith('/theme/assets/icons/licenses/')).sort(), [...source.keys()].filter(path => !['/theme/tokens.json', '/theme/styles.source.css', '/media/unused.svg'].includes(path)).sort());
 });
 
 test('missing_dependencies_and_encoded_path_escape_fail_before_publication', () => {
@@ -44,23 +45,22 @@ test('static_pages_load_only_the_footer_year_module_and_document_controls_keep_t
   assert.match(article, /<script type="module" async src="\/publication\.js\?v=client"><\/script><\/body>/);
   assert.ok(article.indexOf('data-comments') < article.indexOf('async src="/publication.js'));
   assert.match(article, /<script type="module" src="\/document\.js\?v=client">/);
-  for (const marker of ['data-tabs', 'data-tool', 'data-keyboard', 'data-tooltip-trigger']) assert.deepEqual(clientEntrypoints(`<div ${marker}></div>`), ['document.js']);
+  for (const marker of ['data-tabs', 'data-tool', 'data-tooltip-trigger']) assert.deepEqual(clientEntrypoints(`<div ${marker}></div>`), ['document.js']);
   assert.deepEqual(clientEntrypoints('<code>&lt;div data-tool&gt;</code>'), []);
 });
 
-test('video_state_icons_are_included_before_the_first_play', () => {
+test('video_media_are_collected_without_separate_control_images', () => {
   const pages = new Map([['/', '<div data-player><video poster="/media/poster.png"><source src="/media/demo.mp4"></video></div>']]);
   const assets = publicationAssets(pages, [], () => Buffer.from(''));
-  for (const path of ['/media/poster.png', '/media/demo.mp4', '/theme/assets/controls/pause.svg', '/theme/assets/controls/replay.svg']) assert.ok(assets.has(path));
+  for (const path of ['/media/poster.png', '/media/demo.mp4']) assert.ok(assets.has(path));
+  assert.ok([...assets.keys()].every(path => !path.startsWith('/theme/assets/controls/')));
   assert.deepEqual(clientEntrypoints(pages.get('/')), ['video.js']);
 });
 
 test('used_licensed_assets_include_notices_and_unused_assets_do_not', () => {
   const dependencies = [
-    ['/theme/assets/controls/play.svg', '/theme/assets/controls/LICENSE'],
     ['/theme/assets/fonts/pretendard-variable.woff2', '/theme/assets/fonts/pretendard-license.txt'],
     ['/theme/assets/fonts/jetbrains-mono-regular.woff2', '/theme/assets/fonts/jetbrains-mono-license.txt'],
-    ['/theme/assets/icons/brands/python.svg', '/theme/assets/icons/brands/LICENSE'],
     ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
     ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],
     ['/assets/company-j2ysoft.png', '/assets/company-logos-NOTICE.txt'],
@@ -81,6 +81,14 @@ test('used_licensed_assets_include_notices_and_unused_assets_do_not', () => {
   }
   const unused = publicationAssets(new Map([['/', '<main>자산 없음</main>']]), [], () => Buffer.from(''));
   for (const [, notice] of dependencies) assert.ok(!unused.has(notice));
+  for (const name of ['collected-icons', 'devicon', 'simple-icons', 'bootstrap', 'apache-2.0']) {
+    const notice = `/theme/assets/icons/licenses/${name}.txt`;
+    assert.ok(unused.has(notice), `inline icon notice: ${notice}`);
+    assert.throws(() => publicationAssets(new Map(), [], path => {
+      if (path === notice) throw new Error('missing icon notice');
+      return Buffer.from('');
+    }), /missing icon notice/);
+  }
 });
 
 test('blog_archive_loads_its_client_only_when_the_list_exists', () => {

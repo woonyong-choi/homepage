@@ -1,10 +1,10 @@
 // 홈 설정의 섹션 종류마다 독립된 HTML 구성 요소를 만든다.
-import { controlImage } from './controls.mjs';
 import { escape } from './markdown.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 import { href } from './home-content.mjs';
 import { interviewCards, publicInterviews } from './interviews.mjs';
 import { SocialIcon as socialIcon } from './vendor/theme/ui/index.mjs';
+import { iconFile } from './vendor/theme/ui/build/icons.mjs';
 
 const paragraphs = value => value.split(/\n\s*\n/).map(part => `<p>${escape(part.replace(/\s*\n\s*/g, ' ').trim())}</p>`).join('');
 const { trusted } = ui;
@@ -14,7 +14,7 @@ function heroAction(hero) {
   const label = hero.action?.label ?? '프로젝트 영상 보기';
   if (hero.action?.href) return `<a class="app-hero-link" href="${escape(hero.action.href)}">${escape(label)} <span aria-hidden="true">${hero.action.href.startsWith('#') ? '↓' : '→'}</span></a>`;
   if (!hero.video) return '';
-  return String(ui.RemoteLink({ id: `${hero.id}-player`, href: `#${hero.id}-video`, label, icon: trusted(controlImage('play', '', '')) }));
+  return String(ui.RemoteLink({ id: `${hero.id}-player`, href: `#${hero.id}-video`, label, icon: ui.ControlIcon('play') }));
 }
 
 function heroShowcase({ id, video, image }) {
@@ -27,7 +27,7 @@ export function heroSection(hero) {
   return String(ui.Hero({ id: hero.id, title: hero.title, description: hero.description, icon: hero.icon ? trusted(picture({ ...hero.icon, alt: hero.icon.alt || hero.title || '' }, 'app-hero-logo', 'eager')) : undefined, action: action ? trusted(action) : undefined, showcase: trusted(heroShowcase(hero)) }));
 }
 
-// 프로젝트, 기술, 인터뷰, 구독이 함께 쓰는 섹션 머리: 아이콘, 제목, 설명, 링크 행, 동작 링크.
+// 프로젝트, 기술, 인터뷰, 연락이 함께 쓰는 섹션 머리: 아이콘, 제목, 설명, 링크 행, 동작 링크.
 function sectionIntro({ icon, title, titleId, description, links = [], action }) {
   return String(ui.SectionIntro({ id: titleId, icon: icon ? trusted(picture(icon)) : undefined, title, description: description ? trusted(paragraphs(description)) : undefined, links: links.length ? trusted(links.map(socialLink).join('')) : undefined, action }));
 }
@@ -54,9 +54,9 @@ const flowRail = (options, items) => String(ui.FlowRail({ ...options, items: tru
 export function technologySection(section, brands) {
   if (!section.items.length) return '';
   const list = section.items.map(name => {
-    const brand = brands.find(item => item.name === name);
+    const brand = brands[name];
     if (!brand) throw new Error(`unknown technology: ${name}`);
-    return String(ui.LogoItem({ href: `/tags/${encodeURIComponent(name)}/`, label: `${brand.label} 태그 글 보기`, src: `/theme/assets/icons/brands/${brand.file}` }));
+    return String(ui.LogoItem({ href: `/tags/${encodeURIComponent(name)}/`, label: `${brand.label} 태그 글 보기`, src: `/theme/assets/icons/${iconFile(name)}` }));
   }).join('');
   const id = escape(section.id);
   return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));
@@ -74,20 +74,8 @@ export function interviewsSection(section, { preview = false } = {}) {
   return String(ui.Section({ id, variant: 'quotes', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(body) }));
 }
 
-function newsletter(contact, id) {
-  const ready = !!contact.endpoint;
-  const heading = sectionIntro({ icon: contact.icon, title: contact.title, titleId: `${id}-title`, description: contact.description });
-  const privacy = contact.privacy ? ` <a href="${escape(contact.privacy.href)}">${escape(contact.privacy.label)}</a>` : '';
-  const state = ready
-    ? (contact.note || privacy ? `<p class="app-newsletter-note" id="${id}-state">${escape(contact.note ?? '')}${privacy}</p>` : '')
-    : `<p class="app-newsletter-note" id="${id}-state" role="status">구독 서비스를 준비 중입니다. 지금은 이메일 주소를 받지 않습니다.${privacy}</p>`;
-  const form = String(ui.EmailForm({ id, action: contact.endpoint || undefined, field: contact.field, label: '이메일 주소', placeholder: 'me@example.com', button: contact.button, note: state ? trusted(state) : undefined }));
-  const direct = contact.email ? `<p class="app-caption">메일로 직접 문의하려면 <a href="mailto:${escape(contact.email)}">${escape(contact.email)}</a></p>` : '';
-  return String(ui.Section({ id, variant: 'form', labelledBy: `${id}-title`, heading: trusted(heading), content: trusted(form + direct) }));
-}
-
 export function contactSection(contact) {
-  const id = escape(contact.id);
-  if (contact.mode === 'newsletter') return newsletter(contact, id);
-  return `<section id="${id}" class="app-home-contact" aria-labelledby="${id}-title"><h2 id="${id}-title">${escape(contact.title)}</h2><p>${escape(contact.description)}</p><a class="app-primary-action" href="mailto:${escape(contact.email)}">${escape(contact.button)} <span aria-hidden="true">→</span></a></section>`;
+  const titleId = `${contact.id}-title`;
+  const heading = sectionIntro({ ...contact, titleId, action: { label: contact.button, href: `mailto:${contact.email}` } });
+  return String(ui.Section({ id: contact.id, labelledBy: titleId, heading: trusted(heading), content: trusted('') }));
 }

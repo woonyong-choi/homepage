@@ -61,7 +61,7 @@ test('extended_inline_and_block_syntax_renders_and_leaves_literals_alone', () =>
 
 test('safe_details_blocks_render_and_unsafe_variants_stay_text', () => {
   const html = render('<details open>\n<summary>**요약** 글자</summary>\n\n본문 `코드`\n\n<details>\n<summary>안쪽</summary>\n\n중첩\n</details>\n\n</details>\n\n끝');
-  assert.match(html, /^<details open="" class="app-details">\n<summary><strong>요약<\/strong> 글자<\/summary>/);
+  assert.match(html, /^<details class="app-details" open><summary><strong>요약<\/strong> 글자<\/summary>/);
   assert.equal((html.match(/<details/g) ?? []).length, 2);
   assert.equal((html.match(/<\/details>/g) ?? []).length, 2);
   assert.match(html, /<p>끝<\/p>\n$/);
@@ -205,10 +205,6 @@ test('ui_components_and_nested_fences_keep_working_with_markdown_extensions', ()
   assert.match(html, /<code class="language-js">/);
   assert.match(html, /<code class="language-markdown">/);
   assert.ok(text(html).includes('```js\nconsole.log(1);\n```'));
-  const syntax = createMarkdown().render('```ui:keys\nkeys: [⌘, C]\n```', { showSyntax: true });
-  assert.match(syntax, /aria-label="작성 문법 복사"/);
-  assert.match(syntax, /class="app-tool-label">Markdown</);
-  assert.equal(codeOf(syntax.slice(syntax.indexOf('<details'))), '```ui:keys\nkeys: [⌘, C]\n```');
 });
 
 test('footnotes_stay_unique_across_pages_and_link_back', () => {

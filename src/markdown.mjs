@@ -1,5 +1,4 @@
 // Markdown과 명시적인 문서 구성 요소를 정적 HTML로 변환한다.
-import { controlImage } from './controls.mjs';
 import { existsSync, readFileSync } from 'node:fs';
 import MarkdownIt from './vendor/markdown-it/markdown-it.mjs';
 import footnote from 'markdown-it-footnote';
@@ -39,10 +38,10 @@ export function image(name, alt = '', className = '') {
 }
 
 export const player = (data, id, controls = false) => String(ui.Player({ id, src: asset(data.src), poster: asset(data.poster), title: data.title, width: data.width, height: data.height, controls, overlay: data.overlay, wide: data.wide }));
-export const remote = (id, src = '') => String(ui.RemoteButton({ id, src: src ? asset(src) : undefined, icon: trusted(controlImage('play')) }));
+export const remote = (id, src = '') => String(ui.RemoteButton({ id, src: src ? asset(src) : undefined, icon: ui.ControlIcon('play') }));
 
 // 영상 입력을 구성 요소 속성으로 옮긴다. ui:video(`width`·`height`·`wide`는 플레이어 값)와 ::video(`width`는 블록 폭)가 같이 쓴다.
-export const videoOf = (data, id) => String(ui.Video({ id, src: asset(data.src), poster: asset(data.poster), title: data.title, caption: data.caption ?? '', frame: data.frame === 'iphone' ? 'iphone' : undefined, playerWidth: data.playerWidth, playerHeight: data.playerHeight, playerWide: data.playerWide, width: data.width, wide: data.wide, size: data.size, deviceOverlay: trusted(image('bezel-iphone6-overlay.svg', '', 'app-device-overlay')) }));
+export const videoOf = (data, id) => String(ui.Video({ id, src: asset(data.src), poster: asset(data.poster), title: data.title, caption: data.caption ?? '', frame: data.frame === 'iphone' ? 'iphone' : undefined, playerWidth: data.playerWidth, playerHeight: data.playerHeight, playerWide: data.playerWide, width: ui.contentWidth(data), deviceOverlay: trusted(image('bezel-iphone6-overlay.svg', '', 'app-device-overlay')) }));
 
 // 같은 낱말 표식 `::강조::`, `==강조==`로 mark를 만든다. 공백으로 시작하거나 끝나는 표식은 글자 그대로 둔다.
 function markRule(marker) {
@@ -124,7 +123,6 @@ function detailsBlock(state, startLine, endLine, silent) {
   const open = state.push('details_open', 'details', 1);
   open.map = [startLine, close];
   if (opening[1]) open.attrSet('open', '');
-  open.attrJoin('class', 'app-details');
   if (summary) {
     state.push('summary_open', 'summary', 1);
     const inline = state.push('inline', '', 0);
@@ -149,9 +147,9 @@ const MATH_OPTIONS = Object.freeze({ katex, throwOnError: false, errorColor: 'in
 const CARD_VARIANTS = ['centered', 'grouped', 'inline', 'related'];
 // 그림 입력(`src`, `alt`, `href`, `rounded`, `caption`, 폭)을 구성 요소 속성으로 옮긴다. ui:figure와 :::figure가 같이 쓴다.
 export function figureOf(item) {
-  return ui.Figure({ media: trusted(image(item.src, item.alt, item.rounded ? 'is-rounded' : '')), href: item.href, caption: item.caption ?? '', width: item.width, wide: item.wide, size: item.size });
+  return ui.Figure({ media: trusted(image(item.src, item.alt, item.rounded ? 'is-rounded' : '')), href: item.href, caption: item.caption ?? '', width: ui.contentWidth(item) });
 }
-// 카드 입력(`icon`: 스프라이트 이름, `content:이름`, false)을 구성 요소의 속성으로 옮긴다. 이어서 읽을 글(`related`) 카드는 콘텐츠 아이콘만 쓰고 설명은 그리지 않는다.
+// 카드 입력(`icon`: 공통 문서 아이콘 이름, `content:이름`, false)을 구성 요소의 속성으로 옮긴다. 이어서 읽을 글(`related`) 카드는 콘텐츠 아이콘만 쓰고 설명은 그리지 않는다.
 function cardSlot(item, parentVariant) {
   const variant = item.variant ?? parentVariant;
   if (variant && !CARD_VARIANTS.includes(variant)) throw new Error(`Unknown card variant: ${variant}`);
@@ -161,9 +159,9 @@ function cardSlot(item, parentVariant) {
 }
 export function renderGallery(data, id) {
   const slides = Array.isArray(data.slides) ? data.slides.map(slide => ({ image: trusted(image(slide.src, slide.alt ?? slide.label)), caption: slide.caption, label: slide.label })) : data.slides;
-  return String(ui.Gallery({ id, title: data.title, wide: data.wide, width: data.width, selected: data.selected, slides }));
+  return String(ui.Gallery({ id, title: data.title, width: ui.contentWidth(data), selected: data.selected, slides }));
 }
-const DIRECTIVE_KIT = Object.freeze({ escape, safeUrl, image, contentIcon, trusted, controlImage, card: cardSlot, figureOf, videoOf, asset, gallery: renderGallery, ui, assetExists: name => existsSync(new URL(`../content/assets/${name}`, import.meta.url)) });
+const DIRECTIVE_KIT = Object.freeze({ escape, safeUrl, image, contentIcon, trusted, card: cardSlot, figureOf, videoOf, asset, gallery: renderGallery, ui, assetExists: name => existsSync(new URL(`../content/assets/${name}`, import.meta.url)) });
 
 function fenceOptions(info, token, env, attributes = CODE_ATTRIBUTES) {
   const source = info.replace(/^\S+\s*/, '');
@@ -179,6 +177,10 @@ export function createMarkdown() {
   md.inline.ruler.before('emphasis', 'subscript', scriptRule('~', 'sub'));
   md.inline.ruler.before('emphasis', 'superscript', scriptRule('^', 'sup'));
   md.block.ruler.before('html_block', 'details', detailsBlock, { alt: ['paragraph', 'reference', 'blockquote', 'list'] });
+  md.renderer.rules.details_open = (tokens, index) => ui.Details.open({ open: tokens[index].attrGet('open') !== null });
+  md.renderer.rules.details_close = () => ui.Details.close();
+  md.renderer.rules.summary_open = () => ui.Details.summaryOpen();
+  md.renderer.rules.summary_close = () => ui.Details.summaryClose();
   md.core.ruler.after('github-task-lists', 'cancelled-task-lists', state => {
     for (let index = 2; index < state.tokens.length; index += 1) {
       const token = state.tokens[index];
@@ -222,9 +224,7 @@ export function createMarkdown() {
     if (kind.startsWith('ui:')) {
       const data = parse(token.content, { maxAliasCount: 0 });
       if (!data || typeof data !== 'object') throw new Error(`Invalid ${kind} data`);
-      const html = component(kind.slice(3), data, md, env);
-      if (!env.showSyntax) return html;
-      return html + `<details class="app-source-example"><summary>작성 문법 보기: ${escape(kind)}</summary>${codeBlock(`<code>${escape('```' + kind + '\n' + token.content + '```')}</code>`, { label: '작성 문법 복사', language: 'Markdown' })}</details>`;
+      return component(kind.slice(3), data, md, env);
     }
     const { id, label } = codeLanguage(kind);
     const codeOptions = fenceOptions(kind, token, env);
@@ -329,14 +329,6 @@ function component(kind, data, md, env) {
     case 'keys':
       return String(ui.Shortcut({ label: data.label, keys: data.keys }));
     case 'tooltip': return String(ui.TooltipBlock({ id: `${id}-tip`, label: data.label, body: trusted(render(data.description)) }));
-    case 'keyboard':
-      return String(ui.Keyboard({ id, image: trusted(image('keycommand-keyboard-io40.png', '키보드')), label: '키보드 언어', helpLabel: '도움말', help: trusted(render(data.help)), languages: data.languages, groups: data.groups.map(group => ({ ...group, rows: group.rows.map(row => ({ ...row, label: trusted(render(row.label)), note: row.note ? trusted(render(row.note)) : undefined })) })) }));
-    case 'status-board':
-      return String(ui.StatusBoard({ ...data, id, historyLabel: data.historyLabel ?? '지난 기록', title: data.title ?? '업데이트', items: data.items.map(item => ({ ...item, body: trusted(render(item.body)) })) }));
-    case 'contact-form':
-      return String(ui.ContactForm({ ...data, id, labels: { subject: '제목', message: '내용', kind: '문의 종류', email: '이메일', product: '관련 항목', privacy: '개인정보', verification: '입력 확인', verify: '검토용 입력 확인', submit: '보내기', ...data.labels } }));
-    case 'form':
-      return String(ui.DemoForm({ ...data, id, label: data.label ?? '구독', notice: '입력 동작 예시입니다. 내용은 전송·저장되지 않습니다.', emailLabel: '이메일', messageLabel: '내용' }));
     default: throw new Error(`Unknown document component: ${kind}`);
   }
 }

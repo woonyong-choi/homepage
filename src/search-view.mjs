@@ -53,7 +53,7 @@ export function renderResults(root, result, state, tags) {
   if (previous) previous.replaceWith(pages); else output.after(pages);
   root.setAttribute('aria-busy', 'false');
   const fallback = root.querySelector('[data-search-fallback]');
-  if (fallback) fallback.hidden = !fallback.open && !fallback.contains(document.activeElement);
+  if (fallback) fallback.hidden = !fallback.querySelector('details').open && !fallback.contains(document.activeElement);
 }
 
 function resultLink(entry, query) {

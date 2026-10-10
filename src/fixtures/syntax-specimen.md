@@ -87,14 +87,14 @@ npm run build:site
 
 ## Images and captions
 
-![문서 아이콘](/theme/assets/icons/small/document.svg)
+![문서 아이콘](/theme/assets/icons/documents/document.svg)
 
 ```ui:figure
 {
   "src": "2-today-mac.png",
   "alt": "캡션이 있는 이미지 예시",
   "caption": "캡션이 있는 이미지 예시",
-  "wide": false
+  "width": "content"
 }
 ```
 
@@ -165,7 +165,7 @@ npm run build:site
 
 ```ui:gallery
 {
-  "wide": true,
+  "width": "wide",
   "title": "다섯 단계 예시",
   "slides": [
     {
@@ -248,7 +248,7 @@ npm run build:site
 }
 ```
 
-## Keyboard and tooltip
+## Shortcuts and tooltip
 
 ```ui:keys
 {
@@ -290,15 +290,6 @@ npm run build:site
 }
 ```
 
-## Form validation
-
-```ui:form
-{
-  "message": true,
-  "label": "Validate example"
-}
-```
-
 ## Component syntax
 
 구성 요소는 `ui:종류` 코드 펜스에 YAML 또는 JSON으로 작성합니다. 아래는 실행되지 않는 문법 설명용 코드입니다.
@@ -313,7 +304,7 @@ npm run build:site
 ```
 ````
 
-지원 구성 요소: `callout`, `details`, `figure`, `video`, `gallery`, `tabs`, `cards`, `definitions`, `speech`, `keys`, `tooltip`, `form`, `group`, `feature`. HTML 원문과 스크립트는 실행하지 않습니다.
+지원 구성 요소: `callout`, `details`, `figure`, `video`, `gallery`, `tabs`, `cards`, `definitions`, `speech`, `keys`, `tooltip`, `group`, `feature`. HTML 원문과 스크립트는 실행하지 않습니다.
 
 
 ## Speech and grouped sections
@@ -331,7 +322,6 @@ body: "[문서 목록으로 돌아가기](/docs/)"
 
 ```ui:feature
 title: A reusable feature
-icon: fancysection-icon-whatpeoplearesaying-io70.png
 description: 공통 구성 요소의 문법으로 소개 구간을 작성합니다.
 body: "[프로젝트 목록](/projects/)으로 이동하는 링크를 함께 표시합니다."
 left: 왼쪽 설명에는 기능의 목적을 적습니다.
@@ -386,177 +376,6 @@ items:
   - title: 선택하기
     body: 설명과 기기 화면을 나란히 배치합니다.
 media: "![화면](/assets/10-reminders-mac.png)"
-```
-
-## 문의 입력 양식
-
-```ui:contact-form
-privacy: 문의 내용을 처리하는 방식을 설명하는 예시입니다.
-availability: 입력 검증만 실행하며 외부로 전송하지 않습니다.
-```
-
-## 상태와 출시 목록
-
-```ui:status-board
-updated: Example status
-message: 상태 표시 예시입니다.
-history: 지난 기록의 예시입니다.
-items:
-  - title: Example release
-    body: "변경 사항과 [관련 글](/blog/)을 연결합니다."
-    status: Released
-    date: October 6, 2026
-```
-
-## 키보드 배열별 단축키
-
-```ui:keyboard
-{
-  "languages": [
-    {
-      "value": "en-us",
-      "label": "English (US)"
-    },
-    {
-      "value": "en-gb",
-      "label": "English (Great Britain)"
-    },
-    {
-      "value": "en-int",
-      "label": "English (International)"
-    },
-    {
-      "value": "ar",
-      "label": "Arabic"
-    },
-    {
-      "value": "zh-pinyin",
-      "label": "Chinese (Pinyin)"
-    },
-    {
-      "value": "zh-zhuyin",
-      "label": "Chinese (Zhuyin)"
-    },
-    {
-      "value": "da",
-      "label": "Danish"
-    },
-    {
-      "value": "nl",
-      "label": "Dutch"
-    },
-    {
-      "value": "fi",
-      "label": "Finnish"
-    },
-    {
-      "value": "fr",
-      "label": "French"
-    },
-    {
-      "value": "fr-ch",
-      "label": "French (Swiss)"
-    },
-    {
-      "value": "fr-ca",
-      "label": "French (Canada)"
-    },
-    {
-      "value": "de",
-      "label": "German"
-    },
-    {
-      "value": "de-ch",
-      "label": "German (Swiss)"
-    },
-    {
-      "value": "hu",
-      "label": "Hungarian"
-    },
-    {
-      "value": "it",
-      "label": "Italian"
-    },
-    {
-      "value": "ja-kana",
-      "label": "Japanese (Kana)"
-    },
-    {
-      "value": "ja-romaji",
-      "label": "Japanese (Romaji)"
-    },
-    {
-      "value": "ko",
-      "label": "Korean (2-set)"
-    },
-    {
-      "value": "pt",
-      "label": "Portuguese"
-    },
-    {
-      "value": "es",
-      "label": "Spanish"
-    },
-    {
-      "value": "es-la",
-      "label": "Spanish (Latin America)"
-    },
-    {
-      "value": "ru",
-      "label": "Russian"
-    },
-    {
-      "value": "sv",
-      "label": "Swedish"
-    },
-    {
-      "value": "tr-q",
-      "label": "Turkish Q"
-    },
-    {
-      "value": "tr-f",
-      "label": "Turkish F"
-    },
-    {
-      "value": "other",
-      "label": "Other"
-    }
-  ],
-  "help": "키보드 배열에 따른 표시 전환 예시입니다. 단축키 데이터는 Markdown에서 언어별로 정의합니다.",
-  "groups": [
-    {
-      "title": "Example",
-      "rows": [
-        {
-          "label": "예시 작업 1 — 항목을 선택하고 동작합니다.",
-          "keys": {
-            "en-us": [
-              "⌘ Cmd",
-              "N"
-            ],
-            "ko": [
-              "⌘ Cmd",
-              "N (ㅜ)"
-            ],
-            "fr": [
-              "⌘ Cmd",
-              "N"
-            ]
-          }
-        },
-        {
-          "label": "예시 작업 2 — 항목을 선택하고 동작합니다.",
-          "keys": {
-            "en-us": [
-              "⌘ Cmd",
-              "Return"
-            ]
-          }
-        }
-      ]
-    }
-  ]
-}
 ```
 
 ## Icon catalog

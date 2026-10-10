@@ -4,8 +4,6 @@ import { TAB_ATTRIBUTES, WIDTH_OPTION } from './directive-syntax.mjs';
 
 const PLACES = ['root', 'tab'];
 
-const checkWidth = (attrs, { ui }) => ui.contentWidth(attrs);
-
 // 옛 `::::tabs`+`:::tab[이름]` 형식은 선택 줄이 위에 오는 분할 모양이다. 새 `@tab` 형식은 meta.options(없으면 테마 기본값)를 쓴다.
 const LEGACY_TABS = Object.freeze({ position: 'top', selector: 'segmented' });
 
@@ -102,15 +100,14 @@ export const BLOCKS = Object.freeze({
   },
   gallery: {
     label: 'none',
-    attrs: { title: { type: 'text' }, width: WIDTH_OPTION, wide: { type: 'bool' } },
-    check: checkWidth,
+    attrs: { title: { type: 'text' }, width: WIDTH_OPTION },
     within: PLACES,
     body: { only: ['directive:slide'], min: 1 },
     prepare(meta, children, { nextId }) {
       meta.id = nextId();
       meta.slides = children.map(child => ({ src: child.meta.attrs.src, alt: child.meta.attrs.alt, caption: child.meta.attrs.caption }));
     },
-    open: ({ id, slides, attrs }, { gallery }) => gallery({ title: attrs.title, wide: attrs.wide, width: attrs.width, slides }, id),
+    open: ({ id, slides, attrs }, { gallery }) => gallery({ title: attrs.title, width: attrs.width, slides }, id),
     close: () => '',
   },
   slide: {
@@ -123,18 +120,16 @@ export const BLOCKS = Object.freeze({
   figure: {
     leaf: true,
     label: 'none',
-    attrs: { src: { type: 'asset', required: true }, alt: { type: 'text', required: true }, caption: { type: 'text' }, href: { type: 'url' }, rounded: { type: 'bool' }, width: WIDTH_OPTION, size: { type: 'enum', values: ['compact'] }, wide: { type: 'bool' } },
+    attrs: { src: { type: 'asset', required: true }, alt: { type: 'text', required: true }, caption: { type: 'text' }, href: { type: 'url' }, rounded: { type: 'bool' }, width: WIDTH_OPTION },
     within: PLACES,
-    check: checkWidth,
     render: ({ attrs }, { figureOf }) => String(figureOf(attrs)),
   },
   video: {
     leaf: true,
     label: 'none',
-    attrs: { src: { type: 'asset', required: true }, poster: { type: 'asset', required: true }, alt: { type: 'text', required: true }, caption: { type: 'text' }, controls: { type: 'bool' }, frame: { type: 'enum', values: ['none', 'iphone'] }, width: WIDTH_OPTION, wide: { type: 'bool' } },
+    attrs: { src: { type: 'asset', required: true }, poster: { type: 'asset', required: true }, alt: { type: 'text', required: true }, caption: { type: 'text' }, controls: { type: 'bool' }, frame: { type: 'enum', values: ['none', 'iphone'] }, width: WIDTH_OPTION },
     within: PLACES,
-    check(attrs, kit) {
-      checkWidth(attrs, kit);
+    check(attrs) {
       if (attrs.controls === false) throw new Error('본문 영상의 재생 조작은 숨길 수 없습니다. controls 옵션을 생략하세요');
     },
     render: ({ attrs }, { videoOf, nextId }) => videoOf({ ...attrs, title: attrs.alt }, nextId()),

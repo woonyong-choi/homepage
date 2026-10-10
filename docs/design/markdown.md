@@ -1,6 +1,6 @@
 # Markdown 글 작성
 
-글은 `.md` 파일 하나이며 일반 Markdown만으로 쓴다. `ui:` 구성 요소는 복각 검토 화면용 선택 기능이고 글 작성에 필요하지 않다. 실제 렌더링은 미리보기의 `/blog/markdown-guide/`에서 확인한다. 승인 예시는 `content/blog/markdown-guide.md`이며 `example: true`라 운영 빌드, 검색, RSS, 사이트맵에서 빠진다.
+글은 `.md` 파일 하나이며 일반 Markdown만으로 쓴다. `ui:` 구성 요소는 구조화된 입력을 위한 선택 기능이고 일반 글 작성에는 필요하지 않다. 실제 렌더링은 미리보기의 `/blog/markdown-guide/`에서 확인한다. 승인 예시는 `content/blog/markdown-guide.md`이며 `example: true`라 운영 빌드, 검색, RSS, 사이트맵에서 빠진다.
 
 ## 파일과 메타데이터
 
@@ -238,7 +238,7 @@ const message = "넓은 코드블록";
 ````
 
 - 탭도 `:::tabs w-narrow`, `:::tabs w-wide`로 쓴다. 같은 규칙이 묶음 전체에 적용된다.
-- 옛 `width=narrow`, `width=wide`, `wide`, `size=compact`는 호환 표기다. 기본값 `width=content`는 생략과 같다. 같은 폭을 새·옛 표기로 중복 지정하거나 서로 다른 폭을 함께 지정하면 오류다. 기존 `wide`·`size` 호환 조합은 값이 다를 때 오류다.
+- 블록 폭은 `width` 하나로 정한다. `w-narrow`와 `w-wide`는 각각 `width=narrow`와 `width=wide`로 해석하며, 기본값 `width=content`는 생략과 같다. 같은 폭을 중복 지정하거나 다른 폭을 함께 지정하면 오류다. 옛 블록 속성 `wide`와 `size=compact`는 받지 않는다. `ui:video`의 플레이어 치수·비율(`width`, `height`, `wide`), 그림 격자의 `size`, 카드의 `compact`는 블록 폭과 다른 속성으로 유지한다.
 - Daphnis도 `dap`, `dap w-wide`, `dap w-narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
 - 폭은 공통 구성 요소가 클래스(`app-width-narrow`, `app-width-wide`)로 정하고 값은 테마 토큰이다. CSS나 픽셀 값을 글마다 직접 넣지 않는다.
 - 기기 탭 상자 안에서 `w-wide`를 쓰면 상자 밖으로 나오므로 안쪽 요소의 폭은 보통 생략한다.

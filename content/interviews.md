@@ -2,9 +2,7 @@
 id: interviews
 type: interviews
 enabled: true
-icon:
-  src: /assets/fancysection-icon-whatpeoplearesaying-io70.png
-  alt: ""
+icon: chat-quote
 links:
   - label: GitHub
     href: https://github.com/woonyong-choi
@@ -17,7 +15,7 @@ items:
     summary: "[@만난 곳](/docs/)에서 함께한 동료평가 내용을 작성하세요."
     profile:
       image:
-        src: /assets/tweetgrid-avatar-default.png
+        src: /theme/assets/icons/places/building.svg
         alt: ""
       title: 회사명
       subtitle: 직무
@@ -32,7 +30,7 @@ items:
     summary: 짧은 평가입니다.
     profile:
       image:
-        src: /theme/assets/illustrations/project-placeholder-icon.svg
+        src: /theme/assets/icons/places/building.svg
         alt: ""
       title: 회사명
       subtitle: 직무

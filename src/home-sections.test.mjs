@@ -5,6 +5,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { loadHomeContent, parseHomeSections } from './home-content.mjs';
 import { personalHome } from './publication-layout.mjs';
 import { clientEntrypoints, publicationAssets } from './publication-assets.mjs';
+import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
 
 const TECHNOLOGIES = new Set(['python', 'git']);
 const render = (yaml, preview = true) => personalHome({ config: { name: '이름' }, home: parseHomeSections(parseYaml(yaml), { technologies: TECHNOLOGIES }), preview });
@@ -75,8 +76,8 @@ test('interview_cards_show_summary_and_exactly_the_image_title_subtitle_slots', 
   assert.match(linked, /<a class="app-interview-card-link" href="https:\/\/example.com\/talk" aria-label="회사명 직무 인터뷰 보기"><\/a>/);
   assert.match(linked, /<strong>회사명<\/strong><span>직무<\/span>/);
   assert.equal((linked.match(/<a[^>]+href="https:\/\/example.com\/talk"/g) ?? []).length, 1);
-  const picture = render(item('').replace('profile: {', 'profile: { image: { src: /assets/tweetgrid-avatar-default.png }, '), false);
-  assert.match(picture, /<div class="app-interview-meta"><span class="app-interview-avatar"><img src="\/assets\/tweetgrid-avatar-default\.png" alt=""[^>]*><\/span><div class="app-interview-lines">/);
+  const picture = render(item('').replace('profile: {', 'profile: { image: { src: /theme/assets/icons/places/building.svg }, '), false);
+  assert.match(picture, /<div class="app-interview-meta"><span class="app-interview-avatar"><img src="\/theme\/assets\/icons\/places\/building\.svg" alt=""[^>]*><\/span><div class="app-interview-lines">/);
   const bare = render('sections:\n  - { id: interviews, type: interviews, items: [{ id: a, summary: <b>요약</b> }, { id: b, summary: 둘, profile: { title: "<i>제목</i>" } }] }', false);
   assert.doesNotMatch(bare.split('</li>')[0], /app-interview-meta/);
   assert.match(bare, /&lt;b&gt;요약&lt;\/b&gt;/);
@@ -112,7 +113,7 @@ test('social_links_support_registry_icons_and_show_a_link_less_icon_as_a_placeho
   const html = render('sections:\n  - { id: talk, type: interviews, links: [{ label: GitHub, href: "https://github.com/x", icon: github }, { label: LinkedIn, icon: linkedin }], items: [{ id: a, summary: 예시 요약 }] }');
   const row = html.match(/<p class="app-landing-social">.*?<\/p>/)[0];
   assert.match(row, /<a href="https:\/\/github.com\/x" aria-label="GitHub"><svg/);
-  assert.match(row, /<span role="img" aria-label="LinkedIn · 주소 준비 중"><svg class="app-landing-symbol"/);
+  assert.match(row, /<span role="img" aria-label="LinkedIn · 주소 준비 중"><svg[^>]*class="app-landing-symbol"/);
   assert.equal((row.match(/<a /g) ?? []).length, 1);
 });
 
@@ -121,11 +122,14 @@ test('technologies_and_interviews_share_the_section_intro_with_projects', () => 
   const tech = render('sections:\n  - { id: tech, type: technologies, items: [python] }');
   assert.match(intro(tech), /<h2 id="tech-title">함께 쓰는 기술<\/h2><p>기술별 기록을 모았습니다\.<\/p>/);
   const rich = render('sections:\n  - id: talk\n    type: interviews\n    icon: { src: https://example.com/i.png }\n    title: 이야기\n    description: 설명\n    links: [{ label: GitHub, href: "https://github.com/x", icon: github }, { label: 글, href: /blog/ }]\n    items: [{ id: a, summary: 예시 요약 }]');
-  assert.match(intro(rich), /<h2 id="talk-title"><img src="https:\/\/example.com\/i.png" alt="" loading="lazy" decoding="async"> 이야기<\/h2><p>설명<\/p><p class="app-landing-social"><a href="https:\/\/github.com\/x" aria-label="GitHub"><svg class="app-landing-symbol"/);
+  assert.match(intro(rich), /<h2 id="talk-title"><img src="https:\/\/example.com\/i.png" alt="" loading="lazy" decoding="async"> 이야기<\/h2><p>설명<\/p><p class="app-landing-social"><a href="https:\/\/github.com\/x" aria-label="GitHub"><svg[^>]*class="app-landing-symbol"/);
   assert.match(intro(rich), /<a href="\/blog\/">글<\/a>/);
   assert.doesNotMatch(rich, /data-flow-controls|data-flow-(?:toggle|prev|next)|<button/);
   assert.match(rich, /class="app-landing-section app-landing-interviews"/);
   assert.deepEqual(clientEntrypoints(rich), ['flows.js']);
+  const named = render('sections:\n  - { id: contact, type: contact, email: hello@example.com, icon: mail }');
+  assert.match(intro(named), /<img src="\/theme\/assets\/icons\/communication\/mail.svg"/);
+  assert.throws(() => render('sections:\n  - { id: contact, type: contact, email: hello@example.com, icon: missing-icon }'), /unknown icon/);
 });
 
 test('hero_title_names_the_page_and_icon_and_missing_files_of_disabled_items_are_ignored', () => {
@@ -143,25 +147,24 @@ test('hero_title_names_the_page_and_icon_and_missing_files_of_disabled_items_are
   assert.throws(() => parseHomeSections(parseYaml(yaml.replace('enabled: false, ', '')), { exists: () => false }), /items\[0\]\.image\.src: 파일이 없습니다/);
 });
 
-test('newsletter_without_endpoint_keeps_controls_disabled_and_never_posts', () => {
-  const base = 'sections:\n  - id: contact\n    type: contact\n    mode: newsletter\n    email: hello@example.com';
-  const idle = render(base);
-  assert.doesNotMatch(idle, /action=|method=/);
-  assert.match(idle, /<input[^>]*type="email"[^>]* disabled/);
-  assert.match(idle, /<button type="submit" disabled>구독<\/button>/);
-  assert.match(idle, /구독 서비스를 준비 중입니다/);
-  assert.match(idle, /href="mailto:hello@example.com"/);
-  assert.doesNotMatch(idle, /개인정보|구독했습니다|완료/);
-  const live = render(`${base}\n    endpoint: https://subscribe.example.com/form\n    privacy: { label: 개인정보, href: "https://example.com/privacy" }`);
-  assert.match(live, /<form class="app-newsletter" method="post" action="https:\/\/subscribe.example.com\/form">/);
-  assert.doesNotMatch(live, /disabled|준비 중/);
-  assert.match(live, /<a href="https:\/\/example.com\/privacy">개인정보<\/a>/);
-  assert.throws(() => render(`${base}\n    endpoint: http://subscribe.example.com`), /sections\[0\]\.endpoint.*HTTPS/);
-  assert.match(render('sections:\n  - { id: contact, type: contact, email: hello@example.com }'), /href="mailto:hello@example.com"/);
+test('contact_uses_the_email_link_and_rejects_unsupported_subscription_settings', () => {
+  const base = 'sections:\n  - id: contact\n    type: contact\n    email: hello@example.com';
+  const html = render(base);
+  assert.match(html, /<h2 id="contact-title">함께 만들어 볼까요\?<\/h2>/);
+  assert.match(html, /href="mailto:hello@example.com">메일 보내기<\/a>/);
+  assert.doesNotMatch(html, /<form|<input|<button|구독|준비 중/);
+  for (const setting of ['mode: newsletter', 'endpoint: https://subscribe.example.com/form']) {
+    assert.throws(() => render(`${base}\n    ${setting}`), /알 수 없는 설정/);
+  }
+  const home = loadHomeContent(new Set(Object.keys(getIconCatalog().brands)));
+  const shipped = personalHome({ config: { name: '이름' }, home });
+  assert.match(shipped, /<p class="app-hero-title" aria-hidden="true">최우녕<\/p>/);
+  assert.match(shipped, /href="mailto:woonyong.contact@gmail.com">메일 보내기<\/a>/);
+  assert.doesNotMatch(shipped, /<form|<input|구독 서비스를 준비 중/);
 });
 
 test('the_shipped_interviews_section_shows_its_title_description_and_two_social_links', () => {
-  const brands = JSON.parse(readFileSync(new URL('./vendor/theme/assets/icons/brands/catalog.json', import.meta.url))).icons.map(item => item.name);
+  const brands = Object.keys(getIconCatalog().brands);
   const interviews = loadHomeContent(new Set(brands)).find(section => section.type === 'interviews');
   assert.equal(interviews.description, '함께 일한 동료들이 들려주는 저에 대한 이야기입니다.');
   assert.equal(interviews.title, '사람들이 하는 말');
@@ -170,7 +173,7 @@ test('the_shipped_interviews_section_shows_its_title_description_and_two_social_
 });
 
 test('the_shipped_home_content_omits_projects_from_the_visible_sections', () => {
-  const brands = JSON.parse(readFileSync(new URL('./vendor/theme/assets/icons/brands/catalog.json', import.meta.url))).icons.map(item => item.name);
+  const brands = Object.keys(getIconCatalog().brands);
   const home = loadHomeContent(new Set(brands));
   assert.deepEqual(home.map(section => section.type), ['hero', 'technologies', 'interviews', 'contact']);
   assert.equal(home[1].title, '기술과 생각');
@@ -178,7 +181,7 @@ test('the_shipped_home_content_omits_projects_from_the_visible_sections', () => 
 });
 
 test('the_shipped_hero_plays_the_selected_local_video_from_the_beginning', () => {
-  const brands = JSON.parse(readFileSync(new URL('./vendor/theme/assets/icons/brands/catalog.json', import.meta.url))).icons.map(item => item.name);
+  const brands = Object.keys(getIconCatalog().brands);
   const hero = loadHomeContent(new Set(brands)).find(section => section.type === 'hero');
   assert.equal(hero.video.src, '/media/woonyong-interview.mp4');
   assert.equal(hero.action.href, undefined);

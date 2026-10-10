@@ -3,9 +3,6 @@ sections:
   - id: hero
     type: hero
     enabled: true
-    icon:
-      src: /assets/hero-logo-things-io90.png
-      alt: Things 임시 로고
     video:
       src: /media/woonyong-interview.mp4
       poster: /media/woonyong-interview-poster.jpg
@@ -21,9 +18,7 @@ sections:
         link:
           label: 자세히 보기
           href: /docs/
-        icon:
-          src: /theme/assets/illustrations/project-placeholder-icon.svg
-          alt: ""
+        icon: project
         image:
           src: /theme/assets/illustrations/project-placeholder.svg
           alt: 더미 프로젝트 이미지
@@ -32,9 +27,7 @@ sections:
         link:
           label: 자세히 보기
           href: /blog/
-        icon:
-          src: /theme/assets/illustrations/project-placeholder-icon.svg
-          alt: ""
+        icon: project
         image:
           src: /theme/assets/illustrations/project-placeholder.svg
           alt: 더미 프로젝트 이미지
@@ -43,13 +36,10 @@ sections:
   - id: contact
     type: contact
     enabled: true
-    mode: newsletter
-    title: 소식 받아보기
-    description: 새 글과 프로젝트 소식을 이메일로 보내 드립니다.
-    button: 구독
-    icon:
-      src: /assets/fancysection-icon-newsletter-io70.png
-      alt: ""
+    title: 함께 만들어 볼까요?
+    description: 프로젝트와 협업에 관한 이야기를 기다립니다.
+    button: 메일 보내기
+    icon: mail
     email: woonyong.contact@gmail.com
 ---
 
