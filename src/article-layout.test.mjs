@@ -86,8 +86,8 @@ test('document_column_keeps_reading_width_and_soft_wrapping_between_navigation_c
   assert.match(rule('.app-code pre'), /white-space: pre-wrap;[^}]*overflow-wrap: anywhere;/);
   assert.doesNotMatch(rule('.app-code pre'), /overflow-x|overflow: (?:auto|scroll)/);
   assert.match(rule('.app-code'), /grid-template-columns: minmax\(0, 1fr\);[^}]*overflow: hidden/);
-  assert.match(rule('.app-code-header'), /justify-content: space-between/);
-  assert.match(rule('.app-code-header button[hidden]'), /display: none/);
+  assert.match(rule('.app-tool-header'), /justify-content: space-between/);
+  assert.match(rule('.app-tool-button[hidden]'), /display: none/);
   assert.doesNotMatch(css, /\.app-code button \{/);
 });
 

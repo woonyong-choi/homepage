@@ -31,11 +31,34 @@ category: software-design
 
 큐는 처리 능력을 무한히 늘리지 않습니다. 잠깐의 입력 증가를 흡수하지만, 평균 입력이 평균 처리 능력을 계속 넘으면 대기가 쌓입니다. 한도를 늘리기 전에 큐 길이, 가장 오래 기다린 항목, 처리 시간과 실패율을 함께 봐야 합니다.
 
-```text
-입력 → 용량 확인 → 제한된 큐 → 작업자
-          ↓
-     거부 또는 재시도 안내
+```dap
+daphnis 2
+title "큐에 여유가 없으면 입력을 기다리게 한다"
+
+box input "요청 접수" icon=apigw
+queue jobs "대기 작업" slots=4 from=1
+box worker "작업자" icon=server
+box retry "재시도 안내" icon=notify
+value done "처리 완료" on=worker
+on worker done+1
+
+input -> jobs
+jobs -> worker
+input -> retry quiet
+view graph down
+
+scene "구조" mode=static
+
+scene "유입이 많을 때" mode=loop for=8s
+  track input -> jobs every=1s time=700ms wait="jobs<4" timeout=1s else=retry reserve="jobs+1"
+  track jobs -> worker at=500ms every=2s time=700ms wait="jobs>0" reserve="jobs-1" tone=green
+
+scene "소비자가 회복되면" mode=loop for=8s set="jobs=4"
+  track input -> jobs every=2500ms time=700ms wait="jobs<4" timeout=1s else=retry reserve="jobs+1"
+  track jobs -> worker at=500ms every=1s time=700ms wait="jobs>0" reserve="jobs-1" tone=green
 ```
+
+위 그림에서 **유입이 많을 때**를 고르면 큐가 차는 동안 요청이 들어오고, 빈자리를 기다리다 시간이 지나면 재시도 안내로 넘어갑니다. **소비자가 회복되면**에서는 작업자가 더 자주 꺼내 대기를 줄입니다. 재생 간격은 흐름을 구분하기 위한 설정이며 실제 처리량 측정값은 아닙니다.
 
 가득 찼을 때의 동작을 정하지 않은 큐는 정책을 메모리 한계에 맡긴 셈입니다. 사용자에게 언제 다시 시도할지 알리거나, 중요한 작업과 덜 중요한 작업을 분리하는 선택이 필요합니다.
 

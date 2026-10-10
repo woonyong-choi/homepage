@@ -12,7 +12,7 @@ const md = createMarkdown();
 const render = source => md.render(source, {});
 const text = html => html.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#(?:39|x27);/g, "'").replace(/&amp;/g, '&');
 const codeOf = html => text(html.match(/<pre><code[^>]*>([\s\S]*?)<\/code><\/pre>/)[1]);
-const labelOf = html => html.match(/class="app-code-language">([^<]*)</)[1];
+const labelOf = html => html.match(/class="app-tool-label">([^<]*)</)[1];
 const fence = (info, body) => '```' + info + '\n' + body + '```\n';
 
 test('commonmark_and_gfm_constructs_render_as_semantic_html', () => {
@@ -27,7 +27,7 @@ test('commonmark_and_gfm_constructs_render_as_semantic_html', () => {
     '![대체](/media/a.png "제목")', '', '각주[^a]\n\n[^a]: 본문',
   ].join('\n'));
   for (const marker of ['<h1 id="', '<h6 id="', '<em>', '<strong>', '<s>', '<code>코드</code>', '<br>', '<blockquote>\n<p>인용</p>\n<blockquote>', '<ol>', '<ul>\n<li>중첩', 'task-list-item-checkbox', 'is-right', '<hr>', 'href="https://example.com/"', 'href="https://example.org/path"', '<img src="/media/a.png" alt="대체" title="제목"', 'footnote-ref', 'class="footnotes"']) assert.ok(html.includes(marker), marker);
-  assert.match(html, /<div class="app-table-scroll"><table>/);
+  assert.match(html, /<div class="app-table-scroll"[^>]*><table class="app-table">/);
 });
 
 test('every_heading_level_keeps_its_written_level_as_a_class_and_ids_never_collide', () => {
@@ -173,7 +173,7 @@ test('every_registered_highlight_language_and_alias_renders_and_keeps_its_text',
       aliases += 1;
       if (!/^[\w+#.-]+$/.test(name)) continue;
       const html = render(fence(name, source));
-      assert.match(html, /<div class="app-code"><div class="app-code-header"><span class="app-code-language">[^<]+<\/span><button/);
+      assert.match(html, /<div class="app-code app-tool-surface"><div class="app-tool-header"><span class="app-tool-label">[^<]+<\/span><div class="app-toolbar"/);
       assert.equal(codeOf(html), source, name);
       assert.doesNotMatch(html, /<tag>/);
     }
@@ -192,22 +192,22 @@ test('copy_source_is_the_exact_fence_content_including_tabs_comments_and_trailin
   const body = '// 주석\n\tfunction a() {  \n\t\treturn "탭\\t";   \n\t}\n\n\n  # 공백 시작\n';
   for (const info of ['js', 'python', 'bash', 'text', 'nonexistent']) assert.equal(codeOf(render(fence(info, body))), body, info);
   const html = render(fence('js', body));
-  assert.equal((html.match(/data-copy aria-label="코드 복사" hidden/g) ?? []).length, 1);
-  assert.ok(html.indexOf('data-copy') < html.indexOf('<pre>'), '복사 버튼은 코드 위쪽 머리글에 있다');
-  assert.ok(html.indexOf('data-copy') > html.indexOf('class="app-code-header"') && html.indexOf('data-copy') < html.indexOf('</div><pre>'));
+  assert.equal((html.match(/data-tool="copy" aria-label="코드 복사" title="코드 복사" hidden/g) ?? []).length, 1);
+  assert.ok(html.indexOf('data-tool') < html.indexOf('<pre>'), '복사 버튼은 코드 위쪽 머리글에 있다');
+  assert.ok(html.indexOf('data-tool') > html.indexOf('class="app-tool-header"') && html.indexOf('data-tool') < html.indexOf('</div><pre>'));
 });
 
 test('ui_components_and_nested_fences_keep_working_with_markdown_extensions', () => {
   const inner = '```js\nconsole.log(1);\n```';
   const html = render('````ui:callout\ntitle: 알림\nbody: |\n  ' + inner.split('\n').join('\n  ') + '\n````\n\n````markdown\n' + inner + '\n````\n');
   assert.match(html, /class="app-callout"/);
-  assert.equal((html.match(/class="app-code"/g) ?? []).length, 2);
+  assert.equal((html.match(/class="app-code app-tool-surface"/g) ?? []).length, 2);
   assert.match(html, /<code class="language-js">/);
   assert.match(html, /<code class="language-markdown">/);
   assert.ok(text(html).includes('```js\nconsole.log(1);\n```'));
   const syntax = createMarkdown().render('```ui:keys\nkeys: [⌘, C]\n```', { showSyntax: true });
   assert.match(syntax, /aria-label="작성 문법 복사"/);
-  assert.match(syntax, /class="app-code-language">Markdown</);
+  assert.match(syntax, /class="app-tool-label">Markdown</);
   assert.equal(codeOf(syntax.slice(syntax.indexOf('<details'))), '```ui:keys\nkeys: [⌘, C]\n```');
 });
 
@@ -231,7 +231,7 @@ test('the_markdown_guide_example_renders_every_supported_construct_and_round_tri
   const blocks = [...rendered.html.matchAll(/<pre><code class="language-[^"]*">([\s\S]*?)<\/code><\/pre>/g)].map(match => text(match[1]));
   assert.equal(blocks.length, fences.length);
   fences.forEach((match, index) => assert.equal(blocks[index], match[3], `fence ${index}: ${match[2]}`));
-  const labels = new Set([...rendered.html.matchAll(/class="app-code-language">([^<]*)</g)].map(match => match[1].split(' · ')[0]));
+  const labels = new Set([...rendered.html.matchAll(/class="app-tool-label">([^<]*)</g)].map(match => match[1].split(' · ')[0]));
   for (const label of ['JavaScript', 'TypeScript', 'Python', 'C', 'C++', 'C#', 'Java', 'Kotlin', 'Rust', 'Go', 'Swift', 'Bash', 'SQL', 'JSON', 'YAML', 'HTML, XML', 'CSS', 'Dockerfile', 'Markdown', 'Plain text']) assert.ok(labels.has(label), label);
   for (const marker of ['app-heading-1', 'app-heading-6', '<s>', '<mark>', '<sub>', '<sup>', '<kbd>', '<dl>', '<details', 'class="footnotes"', 'is-center', 'is-right', 'contains-task-list', 'is-cancelled', '<hr>', '<blockquote>', '<img ']) assert.ok(rendered.html.includes(marker), marker);
   assert.doesNotMatch(rendered.html, /<script|href="javascript|onerror=alert\(1\)>/);
@@ -246,7 +246,7 @@ test('definition_lists_support_multiple_paragraphs_blocks_and_inline_formatting_
   assert.match(html, /<dd>\n<p>첫 문단<\/p>\n<p>둘째 문단<\/p>\n<\/dd>/);
   assert.equal((html.match(/<dd>/g) ?? []).length, 2);
   assert.equal((html.match(/<dl>/g) ?? []).length, 1);
-  assert.match(html, /<\/dl>\n<div class="app-code">/);
+  assert.match(html, /<\/dl>\n<div class="app-code app-tool-surface">/);
 });
 
 test('details_close_tags_inside_fenced_code_do_not_end_the_block_and_nesting_stays_balanced', () => {
@@ -262,10 +262,10 @@ test('details_close_tags_inside_fenced_code_do_not_end_the_block_and_nesting_sta
 test('indented_code_blocks_get_the_same_header_copy_button_and_exact_text', () => {
   const body = 'indented <b>&</b>\n  deeper\n\nlast';
   const html = render('문단\n\n' + body.split('\n').map(line => (line ? '    ' + line : line)).join('\n') + '\n');
-  assert.match(html, /<div class="app-code"><div class="app-code-header"><span class="app-code-language">Plain text<\/span><button type="button" data-copy aria-label="코드 복사" hidden>/);
+  assert.match(html, /<div class="app-code app-tool-surface"><div class="app-tool-header"><span class="app-tool-label">Plain text<\/span>[\s\S]*?data-tool="copy" aria-label="코드 복사" title="코드 복사" hidden/);
   assert.equal(codeOf(html), body + '\n');
   assert.doesNotMatch(html, /<b>/);
-  assert.match(html, /data-copy-status/);
+  assert.match(html, /data-tool-status/);
 });
 
 test('heading_ids_stay_unique_when_a_natural_slug_collides_with_a_numbered_one', () => {

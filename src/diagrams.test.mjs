@@ -26,6 +26,21 @@ test('nested_diagrams_are_built_once_and_embed_static_html_with_original_source'
   dom.window.close();
 });
 
+test('diagram_width_uses_the_same_fence_options_without_recompiling_the_source', () => {
+  const md = createMarkdown();
+  const sources = new Map();
+  const diagrams = new Map([[source, { src: '/diagrams/example.html', title: '도표', dimensions: { width: 800, height: 500 } }]]);
+  for (const [option, suffix] of [['', ''], ['w-wide', ' app-width-wide'], ['w-narrow', ' app-width-narrow']]) {
+    const input = '```dap ' + option + '\n' + source + '```\n';
+    const html = md.render(input, { diagramSources: sources, diagrams });
+    assert.ok(html.includes('class="app-diagram' + suffix + '"'));
+  }
+  assert.equal(sources.size, 1);
+  for (const option of ['w-wide w-narrow', 'filename=x', 'unknown']) {
+    assert.throws(() => md.render('```dap ' + option + '\n' + source + '```\n', { diagrams }));
+  }
+});
+
 test('embedded_sources_reject_external_files_with_the_page_location', async () => {
   for (const text of [
     'daphnis 2\nicons local "private"\nbox a "A" icon=local:secret\n',

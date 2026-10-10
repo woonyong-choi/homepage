@@ -65,7 +65,7 @@ test('tab_bodies_keep_code_images_footnotes_and_ui_components_working', () => {
   assert.equal(document.querySelectorAll('[role=tab]').length, 2);
   const panel = document.querySelector('[role=tabpanel]');
   assert.equal(panel.querySelectorAll('.app-code').length, 3);
-  assert.ok(panel.querySelector('.app-code [data-copy]'));
+  assert.ok(panel.querySelector('.app-code [data-tool="copy"]'));
   assert.match(panel.querySelector('.app-code code').textContent, /echo ":::tab\[가짜\]"\n:::/);
   assert.equal(panel.querySelector('img').getAttribute('alt'), '스크린샷');
   assert.ok(panel.querySelector('.app-callout'));
@@ -258,7 +258,7 @@ test('document_composition_example_renders_every_block_with_unique_ids', () => {
   assert.ok(document.querySelector('p.app-fineprint'));
   assert.ok(document.querySelector('.app-callout.is-warning') && document.querySelector('.app-tabpanel .app-callout'));
   assert.ok(document.querySelector('p button.app-tooltip + .app-tooltip-bubble'));
-  assert.ok(document.querySelector('.app-code [data-copy]'));
+  assert.ok(document.querySelector('.app-code [data-tool="copy"]'));
   assert.ok(document.querySelector('dl.app-definitions'));
   const related = [...document.querySelectorAll('.app-related-grid > a.app-help-card.app-related-link')];
   assert.equal(related.length, 3);
@@ -363,7 +363,7 @@ test('width_prop_maps_from_every_grammar_to_the_same_shared_classes_and_aliases_
   assert.deepEqual(classes('figure.app-figure').slice(0, 4), ['app-figure app-width-narrow', 'app-figure app-width-wide', 'app-figure app-width-narrow', 'app-figure']);
   assert.ok(document.querySelector('figure.app-figure.app-width-wide [data-player]'));
   assert.ok(document.querySelector('section.app-tabs.app-width-wide'));
-  assert.deepEqual(classes('.app-code'), ['app-code app-width-narrow', 'app-code']);
+  assert.deepEqual(classes('.app-code'), ['app-code app-tool-surface app-width-narrow', 'app-code app-tool-surface']);
   assert.equal(document.querySelectorAll('figure.app-figure.app-width-wide').length, 3);
   assert.doesNotMatch(html, /app-breakout|is-compact/);
 });
@@ -379,7 +379,7 @@ test('long_unbroken_code_keeps_the_exact_raw_text_for_copying', () => {
   const long = 'Token_' + '0123456789'.repeat(40) + '\n\t끝  \n';
   const document = dom(render('```text width=wide\n' + long + '```\n'));
   assert.equal(document.querySelector('.app-code code').textContent, long);
-  assert.ok(document.querySelector('.app-code-header [data-copy]'));
+  assert.ok(document.querySelector('.app-tool-header [data-tool="copy"]'));
   assert.equal(document.querySelector('.app-code pre').getAttribute('style'), null);
 });
 

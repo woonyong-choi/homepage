@@ -17,7 +17,7 @@ export async function compileDiagrams(sources) {
       const html = Buffer.from(await toHtml(result, title));
       const hash = createHash('sha256').update(html).digest('hex');
       const src = `/diagrams/${hash}.html`;
-      diagrams.set(source, { src, title, width: result.scene.width, height: result.scene.height });
+      diagrams.set(source, { src, title, dimensions: { width: result.scene.width, height: result.scene.height } });
       assets.set(src, html);
     } catch (error) {
       throw new Error(`${page}: Daphnis 도표를 만들 수 없습니다. ${error.message}`, { cause: error });
