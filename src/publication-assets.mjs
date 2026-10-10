@@ -9,6 +9,7 @@ const ASSET_NOTICES = new Map([
   ['/theme/assets/fonts/jetbrains-mono-regular.woff2', '/theme/assets/fonts/jetbrains-mono-license.txt'],
   ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
   ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],
+  ...['j2ysoft', 'jusin-background', 'neople-background', 'nexon', 'roborobo'].map(name => [`/assets/company-${name}.png`, '/assets/company-logos-NOTICE.txt']),
 ]);
 
 export function clientEntrypoints(body) {
