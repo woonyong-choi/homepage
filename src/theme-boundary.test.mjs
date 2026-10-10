@@ -85,15 +85,8 @@ function ownedClassHits(source, owned) {
 test('consumer_sources_never_write_markup_of_components_the_theme_owns', async () => {
   const { OWNED_CLASSES } = await import('./vendor/theme/ui/index.mjs');
   const sources = readdirSync(product).filter(name => /\.(mjs|js)$/.test(name) && !name.endsWith('.test.mjs'));
-  // 아이콘 검토 화면의 번호 링크만 별도 검사한다.
-  const KNOWN = {
-    'icon-audit.mjs': ['app-page-links'],
-  };
-  const found = Object.fromEntries(sources.map(name => [name, ownedClassHits(readFileSync(join(product, name), 'utf8'), OWNED_CLASSES)]).filter(([, hits]) => hits.length));
-  const offenders = Object.entries(found).map(([name, hits]) => [name, hits.filter(hit => !(KNOWN[name] ?? []).includes(hit))]).filter(([, hits]) => hits.length);
+  const offenders = sources.map(name => [name, ownedClassHits(readFileSync(join(product, name), 'utf8'), OWNED_CLASSES)]).filter(([, hits]) => hits.length);
   assert.deepEqual(offenders, [], '테마 구성 요소가 소유한 클래스를 소비자가 직접 출력한다. vendor/theme/ui/index.mjs를 가져다 쓴다');
-  // 예외가 더는 필요 없으면 지워야 한다.
-  for (const [name, classes] of Object.entries(KNOWN)) for (const owned of classes) assert.ok(found[name]?.includes(owned), `${name}의 예외 ${owned}가 더는 필요 없다`);
   // 어댑터는 같은 하나의 구성 요소 모듈을 가져온다. 브라우저 검색 화면도 포함한다.
   for (const name of ['markdown.mjs', 'publication-layout.mjs', 'search-view.mjs', 'home-sections.mjs', 'blog-layout.mjs']) assert.match(readFileSync(join(product, name), 'utf8'), /from '\.\/vendor\/theme\/ui\/index\.mjs'/, name);
 });

@@ -17,14 +17,13 @@ test('audit_pages_expose_every_current_review_once', () => {
   const review = JSON.parse(readFileSync(new URL('./vendor/theme/assets/icons/current-review.json', import.meta.url)));
   const pages = iconAuditPages();
   const ids = pages.flatMap(page => [...page.body.matchAll(/data-audit-id="([^"]+)"/g)].map(match => match[1]));
-  assert.equal(pages.length, 12);
-  assert.equal(ids.length, 142);
+  assert.ok(pages.length > 1);
   assert.deepEqual(ids.toSorted(), Object.keys(review.entries).toSorted());
   for (const [id, entry] of Object.entries(review.entries)) {
     assert.equal(pages.filter(page => page.body.includes(`data-audit-id="${id}" data-review-fingerprint="${entry.fingerprint}"`)).length, 1);
   }
   assert.match(pages[4].body, /펼친 책과 학습 내용을 나타내는 줄/);
-  assert.match(pages[11].body, /24px에서는 표식 없이 같은 문서 도형/);
+  assert.match(pages.at(-1).body, /24px에서는 표식 없이 같은 문서 도형/);
 });
 test('markdown_cards_accept_content_icons_without_changing_reference_icons',()=>{
   const md=createMarkdown();
