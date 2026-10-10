@@ -73,13 +73,13 @@ sections:
 
 ## 섹션
 
-머리 `icon`은 공통 카탈로그 이름(`technology`, `project`) 또는 `{src, alt}` 이미지다. 공통 이름은 정본 `iconFile()`로 경로를 해석한다. 구독과 동료 평가 머리는 공통 자산의 `newsletter.png`, `testimonials.png`를 쓴다. 홈 히어로는 `icon`이 없으면 원고의 제목을 표시한다.
+머리 `icon`은 공통 카탈로그 이름(`technology`, `project`) 또는 `{src, alt}` 이미지다. 공통 이름은 정본 `iconFile()`로 경로를 해석한다. 구독과 동료 평가 머리는 공통 자산의 `newsletter.png`, `testimonials.png`를 쓴다. 홈 히어로는 `icon`과 `wordmark`가 없으면 원고의 제목을 표시한다.
 
-상단 글자이미지는 `config/site.json`의 `logo`에 `{src, alt}`로 지정한다. `alt`는 홈페이지 이동 링크의 접근성 이름에 쓰고 저자와 메타데이터의 `name`은 별도로 유지한다. 히어로 글자이미지는 `hero.icon.src`로 지정하며 홈 본문 제목을 스크린리더용 제목으로 남긴다. 콘텐츠 SVG는 공통 정적 SVG 렌더러로 인라인 조립해 공통 글자색을 상속한다.
+`config/site.json`의 `title`은 탭·공유 정보·RSS의 사이트 이름이고 `name`은 작성자 이름이다. 상단 글자이미지는 같은 설정의 `logo`에 `{src, alt}`로 지정한다. `alt`는 홈페이지 이동 링크의 접근성 이름에 쓰고 저자와 메타데이터의 `name`은 별도로 유지한다. 히어로 글자이미지는 `wordmark: {src, alt}`로 지정하며 홈 본문 제목을 스크린리더용 제목으로 남긴다. `icon`과 `wordmark`는 함께 지정할 수 없다. 콘텐츠 SVG는 공통 정적 SVG 렌더러로 인라인 조립해 공통 글자색을 상속한다. 글자이미지는 공통 `app-hero-wordmark`의 높이와 원본 비례를 사용하고 아이콘의 고정 폭을 따르지 않는다.
 
 | 종류 | 필드 |
 |---|---|
-| hero | 홈 본문의 제목과 소개를 사용한다. 제목은 페이지 제목과 아이콘 대체 글이며 `icon`이 없으면 화면에 표시한다. 나머지 속성: `icon`, `image`(`{src, alt}`), `video`(`{src, title}` 필수, `poster` 선택), `action`(`{label, href}`) |
+| hero | 홈 본문의 제목과 소개를 사용한다. 제목은 페이지 제목과 이미지 대체 글이며 `icon`과 `wordmark`가 없으면 화면에 표시한다. 나머지 속성: `icon`, `wordmark`, `image`(`{src, alt}`), `video`(`{src, title}` 필수, `poster` 선택), `action`(`{label, href}`) |
 | projects | `items` 목록. 항목마다 `title`, `description` 필수와 `enabled`, `link`(`{label, href}`), `icon`, `image` |
 | technologies | 본문의 제목·소개와 머리 `icon`. `items`는 아이콘 카탈로그 이름 목록이며 같은 이름의 태그 글로 연결 |
 | interviews | 본문의 제목·소개와 머리 `icon`, `links`(`{label, href?, icon?}`). `items`: `id`, `summary` 필수, `profile`(`{image?, title, subtitle?}`), `url`, `example` 선택 |
@@ -123,4 +123,6 @@ items:
 
 프로젝트 구간은 실제 내용을 채우기 전까지 꺼 둔다. 프로젝트 기본 그림은 공통 테마의 `assets/illustrations/`에서 가져온다. 사용 중인 외부 자산의 출처는 `config/assets.json`에 있다. 구간의 구조와 배치는 공통 `Section`, `SectionIntro` 구성 요소가 소유한다.
 
-`content/assets/who-knows.svg`는 상단 브랜드, `content/assets/backend-engineer.svg`는 소개 제목이다. 공통 Pretendard Variable의 굵기 700과 글자 간격을 도형으로 변환한 콘텐츠 자산이며 외부 글꼴을 요청하지 않는다. 원본 글꼴의 SIL Open Font License는 공통 `assets/fonts/pretendard-license.txt`를 함께 발행한다.
+`content/assets/who-knows.svg`는 상단 브랜드이며 공통 `assets/fonts/inter-display-black.woff2`의 Inter Display Black을 사용한다. `content/assets/backend-engineer.svg`는 소개 제목이며 공통 `assets/fonts/pretendard-variable.woff2`의 Black(900)을 사용한다. 두 SVG는 글꼴의 기본 kerning과 글자 윤곽을 도형으로 변환한 콘텐츠 자산이다. 화면에는 윤곽만 삽입하므로 추가 웹폰트를 요청하지 않는다. 글꼴 원본과 SIL Open Font License는 공통 `assets/fonts/`에서 관리한다.
+
+[Things 공식 사이트](https://culturedcode.com/things/)의 로고 이미지를 획과 비례의 참고로 삼았다. 로고의 정확한 글꼴 이름은 확인되지 않았으며 Inter가 원본 글꼴이라는 뜻은 아니다. [Inter 공식 안내](https://rsms.me/inter/)의 Display 디자인과 Black 굵기를 비교해 선택했다.

@@ -22,7 +22,7 @@ import { browserScripts } from './browser-scripts.mjs';
 import { mathAssets } from './math-assets.mjs';
 import { compileDiagrams } from './diagrams.mjs';
 import { compileStyles as publicationStyles } from './vendor/theme/ui/build/styles.mjs';
-import { siteOrigin, SITE_ICON } from './publication-metadata.mjs';
+import { siteOrigin, siteTitle, SITE_ICON } from './publication-metadata.mjs';
 import { siteIdentity } from './site-identity.mjs';
 import { legacyRoutes, redirectPage } from './publication-routes.mjs';
 import { markdownFiles, readContentFile } from './content-files.mjs';
@@ -69,7 +69,7 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
     if (output.has(route)) throw new Error(`duplicate publication route: ${route}`);
     output.set(route, documentShell({ route, title, ...metadata }, body, context));
   };
-  add('/', CONFIG.name, personalHome(context));
+  add('/', siteTitle(CONFIG), personalHome(context));
   add('/docs/', 'Search', wikiLanding(documents, context, undefined, recentBlog(posts, TAGS)));
   const fields = [...new Set([...TOPIC_GROUPS, ...FIELDS])];
   for (const field of fields) add(`/docs/topics/${field}/`, FIELD_NAMES[field], wikiLanding(documents, context, field));
@@ -152,7 +152,7 @@ async function writeSite(output, documents, context, scripts) {
   writeFileSync(join(OUTPUT, 'search-index.json.gz'), gzipSync(indexJson, { level: 9 }));
   mkdirSync(join(OUTPUT, 'blog'), { recursive: true });
   const posts = blogDocuments(documents).filter(page => !page.example);
-  writeFileSync(join(OUTPUT, 'blog/feed.xml'), `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escape(CONFIG.name)}</title><link>${escape(context.origin + '/blog/')}</link><description>${escape(CONFIG.description)}</description>${posts.map(page => `<item><title>${escape(page.title)}</title><link>${escape(context.origin + page.route)}</link><guid isPermaLink="false">${page.id}</guid><pubDate>${new Date(page.publishedAt).toUTCString()}</pubDate><description>${escape(page.description)}</description></item>`).join('')}</channel></rss>`);
+  writeFileSync(join(OUTPUT, 'blog/feed.xml'), `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escape(siteTitle(CONFIG))}</title><link>${escape(context.origin + '/blog/')}</link><description>${escape(CONFIG.description)}</description>${posts.map(page => `<item><title>${escape(page.title)}</title><link>${escape(context.origin + page.route)}</link><guid isPermaLink="false">${page.id}</guid><pubDate>${new Date(page.publishedAt).toUTCString()}</pubDate><description>${escape(page.description)}</description></item>`).join('')}</channel></rss>`);
   writeFileSync(join(OUTPUT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].filter(route => route !== '/search/' && !context.redirects.has(route)).map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
   validateOutput(output);
   writeFileSync(join(OUTPUT, 'build-report.json'), JSON.stringify({ pages: output.size, documents: documents.length, examples: documents.filter(page => page.example).length, preview: context.preview, commentsStatus: context.commentsStatus, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));

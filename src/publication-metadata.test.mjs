@@ -26,7 +26,7 @@ test('metadata_uses_one_home_name_and_keeps_preview_without_an_invented_origin',
   assert.equal(logo.getAttribute('aria-label'), `${config.name} 홈`);
   assert.equal(logo.querySelector('[data-control-icon]'), null);
   assert.equal(logo.textContent, config.name);
-  const branded = { ...config, logo: { src: '/assets/who-knows.svg', alt: 'Who Knows' } };
+  const branded = { ...config, title: 'Who Knows', logo: { src: '/assets/who-knows.svg', alt: 'Who Knows' } };
   const brandedPage = documentShell({ title: config.name, route: '/' }, '', { ...context, config: branded });
   const brandedLogo = new JSDOM(brandedPage).window.document.querySelector('.app-logo');
   assert.equal(brandedLogo.getAttribute('aria-label'), 'Who Knows 홈');
@@ -34,6 +34,10 @@ test('metadata_uses_one_home_name_and_keeps_preview_without_an_invented_origin',
   assert.equal(brandedLogo.querySelector('img'), null);
   assert.equal(brandedLogo.querySelector('[data-control-icon]'), null);
   assert.equal(brandedLogo.textContent, '');
+  assert.match(brandedPage, /<title>Who Knows<\/title>/);
+  assert.match(brandedPage, /property="og:site_name" content="Who Knows"/);
+  assert.match(brandedPage, /content="이름 &amp; 글의 기록을 나타내는 문서 아이콘"/);
+  assert.match(publicationMetadata({ title: '글 제목', route: '/articles/example/' }, { ...context, config: branded }), /<title>글 제목 · Who Knows<\/title>/);
   assert.throws(() => documentShell({ title: config.name, route: '/' }, '', { ...context, config: { ...branded, logo: { src: '/assets/../secret.svg' } } }), /content SVG must be a file under \/assets/);
 });
 

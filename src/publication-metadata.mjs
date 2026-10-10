@@ -4,6 +4,10 @@ import { iconFile } from './vendor/theme/ui/build/icons.mjs';
 
 export const SITE_ICON = `/theme/assets/icons/${iconFile('document')}`;
 
+export function siteTitle(config) {
+  return config.title ?? config.name;
+}
+
 export function siteOrigin(value, preview) {
   if (!value) {
     if (!preview) throw new Error('production build requires SITE_ORIGIN');
@@ -18,7 +22,9 @@ export function siteOrigin(value, preview) {
 
 export function publicationMetadata(page, context) {
   const { config, origin = '', preview, identity, themeHash, tags = {} } = context;
-  const title = page.title === config.name ? config.name : `${page.title} · ${config.name}`;
+  const site = siteTitle(config);
+  const pageTitle = page.route === '/' ? site : page.title;
+  const title = pageTitle === site ? site : `${pageTitle} · ${site}`;
   const description = page.description ?? config.description;
   const meta = (key, value, attribute = 'property') => `<meta ${attribute}="${key}" content="${escape(value)}">`;
   let html = `<title>${escape(title)}</title>${meta('description', description, 'name')}${preview ? meta('robots', 'noindex,nofollow', 'name') : ''}`;
@@ -27,8 +33,8 @@ export function publicationMetadata(page, context) {
   if (!origin) return html;
   const canonical = origin + page.route;
   html += `<link rel="canonical" href="${escape(canonical)}">`;
-  html += meta('og:title', page.title) + meta('og:description', description) + meta('og:type', page.id ? 'article' : 'website') + meta('og:url', canonical) + meta('og:site_name', config.name) + meta('og:locale', 'ko_KR');
-  html += meta('twitter:card', 'summary', 'name') + meta('twitter:title', page.title, 'name') + meta('twitter:description', description, 'name');
+  html += meta('og:title', pageTitle) + meta('og:description', description) + meta('og:type', page.id ? 'article' : 'website') + meta('og:url', canonical) + meta('og:site_name', site) + meta('og:locale', 'ko_KR');
+  html += meta('twitter:card', 'summary', 'name') + meta('twitter:title', pageTitle, 'name') + meta('twitter:description', description, 'name');
   if (identity) {
     const image = origin + identity.share;
     const alt = `${config.name}의 기록을 나타내는 문서 아이콘`;
