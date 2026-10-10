@@ -35,7 +35,8 @@ export function heroSection(hero) {
 
 // 프로젝트, 기술, 인터뷰, 연락이 함께 쓰는 섹션 머리: 아이콘, 제목, 설명, 링크 행, 동작 링크.
 function sectionIntro({ icon, title, titleId, description, links = [], action }) {
-  return String(ui.SectionIntro({ id: titleId, icon: icon ? trusted(picture(icon)) : undefined, title, description: description ? trusted(paragraphs(description)) : undefined, links: links.length ? trusted(links.map(socialLink).join('')) : undefined, action }));
+  const graphic = icon?.src.endsWith('.svg') ? ui.ContentIconImage({ src: icon.src, size: 'card' }) : icon ? trusted(picture(icon)) : undefined;
+  return String(ui.SectionIntro({ id: titleId, icon: graphic, title, description: description ? trusted(paragraphs(description)) : undefined, links: links.length ? trusted(links.map(socialLink).join('')) : undefined, action }));
 }
 
 // href가 없는 항목은 아이콘만 보이는 자리표시이며 링크로 읽히지 않고 클릭되지 않는다.

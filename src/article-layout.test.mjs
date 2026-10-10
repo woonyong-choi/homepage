@@ -117,7 +117,6 @@ test('theme_tokens_resolve_to_the_measured_reference_dimensions', () => {
   assert.equal(px(token('--text-post-date-size')), 16.02);
   assert.equal(px(token('--text-post-title-size')), 37.8);
   near(px(token('--text-post-title-size')) * Number(token('--leading-post-title-line')), 43.47);
-  assert.equal(token('--spacing-post-title-width'), '84%');
   assert.equal(px(token('--spacing-post-title-margin')), 18.9);
   assert.equal(px(token('--text-post-lead-size')), 22.5);
   near(px(token('--text-post-lead-size')) * Number(token('--leading-line-intro')), 28.125);
@@ -152,13 +151,6 @@ test('support_body_headings_have_no_rule_or_padding_and_containers_share_the_bod
   for (const selector of ['.app-blog-post', '.app-document-shell']) assert.match([...css.matchAll(new RegExp(`\\n${selector.replace('.', '\\.')} \\{[^}]*\\}`, 'g'))].join(''), /line-height: var\(--leading-feature-body-line\)/, selector);
   const header = css.match(/\n\.app-post-header \{[^}]*\}/)[0];
   assert.doesNotMatch(header, /line-height/);
-});
-
-test('post_title_fills_the_column_between_percentage_margins_like_the_reference', () => {
-  const title = css.match(/\n\.app-post-title \{ margin: var\(--spacing-post-title-margin\) calc[^}]*\}/)[0];
-  assert.match(title, /margin: var\(--spacing-post-title-margin\) calc\(\(100% - var\(--spacing-post-title-width\)\) \/ 2\)/);
-  assert.doesNotMatch(title, /(^|[\s;])width:/);
-  assert.equal(token('--spacing-post-title-width'), '84%');
 });
 
 test('blog_body_does_not_display_the_author_while_tags_are_not_defined', async () => {

@@ -122,7 +122,7 @@ test('technologies_and_interviews_share_the_section_intro_with_projects', () => 
   const tech = render('sections:\n  - { id: tech, type: technologies, items: [python] }');
   assert.match(intro(tech), /<h2 id="tech-title">함께 쓰는 기술<\/h2><p>기술별 기록을 모았습니다\.<\/p>/);
   const rich = render('sections:\n  - id: talk\n    type: interviews\n    icon: { src: https://example.com/i.png }\n    title: 이야기\n    description: 설명\n    links: [{ label: GitHub, href: "https://github.com/x", icon: github }, { label: 글, href: /blog/ }]\n    items: [{ id: a, summary: 예시 요약 }]');
-  assert.match(intro(rich), /<h2 id="talk-title"><img src="https:\/\/example.com\/i.png" alt="" loading="lazy" decoding="async"> 이야기<\/h2><p>설명<\/p><p class="app-landing-social"><a href="https:\/\/github.com\/x" aria-label="GitHub"><svg[^>]*class="app-landing-symbol"/);
+  assert.match(intro(rich), /<h2 id="talk-title">.*?<img src="https:\/\/example.com\/i.png" alt="" loading="lazy" decoding="async">.*? 이야기<\/h2><p>설명<\/p><p class="app-landing-social"><a href="https:\/\/github.com\/x" aria-label="GitHub"><svg[^>]*class="app-landing-symbol"/);
   assert.match(intro(rich), /<a href="\/blog\/">글<\/a>/);
   assert.doesNotMatch(rich, /data-flow-controls|data-flow-(?:toggle|prev|next)|<button/);
   assert.match(rich, /class="app-landing-section app-landing-interviews"/);

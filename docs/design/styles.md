@@ -26,4 +26,6 @@ npm run check:product
 npm run build:site
 ```
 
-정본 변경은 Daphnis 검증을 거친 뒤 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지 빌드는 Daphnis와 디자인 해시가 다르면 실패한다. 자동 PR에는 가져온 디자인과 렌더러 의존성만 허용하며 검사를 통과한 커밋을 병합한다. 사용자 명의 자동 병합에는 이 저장소 범위의 `DESIGN_AUTOMATION_TOKEN`을 사용한다. fine-grained PAT의 Contents·Pull requests Read and write 권한이 필요하다. 등록되지 않으면 검증한 PR만 준비하며, 사용자 작성자가 아닌 PR은 인증 전환 뒤 사용자 작성 PR로 대체한다.
+정본 변경은 ThinkFlow 검증을 거친 뒤 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지 빌드는 ThinkFlow와 디자인 해시가 다르면 실패한다. 자동 PR에는 가져온 디자인과 렌더러 의존성만 허용하며 검사를 통과한 커밋을 병합한다. 사용자 명의 자동 병합에는 이 저장소 범위의 `DESIGN_AUTOMATION_TOKEN`을 사용한다. fine-grained PAT의 Contents·Pull requests Read and write 권한이 필요하다. 등록되지 않으면 검증한 PR만 준비하며, 사용자 작성자가 아닌 PR은 인증 전환 뒤 사용자 작성 PR로 대체한다.
+
+블로그 제목은 본문 폭을 사용하고 문서 제목 아이콘은 제목의 첫 줄과 정렬한다. 홈 제목의 SVG는 `ContentIconImage`로, PNG는 원본 그림으로 공통 `SectionIntro` 자리에 조립한다. 코드와 도표의 블록 배경은 유지하며 도구 모음은 별도 흰색 면·테두리·그림자를 만들지 않는다. 버튼의 hover·키보드 초점·복사 상태는 두 제품이 같은 공통 동작을 사용한다.

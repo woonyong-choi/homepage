@@ -31,8 +31,8 @@ category: software-design
 
 큐는 처리 능력을 무한히 늘리지 않습니다. 잠깐의 입력 증가를 흡수하지만, 평균 입력이 평균 처리 능력을 계속 넘으면 대기가 쌓입니다. 한도를 늘리기 전에 큐 길이, 가장 오래 기다린 항목, 처리 시간과 실패율을 함께 봐야 합니다.
 
-```dap
-daphnis 2
+```thinkflow
+thinkflow
 title "큐에 여유가 없으면 입력을 기다리게 한다"
 
 box input "요청 접수" icon=apigw

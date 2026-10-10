@@ -52,7 +52,7 @@
 | 정의 목록 | 용어 줄 다음 `: 설명` | `markdown-it-deflist`의 의미를 따른다. 여러 문단과 블록 포함 가능 |
 | 접기 | `<details>`(`open` 선택), `<summary>글자</summary>` | 속성이 없는 두 태그만. 안은 Markdown이며 펜스 코드 안의 `</details>`는 짝이 아니다 |
 | 수식 | `$...$`, `$$...$$` | KaTeX. 아래 절 |
-| 도표 | ` ```dap ` | Daphnis. 아래 절 |
+| 도표 | ` ```thinkflow ` | ThinkFlow. 아래 절 |
 | 키·메뉴 | `:kbd[⌘ K]` `:menu[파일]` | |
 | 아이콘·설명 | `:icon[search]` `:tip[글]{text="설명"}` | 아래 "구성 블록" 절 |
 | 구성 블록 | `:::tabs` `:::note` `:::steps` 등 | 아래 "구성 블록" 절 |
@@ -89,7 +89,7 @@ items:
 
 ### 도표
 
-`dap` 펜스에는 `daphnis 2`로 시작하는 원본을 적는다. 문서 빌드가 Daphnis 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
+`thinkflow` 펜스에는 첫 줄에 `thinkflow`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 ThinkFlow 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
 
 카드·선은 한 번 선언하고 `scene "이름"`으로 장면을 나눈다. 빈 장면은 정지, 이동이 있는 장면은 한 번 재생이 기본이다. 반복은 `mode=loop`, 배속은 `speed=`, 연속 트래픽은 `track … every= …`로 표현한다. 장면 선택 줄은 문서 탭과 같은 공통 부품이다. 문법 복사·HTML 다운로드·전체화면은 도표 프레임에서 제공한다.
 
@@ -142,7 +142,7 @@ items:
 
 | 표시 역할 | 권장 옵션 | 적용 대상 |
 |---|---|---|
-| 폭 | `w-narrow`, `w-wide` | 그림·영상·탭·기기 탭·기존 갤러리·코드블록·Daphnis |
+| 폭 | `w-narrow`, `w-wide` | 그림·영상·탭·기기 탭·기존 갤러리·코드블록·ThinkFlow |
 | 탭 상자와 위치 | `box`, `top` | 탭·기기 탭 |
 | 탭 선택 줄 | `segmented`, `numbers` | 탭·기기 탭 |
 | 카드 모양 | `related`, `centered`, `grouped`, `inline` | 카드 목록 |
@@ -239,7 +239,7 @@ const message = "넓은 코드블록";
 
 - 탭도 `:::tabs w-narrow`, `:::tabs w-wide`로 쓴다. 같은 규칙이 묶음 전체에 적용된다.
 - 블록 폭은 `width` 하나로 정한다. `w-narrow`와 `w-wide`는 각각 `width=narrow`와 `width=wide`로 해석하며, 기본값 `width=content`는 생략과 같다. 같은 폭을 중복 지정하거나 다른 폭을 함께 지정하면 오류다. 옛 블록 속성 `wide`와 `size=compact`는 받지 않는다. `ui:video`의 플레이어 치수·비율(`width`, `height`, `wide`), 그림 격자의 `size`, 카드의 `compact`는 블록 폭과 다른 속성으로 유지한다.
-- Daphnis도 `dap`, `dap w-wide`, `dap w-narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
+- ThinkFlow도 `thinkflow`, `thinkflow w-wide`, `thinkflow w-narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
 - 폭은 공통 구성 요소가 클래스(`app-width-narrow`, `app-width-wide`)로 정하고 값은 테마 토큰이다. CSS나 픽셀 값을 글마다 직접 넣지 않는다.
 - 기기 탭 상자 안에서 `w-wide`를 쓰면 상자 밖으로 나오므로 안쪽 요소의 폭은 보통 생략한다.
 
