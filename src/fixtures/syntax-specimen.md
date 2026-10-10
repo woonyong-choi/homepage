@@ -1,22 +1,10 @@
----
-{
-  "title": "문서 작성 문법 전체 보기",
-  "route": "/things/style-guide/",
-  "layout": "article",
-  "syntax": true,
-  "icon": "markdown",
-  "description": "문단부터 영상과 슬라이드까지, 이 사이트에서 사용할 수 있는 모든 문법을 실제로 확인합니다.",
-  "keywords": "문법 syntax markdown 표 코드 영상 탭",
-  "toc": true
-}
----
-이 페이지는 실제로 빌드되는 문서 문법 모음입니다. 아래의 모든 요소는 하나의 Markdown 원본에서 생성됩니다. 페이지 아래에서 원문을 내려받을 수 있습니다.
+이 문서는 Markdown 렌더러와 공통 구성 요소의 계약 테스트 입력입니다. 발행 페이지에는 포함하지 않습니다.
 
 ## Text and headings
 
 ::하이라이트::와 ::**굵은 강조**::를 조합할 수 있습니다.
 
-일반 문단입니다. **굵은 글씨**, *기울임*, ***굵은 기울임***, ~~취소선~~, `inline code`와 [내부 링크](/things/support/)를 함께 사용할 수 있습니다.
+일반 문단입니다. **굵은 글씨**, *기울임*, ***굵은 기울임***, ~~취소선~~, `inline code`와 [내부 링크](/docs/)를 함께 사용할 수 있습니다.
 줄 끝 공백 두 개로  
 강제 줄바꿈을 만들 수 있습니다.
 
@@ -64,7 +52,7 @@
 | 항목 | 가운데 | 오른쪽 |
 | :--- | :---: | ---: |
 | 일반 텍스트 | **강조** | 100 |
-| `코드` | [링크](/things/support/) | 200 |
+| `코드` | [링크](/docs/) | 200 |
 
 ## Code blocks
 
@@ -82,7 +70,7 @@ def summarize(items):
 ```
 
 ```shell
-npm run build:product
+npm run build:site
 ```
 
 ```text
@@ -92,14 +80,14 @@ npm run build:product
 
 ## Links and footnotes
 
-[참조 링크][support]와 자동 링크 <https://culturedcode.com/things/>를 사용할 수 있습니다. 설명을 각주로 분리할 수도 있습니다.[^sample]
+[참조 링크][docs]와 자동 링크 <https://github.com/woonyong-choi/homepage>를 사용할 수 있습니다. 설명을 각주로 분리할 수도 있습니다.[^sample]
 
-[support]: /things/support/ "지원 문서"
+[docs]: /docs/ "문서 목록"
 [^sample]: 문서 하단으로 이동하고 다시 본문으로 돌아오는 각주 예시입니다.
 
 ## Images and captions
 
-![일정 아이콘](/assets/symbols-things3-today.svg)
+![문서 아이콘](/theme/assets/icons/small/document.svg)
 
 ```ui:figure
 {
@@ -132,7 +120,7 @@ npm run build:product
 {
   "title": "Note",
   "fineprint": true,
-  "body": "**강조**와 [내부 링크](/things/support/)를 넣을 수 있습니다."
+  "body": "**강조**와 [내부 링크](/docs/)를 넣을 수 있습니다."
 }
 ```
 
@@ -181,24 +169,24 @@ npm run build:product
   "title": "다섯 단계 예시",
   "slides": [
     {
-      "src": "os27-siriai-1-io65.jpg",
-      "alt": "음성 입력 단계 1"
+      "src": "2-today-mac.png",
+      "alt": "앱 화면 1"
     },
     {
-      "src": "os27-siriai-2-io65.jpg",
-      "alt": "음성 입력 단계 2"
+      "src": "3-upcoming-mac-2.png",
+      "alt": "앱 화면 2"
     },
     {
-      "src": "os27-siriai-3-io65.jpg",
-      "alt": "음성 입력 단계 3"
+      "src": "4-headings-mac.png",
+      "alt": "앱 화면 3"
     },
     {
-      "src": "os27-siriai-4-io65.jpg",
-      "alt": "음성 입력 단계 4"
+      "src": "5-checklists-mac-2.png",
+      "alt": "앱 화면 4"
     },
     {
-      "src": "os27-siriai-5-io65.jpg",
-      "alt": "음성 입력 단계 5"
+      "src": "7-quickfind-mac.png",
+      "alt": "앱 화면 5"
     }
   ]
 }
@@ -230,8 +218,8 @@ npm run build:product
 
 ```ui:video
 {
-  "src": "meettheallnewthings.mp4",
-  "poster": "meettheallnewthings-poster-e.jpg",
+  "src": "3-upcoming-mac-2.mp4",
+  "poster": "3-upcoming-mac-2.png",
   "title": "기능 소개 영상"
 }
 ```
@@ -287,14 +275,14 @@ npm run build:product
   "columns": 2,
   "items": [
     {
-      "title": "Talk to Siri",
-      "href": "/things/support/articles/2877019/",
+      "title": "문서 목록",
+      "href": "/docs/",
       "icon": "siri",
       "description": "말풍선과 슬라이드 예시"
     },
     {
-      "title": "Things Cloud",
-      "href": "/things/support/articles/2803586/",
+      "title": "블로그 목록",
+      "href": "/blog/",
       "icon": "cloud",
       "description": "링크 카드와 정의 목록 예시"
     }
@@ -336,16 +324,16 @@ body: "Hey Siri, create a sample task."
 
 ```ui:group
 title: Related reading
-body: "[지원 문서로 돌아가기](/things/support/)"
+body: "[문서 목록으로 돌아가기](/docs/)"
 ```
 
 ## Feature section
 
 ```ui:feature
 title: A reusable feature
-icon: fancysection-icon-design-io70.png
-description: 기능 소개 페이지와 같은 문법으로 섹션을 작성합니다.
-body: "[전체 기능 페이지](/things/features/)에서 영상과 기기 탭을 확인하세요."
+icon: fancysection-icon-whatpeoplearesaying-io70.png
+description: 공통 구성 요소의 문법으로 소개 구간을 작성합니다.
+body: "[프로젝트 목록](/projects/)으로 이동하는 링크를 함께 표시합니다."
 left: 왼쪽 설명에는 기능의 목적을 적습니다.
 right: 오른쪽 설명에는 사용 흐름을 적습니다.
 ```
@@ -353,7 +341,7 @@ right: 오른쪽 설명에는 사용 흐름을 적습니다.
 ## Device frame
 
 ```ui:device
-src: 2-today-iphone.png
+src: 3-upcoming-iphone.png
 title: 실제 기기 프레임에 맞춘 화면
 ```
 
@@ -363,17 +351,14 @@ title: 실제 기기 프레임에 맞춘 화면
 
 ```ui:demos
 title: 여러 동작의 공유 플레이어
-poster: 6-magicplus-1.png
+poster: 3-upcoming-iphone.png
 items:
-  - title: Create To-Dos
+  - title: iPhone
     body: 첫 번째 동작을 선택합니다.
-    src: 6-magicplus-1.mp4
-  - title: Create Headings
+    src: 3-upcoming-iphone.mp4
+  - title: Mac
     body: 같은 화면에서 다음 동작으로 전환합니다.
-    src: 6-magicplus-2.mp4
-  - title: Drop to Inbox
-    body: 세 번째 동작을 재생합니다.
-    src: 6-magicplus-3.mp4
+    src: 3-upcoming-mac-2.mp4
 ```
 
 
@@ -418,7 +403,7 @@ message: 상태 표시 예시입니다.
 history: 지난 기록의 예시입니다.
 items:
   - title: Example release
-    body: "변경 사항과 [관련 글](/things/blog/)을 연결합니다."
+    body: "변경 사항과 [관련 글](/blog/)을 연결합니다."
     status: Released
     date: October 6, 2026
 ```
@@ -576,7 +561,7 @@ items:
 
 ## Icon catalog
 
-지원 문서와 카드에서 사용하는 아이콘 전체입니다. 아이콘 이름으로 같은 자산을 재사용합니다.
+문서 목록과 카드에서 사용하는 아이콘 전체입니다. 아이콘 이름으로 같은 자산을 재사용합니다.
 
 ```ui:cards
 {
@@ -584,157 +569,157 @@ items:
     {
       "title": "add",
       "icon": "add",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "applewatch",
       "icon": "applewatch",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "appstore",
       "icon": "appstore",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "calendar",
       "icon": "calendar",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "cloud",
       "icon": "cloud",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "download",
       "icon": "download",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "firstaid",
       "icon": "firstaid",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "gestures",
       "icon": "gestures",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "idea",
       "icon": "idea",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "keyboard",
       "icon": "keyboard",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "mailtothings",
       "icon": "mailtothings",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "markdown",
       "icon": "markdown",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "notes",
       "icon": "notes",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "notifications",
       "icon": "notifications",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "question",
       "icon": "question",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "reminders",
       "icon": "reminders",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "repeating",
       "icon": "repeating",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "search",
       "icon": "search",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "shortcuts",
       "icon": "shortcuts",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "siri",
       "icon": "siri",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "tags",
       "icon": "tags",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "urlscheme",
       "icon": "urlscheme",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "when",
       "icon": "when",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "widgets",
       "icon": "widgets",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "warning",
       "icon": "warning",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "faq",
       "icon": "faq",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "mac",
       "icon": "mac",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "iphone",
       "icon": "iphone",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "ipad",
       "icon": "ipad",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "vision",
       "icon": "vision",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "iphone-and-watch",
       "icon": "iphone-and-watch",
-      "href": "/things/support/"
+      "href": "/docs/"
     }
   ]
 }
@@ -750,7 +735,7 @@ items:
   "items": [
     {
       "label": "Overview",
-      "body": "### 개요\n\n**일반 탭**의 첫 번째 내용입니다. [지원 문서](/things/support/)로 이어집니다."
+      "body": "### 개요\n\n**일반 탭**의 첫 번째 내용입니다. [문서 목록](/docs/)로 이어집니다."
     },
     {
       "label": "Details",
@@ -773,13 +758,13 @@ items:
       "title": "일정",
       "icon": "calendar",
       "description": "아이콘과 설명을 가로로 배치합니다.",
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "기록",
       "icon": "notes",
       "description": "같은 크기와 간격을 유지합니다.",
-      "href": "/things/support/"
+      "href": "/docs/"
     }
   ]
 }
@@ -794,12 +779,12 @@ items:
     {
       "title": "아이콘 없는 항목",
       "icon": false,
-      "href": "/things/support/"
+      "href": "/docs/"
     },
     {
       "title": "간단한 항목",
       "compact": true,
-      "href": "/things/support/"
+      "href": "/docs/"
     }
   ]
 }
@@ -809,19 +794,19 @@ items:
 ## Centered cards
 
 ```ui:cards
-{"variant":"centered","columns":2,"items":[{"title":"기기에서 시작하기","icon":"mac","description":"아이콘과 설명을 가운데에 배치합니다.","href":"/things/support/"},{"title":"함께 살펴보기","icon":"faq","description":"관련 안내를 같은 형태로 연결합니다.","href":"/things/support/"}]}
+{"variant":"centered","columns":2,"items":[{"title":"기기에서 시작하기","icon":"mac","description":"아이콘과 설명을 가운데에 배치합니다.","href":"/docs/"},{"title":"함께 살펴보기","icon":"faq","description":"관련 안내를 같은 형태로 연결합니다.","href":"/docs/"}]}
 ```
 
 ## Grouped links
 
 ```ui:cards
-{"variant":"grouped","columns":2,"items":[{"title":"일정 안내","icon":"calendar","href":"/things/support/"},{"title":"아이콘 없는 안내","icon":false,"href":"/things/support/"}]}
+{"variant":"grouped","columns":2,"items":[{"title":"일정 안내","icon":"calendar","href":"/docs/"},{"title":"아이콘 없는 안내","icon":false,"href":"/docs/"}]}
 ```
 
 ## Inline links
 
 ```ui:cards
-{"variant":"inline","items":[{"title":"Mac","icon":"mac","href":"/things/support/"},{"title":"iPhone","icon":"iphone","href":"/things/support/"},{"title":"지원 문서","icon":false,"href":"/things/support/"}]}
+{"variant":"inline","items":[{"title":"Mac","icon":"mac","href":"/docs/"},{"title":"iPhone","icon":"iphone","href":"/docs/"},{"title":"문서 목록","icon":false,"href":"/docs/"}]}
 ```
 
 

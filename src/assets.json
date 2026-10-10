@@ -12,70 +12,16 @@
     "sha256": "c0e9eaf2092f8cebd863b3420cc8a5ccf384b3bbf0a0860065d372987a59d16a"
   },
   {
-    "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-1-io65.jpg",
-    "file": "assets/os27-siriai-1-io65.jpg",
-    "bytes": 46811,
-    "sha256": "92088c0edf99d9b3a3c881819b63d08c4dac9addc327597fce73a7301ed22dfa"
-  },
-  {
-    "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-2-io65.jpg",
-    "file": "assets/os27-siriai-2-io65.jpg",
-    "bytes": 57022,
-    "sha256": "21786ae2f118eebe892a8b79fe8aaa978258d6c38dd35105335d291770f610d8"
-  },
-  {
-    "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-3-io65.jpg",
-    "file": "assets/os27-siriai-3-io65.jpg",
-    "bytes": 47795,
-    "sha256": "37bfbcbed23ad0c3935520bcf82de8bbfb5a8dd326efaeef15e556655edffe25"
-  },
-  {
-    "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-4-io65.jpg",
-    "file": "assets/os27-siriai-4-io65.jpg",
-    "bytes": 48058,
-    "sha256": "2a399650eb417e75fc72cf20a4bddc5359d3489051cbb038d905e389f30f907c"
-  },
-  {
-    "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-5-io65.jpg",
-    "file": "assets/os27-siriai-5-io65.jpg",
-    "bytes": 72179,
-    "sha256": "988e667beaa5e13b46e1094ae549ac48fc2089870286eb9b727ff2e5ff210000"
-  },
-  {
     "url": "https://culturedcode.com/global/shared/2024-02-20/images/bezel-iphone6-overlay.svg",
     "file": "assets/bezel-iphone6-overlay.svg",
     "bytes": 2034,
     "sha256": "1f183f61d1b76a08ea22d785d3024fba54d79fda4a1be5c7252c15a35d238167"
   },
   {
-    "url": "https://culturedcode.com/global/shared/2024-02-20/images/symbols-things3-today.svg",
-    "file": "assets/symbols-things3-today.svg",
-    "bytes": 1169,
-    "sha256": "dd23af1a36e7e21dbdd8f28e27db0fa16a028e3bf31d6b8461ca736d7f277c02"
-  },
-  {
     "url": "https://culturedcode.com/global/shared/2024-02-20/images/tweetgrid-avatar-default.png",
     "file": "assets/tweetgrid-avatar-default.png",
     "bytes": 1440,
     "sha256": "cda58acbfe0da420b5d95b8c787f9ff2cdadbda2312582a61ca8d000b31a2b51"
-  },
-  {
-    "url": "https://culturedcode.com/things/2022-07-21/images/whatsnew-collage-io60.png",
-    "file": "assets/whatsnew-collage-io60.png",
-    "bytes": 207732,
-    "sha256": "1b38885143170ed9742338a477a70816b029713bc0aa1016807696f7f3ae9f93"
-  },
-  {
-    "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-design-io70.png",
-    "file": "assets/fancysection-icon-design-io70.png",
-    "bytes": 1169,
-    "sha256": "90848310ceaf70ceecd51a9556053b7214a5251beab1f62baaaa52b25588c194"
-  },
-  {
-    "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-features-io70.png",
-    "file": "assets/fancysection-icon-features-io70.png",
-    "bytes": 1261,
-    "sha256": "f671a43ceca6e4ec5c387020d865896b6200edbfbcfff878c45dccfe70e3d917"
   },
   {
     "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-newsletter-io70.png",
@@ -96,28 +42,10 @@
     "sha256": "355d57b2007b3e910f7fd0031641b2c426cc168be01b142c295cc638dbfefce3"
   },
   {
-    "url": "https://culturedcode.com/things/2024-01-20/images/meettheallnewthings2-io75.jpg",
-    "file": "assets/meettheallnewthings2-io75.jpg",
-    "bytes": 46537,
-    "sha256": "5991a5ec6a794d9ad5b79adfc27db4d879c542199e228db53f50fe7384a90575"
-  },
-  {
-    "url": "https://culturedcode.com/things/2024-01-20/images/whatsnew-collage-io60.png",
-    "file": "assets/whatsnew-collage-io60.png",
-    "bytes": 207732,
-    "sha256": "1b38885143170ed9742338a477a70816b029713bc0aa1016807696f7f3ae9f93"
-  },
-  {
     "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/10-reminders-mac.png",
     "file": "assets/10-reminders-mac.png",
     "bytes": 85786,
     "sha256": "76693ec843a01d7cb4b096c311bcecc04525840ec61e1c81873c83ec33d00fb0"
-  },
-  {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/2-today-iphone.png",
-    "file": "assets/2-today-iphone.png",
-    "bytes": 44634,
-    "sha256": "9a39b6fb5801be16725d0dd12b100eb4ef1381c5002b1cddda015ba13ff6d508"
   },
   {
     "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/2-today-mac.png",
@@ -162,46 +90,10 @@
     "sha256": "cf32e8450b27a2246eb9ee24e11ae8918b9502e29cfd83eb929bf3d2f972aa80"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/6-magicplus-1.mp4",
-    "file": "assets/6-magicplus-1.mp4",
-    "bytes": 1560832,
-    "sha256": "e638cbb316765609a29207e31adf2d32828042886cddccbfcbf8f2ebc8952d5c"
-  },
-  {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/6-magicplus-1.png",
-    "file": "assets/6-magicplus-1.png",
-    "bytes": 30117,
-    "sha256": "a46a38abf583712418d1b08d9c7eb42d8b26e7f36a3a30cdd3d523b14fb23ed6"
-  },
-  {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/6-magicplus-2.mp4",
-    "file": "assets/6-magicplus-2.mp4",
-    "bytes": 978243,
-    "sha256": "2e3db7bef4bf22f47240374ab94058a7342d0b0c9793e8db1b7ee404f8c33448"
-  },
-  {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/6-magicplus-3.mp4",
-    "file": "assets/6-magicplus-3.mp4",
-    "bytes": 405982,
-    "sha256": "68b4e13c5dcb58f4dcaece9298247c39bf4c62929b471b75467777262f005211"
-  },
-  {
     "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/7-quickfind-mac.png",
     "file": "assets/7-quickfind-mac.png",
     "bytes": 60421,
     "sha256": "b877d54b57f6c2288f04de633114da2530094d413e83edd2f6b56f46d03a9f69"
-  },
-  {
-    "url": "https://static.culturedcode.com/things/videos/2026-06-25-meet-things-remastered-2/meettheallnewthings-poster-e.jpg",
-    "file": "assets/meettheallnewthings-poster-e.jpg",
-    "bytes": 50485,
-    "sha256": "577e338c53b31183916e93d97e31c8dbfdb8d48cfe32c153ae1bc52a89d90b94"
-  },
-  {
-    "url": "https://static.culturedcode.com/things/videos/2026-06-25-meet-things-remastered-2/meettheallnewthings.mp4",
-    "file": "assets/meettheallnewthings.mp4",
-    "bytes": 38138589,
-    "sha256": "4818de99957269e8b1447d3ce979e30f5e3eca158c16cde87a06b41b74409b48"
   },
   {
     "url": "https://culturedcode.com/frozen/2021/09/keycommand-keyboard-io40.png",

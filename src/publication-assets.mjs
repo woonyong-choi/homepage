@@ -47,8 +47,7 @@ export function publicationAssets(pages, searchEntries, readAsset) {
     const content = readAsset(path);
     files.set(path, content);
     // 화면에서 요청하지 않는 고지도 해당 자산의 배포 의존성이다.
-    const notice = /^\/assets\/company-[a-z0-9-]+\.(?:png|svg)$/.test(path)
-      ? '/assets/company-logos-NOTICE.txt' : /^\/theme\/assets\/icons\/brands\/[^/]+\.svg$/.test(path)
+    const notice = /^\/theme\/assets\/icons\/brands\/[^/]+\.svg$/.test(path)
       ? '/theme/assets/icons/brands/LICENSE' : /^\/theme\/assets\/controls\/[^/]+\.svg$/.test(path) ? '/theme/assets/controls/LICENSE' : path.startsWith('/katex/fonts/') ? '/katex/LICENSE' : ASSET_NOTICES.get(path);
     if (notice) include(notice);
     const references = path.endsWith('.css') ? styleReferences(content.toString()) : path.endsWith('.svg') ? markupReferences(content.toString()) : [];
