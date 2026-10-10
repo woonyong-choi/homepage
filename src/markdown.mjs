@@ -215,7 +215,7 @@ export function createMarkdown() {
   md.renderer.rules.fence = (tokens, index, options, env) => {
     const token = tokens[index];
     const kind = token.info.trim();
-    if (/^dap(?:\s|$)/.test(kind)) {
+    if (/^thinkflow(?:\s|$)/.test(kind)) {
       const diagramOptions = fenceOptions(kind, token, env, DIAGRAM_ATTRIBUTES);
       env.diagramSources?.set(token.content, env.pageId);
       const diagram = env.diagrams?.get(token.content);

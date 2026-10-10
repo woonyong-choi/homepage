@@ -5,11 +5,11 @@ import { createMarkdown } from './markdown.mjs';
 import { compileDiagrams } from './diagrams.mjs';
 import { bindTabs } from './vendor/theme/ui/runtime/tabs.js';
 
-const source = 'daphnis 2\nbox a "서버" icon=server\nbox b "저장소" icon=db\na -> b\nscene "구조"\nscene "트래픽" mode=loop for=3s\n  track a -> b every=1s time=500ms\n';
+const source = 'thinkflow\nbox a "서버" icon=server\nbox b "저장소" icon=db\na -> b\nscene "구조"\nscene "트래픽" mode=loop for=3s\n  track a -> b every=1s time=500ms\n';
 
 test('nested_diagrams_are_built_once_and_embed_static_html_with_original_source', async () => {
   const md = createMarkdown();
-  const input = `:::tabs\n@tab 도표\n\n\`\`\`dap\n${source}\`\`\`\n@tab 같은 도표\n\n\`\`\`dap\n${source}\`\`\`\n:::end\n`;
+  const input = `:::tabs\n@tab 도표\n\n\`\`\`thinkflow\n${source}\`\`\`\n@tab 같은 도표\n\n\`\`\`thinkflow\n${source}\`\`\`\n:::end\n`;
   const sources = new Map();
   md.render(input, { pageId: 'diagrams', diagramSources: sources });
   assert.equal(sources.size, 1);
@@ -31,20 +31,20 @@ test('diagram_width_uses_the_same_fence_options_without_recompiling_the_source',
   const sources = new Map();
   const diagrams = new Map([[source, { src: '/diagrams/example.html', title: '도표', dimensions: { width: 800, height: 500 } }]]);
   for (const [option, suffix] of [['', ''], ['w-wide', ' app-width-wide'], ['w-narrow', ' app-width-narrow']]) {
-    const input = '```dap ' + option + '\n' + source + '```\n';
+    const input = '```thinkflow ' + option + '\n' + source + '```\n';
     const html = md.render(input, { diagramSources: sources, diagrams });
     assert.ok(html.includes('class="app-diagram' + suffix + '"'));
   }
   assert.equal(sources.size, 1);
   for (const option of ['w-wide w-narrow', 'filename=x', 'unknown']) {
-    assert.throws(() => md.render('```dap ' + option + '\n' + source + '```\n', { diagrams }));
+    assert.throws(() => md.render('```thinkflow ' + option + '\n' + source + '```\n', { diagrams }));
   }
 });
 
 test('embedded_sources_reject_external_files_with_the_page_location', async () => {
   for (const text of [
-    'daphnis 2\nicons local "private"\nbox a "A" icon=local:secret\n',
-    'daphnis 2\nchart c "C" bar {\n  x "count"\n  data "private.json"\n  series n "N"\n}\n',
+    'thinkflow\nicons local "private"\nbox a "A" icon=local:secret\n',
+    'thinkflow\nchart c "C" bar {\n  x "count"\n  data "private.json"\n  series n "N"\n}\n',
   ]) await assert.rejects(compileDiagrams(new Map([[text, 'private-page']])), /private-page:.*file-based/);
 });
 

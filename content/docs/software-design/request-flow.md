@@ -25,8 +25,8 @@ category: software-design
 
 구성도는 사용자, 주문 API, 저장소의 경계를 보여 줍니다. 선은 연결 관계이고 움직이는 점은 그 관계를 따라가는 요청입니다. **요청 흐름** 탭을 선택하면 같은 경로에 여러 요청이 겹쳐 이동하는 모습을 볼 수 있습니다.
 
-```dap w-wide
-daphnis 2
+```thinkflow w-wide
+thinkflow
 title "주문 API가 요청을 받아 저장소에 기록한다"
 
 person user "사용자"
@@ -48,8 +48,8 @@ scene "요청 흐름" mode=loop for=8s
 
 구성도에는 저장이 끝나기 전에 성공을 응답하는지 나타나지 않습니다. 순서 그림은 위에서 아래로 메시지를 배치합니다. 이 예제는 저장 완료를 받은 뒤 사용자에게 주문 번호를 돌려줍니다.
 
-```dap
-daphnis 2
+```thinkflow
+thinkflow
 title "저장 완료를 받은 뒤 주문 번호를 응답한다"
 
 person user "사용자"
@@ -72,8 +72,8 @@ scene "주문 접수"
 
 주문 접수의 성공과 후속 처리의 완료는 구분합니다. 상태 그림의 카드는 서버가 아니라 작업의 상태입니다. 재시도 장면을 고르면 처리 도중 실패한 작업이 재시도 대기로 돌아가는 경로를 보여 줍니다.
 
-```dap w-narrow
-daphnis 2
+```thinkflow w-narrow
+thinkflow
 title "실패한 작업은 대기로 돌아가 다시 처리한다"
 
 state queued "대기"
@@ -103,8 +103,8 @@ scene "재시도"
 
 저장소를 상자 하나로 그리면 어떤 키로 사용자를 찾는지 빠집니다. 테이블 카드에서는 열과 키를 정의하고 외래 키로 관계를 연결합니다. **사용자 찾기**를 선택하면 주문의 `user_id`에서 사용자의 `id`로 이어지는 관계를 강조합니다.
 
-```dap
-daphnis 2
+```thinkflow
+thinkflow
 title "주문의 user_id가 사용자의 id를 참조한다"
 
 table users "users" {
@@ -131,8 +131,8 @@ scene "사용자 찾기"
 
 요청이 성공한다는 사실만으로 사용자가 얼마나 기다리는지 알 수는 없습니다. 아래 값은 대기 시간과 처리 시간을 구분하기 위한 합성 데이터입니다. **순서대로 비교**를 선택하면 한 번에 모든 막대를 읽지 않고 두 계열을 차례로 볼 수 있습니다.
 
-```dap w-wide
-daphnis 2
+```thinkflow w-wide
+thinkflow
 title "요청의 대기 시간과 처리 시간을 따로 비교한다"
 
 chart latency "요청별 시간" bar "설명용 합성 데이터" {
@@ -152,13 +152,13 @@ scene "순서대로 비교"
   reveal latency.processing
 ```
 
-이 그림은 세 요청의 값만 비교합니다. 전체 시스템의 성능이나 개선 효과를 주장하려면 측정 환경, 관측 구간과 표본 수를 함께 제시해야 합니다. 시간에 따른 변화에는 선·계단, 분포에는 히스토그램·상자, 구성비에는 누적·비율 차트를 사용할 수 있습니다. 각 입력 형식은 [Daphnis 차트 사용법](https://github.com/woonyong-choi/daphnis/blob/main/docs/reference/charts.md)에 정리되어 있습니다.
+이 그림은 세 요청의 값만 비교합니다. 전체 시스템의 성능이나 개선 효과를 주장하려면 측정 환경, 관측 구간과 표본 수를 함께 제시해야 합니다. 시간에 따른 변화에는 선·계단, 분포에는 히스토그램·상자, 구성비에는 누적·비율 차트를 사용할 수 있습니다. 각 입력 형식은 [ThinkFlow 차트 사용법](https://github.com/woonyong-choi/ThinkFlow/blob/main/docs/reference/charts.md)에 정리되어 있습니다.
 
 ## 문서에 넣는 방법
 
-이 홈페이지에서는 Markdown의 `dap` 코드 블록 하나가 그림 하나입니다. 폭은 코드·이미지와 똑같이 생략하면 본문 기본 폭, `dap w-wide`는 넓게, `dap w-narrow`는 작게 표시합니다. 모바일에서는 모두 화면 안으로 줄어듭니다. `daphnis 2` 아래에 선언과 장면을 적으면 빌드 시 공통 렌더러가 그림을 만들고, 읽는 화면에서는 장면 탭과 원문 복사·HTML 내려받기·전체 화면 조작을 제공합니다. 글마다 스타일이나 재생 코드를 작성하지 않습니다.
+이 홈페이지에서는 Markdown의 `thinkflow` 코드 블록 하나가 그림 하나입니다. 폭은 코드·이미지와 똑같이 생략하면 본문 기본 폭, `thinkflow w-wide`는 넓게, `thinkflow w-narrow`는 작게 표시합니다. 모바일에서는 모두 화면 안으로 줄어듭니다. `thinkflow` 아래에 선언과 장면을 적으면 빌드 시 공통 렌더러가 그림을 만들고, 읽는 화면에서는 장면 탭과 원문 복사·HTML 내려받기·전체 화면 조작을 제공합니다. 글마다 스타일이나 재생 코드를 작성하지 않습니다.
 
-작성할 때는 구성 요소와 연결을 먼저 적고, 정적인 그림으로 설명이 충분하지 않은 부분에 장면을 추가합니다. 설치, 문법과 실행 명령은 [Daphnis 문서](https://github.com/woonyong-choi/daphnis/blob/main/docs/usage.md)에서 확인할 수 있습니다.
+작성할 때는 구성 요소와 연결을 먼저 적고, 정적인 그림으로 설명이 충분하지 않은 부분에 장면을 추가합니다. 설치, 문법과 실행 명령은 [ThinkFlow 문서](https://github.com/woonyong-choi/ThinkFlow/blob/main/docs/usage.md)에서 확인할 수 있습니다.
 
 :::cards related
 ::card title="빠른 생산자와 느린 소비자 사이에 경계를 두기" href=/articles/bounded-queue/ icon=queue

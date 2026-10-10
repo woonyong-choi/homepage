@@ -53,7 +53,7 @@ npm run content:sync -- <assets-root>
 npm run design:sync -- /path/to/design-tokens
 ```
 
-정본의 `main` 변경은 Daphnis 검증을 거쳐 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지는 `build/repo-design-tokens` 브랜치에서 디자인 해시 일치와 전체 빌드·테스트를 확인하고 PR을 만든다. 사용자 명의 `DESIGN_AUTOMATION_TOKEN`이 등록된 경우에만 검증한 커밋을 자동 병합한다. 토큰이 없으면 검증된 PR까지 준비한다. 허용된 디자인 사본·렌더러 의존성 이외의 변경은 자동 병합하지 않는다. 인증과 갱신 경계는 [스타일 수정 지도](docs/design/styles.md)에 정리한다.
+정본의 `main` 변경은 ThinkFlow 검증을 거쳐 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지는 `build/repo-design-tokens` 브랜치에서 디자인 해시 일치와 전체 빌드·테스트를 확인하고 PR을 만든다. 사용자 명의 `DESIGN_AUTOMATION_TOKEN`이 등록된 경우에만 검증한 커밋을 자동 병합한다. 토큰이 없으면 검증된 PR까지 준비한다. 허용된 디자인 사본·렌더러 의존성 이외의 변경은 자동 병합하지 않는다. 인증과 갱신 경계는 [스타일 수정 지도](docs/design/styles.md)에 정리한다.
 
 토큰 파일은 그대로 보관하고 발행 CSS는 실제 HTML과 동작이 참조하는 선택자·변수만 남긴다.
 
