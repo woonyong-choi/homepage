@@ -51,6 +51,70 @@ test('syncApprovedContent_does_not_overwrite_unapproved_public_edits_or_accept_w
   assert.throws(() => verifyApprovedContent(f.site), /unapproved/);
 });
 
+// #164: 발행 목록 해석과 새 항목 생성은 공개 사본을 바꾸기 전에 끝나야 한다.
+test('syncApprovedContent_manifest_error_preserves_approved_inputs', async t => {
+  const cases = [
+    ['invalid JSON', null],
+    ['missing id', [{ slug: 'wiki' }]],
+    ['missing slug', [{ id: 'wiki' }]],
+    ['non-string id', [{ id: 123, slug: 'wiki' }]],
+    ['invalid slug', [{ id: 'wiki', slug: '../wiki' }]],
+    ['duplicate id', [{ id: 'wiki', slug: 'first' }, { id: 'wiki', slug: 'second' }]],
+    ['duplicate slug', [{ id: 'first', slug: 'wiki' }, { id: 'second', slug: 'wiki' }]],
+  ];
+  for (const [problem, identities] of cases) {
+    await t.test(problem, t => {
+      const f = fixture(t);
+      approveContent(f.source, [f.file]);
+      syncApprovedContent(f.source, f.site);
+      const snapshot = join(f.site, 'src/approved-content.json');
+      const manifest = join(f.site, 'src/publication-manifest.json');
+      const previous = [readFileSync(f.output), readFileSync(snapshot)];
+      writeFileSync(join(f.source, f.file), '---\nvisibility: public\n---\n# Changed\n');
+      const sources = [f.file];
+      if (!identities) writeFileSync(manifest, '{');
+      else {
+        mkdirSync(join(f.source, 'documents/wiki'));
+        for (const [index, identity] of identities.entries()) {
+          const source = `documents/wiki/entry-${index}.md`;
+          writeFileSync(join(f.source, source), `---\n${JSON.stringify({ visibility: 'public', ...identity })}\n---\n# Wiki\n`);
+          sources.push(source);
+        }
+      }
+      approveContent(f.source, sources);
+      const previousManifest = readFileSync(manifest);
+
+      assert.throws(() => syncApprovedContent(f.source, f.site), identities ? /(?:invalid|duplicate) publication (?:id|slug)/ : SyntaxError);
+
+      assert.deepEqual(readFileSync(f.output), previous[0]);
+      assert.deepEqual(readFileSync(snapshot), previous[1]);
+      assert.deepEqual(readFileSync(manifest), previousManifest);
+      assert.equal(existsSync(join(f.site, 'src/publication/entry-0.md')), false);
+      assert.equal(existsSync(join(f.site, 'src/publication/entry-1.md')), false);
+    });
+  }
+});
+
+// #164: 사전 목록 생성은 기존 순서와 승인 원문의 식별자·출처를 유지한다.
+test('syncApprovedContent_valid_manifest_preserves_identity_provenance_and_order', t => {
+  const f = fixture(t);
+  const entries = [
+    { id: 'first', slug: 'first-page', sourceUrl: 'https://docs.example.com/first/', sourceHash: 'a'.repeat(64) },
+    { id: 'second', slug: 'second-page' },
+  ];
+  mkdirSync(join(f.source, 'documents/wiki'));
+  for (const entry of entries) writeFileSync(join(f.source, `documents/wiki/${entry.id}.md`), `---\n${JSON.stringify({ visibility: 'public', ...entry })}\n---\n# Wiki\n`);
+  approveContent(f.source, entries.map(entry => `documents/wiki/${entry.id}.md`));
+  mkdirSync(join(f.site, 'src'));
+  const manifest = join(f.site, 'src/publication-manifest.json');
+  writeFileSync(manifest, JSON.stringify({ source: 'https://docs.example.com', documents: [{ id: 'second' }, { id: 'first' }] }));
+
+  assert.equal(syncApprovedContent(f.source, f.site), 2);
+
+  assert.deepEqual(JSON.parse(readFileSync(manifest)), { source: 'https://docs.example.com', documents: entries.toReversed().map(entry => ({ ...entry, file: `${entry.id}.md` })) });
+  assert.equal(Object.keys(verifyApprovedContent(f.site)).length, 2);
+});
+
 test('approveContent_rejects_private_paths_traversal_symlinks_drafts_and_duplicate_approvals', t => {
   const f = fixture(t);
   for (const path of ['archive/private.md', '../private.md', 'documents/examples/../../archive/private.md', '/documents/examples/a.md']) {

@@ -33,6 +33,13 @@ test('publication_contract_rejects_missing_comments_invalid_dates_and_tags', () 
   }
 });
 
+// #164: 식별자는 승인 동기화와 문서 해석 모두 문자열로 제한한다.
+test('publication_contract_rejects_numeric_document_identity', () => {
+  for (const key of ['id', 'slug']) {
+    assert.throws(() => readDocument(source({ [key]: 123 }), TAGS), new RegExp(`invalid document ${key}`));
+  }
+});
+
 test('publication_contract_accepts_only_optional_slug_parents', () => {
   for (const parent of [undefined, null, 'public-parent']) {
     assert.equal(readDocument(source({ parent }), TAGS).parent, parent);

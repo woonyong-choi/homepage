@@ -5,6 +5,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { readContentFile } from './content-files.mjs';
+import { isDocumentId } from './content-model.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const APPROVALS = 'config/homepage-approvals.json';
@@ -14,6 +15,9 @@ const SOURCES = Object.freeze({
   'documents/examples/': 'src/examples/',
 });
 
+// cost: time O(b+n*(d+log n)), heap O(b+n), stack O(1), io O(n*d)
+// vars: b = 승인 원문과 목록의 전체 바이트 수, n = 승인 파일 수, d = 최대 경로 깊이
+// basis: estimate
 export function approveContent(sourceRoot, sources) {
   if (!sources.length) throw new Error('explicit source files are required');
   const approvals = readApprovals(sourceRoot, { allowMissing: true });
@@ -35,19 +39,24 @@ export function revokeContent(sourceRoot, sources) {
   writeJson(safeFile(sourceRoot, APPROVALS), { version: 1, files: approvals.files.filter(entry => !sources.includes(entry.source)) });
 }
 
+// cost: time O(b+n*(d+log n)), heap O(b+n), stack O(d), io O(n*d)
+// vars: b = 승인 원문과 기존 사본의 전체 바이트 수, n = 검증할 파일 수, d = 최대 경로 깊이
+// basis: estimate
 export function syncApprovedContent(sourceRoot, siteRoot = ROOT) {
   const approvals = readApprovals(sourceRoot);
   const files = {};
   const copies = [];
+  const documents = [];
   // 전체 승인과 기존 사본 검증을 먼저 끝내야 중간 실패로 공개 입력이 바뀌지 않는다.
   for (const entry of approvals.files) {
     const target = targetFor(entry.source);
     const source = safeFile(sourceRoot, entry.source);
-    validatePublication(entry.source, source);
+    const metadata = validatePublication(entry.source, source);
     const content = readFileSync(source);
     if (digest(content) !== entry.sha256) throw new Error(`source changed after approval: ${entry.source}`);
     files[target] = entry.sha256;
     copies.push({ target: safeFile(siteRoot, target), content });
+    if (target.startsWith('src/publication/')) documents.push({ id: metadata.id, slug: metadata.slug, file: target.slice('src/publication/'.length), sourceUrl: metadata.sourceUrl, sourceHash: metadata.sourceHash });
   }
   const snapshot = safeFile(siteRoot, SNAPSHOT);
   const previous = existsSync(snapshot) ? verifyApprovedContent(siteRoot) : {};
@@ -56,17 +65,22 @@ export function syncApprovedContent(sourceRoot, siteRoot = ROOT) {
       if (!files[file] || digest(readFileSync(safeFile(siteRoot, file))) !== files[file]) throw new Error(`unmanaged existing content: ${file}`);
     }
   }
+  const manifestPath = safeFile(siteRoot, 'src/publication-manifest.json');
+  const manifest = createPublicationManifest(manifestPath, documents);
   for (const { target, content } of copies) {
     mkdirSync(dirname(target), { recursive: true });
     writeFileSync(target, content);
   }
   for (const file of Object.keys(previous)) if (!Object.hasOwn(files, file)) unlinkSync(safeFile(siteRoot, file));
   writeJson(snapshot, { version: 1, files });
-  updatePublicationManifest(siteRoot, files);
+  writeJson(manifestPath, manifest);
   verifyApprovedContent(siteRoot);
   return copies.length;
 }
 
+// cost: time O(b+n*(d+log n)), heap O(b+n*d), stack O(d), io O(n*d)
+// vars: b = 공개 사본과 목록의 전체 바이트 수, n = 검증할 파일 수, d = 최대 경로 깊이
+// basis: estimate
 export function verifyApprovedContent(siteRoot = ROOT) {
   const snapshot = JSON.parse(readFileSync(safeFile(siteRoot, SNAPSHOT), 'utf8'));
   if (snapshot.version !== 1 || !snapshot.files || typeof snapshot.files !== 'object' || Array.isArray(snapshot.files)) throw new Error('invalid content snapshot');
@@ -78,6 +92,9 @@ export function verifyApprovedContent(siteRoot = ROOT) {
   return snapshot.files;
 }
 
+// cost: time O(b), heap O(b), stack O(1), io O(1)
+// vars: b = 승인 목록의 바이트 수
+// basis: estimate
 function readApprovals(root, { allowMissing = false } = {}) {
   const path = safeFile(root, APPROVALS);
   if (allowMissing && !existsSync(path)) return { version: 1, files: [] };
@@ -124,10 +141,17 @@ function validatePublication(source, file) {
   if (!source.startsWith('documents/wiki/') && !source.startsWith('documents/examples/')) return;
   const { metadata } = readContentFile(file);
   if (metadata.visibility !== 'public' || (metadata.publishedAt && metadata.publishedAt > new Date().toISOString().slice(0, 10))) throw new Error(`draft or scheduled source cannot be exported: ${source}`);
+  return metadata;
 }
 
+// cost: time O(n*(d+log n)), heap O(n*d), stack O(d), io O(n*d)
+// vars: n = 관리 경로의 파일과 폴더 수, d = 최대 경로 깊이
+// basis: estimate
 function managedFiles(root) {
   const result = [];
+  // cost: time O(n*d), heap O(n*d), stack O(d), io O(n*d)
+  // vars: n = 현재 경로 아래 파일과 폴더 수, d = 최대 경로 깊이
+  // basis: estimate
   function visit(path) {
     const file = safeFile(root, path);
     if (!existsSync(file)) return;
@@ -142,18 +166,25 @@ function managedFiles(root) {
   return result.sort();
 }
 
-function updatePublicationManifest(root, files) {
-  const path = safeFile(root, 'src/publication-manifest.json');
+// cost: time O(b+n*log n), heap O(b+n), stack O(1), io O(1)
+// vars: b = 기존 발행 목록의 바이트 수, n = 기존 항목과 새 항목 수
+// basis: estimate
+function createPublicationManifest(path, documents) {
+  for (const key of ['id', 'slug']) {
+    const values = documents.map(document => document[key]);
+    if (values.some(value => !isDocumentId(value))) throw new Error(`invalid publication ${key}`);
+    if (new Set(values).size !== values.length) throw new Error(`duplicate publication ${key}`);
+  }
   const manifest = existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : { source: 'https://docs.woonyong.com' };
   const order = new Map((manifest.documents ?? []).map((document, index) => [document.id, index]));
-  manifest.documents = Object.keys(files).filter(file => file.startsWith('src/publication/')).map(file => {
-    const { metadata } = readContentFile(safeFile(root, file));
-    return { id: metadata.id, slug: metadata.slug, file: file.slice('src/publication/'.length), sourceUrl: metadata.sourceUrl, sourceHash: metadata.sourceHash };
-  }).sort((left, right) => (order.get(left.id) ?? Infinity) - (order.get(right.id) ?? Infinity) || left.id.localeCompare(right.id));
-  writeJson(path, manifest);
+  manifest.documents = documents.sort((left, right) => (order.get(left.id) ?? Infinity) - (order.get(right.id) ?? Infinity) || left.id.localeCompare(right.id));
+  return manifest;
 }
 
 function digest(content) { return createHash('sha256').update(content).digest('hex'); }
+// cost: time O(b), heap O(b), stack O(d), io O(1)
+// vars: b = 직렬화한 JSON의 바이트 수, d = JSON의 최대 중첩 깊이
+// basis: estimate
 function writeJson(path, value) { mkdirSync(dirname(path), { recursive: true }); writeFileSync(path, JSON.stringify(value, null, 2) + '\n'); }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
