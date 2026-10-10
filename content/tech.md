@@ -42,75 +42,87 @@ topics:
     article: nodejs
     group: tech
     description: 이벤트 루프·비동기 I/O
+  computer-science:
+    label: 수학·컴퓨터 과학 기초
+    field: cs
+    icon: algorithm
+    article: computer-science
+    group: cs
+    description: 수학·논리·자료구조·알고리즘
   programming-languages-runtime:
-    label: Programming
+    label: 프로그래밍 언어·런타임
     field: languages
-    icon: terminal
-    aliases:
-      - 프로그래밍
-      - 런타임
+    icon: code
     article: programming-languages-runtime
     group: cs
-    description: 언어 원리·런타임
+    description: 언어 원리·실행 모델·런타임
   os:
-    label: OS
+    label: 컴퓨터 시스템
     field: cs
-    icon: operating-system
-    aliases:
-      - 운영체제
-      - OS
-    article: os
+    icon: cpu
+    article: computer-systems-network
     group: cs
-    description: 프로세스·메모리·파일 시스템
+    description: 컴퓨터 구조·운영체제·메모리
   network:
     label: 네트워크
     field: cs
     icon: network
-    aliases:
-      - 네트워크
     article: network
     group: cs
-    description: 프로토콜·요청·응답
+    description: 프로토콜·연결·요청과 응답
   software-design:
-    label: 소프트웨어 설계
+    label: 소프트웨어 공학
     field: cs
-    icon: architecture
-    aliases:
-      - 설계
-      - 시스템 설계
+    icon: hierarchy
     article: software-design
     group: cs
-    description: 책임 분리·의존성 설계
+    description: 설계·테스트·코드 품질·개발 과정
+  backend-services:
+    label: 백엔드·분산 시스템
+    field: frameworks
+    icon: server
+    article: backend-services
+    group: cs
+    description: 서비스 구조·동시성·분산 처리
+  data:
+    label: 데이터베이스·데이터 처리
+    field: infrastructure
+    icon: database
+    article: data
+    group: cs
+    description: 데이터 모델·저장·질의·처리
+  ai-machine-learning:
+    label: 인공지능
+    field: cs
+    icon: brain-circuit
+    article: ai-machine-learning
+    group: cs
+    description: 머신러닝·딥러닝·언어 모델·평가
+  frontend:
+    label: 프론트엔드·사용자 인터페이스
+    field: frameworks
+    icon: layout
+    article: frontend
+    group: cs
+    description: 브라우저·화면 구성·사용자 상호작용
+  platform-delivery-operations:
+    label: 인프라·운영
+    field: infrastructure
+    icon: cloud
+    article: platform-delivery-operations
+    group: cs
+    description: 배포·관측·자동화·서비스 운영
+  security:
+    label: 보안·개인정보 보호
+    field: infrastructure
+    icon: lock
+    article: security
+    group: cs
+    description: 인증·권한·암호화·개인정보 보호
   ml:
-    label: 머신러닝
-    field: cs
-    icon: model
-    aliases:
-      - 머신러닝
-      - ML
-    article: ml
-    group: cs
-    description: 데이터 학습·모델 평가
+    topic: ai-machine-learning
   llm:
-    label: LLM
-    field: cs
-    icon: model
-    aliases:
-      - LLM
-      - 언어 모델
-    article: llm
-    group: cs
-    description: 언어 모델·구조·활용
-  computer-science:
-    label: CS 기초
-    field: cs
-    icon: processor
-    aliases:
-      - CS
-      - 컴퓨터 과학
-    article: computer-science
-    group: cs
-    description: 컴퓨터 구조·계산 기초
+    topic: ai-machine-learning
   spring-boot:
     label: Spring Boot
     field: frameworks
@@ -120,24 +132,6 @@ topics:
     article: spring-boot
     group: tech
     description: 애플리케이션 구성·요청 처리
-  frontend:
-    label: Frontend
-    field: frameworks
-    icon: components
-    aliases:
-      - 프론트엔드
-    article: frontend
-    group: cs
-    description: 브라우저 동작·화면 구성
-  backend-services:
-    label: Backend
-    field: frameworks
-    icon: api
-    aliases:
-      - 백엔드
-    article: backend-services
-    group: cs
-    description: 요청 처리·서비스 구조
   redis:
     label: Redis
     field: infrastructure
@@ -165,34 +159,6 @@ topics:
     article: linux
     group: tech
     description: 명령어·시스템 동작
-  security:
-    label: 보안
-    field: infrastructure
-    icon: security
-    aliases:
-      - 보안
-    article: security
-    group: cs
-    description: 인증·권한·시스템 보호
-  platform-delivery-operations:
-    label: DevOps
-    field: infrastructure
-    icon: deploy
-    aliases:
-      - DevOps
-      - 인프라
-    article: platform-delivery-operations
-    group: cs
-    description: 개발·배포·운영
-  data:
-    label: Data
-    field: infrastructure
-    icon: database
-    aliases:
-      - 데이터
-    article: data
-    group: cs
-    description: 데이터 저장·처리
   projects:
     label: Projects
     field: cs

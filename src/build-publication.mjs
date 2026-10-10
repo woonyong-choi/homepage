@@ -17,7 +17,7 @@ import { readCommentCounts } from './comment-counts.mjs';
 import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
 import { publicationAssets, clientEntrypoints } from './publication-assets.mjs';
 import { loadHomeContent } from './home-content.mjs';
-import { createTopicTrees } from './topic-navigation.mjs';
+import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { mathAssets } from './math-assets.mjs';
 import { compileDiagrams } from './diagrams.mjs';
@@ -48,7 +48,7 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   const entries = ['docs', 'blog'].flatMap(folder => markdownFiles(join(CONTENT, folder)))
     .sort().map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS));
   entries.sort((left, right) => Number(Boolean(left.example)) - Number(Boolean(right.example)));
-  const documents = publicDocuments(entries, { includeExamples: preview });
+  const documents = navigationDocuments(publicDocuments(entries, { includeExamples: preview }), TOPICS);
   const posts = blogDocuments(documents);
   const comments = readCommentCounts(posts, CONFIG);
   for (const post of posts) {

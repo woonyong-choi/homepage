@@ -2,8 +2,8 @@
 import * as ui from './vendor/theme/ui/index.mjs';
 
 function topicRoots(page, context) {
-  const roots = context.topicTrees?.get(page.category) ?? [];
-  const entrySlug = context.topics[page.category]?.article;
+  const roots = context.topicTrees?.get(page.topic ?? page.category) ?? [];
+  const entrySlug = context.topics[page.topic ?? page.category]?.article;
   const pending = [...roots];
   let entry;
   while (pending.length) {
@@ -36,7 +36,7 @@ export function documentNavigation(page, context) {
   }
   const roots = topicRoots(page, context);
   if (!roots.length) return undefined;
-  const topic = context.topics[page.category];
+  const topic = context.topics[page.topic ?? page.category];
   return ui.DocumentNavigation({ label: topic.label,
     nodes: roots.map(item) });
 }
@@ -53,7 +53,7 @@ export function documentPager(page, context) {
   const index = ordered.findIndex(candidate => candidate.id === page.id);
   if (index < 0 || ordered.length < 2) return '';
   const link = (candidate, direction) => candidate && { text: `${direction} 문서: ${candidate.title}`, href: candidate.route };
-  return String(ui.PageLinks({ label: `${context.topics[page.category].label} 문서 이동`,
+  return String(ui.PageLinks({ label: `${context.topics[page.topic ?? page.category].label} 문서 이동`,
     before: link(ordered[index - 1], '이전'), after: link(ordered[index + 1], '다음') }));
 }
 

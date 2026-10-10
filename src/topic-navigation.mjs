@@ -1,12 +1,36 @@
 // 공개 문서의 부모 관계를 검사하고 전체 깊이를 보존한 주제별 목록을 만든다.
+export function navigationDocuments(documents, topics) {
+  const bySlug = new Map(documents.filter(page => page.type === 'wiki').map(page => [page.slug, page]));
+  const entries = new Map(Object.entries(topics).filter(([, topic]) => topic.article).map(([id, topic]) => [topic.article, id]));
+  const resolved = new Map();
+  return documents.map(page => {
+    if (page.type !== 'wiki') return page;
+    const visited = new Set();
+    let ancestor = page;
+    let topic = topics[page.category]?.topic ?? page.category;
+    while (ancestor && ancestor.category === page.category && !visited.has(ancestor.slug)) {
+      if (resolved.has(ancestor.slug) || entries.has(ancestor.slug)) {
+        topic = resolved.get(ancestor.slug) ?? entries.get(ancestor.slug);
+        break;
+      }
+      visited.add(ancestor.slug);
+      ancestor = bySlug.get(ancestor.parent);
+    }
+    for (const slug of visited) resolved.set(slug, topic);
+    resolved.set(page.slug, topic);
+    return { ...page, topic };
+  });
+}
+
 export function createTopicTrees(documents) {
   const roots = createTopicTree('documents', documents.filter(page => page.type === 'wiki'));
   const topics = new Map();
   const pending = roots.toReversed().map(root => ({ node: root, root }));
   while (pending.length) {
     const { node, root } = pending.pop();
-    if (!topics.has(node.page.category)) topics.set(node.page.category, new Set());
-    topics.get(node.page.category).add(root);
+    const topic = node.page.topic ?? node.page.category;
+    if (!topics.has(topic)) topics.set(topic, new Set());
+    topics.get(topic).add(root);
     for (let i = node.children.length - 1; i >= 0; i--) pending.push({ node: node.children[i], root });
   }
   return new Map([...topics].map(([category, entries]) => [category, [...entries]]));

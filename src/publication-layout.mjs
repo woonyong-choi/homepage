@@ -56,7 +56,7 @@ export function documentCard(page, title = page.title, level = 3, variant) {
 function categoryEntries(documents, topics, field) {
   const bySlug = new Map(documents.map(page => [page.slug, page]));
   return Object.entries(topics).filter(([, topic]) => topic.group && (TOPIC_GROUPS.includes(field) ? topic.group === field : topic.field === field)).map(([id, topic]) => {
-      const article = bySlug.get(topic.article) ?? documents.filter(page => page.category === id && page.type === 'wiki').sort((a, b) => a.id.localeCompare(b.id))[0];
+      const article = bySlug.get(topic.article) ?? documents.filter(page => (page.topic ?? page.category) === id && page.type === 'wiki').sort((a, b) => a.id.localeCompare(b.id))[0];
       return article ? { ...topic, page: { ...article, description: topic.group === 'tech' ? '' : topic.description ?? article.description, contentIcon: { name: topic.icon } } } : null;
     }).filter(Boolean);
 }
