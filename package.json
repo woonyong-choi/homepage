@@ -31,6 +31,9 @@
     "yaml": "^2.9.1"
   },
   "overrides": {
+    "@vscode/markdown-it-katex": {
+      "katex": "$katex"
+    },
     "purgecss": {
       "glob": "13.0.6",
       "postcss-selector-parser": "7.1.6"
