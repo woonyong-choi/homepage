@@ -63,6 +63,11 @@ test('used_licensed_assets_include_notices_and_unused_assets_do_not', () => {
     ['/theme/assets/icons/brands/python.svg', '/theme/assets/icons/brands/LICENSE'],
     ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
     ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],
+    ['/assets/company-j2ysoft.png', '/assets/company-logos-NOTICE.txt'],
+    ['/assets/company-jusin-background.png', '/assets/company-logos-NOTICE.txt'],
+    ['/assets/company-neople-background.png', '/assets/company-logos-NOTICE.txt'],
+    ['/assets/company-nexon.png', '/assets/company-logos-NOTICE.txt'],
+    ['/assets/company-roborobo.png', '/assets/company-logos-NOTICE.txt'],
   ];
   for (const [asset, notice] of dependencies) {
     const pages = new Map([['/', `<a href="${asset}">자산</a>`]]);
