@@ -1,0 +1,12 @@
+# Homepage
+
+> Markdown 기반 개인 홈페이지입니다. 소개·프로젝트·문서·블로그를 함께 제공합니다.
+
+소스와 콘텐츠는 이 저장소에서 관리하며, 공통 디자인은 design-tokens 저장소에서 가져옵니다.
+
+## Docs
+
+- [개인 랜딩 페이지](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/personal-landing.md): 영상 데모, 프로젝트 근거, 동료 추천과 지식 탐색 구성
+- [기록 탐색과 화면 구성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/knowledge-navigation.md): 확정한 네 분야, 카드 배치, 전체 목록과 사이드바 깊이
+- [Markdown 글 작성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/markdown.md): 글 파일, 지원 문법, 코드 블록 언어와 복사, 미지원 항목
+- [스타일 수정 지도](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/styles.md): 토큰·공통 조각·화면·콘텐츠 문법 중 어디를 고치는지, 홈 type별 클래스

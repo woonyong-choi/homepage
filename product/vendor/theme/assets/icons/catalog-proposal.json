@@ -1,0 +1,702 @@
+{
+  "version": 1,
+  "viewBox": "0 0 48 48",
+  "icons": {
+    "data-structures": {
+      "label": "자료구조",
+      "family": "object",
+      "metaphor": "연결 블록",
+      "body": "<path d=\"M14 19V33H29\" fill=\"none\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"5\" y=\"5\" width=\"17\" height=\"17\" rx=\"5\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"26\" y=\"26\" width=\"17\" height=\"17\" rx=\"5\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "컴퓨터 과학",
+      "priority": 1
+    },
+    "algorithm": {
+      "label": "알고리즘",
+      "family": "tile",
+      "metaphor": "판단과 두 갈래 실행 경로",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-neutral)\" stroke=\"var(--icon-neutral-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M24 11L31 18L24 25L17 18Z\" fill=\"var(--icon-paper)\"/><path d=\"M17 18H12V34H19 M31 18H36V34H29\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"19\" cy=\"34\" r=\"2.5\" fill=\"var(--icon-paper)\"/><circle cx=\"29\" cy=\"34\" r=\"2.5\" fill=\"var(--icon-paper)\"/>",
+      "group": "컴퓨터 과학",
+      "priority": 1
+    },
+    "operating-system": {
+      "label": "운영체제",
+      "family": "tile",
+      "metaphor": "OS 약어가 있는 시스템 패널",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-neutral)\" stroke=\"var(--icon-neutral-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M12 14H36\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M19 23C19 17 10 17 10 23V30C10 36 19 36 19 30Z M37 21C33 17 26 19 26 23C26 28 37 25 37 30C37 35 29 37 25 33\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "컴퓨터 과학",
+      "priority": 1
+    },
+    "processor": {
+      "label": "컴퓨터 구조",
+      "family": "object",
+      "metaphor": "프로세서",
+      "body": "<path d=\"M16 5V10 M24 5V10 M32 5V10 M16 38V43 M24 38V43 M32 38V43 M5 16H10 M5 24H10 M5 32H10 M38 16H43 M38 24H43 M38 32H43\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"10\" y=\"10\" width=\"28\" height=\"28\" rx=\"6\" fill=\"var(--icon-neutral)\" stroke=\"var(--icon-neutral-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"17\" y=\"17\" width=\"14\" height=\"14\" rx=\"3\" fill=\"var(--icon-paper)\"/>",
+      "group": "컴퓨터 과학",
+      "priority": 2
+    },
+    "memory": {
+      "body": "<rect x=\"4\" y=\"12\" width=\"40\" height=\"23\" rx=\"4\" fill=\"var(--icon-positive-soft)\" stroke=\"var(--icon-positive)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"10\" y=\"18\" width=\"10\" height=\"11\" rx=\"2\" fill=\"var(--icon-positive)\"/><rect x=\"26\" y=\"18\" width=\"10\" height=\"11\" rx=\"2\" fill=\"var(--icon-positive)\"/><path d=\"M10 36V41 M18 36V41 M30 36V41 M38 36V41\" fill=\"none\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "메모리",
+      "metaphor": "메모리 칸과 회수 표시",
+      "group": "컴퓨터 과학",
+      "priority": 1,
+      "family": "object"
+    },
+    "runtime": {
+      "body": "<rect x=\"8\" y=\"5\" width=\"32\" height=\"38\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M17 12L13 17L17 22 M31 12L35 17L31 22\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M19 26V35H31 M27 31L31 35L27 39\" fill=\"none\" stroke=\"var(--icon-neutral)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "컴파일",
+      "metaphor": "소스 코드에서 실행 결과로 변환",
+      "group": "컴퓨터 과학",
+      "priority": 2,
+      "family": "object"
+    },
+    "concurrency": {
+      "label": "동시성",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M16 13V34 M11 29L16 34L21 29 M32 13V34 M27 29L32 34L37 29\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "metaphor": "나란히 진행하는 두 실행 경로",
+      "family": "tile",
+      "group": "컴퓨터 과학",
+      "priority": 1
+    },
+    "network": {
+      "label": "네트워크",
+      "family": "object",
+      "metaphor": "연결 장비",
+      "body": "<path d=\"M11 26V8 M37 26V8\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"4\" y=\"23\" width=\"40\" height=\"19\" rx=\"7\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"12\" cy=\"32\" r=\"2.5\" fill=\"var(--icon-positive)\"/><circle cx=\"20\" cy=\"32\" r=\"2.5\" fill=\"var(--icon-positive)\"/><path d=\"M29 32H36\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M19 13Q24 9 29 13 M22 18Q24 16 26 18\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "컴퓨터 과학",
+      "priority": 1
+    },
+    "api": {
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-accent)\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M10 31L14 17L18 31 M12 26H16 M22 31V17H26Q31 17 31 22Q31 26 26 26H22 M34 17H38 M36 17V31 M34 31H38\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "API",
+      "metaphor": "API 약어를 직접 나타낸 타일",
+      "group": "애플리케이션과 백엔드",
+      "priority": 1,
+      "family": "tile"
+    },
+    "architecture": {
+      "label": "시스템 설계",
+      "family": "object",
+      "metaphor": "입구·처리·저장 계층",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"9\" rx=\"3\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"5\" y=\"20\" width=\"16\" height=\"9\" rx=\"3\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"27\" y=\"20\" width=\"16\" height=\"9\" rx=\"3\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"5\" y=\"35\" width=\"38\" height=\"8\" rx=\"3\" fill=\"var(--icon-structure-soft)\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "애플리케이션과 백엔드",
+      "priority": 1
+    },
+    "queue": {
+      "label": "메시지 큐",
+      "family": "object",
+      "metaphor": "순서대로 기다리는 항목과 출구",
+      "body": "<rect x=\"5\" y=\"9\" width=\"38\" height=\"19\" rx=\"5\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"10\" y=\"14\" width=\"6\" height=\"10\" rx=\"2\" fill=\"var(--icon-accent)\"/><rect x=\"21\" y=\"14\" width=\"6\" height=\"10\" rx=\"2\" fill=\"var(--icon-accent-soft)\"/><rect x=\"32\" y=\"14\" width=\"6\" height=\"10\" rx=\"2\" fill=\"var(--icon-accent-soft)\"/><path d=\"M12 38H36 M32 34L36 38L32 42\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "애플리케이션과 백엔드",
+      "priority": 1
+    },
+    "event": {
+      "label": "이벤트",
+      "family": "tile",
+      "metaphor": "종",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-critical)\" stroke=\"var(--icon-critical-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M12 31C16 27 16 24 16 20C16 15 19 12 24 12C29 12 32 15 32 20C32 24 32 27 36 31Z\" fill=\"var(--icon-paper)\"/><path d=\"M21 35Q24 40 27 35\" fill=\"var(--icon-paper)\"/><path d=\"M24 9V12\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "애플리케이션과 백엔드",
+      "priority": 2
+    },
+    "scheduler": {
+      "body": "<rect x=\"5\" y=\"7\" width=\"32\" height=\"32\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M6 17H36\" fill=\"none\" stroke=\"var(--icon-critical)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M13 4V10 M29 4V10\" fill=\"none\" stroke=\"var(--icon-critical)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"31\" cy=\"32\" r=\"12\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M31 24V32L37 35\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "배치",
+      "metaphor": "시계와 작업 칸",
+      "group": "애플리케이션과 백엔드",
+      "priority": 1,
+      "family": "object"
+    },
+    "workflow": {
+      "body": "<path d=\"M12 13H36V34H12\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"4\" y=\"5\" width=\"16\" height=\"15\" rx=\"4\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"28\" y=\"26\" width=\"16\" height=\"16\" rx=\"4\" fill=\"var(--icon-positive-soft)\" stroke=\"var(--icon-positive)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M17 29L11 34L17 39\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "워크플로",
+      "metaphor": "이어진 실행 단계",
+      "group": "애플리케이션과 백엔드",
+      "priority": 2,
+      "family": "object"
+    },
+    "serialization": {
+      "body": "<rect x=\"8\" y=\"5\" width=\"32\" height=\"38\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M20 15H17V21L14 24L17 27V33H20 M28 15H31V21L34 24L31 27V33H28\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "직렬화",
+      "metaphor": "중괄호 문서",
+      "group": "애플리케이션과 백엔드",
+      "priority": 2,
+      "family": "object"
+    },
+    "package": {
+      "body": "<path d=\"M5 15L24 5L43 15V35L24 44L5 35Z\" fill=\"var(--icon-warm-soft)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M5 15L24 25L43 15 M24 25V43 M14 10L33 20V28\" fill=\"none\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M11 30L17 33\" fill=\"none\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "의존성",
+      "metaphor": "열린 패키지 상자",
+      "group": "애플리케이션과 백엔드",
+      "priority": 2,
+      "family": "object"
+    },
+    "database": {
+      "label": "데이터베이스",
+      "family": "object",
+      "metaphor": "원통형 저장소",
+      "body": "<path d=\"M8 12V35C8 44 40 44 40 35V12Z\" fill=\"var(--icon-structure-soft)\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M8 12C8 4 40 4 40 12C40 20 8 20 8 12Z\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M9 24C16 29 32 29 39 24 M9 34C16 39 32 39 39 34\" fill=\"none\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "데이터와 저장소",
+      "priority": 1
+    },
+    "transaction": {
+      "label": "트랜잭션",
+      "body": "<rect x=\"6\" y=\"5\" width=\"36\" height=\"38\" rx=\"7\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"12\" y=\"12\" width=\"24\" height=\"5\" rx=\"2\" fill=\"var(--icon-accent-soft)\"/><rect x=\"12\" y=\"21\" width=\"24\" height=\"5\" rx=\"2\" fill=\"var(--icon-accent-soft)\"/><path d=\"M18 34L23 38L32 30\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "metaphor": "경계 안의 여러 작업과 하나의 확정",
+      "family": "outline",
+      "group": "데이터와 저장소",
+      "priority": 1
+    },
+    "indexing": {
+      "label": "인덱스",
+      "body": "<rect x=\"6\" y=\"5\" width=\"31\" height=\"38\" rx=\"7\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"11\" y=\"11\" width=\"17\" height=\"4\" rx=\"2\" fill=\"var(--icon-accent-soft)\"/><rect x=\"11\" y=\"20\" width=\"17\" height=\"4\" rx=\"2\" fill=\"var(--icon-accent-soft)\"/><rect x=\"11\" y=\"29\" width=\"10\" height=\"4\" rx=\"2\" fill=\"var(--icon-accent-soft)\"/><circle cx=\"32\" cy=\"29\" r=\"8\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M38 35L44 42\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "metaphor": "색인 탭과 탐색 표시",
+      "family": "object",
+      "group": "데이터와 저장소",
+      "priority": 1
+    },
+    "cache": {
+      "label": "캐시",
+      "family": "tile",
+      "metaphor": "빠른 접근 번개",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-warm)\" stroke=\"var(--icon-warm-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M25 10L14 26H23L21 38L35 21H26Z\" fill=\"var(--icon-paper)\"/>",
+      "group": "데이터와 저장소",
+      "priority": 1
+    },
+    "search": {
+      "label": "검색",
+      "family": "tile",
+      "metaphor": "확대경",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"22\" cy=\"21\" r=\"9\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M29 28L36 35\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "데이터와 저장소",
+      "priority": 1
+    },
+    "replication": {
+      "body": "<rect x=\"5\" y=\"5\" width=\"24\" height=\"29\" rx=\"5\" fill=\"var(--icon-structure-soft)\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"19\" y=\"14\" width=\"24\" height=\"29\" rx=\"5\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M25 22H36 M25 29H36 M25 36H32\" fill=\"none\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "복제",
+      "metaphor": "연결된 저장소 두 개",
+      "group": "데이터와 저장소",
+      "priority": 2,
+      "family": "object"
+    },
+    "migration": {
+      "body": "<rect x=\"5\" y=\"7\" width=\"15\" height=\"22\" rx=\"4\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"28\" y=\"7\" width=\"15\" height=\"22\" rx=\"4\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M10 14H15 M10 21H15 M33 14H38 M33 21H38\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M10 38H38 M33 33L38 38L33 43\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "마이그레이션",
+      "metaphor": "원본 문서에서 새 문서로 이전하는 방향",
+      "group": "데이터와 저장소",
+      "priority": 1,
+      "family": "object"
+    },
+    "backup": {
+      "body": "<rect x=\"7\" y=\"17\" width=\"34\" height=\"26\" rx=\"5\" fill=\"var(--icon-structure-soft)\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"13\" y=\"23\" width=\"22\" height=\"7\" rx=\"2\" fill=\"var(--icon-paper)\"/><path d=\"M17 36H31\" fill=\"none\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M13 9C23 3 35 4 39 11 M33 10L39 11L38 5\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "백업",
+      "metaphor": "저장소와 되돌림 표시",
+      "group": "데이터와 저장소",
+      "priority": 2,
+      "family": "object"
+    },
+    "pipeline": {
+      "body": "<path d=\"M6 10H19V29H42V41H7V29H7V22H6Z\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M12 16V35H34 M29 30L34 35L29 40\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "데이터 파이프라인",
+      "metaphor": "입력과 출력이 있는 관",
+      "group": "데이터와 저장소",
+      "priority": 1,
+      "family": "object"
+    },
+    "analytics": {
+      "body": "<path d=\"M6 7V42H42\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"12\" y=\"26\" width=\"6\" height=\"11\" rx=\"2\" fill=\"var(--icon-accent-soft)\"/><rect x=\"23\" y=\"18\" width=\"6\" height=\"19\" rx=\"2\" fill=\"var(--icon-accent-edge)\"/><rect x=\"34\" y=\"9\" width=\"6\" height=\"28\" rx=\"2\" fill=\"var(--icon-accent)\"/>",
+      "label": "분석",
+      "metaphor": "축이 있는 막대 그래프",
+      "group": "데이터와 저장소",
+      "priority": 2,
+      "family": "object"
+    },
+    "server": {
+      "label": "서버",
+      "family": "object",
+      "metaphor": "상태등이 있는 랙",
+      "body": "<rect x=\"8\" y=\"5\" width=\"32\" height=\"38\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M9 18H39 M9 31H39\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"15\" cy=\"12\" r=\"2\" fill=\"var(--icon-positive)\"/><circle cx=\"15\" cy=\"25\" r=\"2\" fill=\"var(--icon-positive)\"/><circle cx=\"15\" cy=\"37\" r=\"2\" fill=\"var(--icon-positive)\"/><path d=\"M23 12H33 M23 25H33 M23 37H33\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "인프라와 운영",
+      "priority": 1
+    },
+    "cloud": {
+      "label": "클라우드",
+      "family": "object",
+      "metaphor": "연결 가능한 클라우드",
+      "body": "<path d=\"M13 40C3 40 3 25 13 24C13 8 34 8 35 24C46 24 46 40 36 40Z\" fill=\"var(--icon-cloud)\" stroke=\"var(--icon-cloud-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M17 30L23 35L32 25\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "인프라와 운영",
+      "priority": 1
+    },
+    "container": {
+      "label": "컨테이너",
+      "family": "object",
+      "metaphor": "문과 골판이 있는 운송 컨테이너",
+      "body": "<rect x=\"5\" y=\"11\" width=\"38\" height=\"29\" rx=\"3\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M15 12V39 M25 16V35 M35 16V35\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M9 18V23 M9 28V33\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "인프라와 운영",
+      "priority": 1
+    },
+    "cluster": {
+      "body": "<path d=\"M24 13V27 M11 35V27H37V35\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"15\" y=\"4\" width=\"18\" height=\"14\" rx=\"4\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"5\" y=\"31\" width=\"14\" height=\"13\" rx=\"4\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"29\" y=\"31\" width=\"14\" height=\"13\" rx=\"4\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M20 11H28 M8 38H14 M34 38H40\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "클러스터",
+      "metaphor": "함께 묶인 실행 장비",
+      "group": "인프라와 운영",
+      "priority": 2,
+      "family": "object"
+    },
+    "gateway": {
+      "label": "게이트웨이",
+      "family": "outline",
+      "metaphor": "입구를 통과하는 경로",
+      "body": "<path d=\"M13 42V8Q13 5 17 5H31Q35 5 35 8V42\" fill=\"none\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M5 24H42 M36 18L42 24L36 30\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "인프라와 운영",
+      "priority": 2
+    },
+    "scaling": {
+      "label": "확장",
+      "family": "outline",
+      "metaphor": "퍼져 나가는 실행 단위",
+      "body": "<rect x=\"5\" y=\"25\" width=\"18\" height=\"18\" rx=\"4\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M14 7H41V34 M41 7L24 24\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "인프라와 운영",
+      "priority": 2
+    },
+    "deploy": {
+      "label": "배포",
+      "family": "object",
+      "metaphor": "내보내는 패키지",
+      "body": "<path d=\"M6 18L24 10L42 18V37L24 44L6 37Z\" fill=\"var(--icon-warm-soft)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M6 18L24 26L42 18 M24 26V43\" fill=\"none\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M24 5V21 M18 11L24 5L30 11\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "인프라와 운영",
+      "priority": 1
+    },
+    "monitoring": {
+      "label": "관측",
+      "family": "object",
+      "metaphor": "시스템 상태의 시간별 변화",
+      "body": "<rect x=\"5\" y=\"6\" width=\"38\" height=\"31\" rx=\"6\" fill=\"var(--icon-neutral)\" stroke=\"var(--icon-neutral-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M24 38V43 M16 43H32\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M11 28L18 22L25 25L36 15\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "인프라와 운영",
+      "priority": 1
+    },
+    "logs": {
+      "body": "<rect x=\"8\" y=\"5\" width=\"32\" height=\"38\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"14\" cy=\"14\" r=\"2\" fill=\"var(--icon-positive)\"/><circle cx=\"14\" cy=\"24\" r=\"2\" fill=\"var(--icon-idea)\"/><circle cx=\"14\" cy=\"34\" r=\"2\" fill=\"var(--icon-critical)\"/><path d=\"M21 14H33 M21 24H33 M21 34H30\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "로그",
+      "metaphor": "시간순 기록 줄",
+      "group": "인프라와 운영",
+      "priority": 1,
+      "family": "object"
+    },
+    "tracing": {
+      "body": "<path d=\"M12 13V36 M12 23H21 M21 23V35H30\" fill=\"none\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"7\" y=\"7\" width=\"31\" height=\"7\" rx=\"3\" fill=\"var(--icon-accent)\"/><rect x=\"18\" y=\"20\" width=\"24\" height=\"7\" rx=\"3\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"28\" y=\"33\" width=\"14\" height=\"7\" rx=\"3\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "분산 추적",
+      "metaphor": "계층별 요청 실행 구간",
+      "group": "인프라와 운영",
+      "priority": 2,
+      "family": "object"
+    },
+    "globe": {
+      "label": "인터넷",
+      "family": "outline",
+      "metaphor": "지구와 주소 지점",
+      "body": "<circle cx=\"24\" cy=\"24\" r=\"19\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M5 24H43 M24 5C10 15 10 33 24 43C38 33 38 15 24 5 M9 13H39 M9 35H39\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "인프라와 운영",
+      "priority": 2
+    },
+    "cost": {
+      "body": "<circle cx=\"24\" cy=\"24\" r=\"19\" fill=\"var(--icon-idea)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M12 19H36 M15 13L20 35L24 22L28 35L33 13\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "비용",
+      "metaphor": "사용량 계기와 동전",
+      "group": "인프라와 운영",
+      "priority": 2,
+      "family": "object"
+    },
+    "browser": {
+      "body": "<rect x=\"4\" y=\"6\" width=\"40\" height=\"36\" rx=\"7\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M5 17H43\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"11\" cy=\"11\" r=\"2\" fill=\"var(--icon-critical)\"/><circle cx=\"18\" cy=\"11\" r=\"2\" fill=\"var(--icon-idea)\"/><circle cx=\"25\" cy=\"11\" r=\"2\" fill=\"var(--icon-positive)\"/><rect x=\"10\" y=\"23\" width=\"12\" height=\"13\" rx=\"2\" fill=\"var(--icon-accent-soft)\"/><path d=\"M28 25H37 M28 32H35\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "브라우저",
+      "metaphor": "콘텐츠가 있는 브라우저 창",
+      "group": "웹과 앱",
+      "priority": 1,
+      "family": "object"
+    },
+    "components": {
+      "body": "<rect x=\"5\" y=\"5\" width=\"24\" height=\"16\" rx=\"4\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"35\" y=\"5\" width=\"8\" height=\"16\" rx=\"3\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"5\" y=\"27\" width=\"12\" height=\"16\" rx=\"3\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"23\" y=\"27\" width=\"20\" height=\"16\" rx=\"4\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "UI 구성 요소",
+      "metaphor": "조립되는 화면 조각",
+      "group": "웹과 앱",
+      "priority": 1,
+      "family": "object"
+    },
+    "state": {
+      "body": "<rect x=\"5\" y=\"13\" width=\"38\" height=\"22\" rx=\"11\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"16\" cy=\"24\" r=\"7\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M32 20V28\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "상태 관리",
+      "metaphor": "전환 가능한 두 상태",
+      "group": "웹과 앱",
+      "priority": 2,
+      "family": "object"
+    },
+    "accessibility": {
+      "body": "<circle cx=\"24\" cy=\"24\" r=\"20\" fill=\"var(--icon-cloud)\" stroke=\"var(--icon-cloud-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"24\" cy=\"12\" r=\"4\" fill=\"var(--icon-paper)\"/><path d=\"M11 20L24 23L37 20 M24 23V29 M24 29L17 38 M24 29L31 38\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "접근성",
+      "metaphor": "사람 중심의 접근성 기호",
+      "group": "웹과 앱",
+      "priority": 1,
+      "family": "object"
+    },
+    "mobile": {
+      "label": "모바일",
+      "family": "object",
+      "metaphor": "짙은 몸체와 화면, 상단 수화부가 있는 전화기",
+      "body": "<rect x=\"13\" y=\"4\" width=\"22\" height=\"40\" rx=\"5\" fill=\"var(--icon-neutral)\"/><rect x=\"15\" y=\"6\" width=\"18\" height=\"36\" rx=\"3\" fill=\"var(--icon-neutral-edge)\"/><rect x=\"20\" y=\"5\" width=\"8\" height=\"3\" rx=\"1.5\" fill=\"var(--icon-neutral)\"/>",
+      "group": "웹과 앱",
+      "priority": 2
+    },
+    "interaction": {
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-neutral)\" stroke=\"var(--icon-neutral-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M18 31V16Q18 12 21 13Q23 14 23 17V25L27 24L35 28V34Q35 39 30 39H25L18 35L12 29Q11 26 14 26Z\" fill=\"var(--icon-paper)\"/>",
+      "label": "입력",
+      "metaphor": "누르는 손",
+      "group": "웹과 앱",
+      "priority": 2,
+      "family": "tile"
+    },
+    "design-system": {
+      "body": "<rect x=\"8\" y=\"5\" width=\"32\" height=\"38\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"13\" y=\"11\" width=\"22\" height=\"7\" rx=\"2\" fill=\"var(--icon-critical)\"/><rect x=\"13\" y=\"21\" width=\"22\" height=\"7\" rx=\"2\" fill=\"var(--icon-idea)\"/><rect x=\"13\" y=\"31\" width=\"22\" height=\"7\" rx=\"2\" fill=\"var(--icon-accent)\"/>",
+      "label": "디자인 시스템",
+      "metaphor": "색 견본과 구성 격자",
+      "group": "웹과 앱",
+      "priority": 2,
+      "family": "object"
+    },
+    "security": {
+      "label": "보안",
+      "family": "outline",
+      "metaphor": "방패",
+      "body": "<path d=\"M24 4L40 10V23C40 33 32 40 24 44C16 40 8 33 8 23V10Z\" fill=\"var(--icon-positive-soft)\" stroke=\"var(--icon-positive)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M17 24L22 29L32 18\" fill=\"none\" stroke=\"var(--icon-positive)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "보안",
+      "priority": 1
+    },
+    "key": {
+      "label": "인증",
+      "family": "outline",
+      "metaphor": "열쇠",
+      "body": "<path d=\"M29 5C17 5 15 16 20 22L6 36V43H13V38H19V32L26 25C41 29 48 5 29 5Z\" fill=\"var(--icon-warm-soft)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"33\" cy=\"13\" r=\"3\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "보안",
+      "priority": 1
+    },
+    "lock": {
+      "label": "권한",
+      "family": "object",
+      "metaphor": "자물쇠",
+      "body": "<path d=\"M14 20V14C14 1 34 1 34 14V20\" fill=\"none\" stroke=\"var(--icon-neutral)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"8\" y=\"19\" width=\"32\" height=\"25\" rx=\"6\" fill=\"var(--icon-neutral)\"/><circle cx=\"24\" cy=\"29\" r=\"3\" fill=\"var(--icon-paper)\"/><path d=\"M24 30V36\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "보안",
+      "priority": 1
+    },
+    "firewall": {
+      "label": "방화벽",
+      "family": "object",
+      "metaphor": "벽돌과 불꽃",
+      "body": "<rect x=\"4\" y=\"8\" width=\"34\" height=\"33\" rx=\"5\" fill=\"var(--icon-critical-soft)\" stroke=\"var(--icon-critical)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M5 19H37 M5 30H27 M16 9V19 M25 19V30 M15 30V40\" fill=\"none\" stroke=\"var(--icon-critical)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M33 43C21 43 22 32 27 26C27 32 32 26 32 21C37 24 40 28 42 32C46 39 40 43 33 43Z\" fill=\"var(--icon-idea)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M33 39C29 39 29 35 34 31C33 35 39 39 33 39Z\" fill=\"var(--icon-paper)\"/>",
+      "group": "보안",
+      "priority": 2
+    },
+    "encryption": {
+      "body": "<rect x=\"6\" y=\"5\" width=\"27\" height=\"36\" rx=\"5\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M12 13H24 M12 20H21\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M28 28V23C28 14 40 14 40 23V28\" fill=\"none\" stroke=\"var(--icon-neutral)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"24\" y=\"27\" width=\"20\" height=\"16\" rx=\"4\" fill=\"var(--icon-neutral)\"/><path d=\"M34 33V37\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "암호화",
+      "metaphor": "가려진 데이터와 잠금",
+      "group": "보안",
+      "priority": 2,
+      "family": "object"
+    },
+    "vulnerability": {
+      "body": "<path d=\"M24 4L41 11V24Q39 36 24 44Q9 36 7 24V11Z\" fill=\"var(--icon-critical-soft)\" stroke=\"var(--icon-critical)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M27 7L20 19L28 24L20 39\" fill=\"none\" stroke=\"var(--icon-critical)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "취약점",
+      "metaphor": "금이 간 방패",
+      "group": "보안",
+      "priority": 2,
+      "family": "object"
+    },
+    "privacy": {
+      "body": "<rect x=\"4\" y=\"8\" width=\"40\" height=\"33\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"15\" cy=\"20\" r=\"5\" fill=\"var(--icon-accent-soft)\"/><path d=\"M8 34C8 24 22 24 22 34Z\" fill=\"var(--icon-accent-soft)\"/><rect x=\"25\" y=\"16\" width=\"14\" height=\"6\" rx=\"2\" fill=\"var(--icon-neutral)\"/><path d=\"M27 29H36\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "개인정보",
+      "metaphor": "가려진 사용자 식별 카드",
+      "group": "보안",
+      "priority": 2,
+      "family": "object"
+    },
+    "model": {
+      "body": "<path d=\"M11 12L24 24L11 36 M37 12L24 24L37 36\" fill=\"none\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"11\" cy=\"12\" r=\"6\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"37\" cy=\"12\" r=\"6\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"24\" cy=\"24\" r=\"6\" fill=\"var(--icon-accent)\"/><circle cx=\"11\" cy=\"36\" r=\"6\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"37\" cy=\"36\" r=\"6\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "모델",
+      "metaphor": "연결된 학습 노드",
+      "group": "AI와 머신러닝",
+      "priority": 1,
+      "family": "object"
+    },
+    "training": {
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-positive)\" stroke=\"var(--icon-positive-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M14 12V36 M24 12V36 M34 12V36\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"10\" y=\"17\" width=\"8\" height=\"6\" rx=\"2\" fill=\"var(--icon-paper)\"/><rect x=\"20\" y=\"28\" width=\"8\" height=\"6\" rx=\"2\" fill=\"var(--icon-paper)\"/><rect x=\"30\" y=\"14\" width=\"8\" height=\"6\" rx=\"2\" fill=\"var(--icon-paper)\"/>",
+      "label": "학습",
+      "metaphor": "모델과 조절 장치",
+      "group": "AI와 머신러닝",
+      "priority": 2,
+      "family": "tile"
+    },
+    "inference": {
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"14\" cy=\"24\" r=\"4\" fill=\"var(--icon-accent)\"/><path d=\"M22 24H36 M31 19L36 24L31 29\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "추론",
+      "metaphor": "입력으로부터 결과 생성",
+      "group": "AI와 머신러닝",
+      "priority": 1,
+      "family": "tile"
+    },
+    "dataset": {
+      "body": "<rect x=\"10\" y=\"5\" width=\"31\" height=\"34\" rx=\"5\" fill=\"var(--icon-structure-soft)\" stroke=\"var(--icon-structure)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"5\" y=\"11\" width=\"31\" height=\"32\" rx=\"5\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M6 22H35 M6 32H35 M16 12V42\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "데이터셋",
+      "metaphor": "라벨을 붙인 데이터 집합",
+      "group": "AI와 머신러닝",
+      "priority": 1,
+      "family": "object"
+    },
+    "embedding": {
+      "body": "<circle cx=\"24\" cy=\"24\" r=\"19\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"15\" cy=\"17\" r=\"3\" fill=\"var(--icon-accent)\"/><circle cx=\"24\" cy=\"13\" r=\"3\" fill=\"var(--icon-accent)\"/><circle cx=\"18\" cy=\"27\" r=\"3\" fill=\"var(--icon-accent)\"/><circle cx=\"31\" cy=\"29\" r=\"3\" fill=\"var(--icon-structure)\"/><circle cx=\"26\" cy=\"36\" r=\"3\" fill=\"var(--icon-structure)\"/><circle cx=\"35\" cy=\"21\" r=\"3\" fill=\"var(--icon-structure)\"/>",
+      "label": "임베딩",
+      "metaphor": "공간에 배치된 점",
+      "group": "AI와 머신러닝",
+      "priority": 2,
+      "family": "object"
+    },
+    "rag": {
+      "body": "<rect x=\"5\" y=\"5\" width=\"24\" height=\"32\" rx=\"5\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M11 13H23 M11 20H20\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M22 22H38Q44 22 44 29V34Q44 40 38 40H30L23 42V40Q18 40 18 34V29Q18 22 22 22Z\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M25 29H37 M25 35H33\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "RAG",
+      "metaphor": "참고 문서와 응답",
+      "group": "AI와 머신러닝",
+      "priority": 1,
+      "family": "object"
+    },
+    "agent": {
+      "body": "<path d=\"M24 5V10\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"7\" y=\"10\" width=\"34\" height=\"32\" rx=\"9\" fill=\"var(--icon-neutral)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"12\" y=\"15\" width=\"24\" height=\"21\" rx=\"5\" fill=\"var(--icon-paper)\"/><circle cx=\"18\" cy=\"22\" r=\"2\" fill=\"var(--icon-neutral)\"/><circle cx=\"30\" cy=\"22\" r=\"2\" fill=\"var(--icon-neutral)\"/><path d=\"M18 29Q24 33 30 29\" fill=\"none\" stroke=\"var(--icon-neutral)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "에이전트",
+      "metaphor": "도구를 사용하는 로봇",
+      "group": "AI와 머신러닝",
+      "priority": 1,
+      "family": "object"
+    },
+    "prompt": {
+      "body": "<path d=\"M12 5H36Q44 5 44 14V31Q44 39 36 39H21L9 42V38Q4 37 4 30V14Q4 5 12 5Z\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M13 16L20 22L13 28 M26 28H35\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "프롬프트",
+      "metaphor": "입력 말풍선",
+      "group": "AI와 머신러닝",
+      "priority": 2,
+      "family": "object"
+    },
+    "evaluation": {
+      "body": "<rect x=\"7\" y=\"6\" width=\"33\" height=\"38\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"16\" y=\"3\" width=\"15\" height=\"7\" rx=\"3\" fill=\"var(--icon-accent)\"/><path d=\"M12 21L16 25L22 17 M12 34L16 38L22 30\" fill=\"none\" stroke=\"var(--icon-positive)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M28 22H34 M28 35H34\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "모델 평가",
+      "metaphor": "기준과 결과를 비교하는 판",
+      "group": "AI와 머신러닝",
+      "priority": 1,
+      "family": "object"
+    },
+    "vision": {
+      "body": "<rect x=\"5\" y=\"7\" width=\"38\" height=\"34\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"16\" cy=\"17\" r=\"4\" fill=\"var(--icon-idea)\"/><path d=\"M10 35L21 23L28 30L33 25L39 35Z\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "이미지",
+      "metaphor": "이미지와 시각 정보",
+      "group": "AI와 머신러닝",
+      "priority": 2,
+      "family": "object"
+    },
+    "audio": {
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M12 21V27 M18 16V32 M24 11V37 M30 16V32 M36 21V27\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "음성",
+      "metaphor": "파란 바탕 위 대칭 음성 파형",
+      "group": "AI와 머신러닝",
+      "priority": 2,
+      "family": "tile"
+    },
+    "terminal": {
+      "label": "CLI",
+      "family": "tile",
+      "metaphor": "명령 입력 기호",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-neutral)\" stroke=\"var(--icon-neutral-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M12 16L21 24L12 32 M25 32H35\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "개발 도구와 품질",
+      "priority": 1
+    },
+    "version-control": {
+      "body": "<path d=\"M14 10V38 M14 30Q34 30 34 12\" fill=\"none\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"14\" cy=\"10\" r=\"5\" fill=\"var(--icon-warm-soft)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"14\" cy=\"38\" r=\"5\" fill=\"var(--icon-warm-soft)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"34\" cy=\"12\" r=\"5\" fill=\"var(--icon-warm-soft)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "Git",
+      "metaphor": "커밋과 분기",
+      "group": "개발 도구와 품질",
+      "priority": 1,
+      "family": "object"
+    },
+    "build": {
+      "body": "<path d=\"M7 22H19V10H31V22H43V42H7Z\" fill=\"var(--icon-warm-soft)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M19 22H31 M19 23V41 M31 23V41\" fill=\"none\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "빌드",
+      "metaphor": "부품을 조합한 결과물",
+      "group": "개발 도구와 품질",
+      "priority": 1,
+      "family": "object"
+    },
+    "testing": {
+      "label": "테스트",
+      "family": "tile",
+      "metaphor": "체크와 검사 항목",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-positive)\" stroke=\"var(--icon-positive-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M13 24L21 32L35 16\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "개발 도구와 품질",
+      "priority": 1
+    },
+    "debugging": {
+      "body": "<path d=\"M11 19L5 14 M11 27H4 M12 35L6 40 M37 19L43 14 M37 27H44 M36 35L42 40\" fill=\"none\" stroke=\"var(--icon-neutral)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"13\" y=\"15\" width=\"22\" height=\"28\" rx=\"10\" fill=\"var(--icon-critical)\" stroke=\"var(--icon-critical-edge)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"24\" cy=\"13\" r=\"7\" fill=\"var(--icon-neutral)\"/><path d=\"M24 23V37\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "디버깅",
+      "metaphor": "버그와 탐색 표시",
+      "group": "개발 도구와 품질",
+      "priority": 1,
+      "family": "object"
+    },
+    "performance": {
+      "body": "<circle cx=\"24\" cy=\"24\" r=\"20\" fill=\"var(--icon-idea)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M11 29A14 14 0 0 1 37 29\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M24 29L33 16\" fill=\"none\" stroke=\"var(--icon-neutral)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"24\" cy=\"29\" r=\"3\" fill=\"var(--icon-neutral)\"/>",
+      "label": "성능",
+      "metaphor": "속도계",
+      "group": "개발 도구와 품질",
+      "priority": 1,
+      "family": "object"
+    },
+    "refactoring": {
+      "body": "<rect x=\"5\" y=\"8\" width=\"14\" height=\"11\" rx=\"3\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"5\" y=\"28\" width=\"14\" height=\"11\" rx=\"3\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M24 24H31 M27 20L31 24L27 28\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"36\" y=\"9\" width=\"7\" height=\"30\" rx=\"3\" fill=\"var(--icon-positive-soft)\" stroke=\"var(--icon-positive)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "리팩터링",
+      "metaphor": "재배치하는 코드 블록",
+      "group": "개발 도구와 품질",
+      "priority": 2,
+      "family": "object"
+    },
+    "code-review": {
+      "body": "<rect x=\"8\" y=\"5\" width=\"32\" height=\"38\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M19 12L14 17L19 22 M29 12L34 17L29 22\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M18 33L22 37L31 28\" fill=\"none\" stroke=\"var(--icon-positive)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "label": "코드 리뷰",
+      "metaphor": "중심과 높이를 맞춘 코드 기호와 검토 체크",
+      "group": "개발 도구와 품질",
+      "priority": 2,
+      "family": "object"
+    },
+    "person": {
+      "label": "사용자",
+      "family": "object",
+      "metaphor": "프로필",
+      "body": "<circle cx=\"24\" cy=\"13\" r=\"7\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M9 42V36C9 24 39 24 39 36V42Z\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "사람과 결과물",
+      "priority": 1
+    },
+    "team": {
+      "label": "팀",
+      "family": "object",
+      "metaphor": "여러 프로필",
+      "body": "<circle cx=\"11\" cy=\"17\" r=\"5\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"37\" cy=\"17\" r=\"5\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M5 38V32C5 22 18 22 18 32V38Z\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M30 38V32C30 22 43 22 43 32V38Z\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"24\" cy=\"15\" r=\"7\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M13 42V34C13 24 35 24 35 34V42Z\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "사람과 결과물",
+      "priority": 1
+    },
+    "administrator": {
+      "label": "관리자",
+      "family": "object",
+      "metaphor": "권한 표식이 있는 프로필",
+      "body": "<circle cx=\"20\" cy=\"13\" r=\"7\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M6 42V35C6 23 31 23 31 35V42Z\" fill=\"var(--icon-accent-soft)\" stroke=\"var(--icon-accent-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M29 25V19C29 11 41 11 41 19V25\" fill=\"none\" stroke=\"var(--icon-neutral)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"25\" y=\"24\" width=\"19\" height=\"18\" rx=\"4\" fill=\"var(--icon-neutral)\"/><path d=\"M34 30V36\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "사람과 결과물",
+      "priority": 2
+    },
+    "portfolio": {
+      "label": "포트폴리오",
+      "family": "object",
+      "metaphor": "결과물 가방",
+      "body": "<rect x=\"5\" y=\"14\" width=\"38\" height=\"28\" rx=\"6\" fill=\"var(--icon-warm-soft)\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M17 14V9Q17 6 20 6H28Q31 6 31 9V14 M6 24Q24 33 42 24\" fill=\"none\" stroke=\"var(--icon-warm)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"20\" y=\"25\" width=\"8\" height=\"7\" rx=\"2\" fill=\"var(--icon-warm)\"/>",
+      "group": "사람과 결과물",
+      "priority": 1
+    },
+    "project": {
+      "label": "개발 프로젝트",
+      "family": "tile",
+      "metaphor": "제품을 이루는 모듈",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-structure)\" stroke=\"var(--icon-structure-edge)\" stroke-width=\"var(--icon-stroke)\"/><rect x=\"14\" y=\"14\" width=\"8\" height=\"8\" rx=\"2\" fill=\"var(--icon-paper)\"/><rect x=\"27\" y=\"14\" width=\"8\" height=\"8\" rx=\"2\" fill=\"var(--icon-paper)\"/><rect x=\"14\" y=\"27\" width=\"8\" height=\"8\" rx=\"2\" fill=\"var(--icon-paper)\"/><rect x=\"27\" y=\"27\" width=\"8\" height=\"8\" rx=\"2\" fill=\"var(--icon-paper)\"/>",
+      "group": "사람과 결과물",
+      "priority": 1
+    },
+    "document": {
+      "label": "문서",
+      "family": "object",
+      "metaphor": "접힌 문서",
+      "body": "<path d=\"M12 5H28L39 16V38Q39 43 34 43H12Q7 43 7 38V10Q7 5 12 5Z\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M27 6V13Q27 17 31 17H38\" fill=\"none\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M14 24H31 M14 30H31 M14 36H25\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "사람과 결과물",
+      "priority": 1
+    },
+    "idea": {
+      "label": "문제 해결",
+      "family": "tile",
+      "metaphor": "전구",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-idea)\" stroke=\"var(--icon-idea-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M24 10C13 10 12 23 18 28C20 30 20 31 20 33H28C28 31 28 30 30 28C36 23 35 10 24 10Z\" fill=\"var(--icon-paper)\"/><path d=\"M21 36H27 M22 39H26\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "사람과 결과물",
+      "priority": 2
+    },
+    "experiment": {
+      "label": "실험",
+      "family": "object",
+      "metaphor": "회색 유리 외곽과 파란 액체",
+      "body": "<path d=\"M18 5H30 M20 5V17L9 36Q6 43 14 43H34Q42 43 39 36L28 17V5\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M16 29H32L37 37Q39 40 33 40H15Q10 40 12 36Z\" fill=\"var(--icon-accent-edge)\"/><circle cx=\"21\" cy=\"34\" r=\"2\" fill=\"var(--icon-paper)\"/><circle cx=\"29\" cy=\"36\" r=\"2\" fill=\"var(--icon-paper)\"/>",
+      "group": "사람과 결과물",
+      "priority": 1
+    },
+    "retrospective": {
+      "label": "회고",
+      "family": "outline",
+      "metaphor": "되돌아보는 노트",
+      "body": "<rect x=\"8\" y=\"5\" width=\"32\" height=\"38\" rx=\"6\" fill=\"var(--icon-paper)\" stroke=\"var(--icon-outline)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M15 6V42 M22 14H32 M22 21H32\" fill=\"none\" stroke=\"var(--icon-detail)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M33 36C36 28 25 26 23 31 M23 26V31H28\" fill=\"none\" stroke=\"var(--icon-accent)\" stroke-width=\"var(--icon-stroke)\"/>",
+      "group": "사람과 결과물",
+      "priority": 1
+    },
+    "incident": {
+      "label": "장애 분석",
+      "body": "<rect x=\"5\" y=\"5\" width=\"38\" height=\"38\" rx=\"10\" fill=\"var(--icon-critical)\" stroke=\"var(--icon-critical-edge)\" stroke-width=\"var(--icon-stroke)\"/><path d=\"M24 12V27\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-stroke)\"/><circle cx=\"24\" cy=\"35\" r=\"2.5\" fill=\"var(--icon-paper)\"/>",
+      "metaphor": "주의 표시와 중단된 신호",
+      "family": "tile",
+      "group": "사람과 결과물",
+      "priority": 1
+    },
+    "watch": {
+      "label": "워치",
+      "family": "object",
+      "metaphor": "밴드와 둥근 시계 본체",
+      "body": "<rect x=\"18\" y=\"4\" width=\"12\" height=\"40\" rx=\"4\" fill=\"var(--icon-neutral)\"/><rect x=\"13\" y=\"11\" width=\"22\" height=\"26\" rx=\"6\" fill=\"var(--icon-neutral)\"/><rect x=\"15\" y=\"13\" width=\"18\" height=\"22\" rx=\"4\" fill=\"var(--icon-neutral-edge)\"/><rect x=\"35\" y=\"20\" width=\"2\" height=\"6\" rx=\"1\" fill=\"var(--icon-neutral)\"/>",
+      "group": "웹과 앱",
+      "priority": 2
+    },
+    "tablet": {
+      "label": "태블릿",
+      "family": "object",
+      "metaphor": "가로 화면과 균일한 베젤",
+      "body": "<rect x=\"5\" y=\"8\" width=\"38\" height=\"32\" rx=\"4\" fill=\"var(--icon-neutral)\"/><rect x=\"7\" y=\"10\" width=\"34\" height=\"28\" rx=\"2\" fill=\"var(--icon-neutral-edge)\"/>",
+      "group": "웹과 앱",
+      "priority": 2
+    },
+    "laptop": {
+      "label": "노트북",
+      "family": "object",
+      "metaphor": "검은 화면 본체와 낮은 받침",
+      "body": "<rect x=\"8\" y=\"7\" width=\"32\" height=\"28\" rx=\"3\" fill=\"var(--icon-neutral)\"/><rect x=\"10\" y=\"9\" width=\"28\" height=\"24\" rx=\"1\" fill=\"var(--icon-neutral-edge)\"/><path d=\"M4 37H44V38Q44 41 40 41H8Q4 41 4 38Z\" fill=\"var(--icon-neutral)\"/>",
+      "group": "웹과 앱",
+      "priority": 2
+    }
+  },
+  "badges": {
+    "concept": {
+      "label": "개념",
+      "body": "<circle cx=\"36\" cy=\"36\" r=\"10\" fill=\"var(--icon-paper)\"/><circle cx=\"36\" cy=\"36\" r=\"8\" fill=\"var(--icon-accent)\"/><path d=\"M36 35V40 M36 32V32\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-detail-stroke)\"/>"
+    },
+    "build": {
+      "label": "구현",
+      "body": "<circle cx=\"36\" cy=\"36\" r=\"10\" fill=\"var(--icon-paper)\"/><circle cx=\"36\" cy=\"36\" r=\"8\" fill=\"var(--icon-neutral)\"/><path d=\"M33 33L30 36L33 39 M39 33L42 36L39 39\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-detail-stroke)\"/>"
+    },
+    "troubleshooting": {
+      "label": "문제 해결",
+      "body": "<circle cx=\"36\" cy=\"36\" r=\"10\" fill=\"var(--icon-paper)\"/><circle cx=\"36\" cy=\"36\" r=\"8\" fill=\"var(--icon-warm)\"/><path d=\"M36 31V37 M36 41V41\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-detail-stroke)\"/>"
+    },
+    "experiment": {
+      "label": "실험",
+      "body": "<circle cx=\"36\" cy=\"36\" r=\"10\" fill=\"var(--icon-paper)\"/><circle cx=\"36\" cy=\"36\" r=\"8\" fill=\"var(--icon-structure)\"/><path d=\"M34 31H38 M35 31V35L32 40H40L37 35V31\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-detail-stroke)\"/>"
+    },
+    "retrospective": {
+      "label": "회고",
+      "body": "<circle cx=\"36\" cy=\"36\" r=\"10\" fill=\"var(--icon-paper)\"/><circle cx=\"36\" cy=\"36\" r=\"8\" fill=\"var(--icon-positive)\"/><path d=\"M32 35A5 5 0 1 1 32 39 M32 31V35H36\" fill=\"none\" stroke=\"var(--icon-paper)\" stroke-width=\"var(--icon-detail-stroke)\"/>"
+    }
+  },
+  "daphnis": {},
+  "usage": "web"
+}

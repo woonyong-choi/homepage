@@ -1,0 +1,16 @@
+<!-- @license lucide-static v1.52.0 - ISC -->
+<svg
+  class="lucide lucide-book-open"
+  xmlns="http://www.w3.org/2000/svg"
+  width="100%"
+  height="100%"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="var(--asset-paint-foreground)"
+  stroke-width="var(--asset-stroke-width-toolbar)"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+><style data-site-tokens="">:root{--asset-paint-foreground:#1f1f1f;--asset-stroke-width-toolbar:1.5}@media(prefers-color-scheme:dark){:root{--asset-paint-foreground:#f0f0f0;--asset-stroke-width-toolbar:1.5}}</style>
+  <path d="M12 5v16" />
+  <path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z" />
+</svg>

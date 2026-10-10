@@ -1,0 +1,2367 @@
+{
+  "https://culturedcode.com/things/": {
+    "title": "Things - To-Do List App for Mac & iOS",
+    "headings": [
+      {
+        "level": "h1",
+        "text": "Things"
+      },
+      {
+        "level": "h2",
+        "text": "Simply Powerful"
+      },
+      {
+        "level": "h2",
+        "text": "Get Things, Get Done"
+      },
+      {
+        "level": "h3",
+        "text": "Mac"
+      },
+      {
+        "level": "h3",
+        "text": "iPhone & Watch"
+      },
+      {
+        "level": "h3",
+        "text": "iPad"
+      },
+      {
+        "level": "h3",
+        "text": "Vision Pro"
+      },
+      {
+        "level": "h2",
+        "text": "What People Are Saying"
+      },
+      {
+        "level": "h2",
+        "text": "Read All About It"
+      },
+      {
+        "level": "h2",
+        "text": "Things Newsletter"
+      },
+      {
+        "level": "h2",
+        "text": "Footer"
+      },
+      {
+        "level": "h3",
+        "text": "Products"
+      },
+      {
+        "level": "h3",
+        "text": "Support"
+      },
+      {
+        "level": "h3",
+        "text": "News"
+      },
+      {
+        "level": "h3",
+        "text": "Company"
+      }
+    ],
+    "links": [
+      {
+        "text": "See features",
+        "url": "https://culturedcode.com/things/features/",
+        "class": [
+          "fancysection-action"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/mac/appstore/",
+        "class": []
+      },
+      {
+        "text": "view in your currency",
+        "url": "https://culturedcode.com/things/pricing/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/download/",
+        "class": [
+          "matomo_download"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/mac/appstore/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/iphone/appstore/",
+        "class": []
+      },
+      {
+        "text": "view in your currency",
+        "url": "https://culturedcode.com/things/pricing/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/iphone/appstore/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/ipad/appstore/",
+        "class": []
+      },
+      {
+        "text": "view in your currency",
+        "url": "https://culturedcode.com/things/pricing/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/ipad/appstore/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/vision/appstore/",
+        "class": []
+      },
+      {
+        "text": "view in your currency",
+        "url": "https://culturedcode.com/things/pricing/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/vision/appstore/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/bluesky/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/x/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/threads/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/instagram/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/mastodon/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      },
+      {
+        "text": "unsubscribe",
+        "url": "https://culturedcode.com/mailinglist/unsubscribe/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "Privacy Policy",
+        "url": "https://culturedcode.com/privacy/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      }
+    ],
+    "media": [
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/hero-logo-things-io90.png",
+        "alt": "Things",
+        "class": [
+          "hero-image",
+          "img"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2026-06-25-meet-things-remastered-2/meettheallnewthings.mp4",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2026-06-25-meet-things-remastered-2/meettheallnewthings-poster-e.jpg",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2026-06-25-meet-things-remastered-2/meettheallnewthings-poster-e.jpg",
+        "alt": "Meet the all-new Things",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/meettheallnewthings2-io75.jpg",
+        "alt": "Meet Things",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-features-io70.png",
+        "alt": "Features",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/whatsnew-collage-io60.png",
+        "alt": "Screenshots of Things running on Mac, iPhone, iPad, and Apple Watch",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-download-io70.png",
+        "alt": "Get Things",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/productcard-mac.svg",
+        "alt": "Mac",
+        "class": [
+          "productcard-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-trial.svg",
+        "alt": "Download Free Trial",
+        "class": [
+          "productcard-appstorebutton",
+          "for-trial"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-mac-black.svg",
+        "alt": "Download on the Mac App Store",
+        "class": [
+          "productcard-appstorebutton",
+          "for-mac"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/productcard-iphone-watch.svg",
+        "alt": "iPhone and Watch",
+        "class": [
+          "productcard-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-ios-black.svg",
+        "alt": "Download on the App Store",
+        "class": [
+          "productcard-appstorebutton",
+          "for-ios"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/productcard-ipad.svg",
+        "alt": "iPad",
+        "class": [
+          "productcard-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-ios-black.svg",
+        "alt": "Download on the App Store",
+        "class": [
+          "productcard-appstorebutton",
+          "for-ios"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/productcard-vision.svg",
+        "alt": "Vision Pro",
+        "class": [
+          "productcard-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-ios-black.svg",
+        "alt": "Download on the App Store",
+        "class": [
+          "productcard-appstorebutton",
+          "for-vision"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-whatpeoplearesaying-io70.png",
+        "alt": "What people are saying",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-read-io70.png",
+        "alt": "Read All About It",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/nicequote-logo-apple.svg",
+        "alt": "Apple",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appledesignaward-graphic-new-io70.png",
+        "alt": "Things - Apple Design Award Winner",
+        "class": [
+          "nicequote-ada"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/nicequote-logo-wirecutter.svg",
+        "alt": "Wirecutter – The New York Times",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/nicequote-logo-wired.svg",
+        "alt": "WIRED",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2023/12/macstories-bestnewfeature-2023-io70.png",
+        "alt": "MacStories - Best Feature 2023",
+        "class": [
+          "nicequote-seal"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/nicequote-logo-macstories.svg",
+        "alt": "MacStories",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/nicequote-logo-imore.svg",
+        "alt": "iMore",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/nicequote-logo-macstories.svg",
+        "alt": "MacStories",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/nicequote-logo-apple.svg",
+        "alt": "Apple",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2018/12/macstories-best-app-update.3x.png",
+        "alt": "MacStories Best App Update of 2018",
+        "class": [
+          "nicequote-seal"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/nicequote-logo-macstories.svg",
+        "alt": "MacStories",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-newsletter-io70.png",
+        "alt": "Newsletter",
+        "class": [
+          "fancysection-icon"
+        ]
+      }
+    ]
+  },
+  "https://culturedcode.com/things/features/": {
+    "title": "What’s New in the all-new Things. Your to-do list for Mac & iOS",
+    "headings": [
+      {
+        "level": "h1",
+        "text": "What’s new in the all-new Things?"
+      },
+      {
+        "level": "h2",
+        "text": "All-New Design"
+      },
+      {
+        "level": "h3",
+        "text": "Beautiful To-Dos"
+      },
+      {
+        "level": "h3",
+        "text": "Design Is Not an Afterthought"
+      },
+      {
+        "level": "h2",
+        "text": "Today and This Evening"
+      },
+      {
+        "level": "h3",
+        "text": "Calendar Events"
+      },
+      {
+        "level": "h3",
+        "text": "This Evening"
+      },
+      {
+        "level": "h2",
+        "text": "Upcoming"
+      },
+      {
+        "level": "h2",
+        "text": "Headings"
+      },
+      {
+        "level": "h3",
+        "text": "Divide and Conquer"
+      },
+      {
+        "level": "h3",
+        "text": "Keep It Together"
+      },
+      {
+        "level": "h2",
+        "text": "Checklists"
+      },
+      {
+        "level": "h2",
+        "text": "Magic Plus"
+      },
+      {
+        "level": "h3",
+        "text": "Create To-Dos Play"
+      },
+      {
+        "level": "h3",
+        "text": "Create Headings Play"
+      },
+      {
+        "level": "h3",
+        "text": "Drop to Inbox Play"
+      },
+      {
+        "level": "h2",
+        "text": "Quick Find"
+      },
+      {
+        "level": "h3",
+        "text": "Quick Indeed"
+      },
+      {
+        "level": "h3",
+        "text": "App-Wide Tag Search"
+      },
+      {
+        "level": "h3",
+        "text": "Type Travel"
+      },
+      {
+        "level": "h3",
+        "text": "Quick Indeed"
+      },
+      {
+        "level": "h3",
+        "text": "App-Wide Tag Search"
+      },
+      {
+        "level": "h2",
+        "text": "Jump Start"
+      },
+      {
+        "level": "h3",
+        "text": "Just a Click Away"
+      },
+      {
+        "level": "h3",
+        "text": "Natural Date Input"
+      },
+      {
+        "level": "h3",
+        "text": "Just a Swipe Away"
+      },
+      {
+        "level": "h3",
+        "text": "Natural Date Input"
+      },
+      {
+        "level": "h2",
+        "text": "Desktop-Class List Editing on iOS"
+      },
+      {
+        "level": "h3",
+        "text": "Insert Things Anywhere"
+      },
+      {
+        "level": "h3",
+        "text": "Super Fast Multi-Select"
+      },
+      {
+        "level": "h3",
+        "text": "Drag to Reorder"
+      },
+      {
+        "level": "h3",
+        "text": "All Together Now"
+      },
+      {
+        "level": "h2",
+        "text": "Timely Reminders"
+      },
+      {
+        "level": "h3",
+        "text": "Click"
+      },
+      {
+        "level": "h3",
+        "text": "Type"
+      },
+      {
+        "level": "h3",
+        "text": "Speak"
+      },
+      {
+        "level": "h3",
+        "text": "Tap"
+      },
+      {
+        "level": "h3",
+        "text": "Type"
+      },
+      {
+        "level": "h3",
+        "text": "Speak"
+      },
+      {
+        "level": "h2",
+        "text": "Slim Mode"
+      },
+      {
+        "level": "h3",
+        "text": "Slim but Powerful"
+      },
+      {
+        "level": "h3",
+        "text": "Collapsible Sidebar on iPad"
+      },
+      {
+        "level": "h2",
+        "text": "Multiple Windows"
+      },
+      {
+        "level": "h2",
+        "text": "All the Small Things…"
+      },
+      {
+        "level": "h3",
+        "text": "Progress Pies"
+      },
+      {
+        "level": "h3",
+        "text": "Sidebar Structure"
+      },
+      {
+        "level": "h3",
+        "text": "Quick Move"
+      },
+      {
+        "level": "h3",
+        "text": "Touch Bar Support"
+      },
+      {
+        "level": "h3",
+        "text": "Updated Watch App"
+      },
+      {
+        "level": "h3",
+        "text": "New Core"
+      },
+      {
+        "level": "h3",
+        "text": "Beautiful Animations"
+      },
+      {
+        "level": "h3",
+        "text": "Fully integrated with macOS and iOS"
+      },
+      {
+        "level": "h2",
+        "text": "It keeps getting better"
+      },
+      {
+        "level": "h3",
+        "text": "Get Things, Get Done"
+      },
+      {
+        "level": "h3",
+        "text": "Mac"
+      },
+      {
+        "level": "h3",
+        "text": "iPhone & Watch"
+      },
+      {
+        "level": "h3",
+        "text": "iPad"
+      },
+      {
+        "level": "h3",
+        "text": "Vision Pro"
+      },
+      {
+        "level": "h3",
+        "text": "What People Are Saying"
+      },
+      {
+        "level": "h2",
+        "text": "Footer"
+      },
+      {
+        "level": "h3",
+        "text": "Products"
+      },
+      {
+        "level": "h3",
+        "text": "Support"
+      },
+      {
+        "level": "h3",
+        "text": "News"
+      },
+      {
+        "level": "h3",
+        "text": "Company"
+      }
+    ],
+    "links": [
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/features/#productswitch-today-mac",
+        "class": [
+          "tabs-title"
+        ]
+      },
+      {
+        "text": "iOS",
+        "url": "https://culturedcode.com/things/features/#productswitch-today-ios",
+        "class": [
+          "tabs-title"
+        ]
+      },
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/features/#productswitch-upcoming-mac",
+        "class": [
+          "tabs-title"
+        ]
+      },
+      {
+        "text": "iOS",
+        "url": "https://culturedcode.com/things/features/#productswitch-upcoming-ios",
+        "class": [
+          "tabs-title"
+        ]
+      },
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/features/#productswitch-heading-mac",
+        "class": [
+          "tabs-title"
+        ]
+      },
+      {
+        "text": "iOS",
+        "url": "https://culturedcode.com/things/features/#productswitch-heading-ios",
+        "class": [
+          "tabs-title",
+          "is-selected"
+        ]
+      },
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/features/#productswitch-checklist-mac",
+        "class": [
+          "tabs-title"
+        ]
+      },
+      {
+        "text": "iOS",
+        "url": "https://culturedcode.com/things/features/#productswitch-checklist-ios",
+        "class": [
+          "tabs-title",
+          "is-selected"
+        ]
+      },
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/features/#productswitch-quickfind-mac",
+        "class": [
+          "tabs-title"
+        ]
+      },
+      {
+        "text": "iOS",
+        "url": "https://culturedcode.com/things/features/#productswitch-quickfind-ios",
+        "class": [
+          "tabs-title",
+          "is-selected"
+        ]
+      },
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/features/#productswitch-jumpstart-mac",
+        "class": [
+          "tabs-title"
+        ]
+      },
+      {
+        "text": "iOS",
+        "url": "https://culturedcode.com/things/features/#productswitch-jumpstart-ios",
+        "class": [
+          "tabs-title",
+          "is-selected"
+        ]
+      },
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/features/#productswitch-reminders-mac",
+        "class": [
+          "tabs-title",
+          "is-selected"
+        ]
+      },
+      {
+        "text": "iOS",
+        "url": "https://culturedcode.com/things/features/#productswitch-reminders-ios",
+        "class": [
+          "tabs-title"
+        ]
+      },
+      {
+        "text": "Check out our blog",
+        "url": "https://culturedcode.com/things/blog/",
+        "class": [
+          "fancysection-action"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/blog/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/mac/appstore/",
+        "class": []
+      },
+      {
+        "text": "view in your currency",
+        "url": "https://culturedcode.com/things/pricing/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/download/",
+        "class": [
+          "matomo_download"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/mac/appstore/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/iphone/appstore/",
+        "class": []
+      },
+      {
+        "text": "view in your currency",
+        "url": "https://culturedcode.com/things/pricing/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/iphone/appstore/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/ipad/appstore/",
+        "class": []
+      },
+      {
+        "text": "view in your currency",
+        "url": "https://culturedcode.com/things/pricing/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/ipad/appstore/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/vision/appstore/",
+        "class": []
+      },
+      {
+        "text": "view in your currency",
+        "url": "https://culturedcode.com/things/pricing/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/things/vision/appstore/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/bluesky/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/x/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/threads/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/instagram/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      },
+      {
+        "text": "",
+        "url": "https://culturedcode.com/follow/mastodon/",
+        "class": [
+          "fancysection-action",
+          "has-no-chevron"
+        ]
+      }
+    ],
+    "media": [
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/whatsnew-collage-io60.png",
+        "alt": "Screenshots of Things running on Mac, iPhone, iPad, and Apple Watch",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-design-io70.png",
+        "alt": "All-New Design",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/1-design-hotels-3-mac-2.mp4",
+        "alt": "",
+        "class": [
+          "video",
+          "has-safety-clipping"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/1-design-hotels-3-mac-2.png",
+        "alt": "",
+        "class": [
+          "video",
+          "has-safety-clipping"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-today-io70.png",
+        "alt": "Today and This Evening",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/2-today-mac.png",
+        "alt": "Today and This Evening",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/2-today-iphone.png",
+        "alt": "Today and This Evening",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-upcoming-io70.png",
+        "alt": "Upcoming",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/3-upcoming-mac-2.mp4",
+        "alt": "",
+        "class": [
+          "video",
+          "has-safety-clipping"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/3-upcoming-mac-2.png",
+        "alt": "",
+        "class": [
+          "video",
+          "has-safety-clipping"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/3-upcoming-iphone.mp4",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/3-upcoming-iphone.png",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-headings-io70.png",
+        "alt": "Headings",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/4-headings-mac.png",
+        "alt": "Heading",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/4-headings-ios.mp4",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/4-headings-ios.png",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-checklists-io70.png",
+        "alt": "Checklists",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/5-checklists-mac-2.png",
+        "alt": "Checklists",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/5-checklists-iphone.mp4",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/5-checklists-iphone.png",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-magicplus-io70.png",
+        "alt": "Magic Plus",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/6-magicplus-1.mp4",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/6-magicplus-1.png",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-quickfind-io70.png",
+        "alt": "Quick Find",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/7-quickfind-mac.png",
+        "alt": "Quick Find",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/7-quickfind-iphone.mp4",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/7-quickfind-iphone-a.png",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-when-io70.png",
+        "alt": "When",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/8-jumpstart-mac.png",
+        "alt": "Jump Start",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/8-jumpstart-iphone.mp4",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/8-jumpstart-iphone.png",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-listediting-io70.png",
+        "alt": "List Editing",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/9-desktopclass.mp4",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/9-desktopclass.png",
+        "alt": "",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-reminders-io70.png",
+        "alt": "Reminders",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/10-reminders-mac.png",
+        "alt": "Timely Reminders",
+        "class": []
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/10-reminders-iphone.png",
+        "alt": "Reminders",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-slimmode-io70.png",
+        "alt": "Slim Mode",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/11-slimmode-mac.mp4",
+        "alt": "",
+        "class": [
+          "video",
+          "has-safety-clipping"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/11-slimmode-mac.jpg",
+        "alt": "",
+        "class": [
+          "video",
+          "has-safety-clipping"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-multiplewindows-io70.png",
+        "alt": "Multiple Windows",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/12-multiplewindows-mac-3.png",
+        "alt": "Multiple Windows",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-littlethings-io70.png",
+        "alt": "Small Things",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2023/01/hero-shortcuts-reloaded-io70.png",
+        "alt": "To see all the latest and greatest improvements for Things, visit our blog",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-download-io70.png",
+        "alt": "Get Things",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/productcard-mac.svg",
+        "alt": "Mac",
+        "class": [
+          "productcard-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-trial.svg",
+        "alt": "Download Free Trial",
+        "class": [
+          "productcard-appstorebutton",
+          "for-trial"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-mac-black.svg",
+        "alt": "Download on the Mac App Store",
+        "class": [
+          "productcard-appstorebutton",
+          "for-mac"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/productcard-iphone-watch.svg",
+        "alt": "iPhone and Watch",
+        "class": [
+          "productcard-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-ios-black.svg",
+        "alt": "Download on the App Store",
+        "class": [
+          "productcard-appstorebutton",
+          "for-ios"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/productcard-ipad.svg",
+        "alt": "iPad",
+        "class": [
+          "productcard-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-ios-black.svg",
+        "alt": "Download on the App Store",
+        "class": [
+          "productcard-appstorebutton",
+          "for-ios"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/productcard-vision.svg",
+        "alt": "Vision Pro",
+        "class": [
+          "productcard-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/appstore-ios-black.svg",
+        "alt": "Download on the App Store",
+        "class": [
+          "productcard-appstorebutton",
+          "for-vision"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-whatpeoplearesaying-io70.png",
+        "alt": "What People Are Saying",
+        "class": [
+          "fancysection-icon"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/nicequote-logo-apple.svg",
+        "alt": "Apple",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/appledesignaward-graphic-new-io70.png",
+        "alt": "Things - Apple Design Award Winner",
+        "class": [
+          "nicequote-ada"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/nicequote-logo-wirecutter.svg",
+        "alt": "Wirecutter – The New York Times",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/nicequote-logo-wired.svg",
+        "alt": "WIRED",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2023/12/macstories-bestnewfeature-2023-io70.png",
+        "alt": "MacStories - Best Feature 2023",
+        "class": [
+          "nicequote-seal"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/nicequote-logo-macstories.svg",
+        "alt": "MacStories",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/nicequote-logo-imore.svg",
+        "alt": "iMore",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/nicequote-logo-macstories.svg",
+        "alt": "MacStories",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/nicequote-logo-apple.svg",
+        "alt": "Apple",
+        "class": [
+          "nicequote-logo"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2018/12/macstories-best-app-update.3x.png",
+        "alt": "MacStories Best App Update of 2018",
+        "class": [
+          "nicequote-seal"
+        ]
+      },
+      {
+        "url": "https://culturedcode.com/things/2022-07-21/images/nicequote-logo-macstories.svg",
+        "alt": "MacStories",
+        "class": [
+          "nicequote-logo"
+        ]
+      }
+    ]
+  },
+  "https://culturedcode.com/things/support/": {
+    "title": "Things Support",
+    "headings": [
+      {
+        "level": "h1",
+        "text": "Support"
+      },
+      {
+        "level": "h2",
+        "text": "Get Started"
+      },
+      {
+        "level": "h2",
+        "text": "The Basics"
+      },
+      {
+        "level": "h2",
+        "text": "Things Cloud"
+      },
+      {
+        "level": "h2",
+        "text": "Discover Great Features"
+      },
+      {
+        "level": "h2",
+        "text": "Tips & Tricks"
+      },
+      {
+        "level": "h2",
+        "text": "Troubleshooting"
+      },
+      {
+        "level": "h2",
+        "text": "Footer"
+      },
+      {
+        "level": "h3",
+        "text": "Products"
+      },
+      {
+        "level": "h3",
+        "text": "Support"
+      },
+      {
+        "level": "h3",
+        "text": "News"
+      },
+      {
+        "level": "h3",
+        "text": "Company"
+      }
+    ],
+    "links": [
+      {
+        "text": "Getting the Apps Here’s how to get Things for each of your devices.",
+        "url": "https://culturedcode.com/things/support/articles/2803552",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-appstore"
+        ]
+      },
+      {
+        "text": "Syncing Your To-Dos Learn how to create a Things Cloud account and connect all your devices.",
+        "url": "https://culturedcode.com/things/support/articles/2803586",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-cloud"
+        ]
+      },
+      {
+        "text": "Trying Things",
+        "url": "https://culturedcode.com/things/support/articles/2803551",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "Importing Data From Other Apps",
+        "url": "https://culturedcode.com/things/support/articles/2803555",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "Scheduling To-Dos Learn how to use Today, Anytime, Upcoming and Someday.",
+        "url": "https://culturedcode.com/things/support/articles/2803579",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-when"
+        ]
+      },
+      {
+        "text": "Using Tags Sharpen your focus by using tags to categorize your to-dos.",
+        "url": "https://culturedcode.com/things/support/articles/2803581",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-tags"
+        ]
+      },
+      {
+        "text": "Searching & Navigating with Quick Find Navigate to any list and find everything instantly.",
+        "url": "https://culturedcode.com/things/support/articles/2803584",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-search"
+        ]
+      },
+      {
+        "text": "Repeating To-Dos For anything you need to do every few days, weeks, or months.",
+        "url": "https://culturedcode.com/things/support/articles/2803564",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-repeating"
+        ]
+      },
+      {
+        "text": "Writing Notes in Things Capture all the extra details you need to get the task done.",
+        "url": "https://culturedcode.com/things/support/articles/4438545",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-notes"
+        ]
+      },
+      {
+        "text": "Getting Productive with Things A quick guide to getting the most out of Things.",
+        "url": "https://culturedcode.com/things/support/articles/6378414",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-idea"
+        ]
+      },
+      {
+        "text": "Syncing Your To-Dos Learn how to create a Things Cloud account and connect all your devices.",
+        "url": "https://culturedcode.com/things/support/articles/2803586",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-cloud"
+        ]
+      },
+      {
+        "text": "Change Password",
+        "url": "https://culturedcode.com/things/support/articles/2803588",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "Change Username",
+        "url": "https://culturedcode.com/things/support/articles/2803589",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "Troubleshooting Things Cloud",
+        "url": "https://culturedcode.com/things/support/articles/2803590",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "Delete Account & Data",
+        "url": "https://culturedcode.com/things/support/articles/2803591",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "Calendar Integration See calendar events next to your to-dos as you plan your day.",
+        "url": "https://culturedcode.com/things/support/articles/2803583",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-calendar"
+        ]
+      },
+      {
+        "text": "Keyboard Shortcuts Be more productive with powerful keyboard shortcuts.",
+        "url": "https://culturedcode.com/things/support/articles/2785159",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-keyboard"
+        ]
+      },
+      {
+        "text": "Gestures Learn about everything you can do with a swipe, drag, or tap.",
+        "url": "https://culturedcode.com/things/support/articles/2803582",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-gestures"
+        ]
+      },
+      {
+        "text": "Talk to Siri How to tell Siri to add a to-do or show a list.",
+        "url": "https://culturedcode.com/things/support/articles/2877019",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-siri"
+        ]
+      },
+      {
+        "text": "Write Notes with Markdown Add style and structure to your notes with Markdown.",
+        "url": "https://culturedcode.com/things/support/articles/4651820",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-markdown"
+        ]
+      },
+      {
+        "text": "Apple Shortcuts Try our ready-made shortcuts to automate your workflows.",
+        "url": "https://culturedcode.com/things/support/articles/2955145",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-shortcuts"
+        ]
+      },
+      {
+        "text": "Things URL Scheme For advanced users, there are even more possibilities for automation.",
+        "url": "https://culturedcode.com/things/support/articles/2803573",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-urlscheme"
+        ]
+      },
+      {
+        "text": "Use Natural Language to Set Dates Just type to quickly schedule to-dos, add reminders, or set deadlines.",
+        "url": "https://culturedcode.com/things/support/articles/9780167",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-when"
+        ]
+      },
+      {
+        "text": "Using Things on Apple Watch See your to-dos on your wrist so you can mark them complete on the go.",
+        "url": "https://culturedcode.com/things/support/articles/2157909",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-applewatch"
+        ]
+      },
+      {
+        "text": "Show All",
+        "url": "https://culturedcode.com/things/support/articles/1059358",
+        "class": [
+          "a",
+          "has-chevron"
+        ]
+      },
+      {
+        "text": "Prioritizing To-Dos Here’s how to use tags to prioritize to-dos in Things.",
+        "url": "https://culturedcode.com/things/support/articles/3289315",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-idea"
+        ]
+      },
+      {
+        "text": "Understanding the Default Lists Learn how to best use Today, Upcoming, Anytime, and Someday.",
+        "url": "https://culturedcode.com/things/support/articles/4001304",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-idea"
+        ]
+      },
+      {
+        "text": "Dealing with Waiting To-Dos Get pending to-dos out of Today and find them again quickly.",
+        "url": "https://culturedcode.com/things/support/articles/2237050",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-idea"
+        ]
+      },
+      {
+        "text": "How to Get To-Dos Unstuck Turn intimidating goals into manageable chunks with projects & checklists.",
+        "url": "https://culturedcode.com/things/support/articles/8491676",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-idea"
+        ]
+      },
+      {
+        "text": "How to Work With Templates Re-use checklists and projects to save time.",
+        "url": "https://culturedcode.com/things/support/articles/2693493",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-idea"
+        ]
+      },
+      {
+        "text": "Run into a problem? If something isn’t working as expected, you’ll find help here.",
+        "url": "https://culturedcode.com/things/support/articles/3614435",
+        "class": [
+          "fancylink",
+          "is-hero",
+          "has-icon-firstaid"
+        ]
+      },
+      {
+        "text": "Things Cloud",
+        "url": "https://culturedcode.com/things/support/articles/2803590",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "App Store Issues",
+        "url": "https://culturedcode.com/things/support/articles/4522602",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "Reinstalling Things",
+        "url": "https://culturedcode.com/things/support/articles/2803593",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "Calendar Integration",
+        "url": "https://culturedcode.com/things/support/articles/2978194",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-no-icon"
+        ]
+      },
+      {
+        "text": "Contact Us",
+        "url": "https://culturedcode.com/contact/",
+        "class": [
+          "button",
+          "is-strong",
+          "is-large"
+        ]
+      }
+    ],
+    "media": []
+  },
+  "https://culturedcode.com/things/blog/": {
+    "title": "Things Blog - Cultured Code",
+    "headings": [
+      {
+        "level": "h1",
+        "text": "Things for OS 27 and Siri AI"
+      },
+      {
+        "level": "h2",
+        "text": "Siri AI (Beta)"
+      },
+      {
+        "level": "h3",
+        "text": "Speak more freely"
+      },
+      {
+        "level": "h3",
+        "text": "Keep the conversation going"
+      },
+      {
+        "level": "h3",
+        "text": "Chat in the new Siri app"
+      },
+      {
+        "level": "h2",
+        "text": "Spotlight"
+      },
+      {
+        "level": "h2",
+        "text": "Snoozing Notifications"
+      },
+      {
+        "level": "h1",
+        "text": "Repeating To-Dos, Refined"
+      },
+      {
+        "level": "h2",
+        "text": "Complete them early"
+      },
+      {
+        "level": "h2",
+        "text": "Reschedule them with ease"
+      },
+      {
+        "level": "h2",
+        "text": "See them all in one place"
+      },
+      {
+        "level": "h2",
+        "text": "And more"
+      },
+      {
+        "level": "h1",
+        "text": "Things for OS 26"
+      },
+      {
+        "level": "h2",
+        "text": "A new icon"
+      },
+      {
+        "level": "h2",
+        "text": "Fresh look & feel on OS 26"
+      },
+      {
+        "level": "h2",
+        "text": "iPad windows and menus"
+      },
+      {
+        "level": "h2",
+        "text": "New widget styles"
+      },
+      {
+        "level": "h2",
+        "text": "Quick controls on Mac and Watch"
+      },
+      {
+        "level": "h2",
+        "text": "And more"
+      },
+      {
+        "level": "h2",
+        "text": "Get it now"
+      },
+      {
+        "level": "h1",
+        "text": "A Swift Cloud"
+      },
+      {
+        "level": "h2",
+        "text": "Why we rebuilt Things Cloud"
+      },
+      {
+        "level": "h2",
+        "text": "Why Swift?"
+      },
+      {
+        "level": "h2",
+        "text": "A seamless transition"
+      },
+      {
+        "level": "h2",
+        "text": "Ready for the future"
+      },
+      {
+        "level": "h2",
+        "text": "Footer"
+      },
+      {
+        "level": "h3",
+        "text": "Products"
+      },
+      {
+        "level": "h3",
+        "text": "Support"
+      },
+      {
+        "level": "h3",
+        "text": "News"
+      },
+      {
+        "level": "h3",
+        "text": "Company"
+      }
+    ],
+    "links": [
+      {
+        "text": "Things for OS 27 and Siri AI",
+        "url": "https://culturedcode.com/things/blog/2026/09/things-for-os-27-and-siri-ai/",
+        "class": [
+          "raw"
+        ]
+      },
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/mac/appstore/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "iPad",
+        "url": "https://culturedcode.com/things/ipad/appstore/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "iPhone, Watch",
+        "url": "https://culturedcode.com/things/iphone/appstore/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "Vision Pro",
+        "url": "https://culturedcode.com/things/vision/appstore/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "Apple’s website",
+        "url": "https://www.apple.com/apple-intelligence/",
+        "class": [
+          "a",
+          "is-weak"
+        ]
+      },
+      {
+        "text": "Repeating To-Dos, Refined",
+        "url": "https://culturedcode.com/things/blog/2026/08/repeating-to-dos-refined/",
+        "class": [
+          "raw"
+        ]
+      },
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/mac/appstore/",
+        "class": []
+      },
+      {
+        "text": "iPad",
+        "url": "https://culturedcode.com/things/ipad/appstore/",
+        "class": []
+      },
+      {
+        "text": "iPhone",
+        "url": "https://culturedcode.com/things/iphone/appstore/",
+        "class": []
+      },
+      {
+        "text": "Things for OS 26",
+        "url": "https://culturedcode.com/things/blog/2025/09/things-for-os-26/",
+        "class": [
+          "raw"
+        ]
+      },
+      {
+        "text": "keyboard shortcuts",
+        "url": "https://culturedcode.com/things/help/keyboard-shortcuts-ios/",
+        "class": []
+      },
+      {
+        "text": "Things’ actions",
+        "url": "https://culturedcode.com/things/support/articles/9596775/",
+        "class": []
+      },
+      {
+        "text": "Mac",
+        "url": "https://culturedcode.com/things/mac/appstore/",
+        "class": []
+      },
+      {
+        "text": "iPad",
+        "url": "https://culturedcode.com/things/ipad/appstore/",
+        "class": []
+      },
+      {
+        "text": "iPhone, Watch",
+        "url": "https://culturedcode.com/things/iphone/appstore/",
+        "class": []
+      },
+      {
+        "text": "Vision Pro",
+        "url": "https://culturedcode.com/things/vision/appstore/",
+        "class": []
+      },
+      {
+        "text": "A Swift Cloud",
+        "url": "https://culturedcode.com/things/blog/2025/05/a-swift-cloud/",
+        "class": [
+          "raw"
+        ]
+      },
+      {
+        "text": "Many of you",
+        "url": "https://culturedcode.com/things/cloud/#feedback",
+        "class": []
+      },
+      {
+        "text": "Fractus",
+        "url": "https://culturedcode.com/things/blog/2021/08/remarkable-notes/#fractus",
+        "class": []
+      },
+      {
+        "text": "our post on Apple’s Swift.org blog",
+        "url": "https://www.swift.org/blog/how-swifts-server-support-powers-things-cloud/",
+        "class": []
+      },
+      {
+        "text": "a talk",
+        "url": "https://www.youtube.com/watch?v=oJArLZIQF8w",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://www.swift.org/blog/how-swifts-server-support-powers-things-cloud/",
+        "class": []
+      },
+      {
+        "text": "",
+        "url": "https://www.youtube.com/watch?v=oJArLZIQF8w",
+        "class": []
+      },
+      {
+        "text": "Newer Posts",
+        "url": "https://culturedcode.com/things/blog/",
+        "class": [
+          "button",
+          "is-disabled"
+        ]
+      },
+      {
+        "text": "Older Posts",
+        "url": "https://culturedcode.com/things/blog/page/2",
+        "class": [
+          "button"
+        ]
+      }
+    ],
+    "media": [
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-hero-io75.jpg",
+        "alt": "Speech bubbles alongside a to-do card, representing a conversation with Siri in Things",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-speakfreely-io70.jpg",
+        "alt": "Siri creating a to-do in Things from a spoken request. “For the road trip next week, I need to get my tires checked. Add a reminder to Things for next Thursday.”",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-1-io65.jpg",
+        "alt": "Siri conversation. Step 1: “Hey Siri, remind me to send the report.”",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-2-io65.jpg",
+        "alt": "Siri conversation. Step 2: “Add a note that I should include last month’s financial data.”",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-3-io65.jpg",
+        "alt": "Siri conversation. Step 3: “Schedule it for tomorrow.”",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-4-io65.jpg",
+        "alt": "Siri conversation. Step 4: “Add it to my Work list.”",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-siriai-5-io65.jpg",
+        "alt": "Siri conversation. Step 5: “Summarize Steve’s latest email as a bullet list and append it to the notes.”",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-siri-app-io70.jpg",
+        "alt": "Saving research from the Siri app to Things",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-spotlight-io70.jpg",
+        "alt": "Spotlight search results",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/09/os27-snooze-io70.jpg",
+        "alt": "Notification snooze options: Complete, Remind Me in 15 min, Remind Me in 1 hour, Remind Me in 3 hours, Remind Me Tomorrow at 9:00 AM",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/08/repeating-hero-io85.jpg",
+        "alt": "Illustration of repeating to-dos in Things",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/08/repeating-comparison-1-io80.png",
+        "alt": "A repeating to-do showing the repeat arrow in place of a checkbox",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/08/repeating-comparison-2-io80.png",
+        "alt": "A repeating to-do showing a checkbox, with the repeat arrow moved to its right",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/08/repeating-reschedule-io80.png",
+        "alt": "Rescheduling a repeating to-do",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2026/08/repeating-list-io80.png",
+        "alt": "The Repeating list in Things, showing all repeating to-dos, grouped by area",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/09/things-os26-hero-rectangular-io90.jpg",
+        "alt": "Things for OS 26",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/09/things-os26-appicon-new-io85.jpg",
+        "alt": "New app icon",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/09/things-os26-appicon-old-io85.jpg",
+        "alt": "Old app icon",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/09/things-os26-screenshot-ios-io75.jpg",
+        "alt": "Things screenshot iOS 26",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/09/things-os26-screenshot-ipados-io75.jpg",
+        "alt": "Things screenshot iPadOS 26",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/09/things-os26-screenshot-macos-io75.jpg",
+        "alt": "Things screenshot macOS 26",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/09/things-os26-powerfulipad-io75.jpg",
+        "alt": "Menu bar on iPadOS 26",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/09/things-os26-widgets-io75.jpg",
+        "alt": "New widget styles",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/05/swift-cloud-hero-io80.png",
+        "alt": "A swift cloud",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/05/swift-cloud-blog-io75.jpg",
+        "alt": "Swift.org Blog Post: How Swift’s server support powers Things Cloud",
+        "class": []
+      },
+      {
+        "url": "https://culturedcode.com/frozen/2025/05/swift-cloud-talk-io75.jpg",
+        "alt": "Server-Side Swift Conference: The success story of server-side Swift",
+        "class": []
+      }
+    ]
+  },
+  "https://culturedcode.com/things/support/articles/2803586": {
+    "title": "Syncing with Things Cloud - Things Support",
+    "headings": [
+      {
+        "level": "h1",
+        "text": "Syncing with Things Cloud"
+      },
+      {
+        "level": "h2",
+        "text": "Q&A"
+      },
+      {
+        "level": "h2",
+        "text": "More questions?"
+      },
+      {
+        "level": "h2",
+        "text": "Footer"
+      },
+      {
+        "level": "h3",
+        "text": "Products"
+      },
+      {
+        "level": "h3",
+        "text": "Support"
+      },
+      {
+        "level": "h3",
+        "text": "News"
+      },
+      {
+        "level": "h3",
+        "text": "Company"
+      }
+    ],
+    "links": [
+      {
+        "text": "Things Cloud",
+        "url": "https://culturedcode.com/things/cloud/",
+        "class": []
+      },
+      {
+        "text": "Create an Account New to Things Cloud? Here’s how to create an account.",
+        "url": "https://culturedcode.com/things/support/1481195/",
+        "class": [
+          "fancylink",
+          "is-centered-hero",
+          "has-icon-cloud"
+        ]
+      },
+      {
+        "text": "Log In Already have an account? Here’s how to connect a new device.",
+        "url": "https://culturedcode.com/things/support/2997514/",
+        "class": [
+          "fancylink",
+          "is-centered-hero",
+          "has-icon-cloud"
+        ]
+      },
+      {
+        "text": "Change Your Password",
+        "url": "https://culturedcode.com/things/support/2803588/",
+        "class": [
+          "fancylink",
+          "is-minimal"
+        ]
+      },
+      {
+        "text": "Change Your Username",
+        "url": "https://culturedcode.com/things/support/2803589/",
+        "class": [
+          "fancylink",
+          "is-minimal"
+        ]
+      },
+      {
+        "text": "Look Up Your Password in iCloud Keychain",
+        "url": "https://culturedcode.com/things/support/2953349/",
+        "class": [
+          "fancylink",
+          "is-minimal"
+        ]
+      },
+      {
+        "text": "Troubleshoot Sync",
+        "url": "https://culturedcode.com/things/support/2803590/",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-icon-firstaid"
+        ]
+      },
+      {
+        "text": "Delete Your Account & Data",
+        "url": "https://culturedcode.com/things/support/2803591/",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-icon-warning"
+        ]
+      },
+      {
+        "text": "Check Things Cloud’s Status",
+        "url": "https://culturedcode.com/status/",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-icon-cloud"
+        ]
+      },
+      {
+        "text": "Things trial",
+        "url": "https://culturedcode.com/things/support/2803551/",
+        "class": []
+      },
+      {
+        "text": "supported Apple device",
+        "url": "https://culturedcode.com/things/support/5571307/",
+        "class": []
+      },
+      {
+        "text": "Learn more",
+        "url": "https://culturedcode.com/things/support/2803605/",
+        "class": []
+      },
+      {
+        "text": "Learn more",
+        "url": "https://culturedcode.com/things/support/2803605/",
+        "class": []
+      },
+      {
+        "text": "find help here",
+        "url": "https://culturedcode.com/things/support/4481378/",
+        "class": []
+      },
+      {
+        "text": "Contact Us",
+        "url": "https://culturedcode.com/contact/form/",
+        "class": [
+          "button",
+          "is-strong"
+        ]
+      }
+    ],
+    "media": []
+  },
+  "https://culturedcode.com/things/support/articles/4651820": {
+    "title": "Markdown Guide - Things Support",
+    "headings": [
+      {
+        "level": "h1",
+        "text": "Markdown Guide"
+      },
+      {
+        "level": "h2",
+        "text": "Getting Started"
+      },
+      {
+        "level": "h2",
+        "text": "Supported Markdown"
+      },
+      {
+        "level": "h2",
+        "text": "Related Articles"
+      },
+      {
+        "level": "h2",
+        "text": "Footer"
+      },
+      {
+        "level": "h3",
+        "text": "Products"
+      },
+      {
+        "level": "h3",
+        "text": "Support"
+      },
+      {
+        "level": "h3",
+        "text": "News"
+      },
+      {
+        "level": "h3",
+        "text": "Company"
+      }
+    ],
+    "links": [
+      {
+        "text": "Writing Notes in Things",
+        "url": "https://culturedcode.com/things/support/4438545/",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-icon-notes"
+        ]
+      },
+      {
+        "text": "Keyboard Shortcuts",
+        "url": "https://culturedcode.com/things/support/2785159/",
+        "class": [
+          "fancylink",
+          "is-minimal",
+          "has-icon-keyboard"
+        ]
+      },
+      {
+        "text": "Contact Us",
+        "url": "https://culturedcode.com/contact/form/",
+        "class": [
+          "button",
+          "is-strong"
+        ]
+      }
+    ],
+    "media": [
+      {
+        "url": "https://culturedcode.com/frozen/2021/08/hero-markdown-guide.p128.png",
+        "alt": "",
+        "class": []
+      }
+    ]
+  }
+}

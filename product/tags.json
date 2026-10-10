@@ -1,0 +1,112 @@
+{
+  "javascript": {
+    "label": "JavaScript",
+    "aliases": [
+      "JS"
+    ]
+  },
+  "python": {
+    "label": "Python",
+    "aliases": [
+      "파이썬"
+    ]
+  },
+  "kubernetes": {
+    "label": "Kubernetes",
+    "aliases": [
+      "K8s"
+    ]
+  },
+  "sql": {
+    "label": "SQL",
+    "aliases": []
+  },
+  "async": {
+    "label": "비동기",
+    "aliases": []
+  },
+  "concurrency": {
+    "label": "동시성",
+    "aliases": []
+  },
+  "error-handling": {
+    "label": "오류 처리",
+    "aliases": []
+  },
+  "testing": {
+    "label": "테스트",
+    "aliases": []
+  },
+  "transaction": {
+    "label": "트랜잭션",
+    "aliases": []
+  },
+  "idempotency": {
+    "label": "멱등성",
+    "aliases": []
+  },
+  "diagnosis": {
+    "label": "장애 진단",
+    "aliases": []
+  },
+  "evidence": {
+    "label": "근거",
+    "aliases": []
+  },
+  "object-copy": {
+    "label": "객체 복사",
+    "aliases": []
+  },
+  "reference": {
+    "label": "참조",
+    "aliases": []
+  },
+  "memory": {
+    "label": "메모리",
+    "aliases": []
+  },
+  "address-translation": {
+    "label": "주소 변환",
+    "aliases": []
+  },
+  "queue": {
+    "label": "큐",
+    "aliases": []
+  },
+  "backpressure": {
+    "label": "역압",
+    "aliases": []
+  },
+  "markdown": {
+    "label": "Markdown",
+    "aliases": []
+  },
+  "c": {
+    "label": "C",
+    "aliases": []
+  },
+  "csharp": {
+    "label": "C#",
+    "aliases": []
+  },
+  "typescript": {
+    "label": "TypeScript",
+    "aliases": []
+  },
+  "kotlin": {
+    "label": "Kotlin",
+    "aliases": []
+  },
+  "postgresql": {
+    "label": "PostgreSQL",
+    "aliases": []
+  },
+  "docker": {
+    "label": "Docker",
+    "aliases": []
+  },
+  "git": {
+    "label": "Git",
+    "aliases": []
+  }
+}

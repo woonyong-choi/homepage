@@ -1,0 +1,25 @@
+name: Validate
+on: [push, pull_request]
+jobs:
+  site:
+    permissions:
+      contents: read
+      discussions: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: node scripts/build-tokens.mjs --check
+      - run: node build.mjs
+      - run: node --check main.js && node --check doc-page.js && node --check build.mjs
+      - run: npm run check:product
+      - run: npm run build:product
+      - run: npm run build:site
+        env:
+          GH_TOKEN: ${{ github.token }}

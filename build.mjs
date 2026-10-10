@@ -1,11 +1,24 @@
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import MarkdownIt from "./assets/vendor/markdown-it.mjs";
+import { verifyApprovedContent } from './product/approved-content.mjs';
+
+verifyApprovedContent();
 
 const root = new URL(".", import.meta.url).pathname;
+execFileSync("node", ["scripts/build-tokens.mjs"], { cwd: root, stdio: "inherit" });
 const navigation = JSON.parse(await readFile(join(root, "content/navigation.json"), "utf8"));
 const javascriptNavigation = JSON.parse(await readFile(join(root, "content/javascript-navigation.json"), "utf8"));
-const home = await readFile(join(root, "index.html"), "utf8");
+const versions = new Map();
+for (const name of ['theme.css', 'styles.css', 'main.js', 'doc-page.js']) {
+  versions.set(name, createHash('sha256').update(await readFile(join(root, name))).digest('hex').slice(0, 12));
+}
+const versioned = (name) => `${name}?v=${versions.get(name)}`;
+const homeSource = await readFile(join(root, "index.html"), "utf8");
+const home = homeSource.replace(/(href|src)="(theme\.css|styles\.css|main\.js)(?:\?v=[a-f0-9]+)?"/g, (_, attr, name) => `${attr}="${versioned(name)}"`);
+if (home !== homeSource) await writeFile(join(root, 'index.html'), home);
 const header = home.match(/<header class="docs-header">[\s\S]*?<\/header>/)?.[0];
 const footer = home.match(/<footer class="docs-footer">[\s\S]*?<\/footer>/)?.[0];
 const dialogs = [...home.matchAll(/<dialog class="docs-(?:search|privacy)-dialog"[\s\S]*?<\/dialog>/g)].map((match) => match[0]).join("\n");
@@ -106,9 +119,9 @@ for (let index = 0; index < pages.length; index++) {
   const isQuickstart = page.id.startsWith("guides/getting-started/quickstarts/");
   const breadcrumb = isQuickstart ? `<a href="${pageHref(prefix, "guides/getting-started")}">Start with Supabase</a><span>›</span><span>Framework Quickstarts</span><span>›</span><span>${escapeHtml(page.navTitle || page.title)}</span>` : `<a href="${prefix}">Docs</a><span>›</span><span>${escapeHtml(page.group)}</span><span>›</span><span>${escapeHtml(page.title)}</span>`;
   const html = `<!doctype html>
-<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" content="#121212" /><title>${escapeHtml(page.title)} | Supabase Docs</title><link rel="icon" href="${prefix}assets/supabase-dark.svg" type="image/svg+xml" /><link rel="stylesheet" href="${prefix}variables.css" /><link rel="stylesheet" href="${prefix}styles.css" /><script src="${prefix}assets/vendor/prism.js" defer></script><script src="${prefix}doc-page.js" defer></script></head>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="theme-color" /><title>${escapeHtml(page.title)} | Supabase Docs</title><link rel="icon" href="${prefix}assets/supabase-dark.svg" type="image/svg+xml" /><link rel="stylesheet" href="${prefix}${versioned("theme.css")}" /><link rel="stylesheet" href="${prefix}${versioned("styles.css")}" /><script src="${prefix}assets/vendor/prism.js" defer></script><script type="module" src="${prefix}${versioned("doc-page.js")}"></script></head>
 <body class="docs-page" data-root="${prefix}"><a class="docs-skip" href="#main">Skip to content</a>${sharedMarkup(header, prefix)}
-<main id="main" tabindex="-1"><div class="docs-document${referenceLayout ? " docs-reference" : ""}${isQuickstart ? " docs-quickstart" : ""}"><div class="docs-document-shell"><aside class="docs-sidebar" aria-label="Documentation navigation">${sidebarMarkup(page.id, prefix)}</aside><div class="docs-content-grid"><article class="docs-article"><button class="docs-sidebar-toggle" type="button" aria-expanded="false">Browse docs</button><nav class="docs-breadcrumb" aria-label="Breadcrumb">${breadcrumb}</nav><h1 class="docs-article-title">${escapeHtml(page.title)}</h1><p class="docs-article-summary">${escapeHtml(page.summary)}</p><details class="docs-mobile-toc"${headings.length ? "" : " hidden"}><summary>On this page</summary><nav>${toc}</nav></details><div class="docs-article-body">${body}</div></article><aside class="docs-toc" aria-label="On this page">${rightActions}${referenceLayout ? "" : `<span>ON THIS PAGE</span><nav>${toc}</nav>`}</aside></div></div></div></main>
+<main id="main" tabindex="-1"><div class="docs-document${referenceLayout ? " docs-reference" : ""}${isQuickstart ? " docs-quickstart" : ""}"><div class="docs-document-shell"><aside class="docs-sidebar" aria-label="Documentation navigation"><button class="docs-sidebar-close" type="button" aria-label="Close documentation navigation">Close</button>${sidebarMarkup(page.id, prefix)}</aside><div class="docs-content-grid"><article class="docs-article"><button class="docs-sidebar-toggle" type="button" aria-expanded="false">Browse docs</button><nav class="docs-breadcrumb" aria-label="Breadcrumb">${breadcrumb}</nav><h1 class="docs-article-title">${escapeHtml(page.title)}</h1><p class="docs-article-summary">${escapeHtml(page.summary)}</p><details class="docs-mobile-toc"${headings.length ? "" : " hidden"}><summary>On this page</summary><nav>${toc}</nav></details><div class="docs-article-body">${body}</div></article><aside class="docs-toc" aria-label="On this page">${rightActions}${referenceLayout ? "" : `<span>ON THIS PAGE</span><nav>${toc}</nav>`}</aside></div></div></div></main>
 ${sharedMarkup(footer, prefix)}${sharedMarkup(dialogs, prefix)}</body></html>`;
   const output = join(root, "pages", page.id, "index.html");
   await mkdir(dirname(output), { recursive: true });
@@ -117,3 +130,7 @@ ${sharedMarkup(footer, prefix)}${sharedMarkup(dialogs, prefix)}</body></html>`;
 }
 await writeFile(join(root, "search-index.json"), JSON.stringify(searchIndex));
 console.log(`Built ${pages.length} static documentation pages`);
+
+execFileSync("python3", ["scripts/audit-tokens.py"], { cwd: root, stdio: "inherit" });
+
+execFileSync('python3', ['scripts/check-pages.py'], { cwd: root, stdio: 'inherit' });

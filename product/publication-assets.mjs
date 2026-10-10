@@ -1,0 +1,70 @@
+// 발행 HTML과 런타임 색인의 의존 파일만 복사 대상으로 모은다.
+import { videoControlAssets } from './controls.mjs';
+const ORIGIN = 'https://publication.invalid';
+const CLIENT_ASSETS = { 'video.js': videoControlAssets };
+const ASSET_ROOTS = ['/theme/', '/assets/', '/media/', '/katex/'];
+const ASSET_NOTICES = new Map([
+  ['/theme/assets/fonts/pretendard-variable.woff2', '/theme/assets/fonts/pretendard-license.txt'],
+  ['/theme/assets/fonts/jetbrains-mono-regular.woff2', '/theme/assets/fonts/jetbrains-mono-license.txt'],
+  ['/media/manta-code-blocks-intro-web.mp4', '/media/manta-code-blocks-LICENSE.txt'],
+  ['/media/manta-code-blocks-poster.png', '/media/manta-code-blocks-LICENSE.txt'],
+  ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
+  ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],
+]);
+
+export function clientEntrypoints(body) {
+  const scripts = [];
+  if (/<[^>]+\sdata-public-search(?:[\s=>])/.test(body)) scripts.push('publication.js');
+  if (/<[^>]+\sclass="[^"]*\bapp-document-nav\b/.test(body) || /<[^>]+\sdata-(?:tabs|copy|keyboard|tooltip-trigger)(?:[\s=>])/.test(body)) scripts.push('document.js');
+  if (/<[^>]+\sdata-document-layout(?:[\s=>])/.test(body)) scripts.push('document-navigation.js');
+  if (/<[^>]+\sdata-comments(?:[\s=>])/.test(body)) scripts.push('comments.js');
+  if (/<[^>]+\sdata-mermaid(?:[\s=>])/.test(body)) scripts.push('mermaid-loader.js');
+  if (/<[^>]+\sdata-flow-rail(?:[\s=>])/.test(body)) scripts.push('flows.js');
+  if (/<[^>]+\sdata-player(?:[\s=>])/.test(body)) scripts.push('video.js');
+  if (/<[^>]+\sdata-current-year(?:[\s=>])/.test(body)) scripts.push('footer-year.js');
+  if (/<[^>]+\sdata-blog-list(?:[\s=>])/.test(body)) scripts.push('blog-list.js');
+  return scripts;
+}
+
+function markupReferences(source) {
+  return [...source.matchAll(/\b(?:src|href|poster)="([^"]+)"/g)].map(match => match[1]);
+}
+
+function styleReferences(source) {
+  const urls = [...source.matchAll(/url\(\s*(?:"([^"]+)"|'([^']+)'|([^\s)]+))\s*\)/g)].map(match => match[1] ?? match[2] ?? match[3]);
+  const imports = [...source.matchAll(/@import\s+["']([^"']+)["']/g)].map(match => match[1]);
+  return [...urls, ...imports];
+}
+
+export function publicationAssets(pages, searchEntries, readAsset) {
+  const files = new Map();
+  function include(reference, from = '/') {
+    if (!reference || reference.startsWith('#')) return;
+    const url = new URL(reference, ORIGIN + from);
+    if (url.origin !== ORIGIN) return;
+    const path = decodeURIComponent(url.pathname);
+    if (!ASSET_ROOTS.some(root => path.startsWith(root))) {
+      if (ASSET_ROOTS.some(root => from.startsWith(root))) throw new Error(`asset dependency outside publication roots: ${reference}`);
+      return;
+    }
+    if (path.includes('\\') || path.split('/').some(part => part === '..' || part === '.')) throw new Error(`invalid publication asset: ${reference}`);
+    if (files.has(path)) return;
+    const content = readAsset(path);
+    files.set(path, content);
+    // 화면에서 요청하지 않는 고지도 해당 자산의 배포 의존성이다.
+    const notice = /^\/assets\/company-[a-z0-9-]+\.(?:png|svg)$/.test(path)
+      ? '/assets/company-logos-NOTICE.txt' : /^\/theme\/assets\/icons\/brands\/[^/]+\.svg$/.test(path)
+      ? '/theme/assets/icons/brands/LICENSE' : /^\/theme\/assets\/controls\/[^/]+\.svg$/.test(path) ? '/theme/assets/controls/LICENSE' : path.startsWith('/katex/fonts/') ? '/katex/LICENSE' : ASSET_NOTICES.get(path);
+    if (notice) include(notice);
+    const references = path.endsWith('.css') ? styleReferences(content.toString()) : path.endsWith('.svg') ? markupReferences(content.toString()) : [];
+    for (const dependency of references) include(dependency, path);
+  }
+  for (const [route, html] of pages) {
+    for (const reference of markupReferences(html)) include(reference, route);
+    for (const client of clientEntrypoints(html)) for (const reference of CLIENT_ASSETS[client] ?? []) include(reference);
+  }
+  for (const entry of searchEntries) include(entry.iconUrl);
+  // iframe에서 직접 읽는 테마는 부모 HTML에 stylesheet 링크가 없다.
+  include('/theme/assets/giscus.css');
+  return files;
+}

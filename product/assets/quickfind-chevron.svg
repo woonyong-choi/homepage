@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="24px" viewBox="0 0 16 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 61.2 (89653) - https://sketch.com -->
+    <title>quickfind-chevron</title>
+    <desc>Created with Sketch.</desc>
+    <g id="quickfind-chevron" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M10.5,5 C11.3284271,5 12,5.67157288 12,6.5 L12,17.5 C12,18.3284271 11.3284271,19 10.5,19 C9.67157288,19 9,18.3284271 9,17.5 L9,8 L-0.5,8 C-1.32842712,8 -2,7.32842712 -2,6.5 C-2,5.67157288 -1.32842712,5 -0.5,5 L10.5,5 L10.5,5 Z" id="Combined-Shape" fill="#05101C" transform="translate(5.000000, 12.000000) rotate(-315.000000) translate(-5.000000, -12.000000) "></path>
+    </g>
+</svg>

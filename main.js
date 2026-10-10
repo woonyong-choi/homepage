@@ -1,3 +1,4 @@
+function tokenNumber(name) { return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)); }
 const asset = (name) => `assets/img/icons/${name}-icon.svg`;
 document.querySelector(".docs-skip").addEventListener("click", (event) => {
   event.preventDefault();
@@ -200,7 +201,7 @@ document.querySelector(".docs-copy").addEventListener("click", async () => {
   setTimeout(() => {
     button.title = "Copy to clipboard";
     button.setAttribute("aria-label", activeTab === "prompt" ? "Copy Agent Prompt" : "Copy CLI commands");
-  }, 1600);
+  }, tokenNumber("--duration-feedback"));
 });
 
 const dialog = document.querySelector(".docs-search-dialog");
@@ -307,3 +308,5 @@ document.querySelector(".docs-privacy-save").addEventListener("click", () => {
   try { localStorage.setItem("docs-optional-preferences", String(optionalStorage.checked)); } catch { /* Browser storage may be unavailable. */ }
   privacyDialog.close();
 });
+
+document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.body).backgroundColor;
