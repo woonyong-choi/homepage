@@ -1,17 +1,19 @@
 // 공개 문서의 식별자와 분류를 화면·검색·댓글에서 함께 사용한다.
 import { parse } from 'yaml';
 
-const ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const DOCUMENT_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const PAGE_SIZES = Object.freeze({ preview: 4, cards: 12, feed: 4, search: 12 });
 export const TOPIC_GROUPS = Object.freeze(['cs', 'tech']);
 export const FIELDS = Object.freeze(['languages', 'cs', 'frameworks', 'infrastructure']);
+
+export function isDocumentId(value) { return typeof value === 'string' && DOCUMENT_ID.test(value); }
 
 export function readDocument(source, tags, now = new Date(), categories = tags) {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
   if (!match) throw new Error('missing document metadata');
   const page = parse(match[1], { maxAliasCount: 0 });
   for (const name of ['id', 'slug']) {
-    if (!ID.test(page[name] ?? '')) throw new Error(`invalid document ${name}`);
+    if (!isDocumentId(page[name])) throw new Error(`invalid document ${name}`);
   }
   if (!['wiki', 'blog'].includes(page.type)) throw new Error(`invalid document type: ${page.id}`);
   for (const name of ['title', 'description']) {
@@ -22,8 +24,8 @@ export function readDocument(source, tags, now = new Date(), categories = tags) 
   if (!Array.isArray(page.tags) || page.tags.length > 5) throw new Error(`invalid tags: ${page.id}`);
   if (new Set(page.tags).size !== page.tags.length || page.tags.some(tag => !tags[tag])) throw new Error(`unknown or duplicate tag: ${page.id}`);
   if (!FIELDS.includes(page.field)) throw new Error(`invalid field: ${page.id}`);
-  if (!ID.test(page.category ?? '') || !categories[page.category]) throw new Error(`invalid category: ${page.id}`);
-  if (page.parent != null && (typeof page.parent !== 'string' || !ID.test(page.parent))) throw new Error(`invalid parent: ${page.id}`);
+  if (!isDocumentId(page.category) || !categories[page.category]) throw new Error(`invalid category: ${page.id}`);
+  if (page.parent != null && !isDocumentId(page.parent)) throw new Error(`invalid parent: ${page.id}`);
   if (typeof page.contentIcon?.name !== 'string') throw new Error(`missing content icon: ${page.id}`);
   if (page.type === 'blog' && page.comments !== true) throw new Error(`blog comments are required: ${page.id}`);
   for (const name of ['publishedAt', 'updatedAt']) {
