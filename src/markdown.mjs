@@ -32,8 +32,9 @@ export function icon(name = 'question') {
   if (typeof name === 'string' && name.startsWith('content:')) return contentIcon(name.slice(8));
   return String(ui.ArticleIcon(name));
 }
+export const imageSize = source => Object.hasOwn(IMAGE_SIZES, source) ? IMAGE_SIZES[source] : undefined;
 export function image(name, alt = '', className = '') {
-  const size = IMAGE_SIZES[name];
+  const size = imageSize(name);
   return `<img${size ? ` width="${size[0]}" height="${size[1]}"` : ''} class="${className}" src="${asset(name)}" alt="${escape(alt)}" loading="lazy" decoding="async">`;
 }
 
@@ -196,7 +197,7 @@ export function createMarkdown() {
     token.attrSet('loading', 'lazy');
     token.attrSet('decoding', 'async');
     const src = token.attrGet('src');
-    const size = src?.startsWith('/assets/') ? IMAGE_SIZES[src.split('/').at(-1)] : undefined;
+    const size = imageSize(src?.startsWith('/assets/') ? src.split('/').at(-1) : src);
     if (size) { token.attrSet('width', size[0]); token.attrSet('height', size[1]); }
     return defaultImage(tokens, index, options, env, self);
   };

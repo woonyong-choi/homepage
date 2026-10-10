@@ -5,6 +5,7 @@ import { createMarkdown } from './markdown.mjs';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { blogFeed } from './blog-layout.mjs';
+import { thumbnailImage } from './post-article.mjs';
 import { token, px, box } from './theme-measure.mjs';
 
 const near = (value, expected) => assert.equal(Math.round(value * 10000) / 10000, expected);
@@ -57,6 +58,21 @@ test('blog_thumbnail_follows_the_lead_as_a_wide_image_in_detail_and_feed', () =>
   assert.match(detail, /loading="eager"/);
   assert.match(feed, /loading="lazy"/);
   assert.doesNotMatch(articlePage(post('blog'), [page], { topics }), /app-post-cover/);
+});
+
+test('thumbnail_dimensions_preserve_the_registered_wide_and_portrait_sources', () => {
+  for (const [src, width, height] of [
+    ['https://picsum.photos/seed/python-copy/1200/500', 1200, 500],
+    ['https://picsum.photos/seed/transaction-boundary/800/1000', 800, 1000],
+  ]) {
+    const html = thumbnailImage({ thumbnail: { src, alt: '표지' } });
+    assert.match(html, new RegExp(`width="${width}" height="${height}"`));
+  }
+});
+
+test('thumbnail_without_registered_dimensions_does_not_guess_an_aspect_ratio', () => {
+  const html = thumbnailImage({ thumbnail: { src: 'https://example.com/unknown.jpg', alt: '원본 크기가 없는 표지' } });
+  assert.doesNotMatch(html, /\s(?:width|height)=/);
 });
 
 test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column', () => {
