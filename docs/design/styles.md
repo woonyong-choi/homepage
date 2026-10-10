@@ -1,46 +1,29 @@
 # 스타일 수정 지도
 
-이 사이트의 화면 스타일은 design-tokens 저장소의 simple 테마가 정본이다. 여기서는 어떤 변경이 어느 저장소의 어느 단계에서 끝나는지만 정한다. 모듈 소유 표, 덮어쓰기 순서, `@import` 평탄화 규칙은 design-tokens의 `docs/styles.md`가 정본이다.
+범용 디자인은 design-tokens가 소유하고 홈페이지는 콘텐츠와 경로를 조립한다.
 
-## 단계
+| 변경 | 정본 |
+|---|---|
+| 색·간격·글자 크기·시간 | `tokens/tokens.json` |
+| 공통 CSS | `styles/` |
+| 카드·검색·본문·홈 구성 요소 | `ui/` |
+| 복사·탭·영상·흐름 동작 | `ui/runtime/` |
+| 아이콘·조작 도형 | `assets/`, `ui/icons.mjs` |
+| CSS 축소와 토큰 검사 | `ui/build/` |
+| 콘텐츠·문구·노출 순서 | 홈페이지의 `src/home.config.yaml` |
+| Markdown·검색·댓글·문서 식별자 | 홈페이지의 `src/` |
 
-| 하고 싶은 일 | 고치는 곳 | 저장소 |
-|---|---|---|
-| 색·간격·글자 크기 | `themes/base/simple/tokens.json` | design-tokens |
-| 공통 조각(카드·본문·검색·입력)의 모양 | `themes/base/simple/styles/{cards,prose,search,forms,...}.css` | design-tokens |
-| 한 화면의 배치와 변형 | `styles/{landing,blog,article,support,features,pages,status}.css` | design-tokens |
-| 홈 섹션 구성·순서·문구 | `product/home.config.yaml` | blog |
-| 글의 구성 요소 | Markdown의 ` ```ui:이름 ` 블록과 `:::이름` 블록 | blog |
-| 새 마크업이 필요한 클래스 | `product/*-layout.mjs`, `home-sections.mjs`, `markdown.mjs`에서 기존 클래스를 조합 | blog |
+가져온 `src/vendor/theme/`는 파일 목록과 SHA-256이 정본 manifest와 일치해야 한다. 여기서 직접 수정하면 동기화와 검증이 실패한다. 공통 UI는 이름 있는 구성 요소와 검증된 HTML 슬롯으로 조립한다. 값은 Tailwind의 color·text·spacing·radius·font·duration 이름 계열로 정의하고 기본 spacing 단위는 4px다.
 
-- `product/vendor/theme/`는 가져온 완성본이다. 직접 고치지 않는다. 스타일을 바꾸면 design-tokens에서 `npm run build` 후 이 저장소에서 `npm run theme:product -- <design-tokens 경로>`로 다시 가져온다.
-- 완성본의 `styles.css`는 모듈을 이미 한 파일로 합친 결과다. 요청 수와 URL은 분리 전과 같다.
-- 새 변형은 선택자를 더 길게 만들어 기존 규칙을 이기지 않고, 소유 조각의 수식 클래스와 토큰으로 만든다. 현재 남은 맥락 선택자는 호환 규칙이다.
-- 새 클래스를 마크업에 쓰려면 먼저 같은 역할의 기존 클래스(`app-help-card`, `app-landing-heading`, `app-prose` 아래 요소)로 표현할 수 있는지 본다. 없을 때만 design-tokens에 규칙을 추가한다.
+발행할 때 실제 HTML과 JavaScript에서 쓰는 CSS 선택자를 모으고, 거기서 참조하는 CSS 변수의 의존 관계를 따라 필요한 값만 남긴다. 모든 모드와 동적 상태를 보존하며 최종 파일을 압축한다. 가져온 정본 파일은 이 최적화로 변경하지 않는다. 브라우저 동작은 필요한 페이지에서만 읽고 검색 색인은 별도로 내려받는다.
 
-## 콘텐츠에서 스타일까지
-
-홈은 `type` 하나가 마크업 묶음과 클래스를 고른다.
-
-| `type` | 마크업(`home-sections.mjs`) | 스타일 모듈 |
-|---|---|---|
-| `hero` | `.app-landing-hero`, `.app-hero-copy`, `.app-cinema` | landing, media, controls |
-| `projects` | `.app-landing-features`, `.app-landing-heading`, `.app-landing-collage` | landing |
-| `technologies` | `.app-landing-technologies`, `.app-flow-viewport`, `.app-technology` | landing, icons |
-| `interviews` | `.app-landing-interviews`, `.app-interview-card` | landing |
-| `contact` | `.app-home-contact` 또는 `.app-landing-newsletter` | landing, forms |
-
-섹션을 끄는 `enabled: false`는 마크업을 만들지 않으므로 스타일을 바꾸지 않는다. 기존 `type`의 항목을 늘리는 것은 `home.config.yaml`만 고친다. 새 `type`은 설정만으로 만들 수 없고 `home-config.mjs` 검증, `home-sections.mjs` 마크업, 필요하면 design-tokens의 수식 클래스 규칙과 토큰을 함께 바꾼다(design-tokens `docs/styles.md` 참고). 마크업이 내보내지 않는 클래스에 규칙만 추가하지 않는다.
-
-글의 `ui:*` 블록과 클래스의 대응은 design-tokens `docs/styles.md`의 "콘텐츠 문법과 클래스"에 있다. 지원 문법 자체는 [Markdown 글 작성](markdown.md)을 따른다.
-
-## 확인
-
-스타일을 바꾼 변경은 다음을 모두 실행하고, 규칙 순서나 모듈을 옮겼다면 대표 화면(홈, 글, 위키)의 계산 스타일을 브라우저에서 변경 전과 비교한다.
+## 갱신
 
 ```sh
-npm run theme:product -- <design-tokens 경로>
+npm run design:sync -- /path/to/design-tokens
+npm run check:tokens
 npm run check:product
-node build.mjs
 npm run build:site
 ```
+
+정본 변경은 Daphnis 검증을 거친 뒤 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지 빌드는 Daphnis와 디자인 해시가 다르면 실패한다. 자동 PR에는 가져온 디자인과 렌더러 의존성만 허용하며 검사를 통과한 커밋을 병합한다.

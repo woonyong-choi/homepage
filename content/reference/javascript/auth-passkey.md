@@ -1,3 +1,0 @@
-This section contains methods for WebAuthn passkey registration, authentication, and management. Methods are invoked behind the `supabase.auth.passkey` namespace.
-
-Passkey support is an experimental feature. Enable it when creating the client:
