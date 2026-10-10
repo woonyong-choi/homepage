@@ -90,3 +90,17 @@ test('tech_and_cs_group_topics_by_navigation_without_changing_source_fields', ()
     '인프라·운영', '보안·개인정보 보호',
   ]);
 });
+
+test('official_guides_link_to_one_source_and_stay_out_of_topic_collections', () => {
+  const guides = [{ title: 'ThinkFlow', icon: 'hierarchy', items: [
+    { title: '시작', href: 'https://example.com/usage', description: '사용 안내' },
+    { title: '문제 해결', href: 'https://example.com/help' },
+  ] }];
+  const context = { topics: {}, config: { guides } };
+  const page = JSDOM.fragment(wikiLanding([], context));
+  const cards = [...page.querySelectorAll('.app-support-split .app-help-card')];
+  assert.deepEqual(cards.map(card => card.getAttribute('href')), guides[0].items.map(item => item.href));
+  assert.equal(cards[0].querySelector('p').textContent, '사용 안내');
+  assert.equal(cards[1].querySelector('p'), null);
+  assert.doesNotMatch(wikiLanding([], context, 'cs'), /ThinkFlow|app-support-split/);
+});
