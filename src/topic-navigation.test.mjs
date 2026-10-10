@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { createTopicTrees } from './topic-navigation.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { documentPager } from './document-navigation.mjs';
+import { createMarkdown } from './markdown.mjs';
 import { JSDOM } from 'jsdom';
 
 function page(slug, parent, changes = {}) {
@@ -77,13 +78,23 @@ test('document_pager_uses_sidebar_order_without_crossing_topics_or_including_blo
   assert.equal(documentPager(page('missing'), context), '');
 });
 
-test('wiki_pager_follows_source_attribution_and_precedes_comments', () => {
-  const root = page('root', null, { sourceUrl: 'https://example.com/source' });
+// #186: 문서 순서 탐색은 수동 관련 카드 뒤에서 방향과 제목을 가진 텍스트 링크로 구분한다.
+test('wiki_pager_keeps_related_cards_and_text_navigation_before_comments', () => {
+  const body = createMarkdown().render(':::cards related\n::card title="관련 문서" href=/docs/related/\n:::end');
+  const root = page('root', null, { sourceUrl: 'https://example.com/source', html: body });
   const pages = [root, page('child', 'root')];
   const html = articlePage(root, { topicTrees: createTopicTrees(pages),
     topics: { python: { label: 'Python', article: 'root' } } }, '<section id="comments">댓글</section>');
-  const positions = ['app-document-body', 'app-source-link', 'app-document-pager', 'id="comments"']
+  const positions = ['app-document-body', 'app-source-link', 'aria-label="Python 문서 이동"', 'id="comments"']
     .map(marker => html.indexOf(marker));
   assert.ok(positions.every(position => position >= 0));
   assert.deepEqual(positions, positions.toSorted((a, b) => a - b));
+  const document = JSDOM.fragment(html);
+  assert.equal(document.querySelectorAll('.app-related-link').length, 1);
+  assert.equal(document.querySelector('.app-related-link').getAttribute('href'), '/docs/related/');
+  const next = document.querySelector('nav[aria-label="Python 문서 이동"] a');
+  assert.equal(next.textContent, '다음 문서: child');
+  assert.equal(next.rel, 'next');
+  assert.equal(next.getAttribute('href'), '/articles/child/');
+  assert.equal(next.children.length, 0);
 });
