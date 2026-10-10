@@ -26,11 +26,10 @@ const CODE_ATTRIBUTES = Object.freeze({ width: WIDTH_OPTION, filename: { type: '
 export { codeLanguage };
 const codeBlock = (code, options) => String(ui.CodeBlock({ code: trusted(code), ...options }));
 
-const referenceIcon = (name = 'question') => `<span class="app-article-icon app-icon-${escape(name)}" aria-hidden="true"></span>`;
 export function icon(name = 'question') {
   if (typeof name === 'object' && name !== null) return contentIcon(name);
   if (typeof name === 'string' && name.startsWith('content:')) return contentIcon(name.slice(8));
-  return referenceIcon(name);
+  return String(ui.ArticleIcon(name));
 }
 export function image(name, alt = '', className = '') {
   const size = IMAGE_SIZES[name];
