@@ -36,4 +36,4 @@ createServer((request, response) => {
     const stream = createReadStream(path, { start,end });
     stream.on('error', () => response.destroy()); stream.pipe(response);
   } catch { response.writeHead(404, {'content-type':'text/plain; charset=utf-8'}); response.end('페이지를 찾을 수 없습니다.'); }
-}).listen(port, host, () => console.log(`Preview: http://${host}:${port}/${args.includes('--root') ? '' : 'things/'}`));
+}).listen(port, host, () => console.log(`Preview: http://${host}:${port}/`));

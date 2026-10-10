@@ -34,10 +34,10 @@ npm run dev
 
 ```sh
 npm run content:check
-npm run content:sync
+npm run content:sync -- <assets-root>
 ```
 
-승인·회수 명령, 폴더와 프런트매터의 관계는 [개인 사이트 발행](docs/design/publication.md)에 있다.
+`<assets-root>`는 승인 목록이 있는 비공개 원문 저장소의 루트다. 승인·회수 명령, 폴더와 프런트매터의 관계는 [개인 사이트 발행](docs/design/publication.md)에 있다.
 
 ## 디자인 갱신
 
