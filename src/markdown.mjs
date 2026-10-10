@@ -14,7 +14,7 @@ import { DirectiveError, parseOptions, WIDTH_OPTION } from './directive-syntax.m
 import { codeLanguage, highlightCode } from './code-highlight.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 
-const IMAGE_SIZES = JSON.parse(readFileSync(new URL('./image-sizes.json', import.meta.url)));
+const IMAGE_SIZES = JSON.parse(readFileSync(new URL('../config/image-sizes.json', import.meta.url)));
 // HTML 모양과 변형은 가져온 테마의 구성 요소가 정의한다. 아래 함수는 입력을 정리해 그 구성 요소에 넘기는 어댑터다.
 const { escape, safeUrl, trusted } = ui;
 export { escape, safeUrl };
@@ -163,7 +163,7 @@ export function renderGallery(data, id) {
   const slides = Array.isArray(data.slides) ? data.slides.map(slide => ({ image: trusted(image(slide.src, slide.alt ?? slide.label)), caption: slide.caption, label: slide.label })) : data.slides;
   return String(ui.Gallery({ id, title: data.title, wide: data.wide, width: data.width, selected: data.selected, slides }));
 }
-const DIRECTIVE_KIT = Object.freeze({ escape, safeUrl, image, contentIcon, trusted, controlImage, card: cardSlot, figureOf, videoOf, asset, gallery: renderGallery, ui, assetExists: name => existsSync(new URL(`./assets/${name}`, import.meta.url)) });
+const DIRECTIVE_KIT = Object.freeze({ escape, safeUrl, image, contentIcon, trusted, controlImage, card: cardSlot, figureOf, videoOf, asset, gallery: renderGallery, ui, assetExists: name => existsSync(new URL(`../content/assets/${name}`, import.meta.url)) });
 
 function fenceOptions(info, token, env, attributes = CODE_ATTRIBUTES) {
   const source = info.replace(/^\S+\s*/, '');

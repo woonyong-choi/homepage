@@ -14,17 +14,23 @@ npm run dev
 
 미리보기는 `http://localhost:8796/`이다. `/docs/`에서 문서와 블로그를 함께 검색하고 `/blog/all/`에서 블로그 카드를 본다. `dist/site/`가 정적 산출물이다. 운영 발행은 확정된 HTTPS 주소를 `SITE_ORIGIN`으로 지정하고 `npm run build:site -- --production`을 실행한다. 운영 빌드는 예시 글과 비공개 입력을 제외한다.
 
-## 구성
+## 수정할 위치
 
-| 경로 | 역할 |
+| 수정할 내용 | 파일·폴더 |
 |---|---|
-| `src/` | 콘텐츠 해석, 검색·댓글 연결, 페이지 조립 |
-| `src/publication/`, `src/examples/` | 승인된 Markdown 사본 |
-| `src/vendor/theme/` | 공통 디자인의 해시 검증 사본 |
-| `src/assets/`, `src/media/` | 현재 화면·검증에 쓰는 콘텐츠 자산과 출처 |
-| `scripts/` | 소스 경계 검사 |
-| `docs/` | 현재 설계와 작성 안내 |
-| `.github/` | 검증과 디자인 갱신 |
+| 홈 소개·영상·구간 순서 | [`content/home.md`](content/home.md) |
+| 동료평가 소개·공개 카드 | [`content/interviews.md`](content/interviews.md) |
+| 기술 링크·분야 이름·카드 설명 | [`content/tech.md`](content/tech.md) |
+| 분야별 문서 | `content/docs/<분야>/`의 승인 사본 |
+| 블로그 원고 | `content/blog/`의 승인 사본 |
+| 이미지·영상·출처 고지 | `content/assets/`, `content/media/` |
+| 사이트·댓글·태그·승인 목록 | `config/` |
+| 해석·검색·댓글·페이지 조립 | `src/` |
+| 공통 디자인 | `src/vendor/theme/`의 해시 검증 사본 |
+| 설계·작성 안내와 검사 | `docs/`, `scripts/` |
+| 생성된 사이트 | `dist/site/` — 빌드가 다시 생성 |
+
+홈의 세 Markdown 파일은 직접 편집한다. 제목과 소개는 본문에, 카드·링크·영상 속성은 맨 위 YAML에 작성한다. 같은 내용을 JSON에 다시 적지 않는다. 분야별 문서와 블로그는 비공개 원본을 수정하고 승인한 뒤 아래 명령으로 가져온다. 비공개 인터뷰 미리보기 연결은 [홈 원고 가이드](docs/design/home-content.md)를 따른다.
 
 색·간격·글꼴·아이콘·공통 마크업·동작은 디자인 저장소에서 관리한다. 홈페이지는 가져온 `src/vendor/theme/ui/index.mjs`의 구성 요소에 콘텐츠와 경로를 넘긴다. `src/vendor/theme/`를 직접 수정하지 않는다.
 
@@ -53,4 +59,4 @@ npm run design:sync -- /path/to/design-tokens
 
 ## 문서
 
-문서는 한국어로 작성한다. [전체 문서](docs/README.md)에서 홈 설정, Markdown 문법, 발행 경계와 스타일 수정 위치를 찾는다.
+문서는 한국어로 작성한다. [전체 문서](docs/README.md)에서 홈 원고, Markdown 문법, 발행 경계와 스타일 수정 위치를 찾는다.

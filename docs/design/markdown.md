@@ -1,19 +1,19 @@
 # Markdown 글 작성
 
-글은 `.md` 파일 하나이며 일반 Markdown만으로 쓴다. `ui:` 구성 요소는 복각 검토 화면용 선택 기능이고 글 작성에 필요하지 않다. 실제 렌더링은 미리보기의 `/blog/markdown-guide/`에서 확인한다. 승인 예시는 `src/examples/blog/markdown-guide.md`이며 `example: true`라 운영 빌드, 검색, RSS, 사이트맵에서 빠진다.
+글은 `.md` 파일 하나이며 일반 Markdown만으로 쓴다. `ui:` 구성 요소는 복각 검토 화면용 선택 기능이고 글 작성에 필요하지 않다. 실제 렌더링은 미리보기의 `/blog/markdown-guide/`에서 확인한다. 승인 예시는 `content/blog/markdown-guide.md`이며 `example: true`라 운영 빌드, 검색, RSS, 사이트맵에서 빠진다.
 
 ## 파일과 메타데이터
 
-비공개 자료 저장소의 원문을 수정하고 승인한 뒤 `content:sync`로 사본을 가져온다. 사본은 `src/publication/`(공개 입력)이나 `src/examples/`(예시)의 하위 폴더에 있으며 직접 수정하지 않는다. 주소는 `slug`, 문서 계층은 `parent`, 내부 분류는 `category`로 결정하며 폴더 경로와 무관하다. `tags`는 공통 태그 목록을 사용하고 빈 배열을 허용한다. 맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
+비공개 자료 저장소의 원문을 수정하고 승인한 뒤 `content:sync`로 사본을 가져온다. 사본은 `content/docs/`(분야별 문서)이나 `content/blog/`(블로그)의 하위 폴더에 있으며 직접 수정하지 않는다. 주소는 `slug`, 문서 계층은 `parent`, 내부 분류는 `category`로 결정하며 폴더 경로와 무관하다. `tags`는 공통 태그 목록을 사용하고 빈 배열을 허용한다. 맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
 
 | 필드 | 필수 | 내용 |
 |---|---|---|
 | `id`, `slug` | 예 | 소문자 영문·숫자·하이픈. 댓글 연결과 주소에 쓰며 중복이면 빌드 오류 |
 | `type` | 예 | `wiki` 또는 `blog` |
 | `title`, `description` | 예 | 제목, 목록·검색·도입문에 쓰는 한두 문장 |
-| `tags` | 아니오 | `tags.json`에 있는 태그 0~5개. 생략하면 빈 배열 |
+| `tags` | 아니오 | `config/tags.json`에 있는 태그 0~5개. 생략하면 빈 배열 |
 | `field` | 예 | `languages`, `cs`, `frameworks`, `infrastructure` 중 하나 |
-| `category` | 예 | `topics.json`에 있는 내부 분류 |
+| `category` | 예 | `content/tech.md`의 `topics`에 있는 내부 분류 |
 | `contentIcon.name` | 예 | 테마의 콘텐츠 아이콘 이름 |
 | `visibility` | 예 | `public` 또는 `draft` |
 | `comments` | blog는 `true` | giscus 댓글 |
@@ -103,7 +103,7 @@ items:
 
 ## 구성 블록
 
-기기별 탭, 단계, 영상, 질문과 답, 카드 링크는 `:::` 블록으로 쓴다. 안쪽은 일반 Markdown이라 JSON이나 이스케이프한 문자열이 필요 없다. 기존 ` ```ui:이름 ` 블록은 그대로 동작하고 둘을 섞어 쓸 수 있다. 완성된 글은 `src/examples/software-design/document-composition.md`이고 미리보기의 `/articles/document-composition/`에서 본다.
+기기별 탭, 단계, 영상, 질문과 답, 카드 링크는 `:::` 블록으로 쓴다. 안쪽은 일반 Markdown이라 JSON이나 이스케이프한 문자열이 필요 없다. 기존 ` ```ui:이름 ` 블록은 그대로 동작하고 둘을 섞어 쓸 수 있다. 완성된 글은 `content/docs/software-design/document-composition.md`이고 미리보기의 `/docs/document-composition/`에서 본다.
 
 ````markdown
 :::platform
@@ -172,7 +172,7 @@ items:
 
 - 블록 중첩은 3단계까지다(`tabs` > `tab` > `note` 등). 목록과 인용 안에서는 블록을 쓸 수 없다.
 - `tab`, `note`, `warning` 안에서는 제목, 각주, 코드 블록, 이미지 등 일반 Markdown을 쓸 수 있다. `fineprint`, `steps`, `qa`, `cards`는 위 표의 본문 제한을 따른다. 제목과 각주 ID는 글 전체에서 겹치지 않는다. 숨은 탭 안의 `##`도 목차에 들어간다.
-- `src`와 `poster`는 `src/assets/`에 있는 파일 이름만 쓴다. 경로, `..`, 없는 파일은 오류다.
+- `src`와 `poster`는 `content/assets/`에 있는 파일 이름만 쓴다. 경로, `..`, 없는 파일은 오류다.
 - `href`는 위 "원본 글 요소"와 같은 규칙이다(`https://`, `mailto:`, `#`, `/`로 시작하는 사이트 경로).
 - `cards`의 글 끝 "이어서 읽을 글"에는 `related`를 쓴다. 작은 아이콘, 제목 한 줄, 갈매기표로 된 한 줄 카드이고 `description`은 그려지지 않는다. 긴 제목은 말줄임으로 줄이고(전체 글은 읽기 도구가 읽는다) 좁은 화면에서는 한 열이다. 글 하단에 자동으로 붙는 "함께 읽기"와 "이 문서의 수정 제안" 링크는 없다. 나머지 변형은 다른 용도의 기존 표현이다.
 - `icon`은 테마의 콘텐츠 아이콘 이름이다. 글 앞의 `contentIcon.name`과 같은 목록이다.
@@ -249,7 +249,7 @@ const message = "넓은 코드블록";
 |---|---|
 | `![대체 글](주소)` | Markdown 이미지. 대체 글을 캡션으로 표시하지 않는다 |
 | `::figure src=파일 alt="설명"` | 로컬 이미지. `caption`을 쓴 경우에만 아래 설명 표시 |
-| `::video src=영상.mp4 poster=미리보기.png alt="설명"` | 로컬 MP4 재생. 영상과 미리보기 파일을 `src/assets/`에 직접 추가 |
+| `::video src=영상.mp4 poster=미리보기.png alt="설명"` | 로컬 MP4 재생. 영상과 미리보기 파일을 `content/assets/`에 직접 추가 |
 | 영상의 `caption` | 작성한 설명을 영상 아래에 표시. 생략하면 설명 없음 |
 | 영상의 재생 조작 | 영상 안에서 시작·일시정지·탐색. 재생이 시작되면 브라우저 재생 막대 표시 |
 | 영상 아래 Play 버튼 | 본문 영상에는 없음. 홈의 프로젝트 영상 보기 링크는 별도 구성 요소로 유지 |

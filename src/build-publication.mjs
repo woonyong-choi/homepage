@@ -16,7 +16,7 @@ import { commentsSection } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { iconAuditPages } from './icon-audit.mjs';
 import { publicationAssets, clientEntrypoints } from './publication-assets.mjs';
-import { loadHomeConfig } from './home-config.mjs';
+import { loadHomeContent } from './home-content.mjs';
 import { createTopicTrees } from './topic-navigation.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { mathAssets } from './math-assets.mjs';
@@ -25,16 +25,18 @@ import { compileStyles as publicationStyles } from './vendor/theme/ui/build/styl
 import { siteOrigin, SITE_ICON } from './publication-metadata.mjs';
 import { siteIdentity } from './site-identity.mjs';
 import { legacyRoutes, redirectPage } from './publication-routes.mjs';
-import { markdownFiles } from './content-files.mjs';
+import { markdownFiles, readContentFile } from './content-files.mjs';
 import { verifyApprovedContent } from './approved-content.mjs';
 
 verifyApprovedContent();
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
+const CONTENT = fileURLToPath(new URL('../content/', import.meta.url));
+const SETTINGS = fileURLToPath(new URL('../config/', import.meta.url));
 const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
-const CONFIG = JSON.parse(readFileSync(join(ROOT, 'publication.config.json')));
-const TOPICS = JSON.parse(readFileSync(join(ROOT, 'topics.json')));
-const TAGS = JSON.parse(readFileSync(join(ROOT, 'tags.json')));
+const CONFIG = JSON.parse(readFileSync(join(SETTINGS, 'site.json')));
+const TOPICS = readContentFile(join(CONTENT, 'tech.md')).metadata.topics;
+const TAGS = JSON.parse(readFileSync(join(SETTINGS, 'tags.json')));
 const THEME = join(ROOT, 'vendor/theme');
 const MANIFEST = JSON.parse(readFileSync(join(THEME, 'manifest.json')));
 const BRAND_NAMES = JSON.parse(readFileSync(join(THEME, 'assets/icons/brands/catalog.json'))).icons.map(item => item.name);
@@ -43,8 +45,10 @@ const digest = value => createHash('sha256').update(value).digest('hex');
 export async function buildPublication({ origin = '', preview = true } = {}) {
   origin = siteOrigin(origin, preview);
   verifyDesign(THEME);
-  const folders = ['publication', ...(preview && existsSync(join(ROOT, 'examples')) ? ['examples'] : [])];
-  const documents = publicDocuments(folders.flatMap(folder => markdownFiles(join(ROOT, folder)).map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS))), { includeExamples: preview });
+  const entries = ['docs', 'blog'].flatMap(folder => markdownFiles(join(CONTENT, folder)))
+    .sort().map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS));
+  entries.sort((left, right) => Number(Boolean(left.example)) - Number(Boolean(right.example)));
+  const documents = publicDocuments(entries, { includeExamples: preview });
   const posts = blogDocuments(documents);
   const comments = readCommentCounts(posts, CONFIG);
   for (const post of posts) {
@@ -59,8 +63,7 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))), readFileSync(join(THEME, 'assets/controls/LICENSE')));
   const context = { config: CONFIG, topics: TOPICS, tags: TAGS, topicTrees, origin, preview, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
-  context.home = loadHomeConfig(new Set(BRAND_NAMES), ROOT, { preview });
-  context.interviewExamples = JSON.parse(readFileSync(join(ROOT, 'interview-examples.json')));
+  context.home = loadHomeContent(new Set(BRAND_NAMES), CONTENT, { preview });
   const output = new Map();
   const add = (route, title, body, metadata = {}) => {
     if (output.has(route)) throw new Error(`duplicate publication route: ${route}`);
@@ -132,7 +135,7 @@ async function writeSite(output, documents, context, scripts) {
     writeFileSync(join(OUTPUT, file), source);
   }
   const index = { entries: documents.map(page => ({ ...searchEntry(page, TAGS), iconUrl: iconUrl(page.contentIcon), example: !!page.example })), tags: TAGS };
-  const assets = new Map([...context.identity.assets, ...publicationAssets(output, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(ROOT, path))))]);
+  const assets = new Map([...context.identity.assets, ...publicationAssets(output, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
   for (const [path, content] of context.diagrams) assets.set(path, content);
   for (const [path, content] of assets) {
     const destination = join(OUTPUT, path);

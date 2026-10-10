@@ -80,7 +80,7 @@ const HOME_SECTIONS = {
   hero: heroSection,
   projects: projectsSection,
   technologies: section => technologySection(section, BRANDS),
-  interviews: (section, context) => interviewsSection(section, { examples: context.interviewExamples, preview: context.preview }),
+  interviews: (section, context) => interviewsSection(section, { preview: context.preview }),
   contact: contactSection,
 };
 

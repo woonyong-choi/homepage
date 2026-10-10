@@ -10,7 +10,7 @@
 | 복사·탭·영상·흐름 동작 | `ui/runtime/` |
 | 아이콘·조작 도형 | `assets/`, `ui/icons.mjs` |
 | CSS 축소와 토큰 검사 | `ui/build/` |
-| 콘텐츠·문구·노출 순서 | 홈페이지의 `src/home.config.yaml` |
+| 콘텐츠·문구·노출 순서 | 홈페이지의 `content/home.md`, `content/tech.md`, `content/interviews.md` |
 | Markdown·검색·댓글·문서 식별자 | 홈페이지의 `src/` |
 
 가져온 `src/vendor/theme/`는 파일 목록과 SHA-256이 정본 manifest와 일치해야 한다. 여기서 직접 수정하면 동기화와 검증이 실패한다. 공통 UI는 이름 있는 구성 요소와 검증된 HTML 슬롯으로 조립한다. 값은 Tailwind의 color·text·spacing·radius·font·duration 이름 계열로 정의하고 기본 spacing 단위는 4px다.

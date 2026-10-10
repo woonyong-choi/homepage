@@ -1,20 +1,21 @@
-// 홈 설정 파일을 읽고 섹션별 계약을 검증한다. 오류에는 틀린 경로를 포함한다.
-import { existsSync, readFileSync } from 'node:fs';
+// 홈 원고의 본문과 메타데이터를 읽고 섹션별 계약을 검증한다.
+import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
-import { parse } from 'yaml';
 import { SOCIAL_ICONS } from './vendor/theme/ui/index.mjs';
 import { summaryParts } from './interviews.mjs';
+import { readContentFile } from './content-files.mjs';
 
-export const HOME_CONFIG = 'home.config.yaml';
-export const LOCAL_INTERVIEWS = 'interviews.local.json';
-const ROOT = fileURLToPath(new URL('.', import.meta.url));
+export const HOME_CONTENT = 'home.md';
+export const LOCAL_INTERVIEWS = 'interviews.local.md';
+const ROOT = fileURLToPath(new URL('../content/', import.meta.url));
+const THEME = fileURLToPath(new URL('./vendor/theme/', import.meta.url));
 const RESERVED_IDS = ['main'];
 const IMAGE_TYPES = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.avif'];
 const VIDEO_TYPES = ['.mp4', '.webm'];
 const EMAIL = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-const fail = (path, message) => { throw new Error(`${HOME_CONFIG} ${path}: ${message}`); };
+const fail = (path, message) => { throw new Error(`${HOME_CONTENT} ${path}: ${message}`); };
 
 function record(value, path, keys) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) fail(path, '키와 값을 가진 항목이어야 합니다');
@@ -67,7 +68,7 @@ function media(value, path, types, context) {
     fail(path, `콘텐츠 또는 테마 자산 아래의 안전한 경로여야 합니다: ${source}`);
   }
   if (!types.some(type => source.toLowerCase().endsWith(type))) fail(path, `${types.join(', ')} 파일이어야 합니다: ${source}`);
-  if (context.check && !context.exists(source)) fail(path, `파일이 없습니다: src${source}`);
+  if (context.check && !context.exists(source)) fail(path, `파일이 없습니다: ${source}`);
   return source;
 }
 
@@ -218,9 +219,7 @@ export const DERIVED_IDS = {
 };
 const domIds = section => (DERIVED_IDS[section.type] ?? (id => [id]))(section.id);
 
-export function parseHomeConfig(source, { technologies = new Set(), exists = () => true } = {}) {
-  let data;
-  try { data = parse(source); } catch (error) { throw new Error(`${HOME_CONFIG}: YAML을 읽을 수 없습니다. ${error.message}`); }
+export function parseHomeSections(data, { technologies = new Set(), exists = () => true } = {}) {
   const root = record(data ?? {}, '(최상위)', ['sections']);
   const used = new Map(RESERVED_IDS.map(id => [id, '예약된 id']));
   return list(root.sections ?? [], 'sections').flatMap((entry, index) => {
@@ -241,16 +240,44 @@ export function parseHomeConfig(source, { technologies = new Set(), exists = () 
   });
 }
 
-export function loadHomeConfig(technologies, root = ROOT, { preview = false } = {}) {
-  const options = { technologies, exists: path => existsSync(join(root, path.startsWith('/theme/') ? `/vendor${path}` : path)) };
-  const sections = parseHomeConfig(readFileSync(join(root, HOME_CONFIG), 'utf8'), options);
+// cost: time O(b+n), heap O(b+n), stack O(d), io O(n)
+// vars: b = 홈 원고 전체 바이트 수, n = 섹션과 카드 수, d = YAML 최대 중첩 깊이
+// basis: estimate
+export function loadHomeContent(technologies, root = ROOT, { preview = false } = {}) {
+  const options = { technologies, exists: path => existsSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(root, path)) };
+  const home = readContentFile(join(root, HOME_CONTENT));
+  record(home.metadata, '(최상위)', ['sections']);
+  const entries = list(home.metadata.sections, 'sections').map((entry, index) => {
+    if (!entry || !Object.hasOwn(entry, 'source')) return entry;
+    const path = `sections[${index}]`;
+    record(entry, path, ['source']);
+    const source = text(entry.source, `${path}.source`);
+    if (!/^[a-z][a-z0-9-]*\.md$/.test(source)) fail(`${path}.source`, '같은 content 폴더의 Markdown 파일 이름이어야 합니다');
+    const { metadata, body } = readContentFile(join(root, source));
+    const section = { ...metadata };
+    if (section.type === 'technologies') delete section.topics;
+    return withIntroduction(section, body, source);
+  });
+  if (home.body.trim()) {
+    const hero = entries.findIndex(section => section?.type === 'hero');
+    if (hero < 0) fail('sections', '홈 본문을 표시할 hero 섹션이 필요합니다');
+    entries[hero] = withIntroduction(entries[hero], home.body, HOME_CONTENT);
+  }
+  const sections = parseHomeSections({ sections: entries }, options);
   const local = join(root, LOCAL_INTERVIEWS);
   if (!preview || !existsSync(local)) return sections;
   const interviews = sections.filter(section => section.type === 'interviews');
   if (interviews.length !== 1) throw new Error(`${LOCAL_INTERVIEWS}: 활성 인터뷰 섹션이 하나여야 합니다`);
-  let items;
-  try { items = JSON.parse(readFileSync(local, 'utf8')); }
-  catch { throw new Error(`${LOCAL_INTERVIEWS}: JSON을 읽을 수 없습니다`); }
-  const replacement = { ...interviews[0], items };
-  return parseHomeConfig(JSON.stringify({ sections: sections.map(section => section === interviews[0] ? replacement : section) }), options);
+  const { metadata, body } = readContentFile(local);
+  record(metadata, LOCAL_INTERVIEWS, ['items']);
+  if (body.trim()) throw new Error(`${LOCAL_INTERVIEWS}: 카드 내용은 items에 작성합니다`);
+  const replacement = { ...interviews[0], items: metadata.items };
+  return parseHomeSections({ sections: sections.map(section => section === interviews[0] ? replacement : section) }, options);
+}
+
+function withIntroduction(section, body, source) {
+  if (Object.hasOwn(section, 'title') || Object.hasOwn(section, 'description')) throw new Error(`${source}: 제목과 소개는 Markdown 본문에 작성합니다`);
+  const match = body.trim().match(/^# ([^\n]+)\n+([\s\S]*)$/);
+  if (!match) throw new Error(`${source}: 첫 줄의 제목과 소개 문단이 필요합니다`);
+  return { ...section, title: match[1].trim(), description: match[2].trim() };
 }

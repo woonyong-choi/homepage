@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { readFileSync } from 'node:fs';
+import { readContentFile } from './content-files.mjs';
 import { publicInterviews, interviewCards, summaryParts } from './interviews.mjs';
-import { href } from './home-config.mjs';
+import { href } from './home-content.mjs';
 
-const examples = JSON.parse(readFileSync(new URL('./interview-examples.json', import.meta.url)));
+const examples = readContentFile(new URL('../content/interviews.md', import.meta.url)).metadata.items;
 
 test('interview_examples_are_five_static_company_placeholders_shown_only_in_preview', () => {
   assert.equal(publicInterviews(examples, true).length, 5);
