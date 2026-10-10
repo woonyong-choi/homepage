@@ -1,10 +1,33 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { commentsSection } from './comments.mjs';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { repositoryUrl } from './repository-links.mjs';
 
 const config = { repo: 'owner/blog', repoId: 'repo-id', category: 'Comments', categoryId: 'category-id' };
+test('comment_theme_keeps_https_origin_and_requires_https_preview_overrides', () => {
+  const site = { repository: 'owner/blog', comments: { themeUrl: 'https://static.example.com/comments.css' } };
+  assert.equal(commentThemeUrl(site, { origin: 'https://example.com', themeHash: 'theme-hash' }), 'https://example.com/theme/assets/giscus.css?v=theme-hash');
+  for (const origin of ['', 'http://localhost:8796']) assert.equal(commentThemeUrl(site, { origin }), site.comments.themeUrl);
+  for (const themeUrl of ['', 'light', '/theme.css', 'http://example.com/theme.css', 'https://user:password@example.com/theme.css']) {
+    assert.throws(() => commentThemeUrl({ ...site, comments: { themeUrl } }), /comments\.themeUrl must be an HTTPS URL/);
+  }
+});
+
+test('preview_comment_theme_uses_a_revision_with_the_current_css_bytes', () => {
+  const themeUrl = commentThemeUrl({ repository: 'owner/blog' });
+  const match = themeUrl.match(/^https:\/\/cdn\.jsdelivr\.net\/gh\/owner\/blog@([a-f0-9]{40})\/(src\/vendor\/theme\/assets\/giscus\.css)$/);
+  assert.ok(match, themeUrl);
+  const root = fileURLToPath(new URL('../', import.meta.url));
+  const published = execFileSync('git', ['show', `${match[1]}:${match[2]}`], { cwd: root });
+  assert.deepEqual(published, readFileSync(new URL('./vendor/theme/assets/giscus.css', import.meta.url)));
+  assert.match(commentsSection({ id: 'stable-id', comments: true }, config, themeUrl), /data-theme="https:\/\/cdn\.jsdelivr\.net\/gh\//);
+});
+
 test('댓글은 글 제목과 URL이 바뀌어도 고정 문서 ID로 연결한다', () => {
   const original = commentsSection({ id: 'stable-id', title: '제목', comments: true }, config, 'https://example.com/theme.css');
   const moved = commentsSection({ id: 'stable-id', title: '바뀐 제목', route: '/new/', comments: true }, config, 'https://example.com/theme.css');

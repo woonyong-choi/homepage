@@ -12,7 +12,7 @@ import * as ui from './vendor/theme/ui/index.mjs';
 import { renderArticle } from './article-renderer.mjs';
 import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchBox, tagPage, iconUrl, FIELD_NAMES } from './publication-layout.mjs';
 import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
-import { commentsSection } from './comments.mjs';
+import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
 import { publicationAssets, clientEntrypoints } from './publication-assets.mjs';
@@ -74,7 +74,7 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   const fields = [...new Set([...TOPIC_GROUPS, ...FIELDS])];
   for (const field of fields) add(`/docs/topics/${field}/`, FIELD_NAMES[field], wikiLanding(documents, context, field));
   add('/projects/', 'Projects', `<main class="app-shell" id="main"><h1 class="app-page-heading">Projects</h1>${projectSection(CONFIG.projects)}</main>`);
-  const commentTheme = origin ? `${origin}/theme/assets/giscus.css?v=${MANIFEST.contentHash}` : 'light';
+  const commentTheme = commentThemeUrl(CONFIG, { origin, themeHash: MANIFEST.contentHash });
   const commentConfig = { ...CONFIG.comments, repo: CONFIG.repository };
   for (const page of documents) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
   for (const [tagId, tag] of Object.entries(TAGS)) {
