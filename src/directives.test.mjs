@@ -349,13 +349,14 @@ test('cancelled_tasks_use_the_same_marker_box_as_open_and_done_tasks', () => {
   assert.equal((html.match(/disabled/g) ?? []).length, 2);
 });
 
-test('width_prop_maps_from_every_grammar_to_the_same_shared_classes_and_aliases_stay', () => {
+test('width_prop_maps_from_every_grammar_without_changing_player_dimensions', () => {
   const html = render([
-    '::figure{src=2-today-mac.png alt=a width=narrow}', '::figure{src=2-today-mac.png alt=b wide}', '::figure{src=2-today-mac.png alt=c size=compact}', '::figure{src=2-today-mac.png alt=d}',
+    '::figure{src=2-today-mac.png alt=a width=narrow}', '::figure{src=2-today-mac.png alt=b width=wide}', '::figure w-narrow src=2-today-mac.png alt=c', '::figure{src=2-today-mac.png alt=d}',
     '::video{src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt=v width=wide}',
     ':::gallery{width=wide}', '::slide{src=2-today-mac.png alt=s}', ':::', '',
     '```js width=narrow', 'const a = 1;', '```', '', '```js', 'const b = 2;', '```', '',
-    '```ui:figure', 'src: 2-today-mac.png', 'alt: ui', 'wide: true', '```', '',
+    '```ui:figure', 'src: 2-today-mac.png', 'alt: ui', 'width: wide', '```', '',
+    '```ui:video', 'src: 3-upcoming-mac-2.mp4', 'poster: 3-upcoming-mac-2.png', 'width: 720', 'height: 400', 'wide: true', '```', '',
   ].join('\n'));
   const document = dom(html);
   const classes = selector => [...document.querySelectorAll(selector)].map(node => node.className);
@@ -364,12 +365,18 @@ test('width_prop_maps_from_every_grammar_to_the_same_shared_classes_and_aliases_
   assert.ok(document.querySelector('section.app-tabs.app-width-wide'));
   assert.deepEqual(classes('.app-code'), ['app-code app-tool-surface app-width-narrow', 'app-code app-tool-surface']);
   assert.equal(document.querySelectorAll('figure.app-figure.app-width-wide').length, 3);
+  assert.ok(document.querySelector('.app-player.is-wide video[width="720"][height="400"]'));
   assert.doesNotMatch(html, /app-breakout|is-compact/);
 });
 
 test('width_errors_name_the_block_and_line', () => {
   assert.match(failure('::figure{src=2-today-mac.png alt=a width=huge}\n').message, /width는 content, narrow, wide 중 하나/);
-  assert.match(failure('문단\n\n::figure{src=2-today-mac.png alt=a width=narrow wide}\n').message, /본문 3줄 :figure: Conflicting width/);
+  for (const [source, name, attribute] of [
+    ['::figure{src=2-today-mac.png alt=a wide=false}', 'figure', 'wide'],
+    ['::figure{src=2-today-mac.png alt=a size=compact}', 'figure', 'size'],
+    ['::video{src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt=a wide}', 'video', 'wide'],
+    [':::gallery{wide}\n::slide{src=2-today-mac.png alt=a}\n:::', 'gallery', 'wide'],
+  ]) assert.ok(failure(`문단\n\n${source}\n`).message.includes(`본문 3줄 :${name}: 허용하지 않는 속성입니다: ${attribute}`));
   assert.match(failure('::video{src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt=a height=10}\n').message, /허용하지 않는 속성입니다: height/);
   assert.match(failure('문단\n\n```js width=huge\nx\n```\n').message, /본문 3줄 :code: width는 content, narrow, wide 중 하나/);
 });

@@ -1,8 +1,8 @@
 // 개인 사이트의 탐색과 본문을 하나의 테마와 문서 식별자로 조합한다.
 import { personalFooter } from './publication-footer.mjs';
-import { readFileSync } from 'node:fs';
 import { escape } from './markdown.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
+import { getIconCatalog, iconFile } from './vendor/theme/ui/build/icons.mjs';
 import { contentIcon } from './content-icons.mjs';
 import { TOPIC_GROUPS } from './content-model.mjs';
 import { clientEntrypoints } from './publication-assets.mjs';
@@ -12,18 +12,17 @@ import { postArticle, shiftHeadings, detailLevels } from './post-article.mjs';
 import { publicationMetadata } from './publication-metadata.mjs';
 import { usesMath, MATH_STYLESHEET } from './math-assets.mjs';
 
-const BRANDS = JSON.parse(readFileSync(new URL('./vendor/theme/assets/icons/brands/catalog.json', import.meta.url))).icons;
+const BRANDS = getIconCatalog().brands;
 export const FIELD_NAMES = Object.freeze({ tech: 'Tech', languages: 'Languages', cs: 'CS', frameworks: 'Frameworks', infrastructure: 'Infrastructure' });
 
 export function iconUrl(spec, size = 'small') {
   const name = typeof spec === 'string' ? spec : spec.name;
-  return `/theme/assets/icons/${BRANDS.some(item => item.file === `${name}.svg`) ? 'brands' : size === 'small' ? 'small' : 'detail'}/${name}.svg`;
+  return `/theme/assets/icons/${iconFile(name, { variant: size === 'small' ? 'default' : 'detail' })}`;
 }
 
 export function subjectIcon(spec, size = 'card') {
   const name = typeof spec === 'string' ? spec : spec.name;
-  const brand = BRANDS.find(item => item.file === `${name}.svg`);
-  if (brand) return String(ui.ContentIconImage({ src: `/theme/assets/icons/brands/${brand.file}`, size }));
+  if (Object.hasOwn(BRANDS, name)) return String(ui.ContentIconImage({ src: iconUrl(spec, size), size }));
   return contentIcon(spec, size, 'detail');
 }
 
@@ -37,7 +36,7 @@ export function documentShell(page, body, context) {
   const entries = clientEntrypoints(body + footer);
   const searchScript = entries.includes('publication.js') ? `<script type="module" async src="/publication.js?v=${hashOf('publication.js')}"></script>` : '';
   const scripts = entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
-  return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', homeLabel: '홈 · Things 임시 로고', items: navigation.map(([label, href]) => ({ label, href })), active })}${body}${footer}${searchScript}</body></html>`;
+  return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', title: config.name, homeLabel: `${config.name} 홈`, icon: ui.ControlIcon('task-done'), items: navigation.map(([label, href]) => ({ label, href })), active })}${body}${footer}${searchScript}</body></html>`;
 }
 
 export function searchBox({ large = false, query = '' } = {}) {
@@ -119,7 +118,7 @@ export function resultRow(page, tags) {
 
 export function tagPage(tag, entries, tags) {
   const fallback = entries.length ? entries.map(page => resultRow(page, tags)).join('') : '<p>이 태그로 발행한 글이 없습니다.</p>';
-  return `<main class="app-shell app-body" id="main">${searchBox()}<h1 class="app-page-heading">${escape(tags[tag].label)}</h1><div data-search-page data-tag="${tag}"><div class="app-filter-summary" data-filter-summary></div><div data-full-results></div><details class="app-details" data-search-fallback><summary>이 태그의 모든 글 보기</summary><p class="app-caption">검색어를 적용하지 않은 이 태그의 전체 목록입니다.</p>${fallback}</details></div></main>`;
+  return `<main class="app-shell app-body" id="main">${searchBox()}<h1 class="app-page-heading">${escape(tags[tag].label)}</h1><div data-search-page data-tag="${tag}"><div class="app-filter-summary" data-filter-summary></div><div data-full-results></div><div data-search-fallback>${ui.Details({ title: '이 태그의 모든 글 보기', body: ui.trusted(`<p class="app-caption">검색어를 적용하지 않은 이 태그의 전체 목록입니다.</p>${fallback}`) })}</div></div></main>`;
 }
 
 export function dateLine(page) {

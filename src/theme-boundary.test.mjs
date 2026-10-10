@@ -11,6 +11,7 @@ import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { readDocument } from './content-model.mjs';
 import { markdownFiles, readContentFile } from './content-files.mjs';
+import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
 
 const product = fileURLToPath(new URL('./', import.meta.url));
 const vendor = join(product, 'vendor/theme');
@@ -18,6 +19,7 @@ const sha = value => createHash('sha256').update(value).digest('hex');
 const files = folder => readdirSync(folder, { recursive: true, withFileTypes: true }).filter(entry => entry.isFile()).map(entry => join(entry.parentPath, entry.name).slice(folder.length + 1)).sort();
 const TAGS = JSON.parse(readFileSync(join(product, '../config/tags.json'), 'utf8'));
 const TOPICS = readContentFile(join(product, '../content/tech.md')).metadata.topics;
+const PAINT = /\s(?:color|fill|stroke|stop-color|flood-color)=["']([^"']*)["']/g;
 
 test('vendored_theme_is_exactly_the_manifest_and_matches_canonical_output_when_present', t => {
   const manifest = JSON.parse(readFileSync(join(vendor, 'manifest.json'), 'utf8'));
@@ -42,21 +44,38 @@ function corpus() {
 
 test('rendered_markdown_pages_carry_no_consumer_presentation', () => {
   const pages = corpus();
+  const iconPaint = new Set();
+  for (const file of new Set(Object.values(getIconCatalog().icons).map(icon => icon.file))) {
+    const svg = readFileSync(join(vendor, 'assets/icons', file), 'utf8');
+    for (const [, value] of svg.matchAll(PAINT)) iconPaint.add(value);
+  }
+  assert.ok(!iconPaint.has('#010203'));
+  assert.throws(() => assertThemePaint('<svg><path fill="#010203"/></svg>', iconPaint), /#010203/);
   assert.ok(pages.length > 8);
   for (const html of pages) {
     // 수식 조판이 계산한 기하(KaTeX 출력)만 style 속성을 가질 수 있다.
     const styled = [...new JSDOM(`<body>${html}</body>`).window.document.querySelectorAll('[style]')].filter(node => !node.closest('.katex, .katex-error'));
     assert.deepEqual(styled.map(node => node.outerHTML.slice(0, 80)), [], '인라인 style 속성');
     assert.doesNotMatch(html, /<style[\s>]|<link[^>]+stylesheet/i, '소비자 스타일시트');
-    // 인라인 SVG는 테마 변수만 쓴다. 속성에 적은 색 값이 없어야 한다.
-    for (const [, value] of html.matchAll(/\s(?:fill|stroke|stop-color|flood-color)="([^"]*)"/g)) assert.match(value, /^(?:none|currentColor|var\(--[\w-]+\))$/, value);
+    // 정본 SVG의 원본색과 mask 색은 보존하고 소비자가 덧붙인 색은 거부한다.
+    assertThemePaint(html, iconPaint);
     // 크기 속성은 이미지·영상의 데이터와 아이콘 도형 좌표의 숫자만 허용한다. 수식(.katex)의 em 크기는 조판기가 계산한다.
     for (const node of new JSDOM(`<body>${html}</body>`).window.document.querySelectorAll('[width], [height]')) {
       if (node.closest('.katex')) continue;
-      for (const name of ['width', 'height']) if (node.hasAttribute(name)) assert.match(`${node.localName}:${node.getAttribute(name)}`, /^(?:img|video|svg|source|rect|circle|ellipse):\d+$/, node.outerHTML.slice(0, 80));
+      for (const name of ['width', 'height']) if (node.hasAttribute(name)) {
+        const value = node.getAttribute(name);
+        if (node.closest('svg')) assert.match(value, /^(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?(?:px|%)?$/i, node.outerHTML.slice(0, 80));
+        else assert.match(`${node.localName}:${value}`, /^(?:img|video|source):\d+$/, node.outerHTML.slice(0, 80));
+      }
     }
   }
 });
+
+function assertThemePaint(html, iconPaint) {
+  for (const [, value] of html.matchAll(PAINT)) {
+    assert.ok(/^(?:none|currentColor|var\(--[\w-]+\))$/.test(value) || iconPaint.has(value), value);
+  }
+}
 
 test('copy_buttons_expose_name_and_live_status_without_visible_text_styling', () => {
   for (const html of corpus()) {
@@ -106,7 +125,7 @@ test('browser_search_view_renders_through_theme_components_and_only_converts_the
   globalThis.document = window.document;
   try {
     const { renderResults } = await import('./search-view.mjs');
-    const entry = { route: '/articles/a/', iconUrl: '/theme/assets/icons/small/x.svg', title: '<img src=x onerror=alert(1)> 검색어', description: '설명 & "따옴표"', tags: ['t'], example: true };
+    const entry = { route: '/articles/a/', iconUrl: '/theme/assets/icons/documents/document.svg', title: '<img src=x onerror=alert(1)> 검색어', description: '설명 & "따옴표"', tags: ['t'], example: true };
     renderResults(window.document.body, { entries: [entry], totalPages: 3, page: 2 }, { query: '검색어', tags: [] }, { t: { label: '태그<' } });
     const result = window.document.querySelector('.app-search-entry');
     assert.equal(result.querySelector('strong img'), null);

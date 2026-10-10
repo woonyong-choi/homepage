@@ -2,9 +2,7 @@
 id: technologies
 type: technologies
 enabled: true
-icon:
-  src: /theme/assets/illustrations/technology-keycap-icon.svg
-  alt: ""
+icon: code
 items:
   - c
   - csharp

@@ -1,7 +1,8 @@
 // 화면의 제목·소개를 탭과 공유 정보에서도 같은 값으로 제공한다.
 import { escape } from './markdown.mjs';
+import { iconFile } from './vendor/theme/ui/build/icons.mjs';
 
-export const SITE_ICON = '/theme/assets/icons/small/document.svg';
+export const SITE_ICON = `/theme/assets/icons/${iconFile('document')}`;
 
 export function siteOrigin(value, preview) {
   if (!value) {

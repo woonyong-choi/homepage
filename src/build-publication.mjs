@@ -14,7 +14,7 @@ import { documentShell, personalHome, wikiLanding, articlePage, projectSection, 
 import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
 import { commentsSection } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
-import { iconAuditPages } from './icon-audit.mjs';
+import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
 import { publicationAssets, clientEntrypoints } from './publication-assets.mjs';
 import { loadHomeContent } from './home-content.mjs';
 import { createTopicTrees } from './topic-navigation.mjs';
@@ -39,7 +39,7 @@ const TOPICS = readContentFile(join(CONTENT, 'tech.md')).metadata.topics;
 const TAGS = JSON.parse(readFileSync(join(SETTINGS, 'tags.json')));
 const THEME = join(ROOT, 'vendor/theme');
 const MANIFEST = JSON.parse(readFileSync(join(THEME, 'manifest.json')));
-const BRAND_NAMES = JSON.parse(readFileSync(join(THEME, 'assets/icons/brands/catalog.json'))).icons.map(item => item.name);
+const BRAND_NAMES = Object.keys(getIconCatalog().brands);
 const digest = value => createHash('sha256').update(value).digest('hex');
 
 export async function buildPublication({ origin = '', preview = true } = {}) {
@@ -60,7 +60,7 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   const diagrams = await compileDiagrams(diagramSources);
   if (diagrams.diagrams.size) renderDocuments(documents, { diagrams: diagrams.diagrams });
   const scripts = browserScripts(ROOT);
-  const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))), readFileSync(join(THEME, 'assets/controls/LICENSE')));
+  const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))));
   const context = { config: CONFIG, topics: TOPICS, tags: TAGS, topicTrees, origin, preview, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
   context.home = loadHomeContent(new Set(BRAND_NAMES), CONTENT, { preview });
@@ -74,7 +74,6 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   const fields = [...new Set([...TOPIC_GROUPS, ...FIELDS])];
   for (const field of fields) add(`/docs/topics/${field}/`, FIELD_NAMES[field], wikiLanding(documents, context, field));
   add('/projects/', 'Projects', `<main class="app-shell" id="main"><h1 class="app-page-heading">Projects</h1>${projectSection(CONFIG.projects)}</main>`);
-  if (preview) for (const page of iconAuditPages()) add(page.route, '아이콘 검증', page.body);
   const commentTheme = origin ? `${origin}/theme/assets/giscus.css?v=${MANIFEST.contentHash}` : 'light';
   const commentConfig = { ...CONFIG.comments, repo: CONFIG.repository };
   for (const page of documents) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);

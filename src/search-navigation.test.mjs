@@ -6,6 +6,7 @@ import { runInNewContext } from 'node:vm';
 
 import { JSDOM } from 'jsdom';
 
+import { tagPage } from './publication-layout.mjs';
 import { readSearchState, searchUrl } from './search-model.mjs';
 import { renderResults } from './search-view.mjs';
 
@@ -35,7 +36,7 @@ test('result_tags_add_to_the_current_search_without_duplicates', () => {
   globalThis.document = dom.window.document;
   try {
     const selected = { query: '주문', tags: ['concurrency'], page: 3, type: 'all' };
-    const entry = { route: '/blog/orders/', title: '주문 처리', description: '동시 요청 처리', iconUrl: '/theme/assets/icons/search.svg', tags: ['concurrency', 'testing'] };
+    const entry = { route: '/blog/orders/', title: '주문 처리', description: '동시 요청 처리', iconUrl: '/theme/assets/icons/documents/search.svg', tags: ['concurrency', 'testing'] };
     renderResults(document.body, { entries: [entry], totalPages: 1, page: 1 }, selected, { concurrency: { label: '동시성' }, testing: { label: '테스트' } });
     const links = [...document.querySelectorAll('.app-search-result-tags a')];
     const filters = links.map(link => readSearchState(new URL(link.getAttribute('href'), 'https://example.com').search));
@@ -48,6 +49,46 @@ test('result_tags_add_to_the_current_search_without_duplicates', () => {
     delete globalThis.document;
     dom.window.close();
   }
+});
+
+// #179: 공통 접기 안에서 읽거나 조작 중인 정적 태그 목록은 검색 결과가 도착해도 유지한다.
+test('tag_fallback_stays_visible_when_open_or_focused', () => {
+  const tags = { python: { label: 'Python' } };
+  for (const state of ['closed', 'open', 'focused']) {
+    const dom = new JSDOM(tagPage('python', [], tags));
+    globalThis.document = dom.window.document;
+    try {
+      const fallback = document.querySelector('[data-search-fallback]');
+      const details = fallback.querySelector('details');
+      details.open = state === 'open';
+      if (state === 'focused') details.querySelector('summary').focus();
+
+      renderResults(document.querySelector('[data-search-page]'), { entries: [], totalPages: 1, page: 1 }, { query: '', tags: ['python'], page: 1, type: 'all' }, tags);
+
+      assert.equal(fallback.hidden, state === 'closed', state);
+      assert.equal(details.open, state === 'open', state);
+    } finally {
+      delete globalThis.document;
+      dom.window.close();
+    }
+  }
+});
+
+test('tag_fallback_reappears_when_search_request_fails', async () => {
+  const browser = searchBrowser('/tags/python/', true, 'python', {
+    html: tagPage('python', [], { python: { label: 'Python' } }),
+    queryIndex: () => Promise.reject(new Error('search unavailable')),
+  });
+  try {
+    const fallback = browser.dom.window.document.querySelector('[data-search-fallback]');
+    fallback.hidden = true;
+
+    await new Promise(resolve => setImmediate(resolve));
+
+    assert.equal(fallback.hidden, false);
+    assert.equal(fallback.querySelector('details').open, false);
+    assert.match(browser.dom.window.document.querySelector('[data-search-status]').textContent, /검색 자료를 불러오지 못했습니다/);
+  } finally { browser.dom.window.close(); }
 });
 
 test('typing_with_tags_keeps_the_intersection_and_resets_pagination', () => {
@@ -100,8 +141,8 @@ test('clear_query_respects_entry_and_remaining_tag', () => {
   }
 });
 
-function searchBrowser(route, page = true, tag = '') {
-  const dom = new JSDOM(`<section data-public-search><form><input><button type="button" data-clear-query></button></form><div role="listbox" hidden></div><p data-search-status></p></section>${page ? `<div data-search-page data-tag="${tag}"></div>` : ''}`);
+function searchBrowser(route, page = true, tag = '', options = {}) {
+  const dom = new JSDOM(options.html ?? `<section data-public-search><form><input><button type="button" data-clear-query></button></form><div role="listbox" hidden></div><p data-search-status></p></section>${page ? `<div data-search-page data-tag="${tag}"></div>` : ''}`);
   const visits = [];
   const requests = [];
   const url = new URL(route, 'https://example.com');
@@ -120,7 +161,7 @@ function searchBrowser(route, page = true, tag = '') {
   runInNewContext(source, {
     document: dom.window.document, window: dom.window, location, history, URL,
     readSearchState, searchUrl,
-    queryIndex(action, state) { requests.push({ action, state }); return new Promise(() => {}); },
+    queryIndex(action, state) { requests.push({ action, state }); return options.queryIndex ? options.queryIndex(action, state) : new Promise(() => {}); },
     showResultsLoading() {}, renderResults() {}, renderSuggestions() {}, showSearchError() {},
   });
   return { dom, visits, requests, input: dom.window.document.querySelector('input'), clear: dom.window.document.querySelector('button') };

@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { SOCIAL_ICONS } from './vendor/theme/ui/index.mjs';
+import { iconFile } from './vendor/theme/ui/build/icons.mjs';
 import { summaryParts } from './interviews.mjs';
 import { readContentFile } from './content-files.mjs';
 
@@ -78,6 +79,11 @@ function picture(value, path, context) {
   return { src: media(item.src, `${path}.src`, IMAGE_TYPES, context), alt: text(item.alt, `${path}.alt`, false) ?? '' };
 }
 
+function sectionIcon(value, path, context) {
+  const image = typeof value === 'string' ? { src: `/theme/assets/icons/${iconFile(text(value, path))}` } : value;
+  return picture(image, path, context);
+}
+
 // 요약 안의 [라벨](주소) 링크는 링크와 같은 주소 규칙을 따른다.
 function summary(value, path) {
   const content = text(value, path);
@@ -93,7 +99,7 @@ function link(value, path, hrefRequired = true) {
 
 // 아이콘, 제목, 설명을 가진 섹션 머리. 기본 문구가 없는 설명은 생략할 수 있다.
 function intro(item, path, context, title, description) {
-  return { icon: picture(item.icon, `${path}.icon`, context), title: text(item.title, `${path}.title`, false) ?? title, description: text(item.description, `${path}.description`, false) ?? description };
+  return { icon: sectionIcon(item.icon, `${path}.icon`, context), title: text(item.title, `${path}.title`, false) ?? title, description: text(item.description, `${path}.description`, false) ?? description };
 }
 
 // 제목 아래 링크 행. icon은 내장 이름(github, rss, linkedin) 또는 이미지 파일이고 없으면 label이 글자로 보인다.
@@ -115,7 +121,7 @@ const SECTIONS = {
     return {
       title: text(item.title, `${path}.title`, false),
       description: text(item.description, `${path}.description`),
-      icon: picture(item.icon, `${path}.icon`, context),
+      icon: sectionIcon(item.icon, `${path}.icon`, context),
       image: picture(item.image, `${path}.image`, context),
       video: video && {
         src: media(video.src, `${path}.video.src`, VIDEO_TYPES, context),
@@ -137,7 +143,7 @@ const SECTIONS = {
         title: text(project.title, `${where}.title`),
         description: text(project.description, `${where}.description`),
         link: link(project.link, `${where}.link`),
-        icon: picture(project.icon, `${where}.icon`, scope),
+        icon: sectionIcon(project.icon, `${where}.icon`, scope),
         image: picture(project.image, `${where}.image`, scope),
       };
     });
@@ -183,30 +189,14 @@ const SECTIONS = {
     return { ...intro(item, path, context, '사람들이 하는 말', '동료평가 소개 섹션입니다.'), links: links(item.links, `${path}.links`, context), items };
   },
   contact(section, path, context) {
-    const mode = section?.mode ?? 'email';
-    if (!['email', 'newsletter'].includes(mode)) fail(`${path}.mode`, 'email 또는 newsletter여야 합니다');
-    const common = ['id', 'type', 'enabled', 'mode', 'title', 'description', 'button', 'email'];
-    const item = record(section, path, mode === 'email' ? common : [...common, 'icon', 'endpoint', 'field', 'note', 'privacy']);
-    const email = text(item.email, `${path}.email`, mode === 'email');
-    if (email && !EMAIL.test(email)) fail(`${path}.email`, `올바른 이메일 주소가 아닙니다: ${email}`);
-    const contact = { mode, email };
-    if (mode === 'email') {
-      return { ...contact,
-        title: text(item.title, `${path}.title`, false) ?? '함께 만들어 볼까요?',
-        description: text(item.description, `${path}.description`, false) ?? '프로젝트와 협업에 관한 이야기를 기다립니다.',
-        button: text(item.button, `${path}.button`, false) ?? '메일 보내기' };
-    }
-    const field = text(item.field, `${path}.field`, false) ?? 'email';
-    if (!/^[A-Za-z][\w-]*$/.test(field)) fail(`${path}.field`, '영문자로 시작하는 입력 이름이어야 합니다');
-    const privacy = item.privacy === undefined ? undefined : record(item.privacy, `${path}.privacy`, ['label', 'href']);
-    return { ...contact, field,
-      title: text(item.title, `${path}.title`, false) ?? '소식 받아보기',
-      description: text(item.description, `${path}.description`, false) ?? '새 글과 프로젝트 소식을 이메일로 보내 드립니다.',
-      button: text(item.button, `${path}.button`, false) ?? '구독',
-      icon: picture(item.icon, `${path}.icon`, context),
-      endpoint: item.endpoint === undefined ? undefined : secure(text(item.endpoint, `${path}.endpoint`), `${path}.endpoint`),
-      note: text(item.note, `${path}.note`, false),
-      privacy: privacy && { label: text(privacy.label, `${path}.privacy.label`), href: href(privacy.href, `${path}.privacy.href`) } };
+    const item = record(section, path, ['id', 'type', 'enabled', 'icon', 'title', 'description', 'button', 'email']);
+    const email = text(item.email, `${path}.email`);
+    if (!EMAIL.test(email)) fail(`${path}.email`, `올바른 이메일 주소가 아닙니다: ${email}`);
+    return {
+      ...intro(item, path, context, '함께 만들어 볼까요?', '프로젝트와 협업에 관한 이야기를 기다립니다.'),
+      email,
+      button: text(item.button, `${path}.button`, false) ?? '메일 보내기',
+    };
   },
 };
 
@@ -215,7 +205,7 @@ export const DERIVED_IDS = {
   hero: id => [id, `${id}-video`, `${id}-player`],
   technologies: id => [id, `${id}-title`],
   interviews: id => [id, `${id}-title`],
-  contact: id => [id, `${id}-title`, `${id}-email`, `${id}-state`],
+  contact: id => [id, `${id}-title`],
 };
 const domIds = section => (DERIVED_IDS[section.type] ?? (id => [id]))(section.id);
 

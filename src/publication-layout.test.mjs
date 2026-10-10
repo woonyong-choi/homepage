@@ -17,10 +17,10 @@ test('tag_page_keeps_static_reading_separate_from_filtered_results', () => {
   const entry = { route: '/articles/promises/', title: 'Promise', description: '비동기 작업', type: 'wiki', tags: ['javascript'], contentIcon: { name: 'runtime' } };
   const html = tagPage('javascript', [entry], tags);
   assert.match(html, /<div data-full-results><\/div>/);
-  assert.match(html, /<details class="app-details" data-search-fallback><summary>이 태그의 모든 글 보기<\/summary>/);
-  const fallback = html.slice(html.indexOf('<details class="app-details" data-search-fallback>'));
+  assert.match(html, /<div data-search-fallback><details class="app-details"><summary>이 태그의 모든 글 보기<\/summary>/);
+  const fallback = html.slice(html.indexOf('<div data-search-fallback>'));
   assert.match(fallback, /href="\/articles\/promises\/"/);
-  assert.doesNotMatch(html.slice(0, html.indexOf('<details class="app-details" data-search-fallback>')), /href="\/articles\/promises\/"/);
+  assert.doesNotMatch(html.slice(0, html.indexOf('<div data-search-fallback>')), /href="\/articles\/promises\/"/);
   assert.match(tagPage('javascript', [], tags), /이 태그로 발행한 글이 없습니다/);
 });
 

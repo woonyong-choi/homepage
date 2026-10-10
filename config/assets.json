@@ -18,30 +18,6 @@
     "sha256": "1f183f61d1b76a08ea22d785d3024fba54d79fda4a1be5c7252c15a35d238167"
   },
   {
-    "url": "https://culturedcode.com/global/shared/2024-02-20/images/tweetgrid-avatar-default.png",
-    "file": "assets/tweetgrid-avatar-default.png",
-    "bytes": 1440,
-    "sha256": "cda58acbfe0da420b5d95b8c787f9ff2cdadbda2312582a61ca8d000b31a2b51"
-  },
-  {
-    "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-newsletter-io70.png",
-    "file": "assets/fancysection-icon-newsletter-io70.png",
-    "bytes": 1367,
-    "sha256": "68511117d40ba3c5b6e4aa2ec0798046e1d105ac63923aa5acc876af1806147d"
-  },
-  {
-    "url": "https://culturedcode.com/things/2024-01-20/images/fancysection-icon-whatpeoplearesaying-io70.png",
-    "file": "assets/fancysection-icon-whatpeoplearesaying-io70.png",
-    "bytes": 824,
-    "sha256": "aaa019e81f24ce8350e4e31713fac8f4e71358b123163a94295393d792c24d95"
-  },
-  {
-    "url": "https://culturedcode.com/things/2024-01-20/images/hero-logo-things-io90.png",
-    "file": "assets/hero-logo-things-io90.png",
-    "bytes": 19445,
-    "sha256": "355d57b2007b3e910f7fd0031641b2c426cc168be01b142c295cc638dbfefce3"
-  },
-  {
     "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/10-reminders-mac.png",
     "file": "assets/10-reminders-mac.png",
     "bytes": 85786,
@@ -94,11 +70,5 @@
     "file": "assets/7-quickfind-mac.png",
     "bytes": 60421,
     "sha256": "b877d54b57f6c2288f04de633114da2530094d413e83edd2f6b56f46d03a9f69"
-  },
-  {
-    "url": "https://culturedcode.com/frozen/2021/09/keycommand-keyboard-io40.png",
-    "file": "assets/keycommand-keyboard-io40.png",
-    "bytes": 324,
-    "sha256": "403e9200aecc963ee744d8f5429a1fd294a16919a835b13171d04c6d8adfb99b"
   }
 ]

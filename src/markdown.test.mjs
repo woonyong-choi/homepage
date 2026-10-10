@@ -25,17 +25,22 @@ test('nested components preserve unique IDs and do not duplicate footnotes', () 
 });
 test('unknown component and malformed data fail the build', () => {
   const md = createMarkdown();
-  assert.throws(()=>md.render(fence('unknown',{body:'text'})));
+  for (const kind of ['unknown', 'keyboard', 'status-board', 'contact-form', 'form']) assert.throws(() => md.render(fence(kind, { body: 'text' })), /Unknown document component/);
   assert.throws(()=>md.render(fence('gallery',{slides:[]})));
   assert.throws(()=>md.render(fence('cards',{variant:'unknown',items:[]})));
   assert.throws(()=>md.render(fence('cards',{items:[{variant:'unknown',title:'Invalid',href:'/things/'}]})));
   assert.throws(()=>md.render('```ui:tabs\nitems: [\n```'));
+  for (const [kind, data] of [['figure', { src: '2-today-mac.png', alt: '화면' }], ['gallery', { slides: [{ src: '2-today-mac.png', label: '화면' }] }]]) {
+    for (const [alias, value] of [['wide', false], ['size', 'compact']]) {
+      assert.throws(() => md.render(fence(kind, { ...data, [alias]: value })), new RegExp(`Use width instead of ${alias}`));
+    }
+  }
 });
 test('specimen renders every declared document component', () => {
   const source=readFileSync(new URL('./fixtures/syntax-specimen.md',import.meta.url),'utf8');
   const html=createMarkdown().render(source,{});
-  for (const kind of ['group','feature','syntax-examples','feature-list','device','demos','feature-pair','callout','details','figure','fineprint','figure-grid','video','gallery','platform','tabs','cards','definitions','speech','keys','tooltip','keyboard','status-board','contact-form','form']) assert.ok(source.includes('ui:' + kind), 'missing specimen: ' + kind);
-  for(const marker of ['<table class="app-table">','<blockquote>','task-list-item','language-javascript','app-callout','app-help-card is-centered','app-help-card is-grouped','app-inline-links','data-tabs','<video','<details','<dl','<kbd','popover','data-demo-form','footnote-ref']) assert.ok(html.includes(marker),marker);
+  for (const kind of ['group','feature','syntax-examples','feature-list','device','demos','feature-pair','callout','details','figure','fineprint','figure-grid','video','gallery','platform','tabs','cards','definitions','speech','keys','tooltip']) assert.ok(source.includes('ui:' + kind), 'missing specimen: ' + kind);
+  for(const marker of ['<table class="app-table">','<blockquote>','task-list-item','language-javascript','app-callout','app-help-card is-centered','app-help-card is-grouped','app-inline-links','data-tabs','<video','<details','<dl','<kbd','popover','footnote-ref']) assert.ok(html.includes(marker),marker);
 });
 
 test('fineprint and figure grid map to the reference DOM without raw html', () => {
@@ -96,13 +101,12 @@ test('inline interface labels escape HTML and preserve code and literal syntax',
   assert.ok(!md.render(String.raw`\:kbd[literal]`).includes('<kbd>'));
 });
 
-test('code_and_syntax_copy_controls_start_hidden_with_independent_status_regions', () => {
-  const source = '```javascript\nconst value = "한글 < >";\n```\n\n' + fence('keys', { keys: ['⌘', 'C'] });
-  const html = createMarkdown().render(source, { showSyntax: true });
+test('code_copy_controls_start_hidden_with_independent_status_regions', () => {
+  const source = '```javascript\nconst value = "한글 < >";\n```\n\n```text\n둘째 코드\n```';
+  const html = createMarkdown().render(source);
   assert.equal((html.match(/data-tool="copy" aria-label="[^"]+" title="[^"]+" hidden/g) ?? []).length, 2);
   assert.equal((html.match(/data-tool-status role="status" aria-live="polite" aria-atomic="true"/g) ?? []).length, 2);
   assert.match(html, /aria-label="코드 복사"/);
-  assert.match(html, /aria-label="작성 문법 복사"/);
   assert.match(html, /한글 &lt; &gt;/);
 });
 

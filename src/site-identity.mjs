@@ -2,8 +2,8 @@
 import { createHash } from 'node:crypto';
 import { Resvg } from '@resvg/resvg-js';
 
-export function siteIdentity(svg, license) {
-  const assets = new Map([['/media/site-icon-LICENSE.txt', Buffer.from(license)]]);
+export function siteIdentity(svg) {
+  const assets = new Map();
   const images = {};
   for (const [role, size] of [['favicon', 32], ['touch', 180], ['share', 512]]) {
     const png = new Resvg(svg, { fitTo: { mode: 'width', value: size }, font: { loadSystemFonts: false } }).render().asPng();

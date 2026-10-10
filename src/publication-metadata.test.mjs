@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { readFileSync } from 'node:fs';
+import { JSDOM } from 'jsdom';
+import { readIcon } from './vendor/theme/ui/build/icons.mjs';
 import { publicationMetadata, siteOrigin } from './publication-metadata.mjs';
+import { documentShell } from './publication-layout.mjs';
 import { siteIdentity } from './site-identity.mjs';
 
 const context = {
@@ -17,6 +19,13 @@ test('metadata_uses_one_home_name_and_keeps_preview_without_an_invented_origin',
   assert.match(home, /name="robots" content="noindex,nofollow"/);
   assert.doesNotMatch(home, /canonical|og:url|example\.invalid/);
   assert.match(home, /rel="icon" type="image\/svg\+xml"/);
+  const config = { ...context.config, name: '이름 & 글', github: 'https://github.com/example' };
+  const page = documentShell({ title: config.name, route: '/' }, '', { ...context, config });
+  const logo = new JSDOM(page).window.document.querySelector('.app-logo');
+  assert.equal(logo.getAttribute('href'), '/');
+  assert.equal(logo.getAttribute('aria-label'), `${config.name} 홈`);
+  assert.equal(logo.querySelector('[data-control-icon]').getAttribute('data-control-icon'), 'task-done');
+  assert.equal(logo.textContent, config.name);
 });
 
 test('article_metadata_shares_identity_and_escapes_content_without_exposing_logical_type', () => {
@@ -49,10 +58,9 @@ test('site_origin_rejects_credentials_paths_queries_and_insecure_publication', (
 });
 
 test('identity_pngs_are_reproducible_from_the_exported_icon_without_system_fonts', () => {
-  const svg = readFileSync(new URL('./vendor/theme/assets/icons/small/document.svg', import.meta.url));
-  const notice = readFileSync(new URL('./vendor/theme/assets/controls/LICENSE', import.meta.url));
-  const first = siteIdentity(svg, notice);
-  const second = siteIdentity(svg, notice);
+  const svg = readIcon('document');
+  const first = siteIdentity(svg);
+  const second = siteIdentity(svg);
   for (const [role, size] of [['favicon', 32], ['touch', 180], ['share', 512]]) {
     assert.equal(first[role], second[role]);
     const png = first.assets.get(first[role]);
@@ -61,6 +69,5 @@ test('identity_pngs_are_reproducible_from_the_exported_icon_without_system_fonts
     assert.equal(png.readUInt32BE(20), size);
     assert.ok(png.equals(second.assets.get(second[role])));
   }
-  assert.ok(first.assets.get('/media/site-icon-LICENSE.txt').equals(notice));
-  assert.throws(() => siteIdentity('invalid SVG', notice));
+  assert.throws(() => siteIdentity('invalid SVG'));
 });
