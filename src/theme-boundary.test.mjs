@@ -10,14 +10,14 @@ import { createMarkdown } from './markdown.mjs';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { readDocument } from './content-model.mjs';
-import { markdownFiles } from './content-files.mjs';
+import { markdownFiles, readContentFile } from './content-files.mjs';
 
 const product = fileURLToPath(new URL('./', import.meta.url));
 const vendor = join(product, 'vendor/theme');
 const sha = value => createHash('sha256').update(value).digest('hex');
 const files = folder => readdirSync(folder, { recursive: true, withFileTypes: true }).filter(entry => entry.isFile()).map(entry => join(entry.parentPath, entry.name).slice(folder.length + 1)).sort();
-const TAGS = JSON.parse(readFileSync(join(product, 'tags.json'), 'utf8'));
-const TOPICS = JSON.parse(readFileSync(join(product, 'topics.json'), 'utf8'));
+const TAGS = JSON.parse(readFileSync(join(product, '../config/tags.json'), 'utf8'));
+const TOPICS = readContentFile(join(product, '../content/tech.md')).metadata.topics;
 
 test('vendored_theme_is_exactly_the_manifest_and_matches_canonical_output_when_present', t => {
   const manifest = JSON.parse(readFileSync(join(vendor, 'manifest.json'), 'utf8'));
@@ -33,7 +33,8 @@ test('vendored_theme_is_exactly_the_manifest_and_matches_canonical_output_when_p
 // 예시, 구성 요소 견본, 공개 글 한 편을 실제 렌더 경로(마크다운 → 글 페이지)로 렌더해 소비자가 표현 값을 더하지 않는지 본다.
 function corpus() {
   const md = createMarkdown();
-  const pages = ['examples', 'publication'].flatMap(folder => markdownFiles(join(product, folder)).slice(0, folder === 'examples' ? undefined : 3).map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS)));
+  const documents = ['docs', 'blog'].flatMap(folder => markdownFiles(join(product, '../content', folder)).map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS)));
+  const pages = [...documents.filter(page => page.example), ...documents.filter(page => !page.example).slice(0, 3)];
   const all = pages.map(page => Object.assign(page, renderArticle(md, page)));
   const specimen = md.render(readFileSync(join(product, 'fixtures/syntax-specimen.md'), 'utf8'), { pageId: 'specimen' });
   return [...all.map(page => articlePage(page, { topics: TOPICS, tags: TAGS })), specimen];

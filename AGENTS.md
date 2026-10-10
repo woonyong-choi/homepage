@@ -12,10 +12,12 @@
 
 ## 구조
 
+- `content/home.md`, `content/interviews.md`, `content/tech.md`: 직접 편집하는 홈 원고
+- `config/`: 사이트·댓글·태그와 승인 목록
 - `src/`: 콘텐츠 해석, 검색·댓글, 경로와 페이지 조립
 - `src/vendor/theme/`: 해시 검증된 디자인 완성본. 직접 수정 금지
-- `src/publication/`, `src/examples/`: 승인된 원문의 사본. 직접 수정 금지
-- `src/assets/`, `src/media/`: 사용 중인 콘텐츠 자산과 고지
+- `content/docs/`, `content/blog/`: 승인된 원문의 사본. 직접 수정 금지
+- `content/assets/`, `content/media/`: 사용 중인 콘텐츠 자산과 고지
 - `docs/`: 현재 구현의 설계와 사용 안내
 - `scripts/`: 검사. 산출물은 Git 밖 `dist/site/`
 

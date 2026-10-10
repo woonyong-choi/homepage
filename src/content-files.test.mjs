@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { markdownFiles, documentPaths } from './content-files.mjs';
+import { markdownFiles, documentPaths, readContentFile } from './content-files.mjs';
 import { readDocument } from './content-model.mjs';
 import { mergePublicationMetadata } from './import-publication.mjs';
 
@@ -29,11 +29,11 @@ test('import_preserves_site_metadata_and_refreshes_source_content_fields', () =>
 
 // #141: 실제 하위 폴더의 공개 문서를 모두 읽고 URL은 slug로만 만든다.
 test('nested_publication_files_keep_the_manifest_identity_and_routes', () => {
-  const root = fileURLToPath(new URL('./publication/', import.meta.url));
-  const tags = JSON.parse(readFileSync(new URL('./tags.json', import.meta.url)));
-  const categories = JSON.parse(readFileSync(new URL('./topics.json', import.meta.url)));
-  const manifest = JSON.parse(readFileSync(new URL('./publication-manifest.json', import.meta.url)));
-  const pages = markdownFiles(root).map(file => readDocument(readFileSync(file, 'utf8'), tags, new Date(), categories));
+  const root = fileURLToPath(new URL('../content/docs/', import.meta.url));
+  const tags = JSON.parse(readFileSync(new URL('../config/tags.json', import.meta.url)));
+  const categories = readContentFile(new URL('../content/tech.md', import.meta.url)).metadata.topics;
+  const manifest = JSON.parse(readFileSync(new URL('../config/publication-manifest.json', import.meta.url)));
+  const pages = markdownFiles(root).map(file => readDocument(readFileSync(file, 'utf8'), tags, new Date(), categories)).filter(page => !page.example);
   assert.equal(pages.length, manifest.documents.length);
   for (const entry of manifest.documents) {
     const page = pages.find(page => page.id === entry.id);

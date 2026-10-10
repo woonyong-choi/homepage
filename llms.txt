@@ -11,4 +11,4 @@
 - [Markdown 글 작성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/markdown.md): 글 파일, 지원 문법, 코드 블록 언어와 복사, 미지원 항목
 - [스타일 수정 지도](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/styles.md): 토큰·공통 조각·화면·콘텐츠 문법 중 어디를 고치는지, 홈 type별 클래스
 - [개인 사이트 발행](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/publication.md): 승인·검색·댓글·운영 빌드 계약
-- [홈 설정 가이드](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/home-config.md): 홈 구간·영상·인터뷰 입력
+- [홈 원고 가이드](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/home-content.md): 홈 구간·영상·인터뷰 입력

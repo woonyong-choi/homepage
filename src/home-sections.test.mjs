@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { parse as parseYaml } from 'yaml';
 import { existsSync, readFileSync } from 'node:fs';
-import { loadHomeConfig, parseHomeConfig } from './home-config.mjs';
+import { loadHomeContent, parseHomeSections } from './home-content.mjs';
 import { personalHome } from './publication-layout.mjs';
 import { clientEntrypoints, publicationAssets } from './publication-assets.mjs';
 
 const TECHNOLOGIES = new Set(['python', 'git']);
-const render = (yaml, preview = true) => personalHome({ config: { name: '이름' }, home: parseHomeConfig(yaml, { technologies: TECHNOLOGIES }), interviewExamples: [{ id: 'e', summary: '예시 요약', profile: { title: '예시 회사', subtitle: '예시 직무' }, example: true }], preview });
+const render = (yaml, preview = true) => personalHome({ config: { name: '이름' }, home: parseHomeSections(parseYaml(yaml), { technologies: TECHNOLOGIES }), preview });
 const positions = (html, marks) => marks.map(mark => html.indexOf(mark));
 const ascending = values => values.every((value, index) => value >= 0 && (!index || value > values[index - 1]));
 
@@ -14,7 +15,7 @@ const ALL = {
   hero: '  - { id: hero, type: hero, description: 소개 }',
   projects: '  - id: projects\n    type: projects\n    items:\n      - { title: 첫째, description: 설명 }',
   technologies: '  - { id: technologies, type: technologies, items: [python] }',
-  interviews: '  - { id: interviews, type: interviews, items: [] }',
+  interviews: '  - { id: interviews, type: interviews, items: [{ id: a, summary: 예시 요약, example: true }] }',
   contact: '  - { id: contact, type: contact, email: hello@example.com }',
 };
 const MARKS = { hero: 'id="hero"', projects: 'id="projects"', technologies: 'id="technologies"', interviews: 'id="interviews"', contact: 'id="contact"' };
@@ -81,7 +82,10 @@ test('interview_cards_show_summary_and_exactly_the_image_title_subtitle_slots', 
   assert.match(bare, /&lt;b&gt;요약&lt;\/b&gt;/);
   assert.match(bare, /<strong>&lt;i&gt;제목&lt;\/i&gt;<\/strong><\/div>/);
   const empty = 'sections:\n  - { id: interviews, type: interviews, items: [] }';
-  assert.match(render(empty, true), /예시 회사/);
+  assert.doesNotMatch(render(empty, true), /interviews/);
+  const example = item(', example: true');
+  assert.match(render(example, true), /회사명/);
+  assert.doesNotMatch(render(example, false), /interviews/);
   assert.doesNotMatch(render(empty, false), /interviews|예시/);
 });
 
@@ -105,7 +109,7 @@ test('interviews_split_in_order_into_ceil_half_rows_after_filtering', () => {
 });
 
 test('social_links_support_registry_icons_and_show_a_link_less_icon_as_a_placeholder', () => {
-  const html = render('sections:\n  - { id: talk, type: interviews, links: [{ label: GitHub, href: "https://github.com/x", icon: github }, { label: LinkedIn, icon: linkedin }], items: [] }');
+  const html = render('sections:\n  - { id: talk, type: interviews, links: [{ label: GitHub, href: "https://github.com/x", icon: github }, { label: LinkedIn, icon: linkedin }], items: [{ id: a, summary: 예시 요약 }] }');
   const row = html.match(/<p class="app-landing-social">.*?<\/p>/)[0];
   assert.match(row, /<a href="https:\/\/github.com\/x" aria-label="GitHub"><svg/);
   assert.match(row, /<span role="img" aria-label="LinkedIn · 주소 준비 중"><svg class="app-landing-symbol"/);
@@ -116,7 +120,7 @@ test('technologies_and_interviews_share_the_section_intro_with_projects', () => 
   const intro = html => html.match(/<div class="app-landing-heading">.*?<\/div>/)[0];
   const tech = render('sections:\n  - { id: tech, type: technologies, items: [python] }');
   assert.match(intro(tech), /<h2 id="tech-title">함께 쓰는 기술<\/h2><p>기술별 기록을 모았습니다\.<\/p>/);
-  const rich = render('sections:\n  - id: talk\n    type: interviews\n    icon: { src: https://example.com/i.png }\n    title: 이야기\n    description: 설명\n    links: [{ label: GitHub, href: "https://github.com/x", icon: github }, { label: 글, href: /blog/ }]\n    items: []');
+  const rich = render('sections:\n  - id: talk\n    type: interviews\n    icon: { src: https://example.com/i.png }\n    title: 이야기\n    description: 설명\n    links: [{ label: GitHub, href: "https://github.com/x", icon: github }, { label: 글, href: /blog/ }]\n    items: [{ id: a, summary: 예시 요약 }]');
   assert.match(intro(rich), /<h2 id="talk-title"><img src="https:\/\/example.com\/i.png" alt="" loading="lazy" decoding="async"> 이야기<\/h2><p>설명<\/p><p class="app-landing-social"><a href="https:\/\/github.com\/x" aria-label="GitHub"><svg class="app-landing-symbol"/);
   assert.match(intro(rich), /<a href="\/blog\/">글<\/a>/);
   assert.doesNotMatch(rich, /data-flow-controls|data-flow-(?:toggle|prev|next)|<button/);
@@ -134,9 +138,9 @@ test('hero_title_names_the_page_and_icon_and_missing_files_of_disabled_items_are
   assert.match(noIcon, /<p class="app-hero-title" aria-hidden="true">내 이름<\/p>/);
   assert.doesNotMatch(render('sections:\n  - { id: hero, type: hero, description: 소개 }'), /app-hero-title/);
   const yaml = 'sections:\n  - id: projects\n    type: projects\n    items:\n      - { enabled: false, title: 숨김, description: 설명, image: { src: /assets/gone.png } }\n      - { title: 보임, description: 설명 }';
-  const html = personalHome({ config: { name: '이름' }, home: parseHomeConfig(yaml, { exists: () => false }), interviewExamples: [], preview: true });
+  const html = personalHome({ config: { name: '이름' }, home: parseHomeSections(parseYaml(yaml), { exists: () => false }), preview: true });
   assert.doesNotMatch(html, /gone\.png|숨김/);
-  assert.throws(() => parseHomeConfig(yaml.replace('enabled: false, ', ''), { exists: () => false }), /items\[0\]\.image\.src: 파일이 없습니다/);
+  assert.throws(() => parseHomeSections(parseYaml(yaml.replace('enabled: false, ', '')), { exists: () => false }), /items\[0\]\.image\.src: 파일이 없습니다/);
 });
 
 test('newsletter_without_endpoint_keeps_controls_disabled_and_never_posts', () => {
@@ -158,16 +162,16 @@ test('newsletter_without_endpoint_keeps_controls_disabled_and_never_posts', () =
 
 test('the_shipped_interviews_section_shows_its_title_description_and_two_social_links', () => {
   const brands = JSON.parse(readFileSync(new URL('./vendor/theme/assets/icons/brands/catalog.json', import.meta.url))).icons.map(item => item.name);
-  const interviews = loadHomeConfig(new Set(brands)).find(section => section.type === 'interviews');
+  const interviews = loadHomeContent(new Set(brands)).find(section => section.type === 'interviews');
   assert.equal(interviews.description, '함께 일한 동료들이 들려주는 저에 대한 이야기입니다.');
   assert.equal(interviews.title, '사람들이 하는 말');
   assert.deepEqual(interviews.links.map(item => [item.icon, Boolean(item.href)]), [['github', true], ['linkedin', true]]);
-  assert.match(personalHome({ config: { name: '이름' }, home: [interviews], interviewExamples: [], preview: true }) || '', /^<main/);
+  assert.match(personalHome({ config: { name: '이름' }, home: [interviews], preview: true }) || '', /^<main/);
 });
 
-test('the_shipped_home_config_omits_projects_from_the_visible_sections', () => {
+test('the_shipped_home_content_omits_projects_from_the_visible_sections', () => {
   const brands = JSON.parse(readFileSync(new URL('./vendor/theme/assets/icons/brands/catalog.json', import.meta.url))).icons.map(item => item.name);
-  const home = loadHomeConfig(new Set(brands));
+  const home = loadHomeContent(new Set(brands));
   assert.deepEqual(home.map(section => section.type), ['hero', 'technologies', 'interviews', 'contact']);
   assert.equal(home[1].title, '기술과 생각');
   assert.equal(home[1].description, '언어와 도구의 원리, 개발 과정에서 마주한 질문과 지식을 정리하고 기록합니다.');
@@ -175,8 +179,8 @@ test('the_shipped_home_config_omits_projects_from_the_visible_sections', () => {
 
 test('the_shipped_hero_plays_the_selected_local_video_from_the_beginning', () => {
   const brands = JSON.parse(readFileSync(new URL('./vendor/theme/assets/icons/brands/catalog.json', import.meta.url))).icons.map(item => item.name);
-  const hero = loadHomeConfig(new Set(brands)).find(section => section.type === 'hero');
+  const hero = loadHomeContent(new Set(brands)).find(section => section.type === 'hero');
   assert.equal(hero.video.src, '/media/woonyong-interview.mp4');
   assert.equal(hero.action.href, undefined);
-  for (const name of ['woonyong-interview.mp4', 'woonyong-interview-poster.jpg']) assert.ok(existsSync(new URL(`./media/${name}`, import.meta.url)));
+  for (const name of ['woonyong-interview.mp4', 'woonyong-interview-poster.jpg']) assert.ok(existsSync(new URL(`../content/media/${name}`, import.meta.url)));
 });

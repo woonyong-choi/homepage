@@ -1,27 +1,28 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { parse as parseYaml } from 'yaml';
 import { fileURLToPath } from 'node:url';
-import { loadHomeConfig, parseHomeConfig } from './home-config.mjs';
+import { loadHomeContent, parseHomeSections } from './home-content.mjs';
 
-const parse = (yaml, options = {}) => parseHomeConfig(yaml, { technologies: new Set(['python']), ...options });
+const parse = (yaml, options = {}) => parseHomeSections(parseYaml(yaml), { technologies: new Set(['python']), ...options });
 const rejects = (yaml, pattern, options) => assert.throws(() => parse(yaml, options), pattern);
 
 test('private_interviews_replace_only_preview_content_and_never_public_content', () => {
   const root = fileURLToPath(new URL('./fixtures/home-local-preview/', import.meta.url));
-  const load = options => loadHomeConfig(new Set(), root, options)[0].items.map(item => item.summary);
+  const load = options => loadHomeContent(new Set(), root, options)[0].items.map(item => item.summary);
   assert.deepEqual(load(), ['공개된 예시 평가']);
   assert.deepEqual(load({ preview: false }), ['공개된 예시 평가']);
   assert.deepEqual(load({ preview: true }), ['비공개 검토용 예시 평가']);
 });
 
 test('errors_name_the_file_and_the_exact_path', () => {
-  rejects('sections:\n  - { id: a, type: banner }', /home\.config\.yaml sections\[0\]\.type: .*banner/);
+  rejects('sections:\n  - { id: a, type: banner }', /home\.md sections\[0\]\.type: .*banner/);
   rejects('sections:\n  - { id: a, type: hero, description: x, colour: red }', /sections\[0\]\.colour: 알 수 없는 설정/);
   rejects('sections:\n  - { id: a, type: hero }', /sections\[0\]\.description: 값이 필요/);
   rejects('sections:\n  - { id: a, type: technologies, items: [python, rust] }', /sections\[0\]\.items\[1\]: 알 수 없는 기술/);
   rejects('sections:\n  - { id: a, type: technologies, items: [python, python] }', /sections\[0\]\.items\[1\]: 중복/);
   rejects('sections:\n  - { id: a, type: projects, items: [{ title: 가, description: 나 }, { title: 다 }] }', /sections\[0\]\.items\[1\]\.description/);
-  rejects('sections: [', /YAML/);
+  assert.throws(() => parse('sections: ['));
 });
 
 test('links_and_media_reject_active_protocols_traversal_and_missing_files', () => {
@@ -34,7 +35,7 @@ test('links_and_media_reject_active_protocols_traversal_and_missing_files', () =
   rejects(hero('/media/../secret.mp4'), /video\.src.*안전한 경로/);
   rejects(hero('javascript:alert(1)'), /video\.src.*HTTPS/);
   rejects(hero('/media/clip.png'), /video\.src.*\.mp4/);
-  rejects(hero('/media/missing.mp4'), /video\.src: 파일이 없습니다: src\/media\/missing\.mp4/, { exists: () => false });
+  rejects(hero('/media/missing.mp4'), /video\.src: 파일이 없습니다: \/media\/missing\.mp4/, { exists: () => false });
   rejects('sections:\n  - { id: a, type: hero, description: x, video: { src: /media/a.mp4, poster: "data:text/html,x", title: t } }', /video\.poster/);
 });
 

@@ -241,7 +241,7 @@ test('article_lead_and_toc_are_unchanged_when_directives_follow_the_lead', () =>
 });
 
 test('document_composition_example_renders_every_block_with_unique_ids', () => {
-  const text = readFileSync(new URL('./examples/software-design/document-composition.md', import.meta.url), 'utf8');
+  const text = readFileSync(new URL('../content/docs/software-design/document-composition.md', import.meta.url), 'utf8');
   const meta = parse(/^---\n([\s\S]*?)\n---\n/.exec(text)[1]);
   const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
   assert.equal(meta.slug, 'document-composition');

@@ -18,7 +18,7 @@ function fixture(t) {
   writeFileSync(join(source, file), '---\nvisibility: public\n---\n# Approved\n');
   writeFileSync(join(source, 'archive/private.md'), 'PRIVATE_CANARY');
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  return { source, site, file, output: join(site, 'src/examples/public.md') };
+  return { source, site, file, output: join(site, 'content/docs/public.md') };
 }
 
 test('syncApprovedContent_exports_only_approved_bytes_and_requires_reapproval_after_changes', t => {
@@ -26,7 +26,7 @@ test('syncApprovedContent_exports_only_approved_bytes_and_requires_reapproval_af
   approveContent(f.source, [f.file]);
   assert.equal(syncApprovedContent(f.source, f.site), 1);
   assert.equal(readFileSync(f.output, 'utf8'), '---\nvisibility: public\n---\n# Approved\n');
-  assert.deepEqual(Object.keys(verifyApprovedContent(f.site)), ['src/examples/public.md']);
+  assert.deepEqual(Object.keys(verifyApprovedContent(f.site)), ['content/docs/public.md']);
   writeFileSync(join(f.source, f.file), '---\nvisibility: public\n---\n# Changed\n');
   assert.throws(() => syncApprovedContent(f.source, f.site), /changed after approval/);
   assert.equal(readFileSync(f.output, 'utf8'), '---\nvisibility: public\n---\n# Approved\n');
@@ -38,6 +38,24 @@ test('syncApprovedContent_exports_only_approved_bytes_and_requires_reapproval_af
   assert.equal(existsSync(f.output), false);
 });
 
+test('syncApprovedContent_routes_blog_sources_and_rejects_colliding_copies_before_writing', t => {
+  const f = fixture(t);
+  for (const folder of ['documents/blog', 'documents/examples/blog']) mkdirSync(join(f.source, folder), { recursive: true });
+  const published = 'documents/blog/article.md';
+  const example = 'documents/examples/blog/sample.md';
+  const content = '---\nvisibility: public\n---\n# Blog\n';
+  for (const file of [published, example]) writeFileSync(join(f.source, file), content);
+  approveContent(f.source, [published, example]);
+  syncApprovedContent(f.source, f.site);
+  assert.deepEqual(Object.keys(verifyApprovedContent(f.site)).sort(), ['content/blog/article.md', 'content/blog/sample.md']);
+  const collision = 'documents/examples/blog/article.md';
+  writeFileSync(join(f.source, collision), content + 'Other source\n');
+  approveContent(f.source, [collision]);
+  assert.throws(() => syncApprovedContent(f.source, f.site), /duplicate public content target: content\/blog\/article\.md/);
+  assert.equal(readFileSync(join(f.site, 'content/blog/article.md'), 'utf8'), content);
+  assert.deepEqual(Object.keys(verifyApprovedContent(f.site)).sort(), ['content/blog/article.md', 'content/blog/sample.md']);
+});
+
 test('syncApprovedContent_does_not_overwrite_unapproved_public_edits_or_accept_wrong_source_root', t => {
   const f = fixture(t);
   assert.throws(() => syncApprovedContent(f.source, f.site), /ENOENT/);
@@ -47,7 +65,7 @@ test('syncApprovedContent_does_not_overwrite_unapproved_public_edits_or_accept_w
   assert.throws(() => syncApprovedContent(f.source, f.site), /changed outside approval/);
   assert.equal(readFileSync(f.output, 'utf8'), 'local edit');
   writeFileSync(f.output, '---\nvisibility: public\n---\n# Approved\n');
-  writeFileSync(join(f.site, 'src/examples/unapproved.md'), 'unexpected');
+  writeFileSync(join(f.site, 'content/docs/unapproved.md'), 'unexpected');
   assert.throws(() => verifyApprovedContent(f.site), /unapproved/);
 });
 
@@ -67,8 +85,8 @@ test('syncApprovedContent_manifest_error_preserves_approved_inputs', async t => 
       const f = fixture(t);
       approveContent(f.source, [f.file]);
       syncApprovedContent(f.source, f.site);
-      const snapshot = join(f.site, 'src/approved-content.json');
-      const manifest = join(f.site, 'src/publication-manifest.json');
+      const snapshot = join(f.site, 'config/approved-content.json');
+      const manifest = join(f.site, 'config/publication-manifest.json');
       const previous = [readFileSync(f.output), readFileSync(snapshot)];
       writeFileSync(join(f.source, f.file), '---\nvisibility: public\n---\n# Changed\n');
       const sources = [f.file];
@@ -89,8 +107,8 @@ test('syncApprovedContent_manifest_error_preserves_approved_inputs', async t => 
       assert.deepEqual(readFileSync(f.output), previous[0]);
       assert.deepEqual(readFileSync(snapshot), previous[1]);
       assert.deepEqual(readFileSync(manifest), previousManifest);
-      assert.equal(existsSync(join(f.site, 'src/publication/entry-0.md')), false);
-      assert.equal(existsSync(join(f.site, 'src/publication/entry-1.md')), false);
+      assert.equal(existsSync(join(f.site, 'content/docs/entry-0.md')), false);
+      assert.equal(existsSync(join(f.site, 'content/docs/entry-1.md')), false);
     });
   }
 });
@@ -105,8 +123,8 @@ test('syncApprovedContent_valid_manifest_preserves_identity_provenance_and_order
   mkdirSync(join(f.source, 'documents/wiki'));
   for (const entry of entries) writeFileSync(join(f.source, `documents/wiki/${entry.id}.md`), `---\n${JSON.stringify({ visibility: 'public', ...entry })}\n---\n# Wiki\n`);
   approveContent(f.source, entries.map(entry => `documents/wiki/${entry.id}.md`));
-  mkdirSync(join(f.site, 'src'));
-  const manifest = join(f.site, 'src/publication-manifest.json');
+  mkdirSync(join(f.site, 'config'));
+  const manifest = join(f.site, 'config/publication-manifest.json');
   writeFileSync(manifest, JSON.stringify({ source: 'https://docs.example.com', documents: [{ id: 'second' }, { id: 'first' }] }));
 
   assert.equal(syncApprovedContent(f.source, f.site), 2);

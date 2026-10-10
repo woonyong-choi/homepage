@@ -221,7 +221,7 @@ test('footnotes_stay_unique_across_pages_and_link_back', () => {
 });
 
 test('the_markdown_guide_example_renders_every_supported_construct_and_round_trips_code', () => {
-  const source = readFileSync(new URL('./examples/blog/markdown-guide.md', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../content/blog/markdown-guide.md', import.meta.url), 'utf8');
   assert.match(source, /example: true/);
   const body = source.split('\n---\n').slice(1).join('\n---\n');
   const meta = parse(source.slice(4, source.indexOf('\n---\n')));

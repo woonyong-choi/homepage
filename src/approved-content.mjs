@@ -9,10 +9,12 @@ import { isDocumentId } from './content-model.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const APPROVALS = 'config/homepage-approvals.json';
-const SNAPSHOT = 'src/approved-content.json';
+const SNAPSHOT = 'config/approved-content.json';
 const SOURCES = Object.freeze({
-  'documents/wiki/': 'src/publication/',
-  'documents/examples/': 'src/examples/',
+  'documents/wiki/': 'content/docs/',
+  'documents/blog/': 'content/blog/',
+  'documents/examples/blog/': 'content/blog/',
+  'documents/examples/': 'content/docs/',
 });
 
 // cost: time O(b+n*(d+log n)), heap O(b+n), stack O(1), io O(n*d)
@@ -50,13 +52,14 @@ export function syncApprovedContent(sourceRoot, siteRoot = ROOT) {
   // 전체 승인과 기존 사본 검증을 먼저 끝내야 중간 실패로 공개 입력이 바뀌지 않는다.
   for (const entry of approvals.files) {
     const target = targetFor(entry.source);
+    if (Object.hasOwn(files, target)) throw new Error(`duplicate public content target: ${target}`);
     const source = safeFile(sourceRoot, entry.source);
     const metadata = validatePublication(entry.source, source);
     const content = readFileSync(source);
     if (digest(content) !== entry.sha256) throw new Error(`source changed after approval: ${entry.source}`);
     files[target] = entry.sha256;
     copies.push({ target: safeFile(siteRoot, target), content });
-    if (target.startsWith('src/publication/')) documents.push({ id: metadata.id, slug: metadata.slug, file: target.slice('src/publication/'.length), sourceUrl: metadata.sourceUrl, sourceHash: metadata.sourceHash });
+    if (entry.source.startsWith('documents/wiki/')) documents.push({ id: metadata.id, slug: metadata.slug, file: target.slice('content/docs/'.length), sourceUrl: metadata.sourceUrl, sourceHash: metadata.sourceHash });
   }
   const snapshot = safeFile(siteRoot, SNAPSHOT);
   const previous = existsSync(snapshot) ? verifyApprovedContent(siteRoot) : {};
@@ -65,7 +68,7 @@ export function syncApprovedContent(sourceRoot, siteRoot = ROOT) {
       if (!files[file] || digest(readFileSync(safeFile(siteRoot, file))) !== files[file]) throw new Error(`unmanaged existing content: ${file}`);
     }
   }
-  const manifestPath = safeFile(siteRoot, 'src/publication-manifest.json');
+  const manifestPath = safeFile(siteRoot, 'config/publication-manifest.json');
   const manifest = createPublicationManifest(manifestPath, documents);
   for (const { target, content } of copies) {
     mkdirSync(dirname(target), { recursive: true });
@@ -138,7 +141,6 @@ function safeFile(root, path) {
 }
 
 function validatePublication(source, file) {
-  if (!source.startsWith('documents/wiki/') && !source.startsWith('documents/examples/')) return;
   const { metadata } = readContentFile(file);
   if (metadata.visibility !== 'public' || (metadata.publishedAt && metadata.publishedAt > new Date().toISOString().slice(0, 10))) throw new Error(`draft or scheduled source cannot be exported: ${source}`);
   return metadata;
@@ -162,7 +164,7 @@ function managedFiles(root) {
       else if (entry.isFile() && entry.name.endsWith('.md')) result.push(child);
     }
   }
-  Object.values(SOURCES).forEach(prefix => visit(prefix.slice(0, -1)));
+  new Set(Object.values(SOURCES)).forEach(prefix => visit(prefix.slice(0, -1)));
   return result.sort();
 }
 

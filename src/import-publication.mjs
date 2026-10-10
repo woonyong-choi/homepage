@@ -45,7 +45,7 @@ export function importPublication(sourceRoot, assetsRoot) {
   });
   const byId = new Map(documents.map(page => [page.projection_id, page]));
   const available = new Map(documents.map(page => [page.slug, page]));
-  const display = JSON.parse(readFileSync(join(ROOT, 'topics.json'), 'utf8'));
+  const display = readContentFile(join(ROOT, '../content/tech.md')).metadata.topics;
   const topics = { ...display, ...Object.fromEntries(TOPICS.filter(([slug]) => available.has(slug)).map(([slug, field, icon, aliases]) => [slug, { label: display[slug]?.label ?? available.get(slug).title, field, icon, aliases, article: slug, ...(display[slug]?.group ? { group: display[slug].group } : {}), ...(display[slug]?.description ? { description: display[slug].description } : {}) }])) };
   const manifest = { source: 'https://docs.woonyong.com', documents: [] };
   mkdirSync(output, { recursive: true });

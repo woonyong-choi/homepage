@@ -2,7 +2,7 @@
 import { controlImage } from './controls.mjs';
 import { escape } from './markdown.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
-import { href } from './home-config.mjs';
+import { href } from './home-content.mjs';
 import { interviewCards, publicInterviews } from './interviews.mjs';
 import { SocialIcon as socialIcon } from './vendor/theme/ui/index.mjs';
 
@@ -62,8 +62,8 @@ export function technologySection(section, brands) {
   return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));
 }
 
-export function interviewsSection(section, { examples = [], preview = false } = {}) {
-  const entries = publicInterviews(section.items.length ? section.items : examples, preview);
+export function interviewsSection(section, { preview = false } = {}) {
+  const entries = publicInterviews(section.items, preview);
   if (!entries.length) return '';
   // 순서를 유지한 채 앞 절반을 위 줄, 나머지를 아래 줄에 둔다. 한 장이면 한 줄이다. 위 줄은 왼쪽, 아래 줄은 오른쪽으로 흐른다.
   const split = entries.length > 1 ? Math.ceil(entries.length / 2) : entries.length;
