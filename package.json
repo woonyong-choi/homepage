@@ -1,0 +1,42 @@
+{
+  "name": "homepage",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "tokens": "node scripts/build-tokens.mjs",
+    "check:tokens": "python3 scripts/audit-tokens.py",
+    "theme:sync": "node scripts/sync-theme.mjs",
+    "build:product": "node product/build.mjs",
+    "check:product": "node --test product/*.test.mjs",
+    "dev": "npm run build:product && node product/serve.mjs",
+    "theme:product": "node product/sync-theme.mjs",
+    "build:site": "node product/build-publication.mjs",
+    "dev:site": "npm run build:site && node product/serve.mjs --port 8796 --root dist/site",
+    "content:approve": "node product/approved-content.mjs approve",
+    "content:revoke": "node product/approved-content.mjs revoke",
+    "content:sync": "node product/approved-content.mjs sync",
+    "content:check": "node product/approved-content.mjs check"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "@vscode/markdown-it-katex": "^1.1.2",
+    "esbuild": "0.28.2",
+    "highlight.js": "^11.12.0",
+    "jsdom": "^30.1.2",
+    "katex": "^0.19.0",
+    "markdown-it-deflist": "^4.0.0",
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "mermaid": "^12.1.0",
+    "purgecss": "7.0.2",
+    "shiki": "4.5.0",
+    "yaml": "^2.9.1"
+  },
+  "overrides": {
+    "purgecss": {
+      "glob": "13.0.6",
+      "postcss-selector-parser": "7.1.6"
+    }
+  }
+}

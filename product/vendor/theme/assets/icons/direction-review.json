@@ -1,0 +1,511 @@
+{
+  "version": 1,
+  "status": "candidate-awaiting-user-review",
+  "basis": "selection-review.json",
+  "icons": {
+    "data-structures": {
+      "label": "자료구조",
+      "direction": "redesigned",
+      "reason": "연결된 데이터 블록. 두 블록의 실물 면·내용·연결선을 구분",
+      "visualReview": "reviewed-24-48"
+    },
+    "algorithm": {
+      "label": "알고리즘",
+      "direction": "redesigned",
+      "reason": "판단 마름모와 두 결과 카드로 흐름도를 표현. 문자나 장식 화살표 제외",
+      "visualReview": "reviewed-24-48"
+    },
+    "operating-system": {
+      "label": "운영체제",
+      "direction": "redesigned",
+      "reason": "스탠드 없는 운영체제 데스크톱 패널",
+      "visualReview": "pending"
+    },
+    "processor": {
+      "label": "컴퓨터 구조",
+      "direction": "preserved",
+      "reason": "칩·핀·코어 유지. 외곽 모서리만 5로 맞추고 핀 간격 유지",
+      "visualReview": "reviewed-24-48"
+    },
+    "memory": {
+      "label": "메모리",
+      "direction": "preserved",
+      "reason": "기판 색과 두 칩 유지. 금속 접점을 중심축 기준 등간격으로 교정",
+      "visualReview": "reviewed-24-48"
+    },
+    "runtime": {
+      "label": "컴파일",
+      "direction": "redesigned",
+      "reason": "코드 문서에서 실행 파일로 변환하는 과정. 입력과 결과의 재질·색 구분",
+      "visualReview": "reviewed-24-48"
+    },
+    "concurrency": {
+      "label": "동시성",
+      "direction": "redesigned",
+      "reason": "동시에 돌아가는 두 시계. 서로 다른 작업의 진행을 겹친 원형 사물로 표현",
+      "visualReview": "reviewed-24-48"
+    },
+    "network": {
+      "label": "네트워크",
+      "direction": "preserved",
+      "reason": "라우터 유지. 무선 신호 두 원호를 같은 중심과 10·5 반지름으로 교정",
+      "visualReview": "reviewed-24-48"
+    },
+    "api": {
+      "label": "API",
+      "direction": "redesigned",
+      "reason": "두 서비스 패널의 요청과 응답. 문자 대신 두 방향의 계약 관계 표현",
+      "visualReview": "reviewed-24-48"
+    },
+    "architecture": {
+      "label": "시스템 설계",
+      "direction": "redesigned",
+      "reason": "설계 도면 위 구조물. 네트워크 연결이나 목록 카드와 다른 도면 모티프",
+      "visualReview": "reviewed-24-48"
+    },
+    "queue": {
+      "label": "메시지 큐",
+      "direction": "redesigned",
+      "reason": "대기열 슬롯 세 칸과 처리 방향. 반복 체크 대신 첫 항목의 색으로 순서 표현",
+      "visualReview": "reviewed-24-48"
+    },
+    "event": {
+      "label": "이벤트",
+      "direction": "redesigned",
+      "reason": "분홍 타일과 흰 종으로 비교. 바깥 진동선 제거",
+      "visualReview": "pending"
+    },
+    "scheduler": {
+      "label": "배치",
+      "direction": "preserved",
+      "reason": "달력과 시계 유지. 시계 외곽을 정확한 원으로 유지하면서 안전 여백 확대",
+      "visualReview": "reviewed-24-48"
+    },
+    "workflow": {
+      "label": "워크플로",
+      "direction": "redesigned",
+      "reason": "입력 카드와 완료 카드 사이의 작업 순환. 원호와 화살촉 규격 통일",
+      "visualReview": "reviewed-24-48"
+    },
+    "serialization": {
+      "label": "직렬화",
+      "direction": "redesigned",
+      "reason": "접힌 데이터 문서와 중괄호. 일반 코드 괄호와 구분하고 내부 여백 확보",
+      "visualReview": "reviewed-24-48"
+    },
+    "package": {
+      "label": "의존성",
+      "direction": "redesigned",
+      "reason": "필요한 구성 요소의 결합을 맞물리는 직소 퍼즐로 표현. 두 조각의 대응 윤곽과 여백을 유지",
+      "visualReview": "pending"
+    },
+    "database": {
+      "label": "데이터베이스",
+      "direction": "preserved",
+      "reason": "짙은 원통과 흰 구분선 유지. 윗면·밑면·구분선에 같은 타원 곡률 적용",
+      "visualReview": "reviewed-24-48"
+    },
+    "transaction": {
+      "label": "트랜잭션",
+      "direction": "redesigned",
+      "reason": "작업 묶음과 하나의 확정 표시. 일반 문서 체크와 다른 저장 처리 패널",
+      "visualReview": "reviewed-24-48"
+    },
+    "indexing": {
+      "label": "인덱스",
+      "direction": "preserved",
+      "reason": "목록과 돋보기 유지. 손잡이를 45도 방향으로 정렬하고 경계 여백 확보",
+      "visualReview": "reviewed-24-48"
+    },
+    "cache": {
+      "label": "캐시",
+      "direction": "redesigned",
+      "reason": "진한 주황 타일과 흰 번개 복원",
+      "visualReview": "pending"
+    },
+    "search": {
+      "label": "검색",
+      "direction": "redesigned",
+      "reason": "독립 돋보기. 유리 면과 손잡이로 읽히는 사물 실루엣",
+      "visualReview": "reviewed-24-48"
+    },
+    "replication": {
+      "label": "복제",
+      "direction": "redesigned",
+      "reason": "동일한 내용의 두 문서를 겹쳐 복제 표현. 미세한 왕복 화살표 제거",
+      "visualReview": "reviewed-24-48"
+    },
+    "migration": {
+      "label": "마이그레이션",
+      "direction": "redesigned",
+      "reason": "원본 저장소에서 대상 저장소로 이전. 두 원통과 독립 이동 경로로 구성",
+      "visualReview": "reviewed-24-48"
+    },
+    "backup": {
+      "label": "백업",
+      "direction": "redesigned",
+      "reason": "파란 저장 매체와 복구 원호. 저장과 복구를 한 실루엣에 결합",
+      "visualReview": "pending"
+    },
+    "pipeline": {
+      "label": "데이터 파이프라인",
+      "direction": "redesigned",
+      "reason": "초록 타일 안 단계적으로 연결된 데이터 처리 경로",
+      "visualReview": "pending"
+    },
+    "analytics": {
+      "label": "분석",
+      "direction": "redesigned",
+      "reason": "분석 보고서 안의 세 막대. 단순 선 그래프와 구분되는 문서형 모티프",
+      "visualReview": "reviewed-24-48"
+    },
+    "server": {
+      "label": "서버",
+      "direction": "redesigned",
+      "reason": "서버 랙의 짙은 섀시와 밝은 슬롯. 문서 아이콘과 시각적으로 분리",
+      "visualReview": "reviewed-24-48"
+    },
+    "cloud": {
+      "label": "클라우드",
+      "direction": "redesigned",
+      "reason": "클라우드 자체를 구름으로 표현. 업로드와 동기화 동작을 분리하고 겹친 색면으로 구성",
+      "visualReview": "pending"
+    },
+    "container": {
+      "label": "컨테이너",
+      "direction": "redesigned",
+      "reason": "파란 화물 컨테이너의 양쪽 문과 잠금 봉. 지붕 장식 제거",
+      "visualReview": "pending"
+    },
+    "cluster": {
+      "label": "클러스터",
+      "direction": "redesigned",
+      "reason": "상위 관리 노드와 두 서버를 연결한 클러스터. 기기별 실물 면 유지",
+      "visualReview": "reviewed-24-48"
+    },
+    "gateway": {
+      "label": "게이트웨이",
+      "direction": "redesigned",
+      "reason": "경계 안의 통로를 통과하는 경로. 출입구의 면을 살려 평면 사각형과 구분",
+      "visualReview": "reviewed-24-48"
+    },
+    "scaling": {
+      "label": "확장",
+      "direction": "redesigned",
+      "reason": "작은 영역에서 큰 영역으로 확대. 목표 외곽과 대각선 방향을 함께 표현",
+      "visualReview": "reviewed-24-48"
+    },
+    "deploy": {
+      "label": "배포",
+      "direction": "redesigned",
+      "reason": "패키지에서 위로 올리는 배포. 상자와 화살표의 교차를 중앙에 한정",
+      "visualReview": "reviewed-24-48"
+    },
+    "monitoring": {
+      "label": "관측",
+      "direction": "redesigned",
+      "reason": "상태 모니터와 살아 있는 신호. 디스플레이·받침·상태 점의 간격 확보",
+      "visualReview": "reviewed-24-48"
+    },
+    "logs": {
+      "label": "로그",
+      "direction": "redesigned",
+      "reason": "로그 행의 프롬프트와 출력. 브라우저나 서버의 슬롯과 구분",
+      "visualReview": "reviewed-24-48"
+    },
+    "tracing": {
+      "label": "분산 추적",
+      "direction": "redesigned",
+      "reason": "추적 보고서 안의 계층형 실행 구간. 요청 단계의 연결과 시간을 표현",
+      "visualReview": "reviewed-24-48"
+    },
+    "globe": {
+      "label": "인터넷",
+      "direction": "redesigned",
+      "reason": "정확한 원과 타원 경선을 사용한 지구본. 손으로 찌그러진 경선 제거",
+      "visualReview": "reviewed-24-48"
+    },
+    "cost": {
+      "label": "비용",
+      "direction": "preserved",
+      "reason": "동전·원화·절감 표식 유지. W 좌우 대칭과 보조 원의 중심·여백 교정",
+      "visualReview": "reviewed-24-48"
+    },
+    "browser": {
+      "label": "브라우저",
+      "direction": "preserved",
+      "reason": "창·제어점·내용 배치 유지. 본체 모서리 곡률을 문서 계열과 조정",
+      "visualReview": "reviewed-24-48"
+    },
+    "components": {
+      "label": "UI 구성 요소",
+      "direction": "redesigned",
+      "reason": "하나의 UI 안에서 조합되는 구성 요소. 색마다 실제 역할을 분리",
+      "visualReview": "reviewed-24-48"
+    },
+    "state": {
+      "label": "상태 관리",
+      "direction": "redesigned",
+      "reason": "전환 스위치. 활성 상태의 트랙과 이동 가능한 손잡이로 표현",
+      "visualReview": "reviewed-24-48"
+    },
+    "accessibility": {
+      "label": "접근성",
+      "direction": "redesigned",
+      "reason": "통용되는 접근성 사람 형태. 팔·다리 각도와 원형 바탕의 여백 정렬",
+      "visualReview": "reviewed-24-48"
+    },
+    "mobile": {
+      "label": "모바일",
+      "direction": "preserved",
+      "reason": "검은 폰 유지. 상하 여백과 베젤 곡률을 대칭으로 조정",
+      "visualReview": "reviewed-24-48"
+    },
+    "interaction": {
+      "label": "입력",
+      "direction": "redesigned",
+      "reason": "짙은 타일 안 흰 손. 가는 외곽선과 바깥 동작 표시 제거",
+      "visualReview": "pending"
+    },
+    "design-system": {
+      "label": "디자인 시스템",
+      "direction": "redesigned",
+      "reason": "색상 견본과 규격 자. 두 물체의 역할과 면을 유지하며 내부 간격 정리",
+      "visualReview": "reviewed-24-48"
+    },
+    "security": {
+      "label": "보안",
+      "direction": "redesigned",
+      "reason": "채운 초록 방패와 굵은 흰 체크",
+      "visualReview": "pending"
+    },
+    "key": {
+      "label": "인증",
+      "direction": "preserved",
+      "reason": "주황 타일과 흰 열쇠. 원형 머리와 두꺼운 몸체",
+      "visualReview": "pending"
+    },
+    "lock": {
+      "label": "권한",
+      "direction": "redesigned",
+      "reason": "정확한 반원 고리와 두꺼운 잠금 본체. 고리·몸체의 중심 공유",
+      "visualReview": "reviewed-24-48"
+    },
+    "firewall": {
+      "label": "방화벽",
+      "direction": "preserved",
+      "reason": "벽과 불 유지. 불 외곽의 끊긴 곡선 접점을 정리하고 하단을 둥글게 연결",
+      "visualReview": "reviewed-24-48"
+    },
+    "encryption": {
+      "label": "암호화",
+      "direction": "preserved",
+      "reason": "문서와 잠금 유지. 잠금 고리를 정확한 반원으로, 열쇠 구멍을 중심축으로 교정",
+      "visualReview": "reviewed-24-48"
+    },
+    "vulnerability": {
+      "label": "취약점",
+      "direction": "redesigned",
+      "reason": "채운 빨강 방패와 내부 흰 균열",
+      "visualReview": "pending"
+    },
+    "privacy": {
+      "label": "개인정보",
+      "direction": "preserved",
+      "reason": "신원 카드 유지. 어깨선을 원호로 교정하고 얼굴·어깨 중심 통일",
+      "visualReview": "reviewed-24-48"
+    },
+    "model": {
+      "label": "모델",
+      "direction": "preserved",
+      "reason": "노드 연결 구조 유지. 네 외곽 노드의 반지름·좌우·상하 간격 통일",
+      "visualReview": "reviewed-24-48"
+    },
+    "training": {
+      "label": "학습",
+      "direction": "redesigned",
+      "reason": "학습 자료와 반복 습득을 열린 책으로 표현. 조절기만 있던 모티프 교체",
+      "visualReview": "reviewed-24-48"
+    },
+    "inference": {
+      "label": "추론",
+      "direction": "redesigned",
+      "reason": "입력 관계를 처리해 하나의 결과를 내는 모형. 재생 버튼과 구분",
+      "visualReview": "reviewed-24-48"
+    },
+    "dataset": {
+      "label": "데이터셋",
+      "direction": "preserved",
+      "reason": "겹친 표와 강조 셀 유지. 행 높이·선 끝·강조 셀의 내부 여백 교정",
+      "visualReview": "reviewed-24-48"
+    },
+    "embedding": {
+      "label": "임베딩",
+      "direction": "redesigned",
+      "reason": "좌표 공간의 군집. 외곽 원 대신 축을 더해 벡터 위치라는 의미 강조",
+      "visualReview": "reviewed-24-48"
+    },
+    "rag": {
+      "label": "RAG",
+      "direction": "preserved",
+      "reason": "문서와 말풍선 유지. 말풍선 네 모서리를 원호로 교정하고 꼬리 연결 정리",
+      "visualReview": "reviewed-24-48"
+    },
+    "agent": {
+      "label": "에이전트",
+      "direction": "preserved",
+      "reason": "로봇 얼굴·돌기·상태 점 유지. 얼굴과 본체의 곡률 관계 및 미소 원호 교정",
+      "visualReview": "reviewed-24-48"
+    },
+    "prompt": {
+      "label": "프롬프트",
+      "direction": "redesigned",
+      "reason": "모델에 전달하는 지시 문장. CLI 기호 대신 말풍선 안의 문장 행",
+      "visualReview": "reviewed-24-48"
+    },
+    "evaluation": {
+      "label": "모델 평가",
+      "direction": "preserved",
+      "reason": "클립보드와 두 검증 행 유지. 체크 각도와 행 간격 동일하게 교정",
+      "visualReview": "reviewed-24-48"
+    },
+    "vision": {
+      "label": "이미지",
+      "direction": "redesigned",
+      "reason": "스캔 프레임과 문서 복원",
+      "visualReview": "pending"
+    },
+    "audio": {
+      "label": "음성",
+      "direction": "redesigned",
+      "reason": "파란 면과 세로 파형 복원",
+      "visualReview": "pending"
+    },
+    "terminal": {
+      "label": "CLI",
+      "direction": "redesigned",
+      "reason": "짙은 타일과 흰 명령 기호 복원",
+      "visualReview": "pending"
+    },
+    "version-control": {
+      "label": "Git",
+      "direction": "preserved",
+      "reason": "세 커밋 유지. 분기 연결을 접선이 이어지는 사분원으로 교정",
+      "visualReview": "reviewed-24-48"
+    },
+    "build": {
+      "label": "빌드",
+      "direction": "redesigned",
+      "reason": "파란 타일 안 조립 도구. 상자 대신 망치와 공구",
+      "visualReview": "pending"
+    },
+    "testing": {
+      "label": "테스트",
+      "direction": "redesigned",
+      "reason": "두 테스트 항목과 결과가 있는 검사표. 단독 체크 타일보다 구체적인 검증 작업",
+      "visualReview": "reviewed-24-48"
+    },
+    "debugging": {
+      "label": "디버깅",
+      "direction": "preserved",
+      "reason": "벌레 유지. 중앙 분리선 하단과 몸체 곡선 사이 안전 여백 조정",
+      "visualReview": "reviewed-24-48"
+    },
+    "performance": {
+      "label": "성능",
+      "direction": "redesigned",
+      "reason": "노란 타일과 가속하는 로켓. 속도계 대신 추진 모티프",
+      "visualReview": "pending"
+    },
+    "refactoring": {
+      "label": "리팩터링",
+      "direction": "redesigned",
+      "reason": "흩어진 두 구조를 정리한 결과. 입력 관계와 결과를 분리해 반복 화살표 제거",
+      "visualReview": "reviewed-24-48"
+    },
+    "code-review": {
+      "label": "코드 리뷰",
+      "direction": "redesigned",
+      "reason": "코드가 담긴 흰 대화창. 검토와 논의를 표현",
+      "visualReview": "pending"
+    },
+    "person": {
+      "label": "사용자",
+      "direction": "redesigned",
+      "reason": "사용자 식별용 인물. Things의 짙은 타일과 흰 기호 방식으로 묘사를 제한",
+      "visualReview": "pending"
+    },
+    "team": {
+      "label": "팀",
+      "direction": "redesigned",
+      "reason": "세 인물의 머리·몸체 비례를 통일. 뒤 두 명과 앞 인물의 면 구분",
+      "visualReview": "reviewed-24-48"
+    },
+    "administrator": {
+      "label": "관리자",
+      "direction": "redesigned",
+      "reason": "사용자와 권한 방패. 확인된 사용자 배지 대신 관리 권한의 사물 표현",
+      "visualReview": "reviewed-24-48"
+    },
+    "portfolio": {
+      "label": "포트폴리오",
+      "direction": "redesigned",
+      "reason": "대표 작업과 두 결과물을 모은 작품 보드. 서류 가방 제외",
+      "visualReview": "pending"
+    },
+    "project": {
+      "label": "개발 프로젝트",
+      "direction": "redesigned",
+      "reason": "코드가 담긴 프로젝트 폴더. 일반 앱 격자와 구분",
+      "visualReview": "reviewed-24-48"
+    },
+    "document": {
+      "label": "문서",
+      "direction": "preserved",
+      "reason": "접힌 종이 유지. 모서리를 정확한 원호로 교정하고 접힘의 접선 연결 정리",
+      "visualReview": "reviewed-24-48"
+    },
+    "idea": {
+      "label": "문제 해결",
+      "direction": "redesigned",
+      "reason": "노란 타일과 흰 전구 복원",
+      "visualReview": "pending"
+    },
+    "experiment": {
+      "label": "실험",
+      "direction": "preserved",
+      "reason": "회색 플라스크와 파란 액체 유지. 바닥 좌우 곡선과 기포 반지름 통일",
+      "visualReview": "reviewed-24-48"
+    },
+    "retrospective": {
+      "label": "회고",
+      "direction": "preserved",
+      "reason": "노트와 되돌아보기 유지. 일정한 반지름의 회전과 45도 화살촉으로 교정",
+      "visualReview": "reviewed-24-48"
+    },
+    "incident": {
+      "label": "장애 분석",
+      "direction": "preserved",
+      "reason": "느낌표 유지. 타일 외곽·내부 기호의 중심과 안전 여백 조정",
+      "visualReview": "reviewed-24-48"
+    },
+    "watch": {
+      "label": "워치",
+      "direction": "redesigned",
+      "reason": "검은 워치. 폰과 같은 3 두께 베젤과 대응되는 내부 곡률 적용",
+      "visualReview": "reviewed-24-48"
+    },
+    "tablet": {
+      "label": "태블릿",
+      "direction": "preserved",
+      "reason": "검은 태블릿 유지. 폰과 같은 외곽·화면 곡률 관계 적용",
+      "visualReview": "reviewed-24-48"
+    },
+    "laptop": {
+      "label": "노트북",
+      "direction": "redesigned",
+      "reason": "검은 노트북. 실제 받침·화면·홈 비례를 살리고 베젤 규격 공유",
+      "visualReview": "reviewed-24-48"
+    }
+  }
+}

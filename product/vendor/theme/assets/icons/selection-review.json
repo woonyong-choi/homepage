@@ -1,0 +1,524 @@
+{
+  "version": 1,
+  "basis": "user-review-of-restored-set",
+  "scope": "concept-and-device-icons",
+  "globalReview": [
+    "corner-curvature",
+    "circle-regularity",
+    "arrow-geometry",
+    "stroke-joins",
+    "internal-spacing"
+  ],
+  "rules": {
+    "accepted": "preserve-metaphor-and-composition; geometry-refinement-only",
+    "conditional": "preserve-metaphor; correct-listed-defect",
+    "rework": "redesign-for-recognizability; no-batch-promotion"
+  },
+  "icons": {
+    "data-structures": {
+      "label": "자료구조",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "7d528255b5e1ccb96c6f45037fc8e80150757ba035e1128aba78be270341b445"
+    },
+    "algorithm": {
+      "label": "알고리즘",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "30a4cad577f6d35a313e7be3270268f465908488275936c6773ebe6e4bef1ae6"
+    },
+    "operating-system": {
+      "label": "운영체제",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "681704e2c8b06ff27a20ab2b5d4296c28e0516e0965a76bf02e63879acc07daf"
+    },
+    "processor": {
+      "label": "컴퓨터 구조",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "83a822d62684633d751a9c4c0373dc02382d029b57e1d093520ca38980f044d9"
+    },
+    "memory": {
+      "label": "메모리",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "8c9c07a4610177e6983304722dd1e587012da31d18ebb711d7cf3c52411a78dc"
+    },
+    "runtime": {
+      "label": "컴파일",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "4d263486f25fae3e7d28bbdb76a5b5fc7d88f8eea120d085398e8971ae3173fd"
+    },
+    "concurrency": {
+      "label": "동시성",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "c7f6958143894d2e893e83ea5f15534696abbc205097a091012753a463032434"
+    },
+    "network": {
+      "label": "네트워크",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "ed5684e62c8c8657181eb257b04afb09ff637f7e12fee4fe51bf20ad60194847"
+    },
+    "api": {
+      "label": "API",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "cbc9c16c726ff18ad6157910f045797903dbd5311ce534dd7f5c5b6cea8d0862"
+    },
+    "architecture": {
+      "label": "시스템 설계",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "42f07092e20132767511986447108185193bf08f2110228be62b131fee97f8f1"
+    },
+    "queue": {
+      "label": "메시지 큐",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "8ad06150318c89fbbdf3e17a7830855b2e2826d515176d8798231198d96d0202"
+    },
+    "event": {
+      "label": "이벤트",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "7ef343676c9cb94b208434decb22e4571ac83f7fbdef498e0b6fcb22d349250f"
+    },
+    "scheduler": {
+      "label": "배치",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "1501439500eb5f2474df952a63a337fd87645232ba1314e61680d36874f03023"
+    },
+    "workflow": {
+      "label": "워크플로",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "96993bd80f9d8ed001d1720c1ada6cbe6387880cfd93d5e30a2c17ecf6a8eb8b"
+    },
+    "serialization": {
+      "label": "직렬화",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "b9cbee4ffc263e03c033e42925f8921ba1721f70cb50e37fe48f83116b1e7082"
+    },
+    "package": {
+      "label": "의존성",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "94921b2d25ddb24d51d45b135d7a11457e4833c9e3d5686f2b3063696b60c6f3"
+    },
+    "database": {
+      "label": "데이터베이스",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "8cdb224b47a8fd424d08a0570473e50b8e4bea2b2cf47f9553100ff97a8936ad"
+    },
+    "transaction": {
+      "label": "트랜잭션",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "d88e1783aef102e906d8ff67658d99929a73f94c416d3578ff475271b803babb"
+    },
+    "indexing": {
+      "label": "인덱스",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "7c0a5a3584567d8d9d2a53cf5277a037a888dde7c43eed5698e9a7e41a9d513e"
+    },
+    "cache": {
+      "label": "캐시",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "c64162ac8fcd714581b1278d164366e3d247a301db8c6a73066a447abfd7cd26"
+    },
+    "search": {
+      "label": "검색",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "fe489b0635575831d512c161b0e07ac9a0b13e35a2643ed06fe50301c06ff1d6"
+    },
+    "replication": {
+      "label": "복제",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "7f27e1f5a4725120e89a1f8ff9ca825f37e4d7984bbf1fe37adb4dfcd5533fa3"
+    },
+    "migration": {
+      "label": "마이그레이션",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "e3c98e052905309d471d7c5288c91a1baa840dbffd9c6a7150ba7a99fc7757c4"
+    },
+    "backup": {
+      "label": "백업",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "f547e9b026f1ade266f35b14bb10655505ddfc020a3dd9c3d8587e135f97a990"
+    },
+    "pipeline": {
+      "label": "데이터 파이프라인",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "11b8d566f5e6ea4bdfd30cea9ff6030d63e6ca856e60e0020a6a984367e6fbd5"
+    },
+    "analytics": {
+      "label": "분석",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "9738aa66f3ac6a2f241382e220bb88d9f36f313e7c5ff86fbf5f89047dc4bcfc"
+    },
+    "server": {
+      "label": "서버",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "cba324b78bd7a568125c2c33c60ff063640978b49372834ba8bc14d219b379b8"
+    },
+    "cloud": {
+      "label": "클라우드",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "dc878564475fb28855dba409aaa8da382981a928cc168def03de153996bbbddc"
+    },
+    "container": {
+      "label": "컨테이너",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "ca454b159cd8b2923f26c8d6135ff4326a82122bf09c1ee3ff4735d67567e32e"
+    },
+    "cluster": {
+      "label": "클러스터",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "6191d2e9ccb6eed27e1e647c6de72262fecde6e3a1de9ef310edc7caced66c52"
+    },
+    "gateway": {
+      "label": "게이트웨이",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "3e487a16670153eadeb82d0e986a94310f4ca89f6899003b202aa17ed572bb71"
+    },
+    "scaling": {
+      "label": "확장",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "2fc39787cd41403a059ee9d5712e6d707f0f210ddc2cc8798285b28036783fa7"
+    },
+    "deploy": {
+      "label": "배포",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "33bc877678b4b84813b3e4630cf247b3cca6e94e27320a3d0e06d55352c5d085"
+    },
+    "monitoring": {
+      "label": "관측",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "4d9033c3ad74073d8cb121e0db03adca11e22d5281ef0bc8183fd2de5ecbd454"
+    },
+    "logs": {
+      "label": "로그",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "25a396c21509c011c07a67bdbb2be620977b71c966802da1d8626f3df0a7b553"
+    },
+    "tracing": {
+      "label": "분산 추적",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "3e6918a07b6b5c7caf018ec6bbd60df354c4581adb843af0b834eebeb5a0fa23"
+    },
+    "globe": {
+      "label": "인터넷",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "32772552477f869401a456abe901240ec51534f63b61ee3e3f5e159defc05af6"
+    },
+    "cost": {
+      "label": "비용",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "7aff2735c510b9263b7d6d1459dee4d9611f22fded4287ce8251b8a00d574fee"
+    },
+    "browser": {
+      "label": "브라우저",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "b00641e2479d0c633773d6dd2dd39e30c862c008b50cebb51b155d0a78f420d4"
+    },
+    "components": {
+      "label": "UI 구성 요소",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "f1bda0107a9cf5a1373835966d6c493b1fd1ea9281791252d002f9ef7bff89f9"
+    },
+    "state": {
+      "label": "상태 관리",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "0759b900d4b8bd52fb73572ca023a5e9582ad23cae5fb0e39218f97b41d7e0c9"
+    },
+    "accessibility": {
+      "label": "접근성",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "9b7cdc5e5a1483b9ab46f6a998fdca3679efffefc103c0c4ccd0a019600cda9f"
+    },
+    "mobile": {
+      "label": "모바일",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "f98cacabaa87a4acfb650166f3143a7d760ce3789e8d0f1e5aea931ed0e59a22"
+    },
+    "interaction": {
+      "label": "입력",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "d7fa7c8cefd485dad6cc0cfcc47f909e67169c29c6f1ae724ef31293ee531619"
+    },
+    "design-system": {
+      "label": "디자인 시스템",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "d3ffca77a371852e532d90fcae17edd87c0064a7433db327475c45c0946d0827"
+    },
+    "security": {
+      "label": "보안",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "5854fcd99ec40c3679b8a180dcccb444aadbf22ea089f7e909b5b839eb2a3829"
+    },
+    "key": {
+      "label": "인증",
+      "status": "conditional",
+      "defect": "circle-regularity",
+      "referenceBodySha256": "a11909adb8a86520905a5bc48503e3bbd5326a3b86078869b6d8359a6d3207a7"
+    },
+    "lock": {
+      "label": "권한",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "ad7de5ddfc9ca4fe528c89a6db7eb0ec3604218256c4aa0fb2e83c901c8905b1"
+    },
+    "firewall": {
+      "label": "방화벽",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "6a74364c0792bd130f63fdd04ac7a772a10ddc604efbcc2a7446bebf1ce2a707"
+    },
+    "encryption": {
+      "label": "암호화",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "3f049681e95957967fbc1fd12afd192fb33ad2fa33f0f0eedb49e63c5690e9e7"
+    },
+    "vulnerability": {
+      "label": "취약점",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "a3509987e81b9b7003c30716f4a28eb6e7ab66f3f927d866e868699f8837ff45"
+    },
+    "privacy": {
+      "label": "개인정보",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "f89a4aa41040fff3eef0d75f68b2dbd680bcf7f68716d946e6df8fbce52e8543"
+    },
+    "model": {
+      "label": "모델",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "7011dab465c5ccf447af92cef4bed12d42e56cc3af14c1c71fb513d3362db973"
+    },
+    "training": {
+      "label": "학습",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "a64ee09487bf1144a3f99c3448ac602a250ead4074cc2644bb78bcc1ef5447fa"
+    },
+    "inference": {
+      "label": "추론",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "d92830a04b677ae352d782b2dbc225875618b2b0cf1e82514329d0e5b1407e5b"
+    },
+    "dataset": {
+      "label": "데이터셋",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "dbd45fbdf04b34efe767fc0c09a5a224f6a1177871b9ffbc928707818e63bb60"
+    },
+    "embedding": {
+      "label": "임베딩",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "727376c4eeb3524dab4ed3d72a7df009f26187bfa49b06fc6094d614070b1214"
+    },
+    "rag": {
+      "label": "RAG",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "532cb6086e34aa52f1fbcd5bc991f92c65cded10152f312de6dbb11c6576baac"
+    },
+    "agent": {
+      "label": "에이전트",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "0c368b2219f8bb10a4ba1f6038eaf82310289ef035680ef57b4848b20fe73a4c"
+    },
+    "prompt": {
+      "label": "프롬프트",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "14bfbde041285197a4960dddb6224672af0e808a856020f828db1a56b6b08364"
+    },
+    "evaluation": {
+      "label": "모델 평가",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "dcafc800036ed98a95d72f78e53ecd1942f94605c35de6be5bbd35f636a5d1ba"
+    },
+    "vision": {
+      "label": "이미지",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "6fcce461f75907ab1169249e9455af9ed9f9432679e6a4059f1c0650517920ca"
+    },
+    "audio": {
+      "label": "음성",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "9ebd0c382df462a14e7141757fb11affe5338daebd5265ddf38e038459cfff8d"
+    },
+    "terminal": {
+      "label": "CLI",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "bc3c71f78ed97f9fac306900ff7e8a8a53c031f4a1544687c3604dce1e81a71f"
+    },
+    "version-control": {
+      "label": "Git",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "35971dad50642b3b232aee2520b2e2822c0b0f1c5fd52390bdd35e03b9054521"
+    },
+    "build": {
+      "label": "빌드",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "6e38faa2a89e45e9fb453c3f9431cee023c61efc651b2d0fbfbedd4bb95333bc"
+    },
+    "testing": {
+      "label": "테스트",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "fa8c04edb7ee727ebd20fc0adc25e8bacccf908399fef387a0a79bb9af06a47f"
+    },
+    "debugging": {
+      "label": "디버깅",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "bfd79dc04e75fca54f56629581e40acd909d7f8d5868754ca184ebc7f174f1d1"
+    },
+    "performance": {
+      "label": "성능",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "ab030fb32240ad6f30db5b7e84c46d5473cde7472c9a2013922f02e85fb985eb"
+    },
+    "refactoring": {
+      "label": "리팩터링",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "ca75b95626995ab977fb1923ef0619dbe9d65b48720a8404acc4ea3d3aabb62f"
+    },
+    "code-review": {
+      "label": "코드 리뷰",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "f8ad07bd07b355c93a8d60b4342e5f6d5248160f0647d83b3b34a223c210a27f"
+    },
+    "person": {
+      "label": "사용자",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "190953edcc858c5e68f630d132f0dcc238d9584c8c3d08c12bbfb75eeb073360"
+    },
+    "team": {
+      "label": "팀",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "5c697feb8d1e5dc232d1d6c57ce3f60bb8c5163a7189b977977e00c9a5502e0f"
+    },
+    "administrator": {
+      "label": "관리자",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "36ebf95f4bb60b07abc096f82921684360cabd59020cd72fa27df59134c84166"
+    },
+    "portfolio": {
+      "label": "포트폴리오",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "cb68873867efc2f53c393b58a7f0808d7d508c357807dc5c82a5aae40499c560"
+    },
+    "project": {
+      "label": "개발 프로젝트",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "f727fab052d1547dcea254f12cdb202bcfe10f9100d1c4bda22c2ded9d65f078"
+    },
+    "document": {
+      "label": "문서",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "0cba1e44dbacf64bb55536cbe87d84b42641cd1fc2c08c0c330102bbd2e5ec16"
+    },
+    "idea": {
+      "label": "문제 해결",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "607eddc8b5f20a763a01cc4e235105059cdbd9d300ad18110f67995faabaaecf"
+    },
+    "experiment": {
+      "label": "실험",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "b60cdcd46620c660963dab9b6a6be25a5bc06c55cb2ce6eaec16772d72143ab7"
+    },
+    "retrospective": {
+      "label": "회고",
+      "status": "conditional",
+      "defect": "arrow-shape",
+      "referenceBodySha256": "97538565087d45b9ef4c60c5911aa504b6727e9cee1d96a5a6c3c816416520e1"
+    },
+    "incident": {
+      "label": "장애 분석",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "33e1e35efcbd028df8d1fd69f2a48ada867eb5f9f53d8109684c64cd851e8c41"
+    },
+    "watch": {
+      "label": "워치",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "8a9cef3dc10f8ccd8ba39896842ea54ed11f9f2338a9278cb0957b861c45ea36"
+    },
+    "tablet": {
+      "label": "태블릿",
+      "status": "accepted",
+      "defect": null,
+      "referenceBodySha256": "53ddc34c37a07e39e30a95f2c2828382881d217f8cc0045584ad7b431f4d123d"
+    },
+    "laptop": {
+      "label": "노트북",
+      "status": "rework",
+      "defect": null,
+      "referenceBodySha256": "f9e309f9bc93b91cae6fb0b42849b37179b40bced7afe8d700790f0dbd155e2f"
+    }
+  },
+  "approvalScope": "direction-only"
+}

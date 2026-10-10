@@ -1,8 +1,8 @@
-# blog
+# homepage
 
 ## 목적
 
-현재 Markdown 문서 UI를 개인 블로그와 사이트로 발전시킨다. 소스와 콘텐츠는 이 저장소에서 수정한다.
+현재 Markdown 문서 UI를 개인 블로그와 사이트로 발전시킨다. 사이트 코드는 이 저장소에서 수정하고 문서 원문은 비공개 assets 저장소에서 관리한다.
 
 ## 작업 규칙
 
@@ -11,8 +11,13 @@
 - 이슈 하나당 작업 브랜치와 PR 하나를 사용한다. 후속 변경은 기본 브랜치에 직접 커밋하거나 push하지 않는다.
 - 커밋은 `type(scope): 한글 설명` 형식으로 작성하고 기존 사용자 Git 작성자 설정을 사용한다. 작성 도구를 나타내는 메시지나 트레일러를 추가하지 않는다.
 - 사용자의 요청 없이 PR을 병합하지 않는다.
-- 제공된 `tokens.json`, `variables.css`, `theme.css`, `DESIGN.md`는 명시적 변경 요청 전까지 보존한다.
-- Markdown은 `content/`, 메뉴는 `content/navigation.json`과 `content/javascript-navigation.json`에서 관리한다.
+- 디자인 정본은 design-tokens 저장소의 themes/base다. vendor/design-theme는 가져온 완성본이고 tokens.json, styles.source.css는 기존 경로 호환 사본이다. 직접 수정하지 않는다. theme.css는 가져온 토큰에서 생성하고 모든 페이지가 직접 로드한다.
+- 토큰과 CSS 변수 이름에 특정 브랜드·프로젝트 이름을 사용하지 않는다. 기본 색상은 색 계열, 소비자 참조는 일반 UI 역할로 이름 짓는다. 실제 글꼴명·자산 파일명·출처 설명은 이 규칙의 대상이 아니다.
+- 값을 추가하기 전 기존 토큰의 동일 값, 의미에 맞는 별칭, 간격·타이포그래피 파생식을 순서대로 검토한다. 새 값에는 사용처와 기존 값으로 대체할 수 없는 이유를 기록한다.
+- `theme.css`와 `styles.css`는 생성물이다. 배치는 공통 테마의 styles.css에서 토큰을 참조한다. `DESIGN.md`는 제공된 참고 문서로 보존한다.
+- `product/publication/`, `product/examples/`, `product/content/`, `content/`의 Markdown은 승인된 사본이다. 직접 수정하지 않고 assets의 원문 수정 → 명시적 승인 → `content:sync` 순서로 가져온다. 새 문서와 승인 이후 달라진 내용은 자동으로 공개하지 않는다. 메뉴는 `content/navigation.json`과 `content/javascript-navigation.json`에서 관리한다.
 - `pages/`와 `search-index.json`은 생성물이므로 직접 수정하거나 커밋하지 않는다.
 - `node build.mjs`와 변경한 JavaScript의 `node --check`를 실행한다. 화면 변경은 해당 내부 URL에서 브라우저로 확인한다.
 - 실제 검증 범위를 넘어서 완료나 원본과의 동일성을 주장하지 않는다.
+- UI 변경 전 Things 공식 사이트에서 대응 화면의 실제 동작·DOM 구조·상태 전환을 직접 확인한다. 정지 화면이나 기존 토큰만 확인한 상태로 사용성 일치를 주장하지 않는다.
+- 구현은 확인한 원본의 탐색·입력·결과·해제 흐름을 유지한다. 원본에 없는 확장 기능도 기존 구성 요소와 위계 안에 넣고 관측 근거·확장 범위·검증 결과를 이슈에 기록한다.

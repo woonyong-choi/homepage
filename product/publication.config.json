@@ -1,0 +1,47 @@
+{
+  "name": "최우녕",
+  "description": "문서와 개발 흐름에서 반복되는 문제를 코드로 해결합니다.",
+  "github": "https://github.com/woonyong-choi",
+  "linkedin": "https://www.linkedin.com/in/woonyong-choi",
+  "avatar": "https://avatars.githubusercontent.com/u/230139989?v=4",
+  "profileSource": "https://github.com/woonyong-choi/woonyong-kr",
+  "projects": [
+    {
+      "title": "Manta",
+      "description": "Obsidian의 코드, 일정, 노트 관계와 다이어그램 작업을 위한 도구입니다.",
+      "href": "https://github.com/woonyong-choi/manta-code-blocks",
+      "icon": "project",
+      "links": [
+        {
+          "title": "Calendar",
+          "href": "https://github.com/woonyong-choi/manta-calendar"
+        },
+        {
+          "title": "Graph",
+          "href": "https://github.com/woonyong-choi/manta-graph"
+        },
+        {
+          "title": "Diagrams",
+          "href": "https://github.com/woonyong-choi/manta-diagrams"
+        }
+      ]
+    },
+    {
+      "title": "Saturn",
+      "description": "로컬 폴더와 CLI 세션, 대화와 검증 기록을 함께 다루는 작업 공간입니다.",
+      "href": "https://github.com/woonyong-choi/saturn",
+      "icon": "terminal",
+      "links": []
+    }
+  ],
+  "comments": {
+    "repoId": "R_kgDOU8zFrQ",
+    "category": "Comments",
+    "categoryId": "DIC_kwDOU8zFrc4DHTnu",
+    "themeUrl": "https://cdn.jsdelivr.net/gh/woonyong-choi/design-tokens@084b0a596c6eea8712a9f2c6f451953f8977e654/dist/simple/assets/giscus.css"
+  },
+  "repository": "woonyong-choi/homepage",
+  "notes": {
+    "projects": false
+  }
+}
