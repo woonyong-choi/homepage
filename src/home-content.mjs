@@ -189,12 +189,28 @@ const SECTIONS = {
     return { ...intro(item, path, context, '사람들이 하는 말', '동료평가 소개 섹션입니다.'), links: links(item.links, `${path}.links`, context), items };
   },
   contact(section, path, context) {
-    const item = record(section, path, ['id', 'type', 'enabled', 'icon', 'title', 'description', 'button', 'email']);
-    const email = text(item.email, `${path}.email`);
-    if (!EMAIL.test(email)) fail(`${path}.email`, `올바른 이메일 주소가 아닙니다: ${email}`);
+    const mode = section?.mode ?? 'email';
+    if (!['email', 'newsletter'].includes(mode)) fail(`${path}.mode`, 'email 또는 newsletter여야 합니다');
+    const common = ['id', 'type', 'enabled', 'mode', 'icon', 'title', 'description', 'button', 'email'];
+    const item = record(section, path, mode === 'email' ? common : [...common, 'endpoint', 'field', 'note', 'privacy']);
+    const email = text(item.email, `${path}.email`, mode === 'email');
+    if (email && !EMAIL.test(email)) fail(`${path}.email`, `올바른 이메일 주소가 아닙니다: ${email}`);
+    if (mode === 'newsletter') {
+      const field = text(item.field, `${path}.field`, false) ?? 'email';
+      if (!/^[A-Za-z][\w-]*$/.test(field)) fail(`${path}.field`, '영문자로 시작하는 입력 이름이어야 합니다');
+      const privacy = item.privacy === undefined ? undefined : record(item.privacy, `${path}.privacy`, ['label', 'href']);
+      return {
+        ...intro(item, path, context, '소식 받아보기', '새 글과 프로젝트 소식을 이메일로 보내 드립니다.'),
+        mode, email, field,
+        button: text(item.button, `${path}.button`, false) ?? '구독',
+        endpoint: item.endpoint === undefined ? undefined : secure(text(item.endpoint, `${path}.endpoint`), `${path}.endpoint`),
+        note: text(item.note, `${path}.note`, false),
+        privacy: privacy && { label: text(privacy.label, `${path}.privacy.label`), href: href(privacy.href, `${path}.privacy.href`) },
+      };
+    }
     return {
       ...intro(item, path, context, '함께 만들어 볼까요?', '프로젝트와 협업에 관한 이야기를 기다립니다.'),
-      email,
+      mode, email,
       button: text(item.button, `${path}.button`, false) ?? '메일 보내기',
     };
   },
@@ -205,7 +221,7 @@ export const DERIVED_IDS = {
   hero: id => [id, `${id}-video`, `${id}-player`],
   technologies: id => [id, `${id}-title`],
   interviews: id => [id, `${id}-title`],
-  contact: id => [id, `${id}-title`],
+  contact: id => [id, `${id}-title`, `${id}-email`, `${id}-state`],
 };
 const domIds = section => (DERIVED_IDS[section.type] ?? (id => [id]))(section.id);
 

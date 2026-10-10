@@ -2,6 +2,7 @@
 import { escape } from './markdown.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 import { href } from './home-content.mjs';
+import { renderContentSvg } from './content-icons.mjs';
 import { interviewCards, publicInterviews } from './interviews.mjs';
 import { SocialIcon as socialIcon } from './vendor/theme/ui/index.mjs';
 import { iconFile } from './vendor/theme/ui/build/icons.mjs';
@@ -24,7 +25,10 @@ function heroShowcase({ id, video, image }) {
 
 export function heroSection(hero) {
   const action = heroAction(hero);
-  return String(ui.Hero({ id: hero.id, title: hero.title, description: hero.description, icon: hero.icon ? trusted(picture({ ...hero.icon, alt: hero.icon.alt || hero.title || '' }, 'app-hero-logo', 'eager')) : undefined, action: action ? trusted(action) : undefined, showcase: trusted(heroShowcase(hero)) }));
+  const logo = hero.icon?.src.endsWith('.svg') && hero.icon.src.startsWith('/assets/')
+    ? renderContentSvg(hero.icon.src, 'app-hero-logo')
+    : hero.icon ? picture({ ...hero.icon, alt: hero.icon.alt || hero.title || '' }, 'app-hero-logo', 'eager') : undefined;
+  return String(ui.Hero({ id: hero.id, title: hero.title, description: hero.description, icon: logo ? trusted(logo) : undefined, action: action ? trusted(action) : undefined, showcase: trusted(heroShowcase(hero)) }));
 }
 
 // 프로젝트, 기술, 인터뷰, 연락이 함께 쓰는 섹션 머리: 아이콘, 제목, 설명, 링크 행, 동작 링크.
@@ -74,7 +78,20 @@ export function interviewsSection(section, { preview = false } = {}) {
   return String(ui.Section({ id, variant: 'quotes', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(body) }));
 }
 
+function newsletter(contact, id) {
+  const isReady = !!contact.endpoint;
+  const heading = sectionIntro({ icon: contact.icon, title: contact.title, titleId: `${id}-title`, description: contact.description });
+  const privacy = contact.privacy ? ` <a href="${escape(contact.privacy.href)}">${escape(contact.privacy.label)}</a>` : '';
+  const state = isReady
+    ? (contact.note || privacy ? `<p class="app-newsletter-note" id="${id}-state">${escape(contact.note ?? '')}${privacy}</p>` : '')
+    : `<p class="app-newsletter-note" id="${id}-state" role="status">구독 서비스를 준비 중입니다. 지금은 이메일 주소를 받지 않습니다.${privacy}</p>`;
+  const form = String(ui.EmailForm({ id, action: contact.endpoint || undefined, field: contact.field, label: '이메일 주소', placeholder: 'me@example.com', button: contact.button, note: state ? trusted(state) : undefined }));
+  const direct = contact.email ? `<p class="app-caption">메일로 직접 문의하려면 <a href="mailto:${escape(contact.email)}">${escape(contact.email)}</a></p>` : '';
+  return String(ui.Section({ id, variant: 'form', labelledBy: `${id}-title`, heading: trusted(heading), content: trusted(form + direct) }));
+}
+
 export function contactSection(contact) {
+  if (contact.mode === 'newsletter') return newsletter(contact, escape(contact.id));
   const titleId = `${contact.id}-title`;
   const heading = sectionIntro({ ...contact, titleId, action: { label: contact.button, href: `mailto:${contact.email}` } });
   return String(ui.Section({ id: contact.id, labelledBy: titleId, heading: trusted(heading), content: trusted('') }));

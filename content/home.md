@@ -3,6 +3,8 @@ sections:
   - id: hero
     type: hero
     enabled: true
+    icon:
+      src: /assets/backend-engineer.svg
     video:
       src: /media/woonyong-interview.mp4
       poster: /media/woonyong-interview-poster.jpg
@@ -36,13 +38,16 @@ sections:
   - id: contact
     type: contact
     enabled: true
-    title: 함께 만들어 볼까요?
-    description: 프로젝트와 협업에 관한 이야기를 기다립니다.
-    button: 메일 보내기
-    icon: mail
+    mode: newsletter
+    title: 소식 받아보기
+    description: 새 글과 프로젝트 소식을 이메일로 보내 드립니다.
+    button: 구독
+    icon:
+      src: /theme/assets/icons/communication/newsletter.png
+      alt: ""
     email: woonyong.contact@gmail.com
 ---
 
-# 최우녕
+# 백엔드 엔지니어
 
 흩어진 지식을 연결해, 다시 꺼내 쓸 수 있는 도구를 만듭니다.

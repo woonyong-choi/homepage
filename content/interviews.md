@@ -2,7 +2,9 @@
 id: interviews
 type: interviews
 enabled: true
-icon: chat-quote
+icon:
+  src: /theme/assets/icons/communication/testimonials.png
+  alt: ""
 links:
   - label: GitHub
     href: https://github.com/woonyong-choi
