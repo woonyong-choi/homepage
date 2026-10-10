@@ -9,7 +9,7 @@ import { clientEntrypoints } from './publication-assets.mjs';
 import { heroSection, projectsSection, technologySection, interviewsSection, contactSection } from './home-sections.mjs';
 import { documentNavigation, documentOutline, documentPager } from './document-navigation.mjs';
 import { postArticle, shiftHeadings, detailLevels } from './post-article.mjs';
-import { publicationMetadata } from './publication-metadata.mjs';
+import { publicationMetadata, siteTitle } from './publication-metadata.mjs';
 import { usesMath, MATH_STYLESHEET } from './math-assets.mjs';
 
 const BRANDS = getIconCatalog().brands;
@@ -37,7 +37,7 @@ export function documentShell(page, body, context) {
   const searchScript = entries.includes('publication.js') ? `<script type="module" async src="/publication.js?v=${hashOf('publication.js')}"></script>` : '';
   const scripts = entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
   const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src)) : undefined;
-  return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', title: config.name, homeLabel: `${config.logo?.alt || config.name} 홈`, logo, items: navigation.map(([label, href]) => ({ label, href })), active })}${body}${footer}${searchScript}</body></html>`;
+  return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation.map(([label, href]) => ({ label, href })), active })}${body}${footer}${searchScript}</body></html>`;
 }
 
 export function searchBox({ large = false, query = '' } = {}) {

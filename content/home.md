@@ -3,7 +3,7 @@ sections:
   - id: hero
     type: hero
     enabled: true
-    icon:
+    wordmark:
       src: /assets/backend-engineer.svg
     video:
       src: /media/woonyong-interview.mp4

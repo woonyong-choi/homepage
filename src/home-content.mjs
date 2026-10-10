@@ -116,12 +116,14 @@ function links(value, path, context) {
 
 const SECTIONS = {
   hero(section, path, context) {
-    const item = record(section, path, ['id', 'type', 'enabled', 'title', 'description', 'icon', 'image', 'video', 'action']);
+    const item = record(section, path, ['id', 'type', 'enabled', 'title', 'description', 'icon', 'wordmark', 'image', 'video', 'action']);
+    if (item.icon !== undefined && item.wordmark !== undefined) fail(path, 'icon과 wordmark는 함께 쓸 수 없습니다');
     const video = item.video === undefined ? undefined : record(item.video, `${path}.video`, ['src', 'poster', 'title']);
     return {
       title: text(item.title, `${path}.title`, false),
       description: text(item.description, `${path}.description`),
       icon: sectionIcon(item.icon, `${path}.icon`, context),
+      wordmark: picture(item.wordmark, `${path}.wordmark`, context),
       image: picture(item.image, `${path}.image`, context),
       video: video && {
         src: media(video.src, `${path}.video.src`, VIDEO_TYPES, context),

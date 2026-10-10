@@ -25,9 +25,11 @@ function heroShowcase({ id, video, image }) {
 
 export function heroSection(hero) {
   const action = heroAction(hero);
-  const logo = hero.icon?.src.endsWith('.svg') && hero.icon.src.startsWith('/assets/')
-    ? renderContentSvg(hero.icon.src, 'app-hero-logo')
-    : hero.icon ? picture({ ...hero.icon, alt: hero.icon.alt || hero.title || '' }, 'app-hero-logo', 'eager') : undefined;
+  const image = hero.wordmark ?? hero.icon;
+  const className = hero.wordmark ? 'app-hero-wordmark' : 'app-hero-logo';
+  const logo = image?.src.endsWith('.svg') && image.src.startsWith('/assets/')
+    ? renderContentSvg(image.src, className)
+    : image ? picture({ ...image, alt: image.alt || hero.title || '' }, className, 'eager') : undefined;
   return String(ui.Hero({ id: hero.id, title: hero.title, description: hero.description, icon: logo ? trusted(logo) : undefined, action: action ? trusted(action) : undefined, showcase: trusted(heroShowcase(hero)) }));
 }
 

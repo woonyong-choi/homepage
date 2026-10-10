@@ -19,6 +19,7 @@ test('errors_name_the_file_and_the_exact_path', () => {
   rejects('sections:\n  - { id: a, type: banner }', /home\.md sections\[0\]\.type: .*banner/);
   rejects('sections:\n  - { id: a, type: hero, description: x, colour: red }', /sections\[0\]\.colour: 알 수 없는 설정/);
   rejects('sections:\n  - { id: a, type: hero }', /sections\[0\]\.description: 값이 필요/);
+  rejects('sections:\n  - { id: a, type: hero, description: x, icon: mail, wordmark: { src: /assets/backend-engineer.svg } }', /icon과 wordmark는 함께 쓸 수 없습니다/);
   rejects('sections:\n  - { id: a, type: technologies, items: [python, rust] }', /sections\[0\]\.items\[1\]: 알 수 없는 기술/);
   rejects('sections:\n  - { id: a, type: technologies, items: [python, python] }', /sections\[0\]\.items\[1\]: 중복/);
   rejects('sections:\n  - { id: a, type: projects, items: [{ title: 가, description: 나 }, { title: 다 }] }', /sections\[0\]\.items\[1\]\.description/);
