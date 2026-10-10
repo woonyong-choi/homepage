@@ -16,7 +16,7 @@ sections:
       alt: Things 임시 로고
     # image: 동영상이 없을 때 소개 아래에 큰 이미지를 보인다.
     # image:
-    #   src: /assets/meettheallnewthings2-io75.jpg
+    #   src: /theme/assets/illustrations/project-placeholder.svg
     #   alt: 설명
     video:
       src: /media/woonyong-interview.mp4
