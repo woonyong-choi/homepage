@@ -190,4 +190,8 @@ npm run content:check
 
 ## 댓글 테마 배포
 
-운영 댓글은 같은 공개 사이트의 `/theme/assets/giscus.css`를 해시 주소로 읽는다. 비공개 디자인 저장소의 CDN 주소나 고정 커밋을 참조하지 않는다. 공개 origin이 없는 로컬 미리보기는 giscus 기본 light 테마를 쓰며, 공통 사용자 테마의 iframe 적용은 실제 HTTPS 배포에서 확인한다.
+HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/giscus.css`를 디자인 해시 주소로 읽는다. origin이 없거나 HTTP인 미리보기는 공개 소비 저장소의 CSS를 jsDelivr의 HTTPS 주소로 읽는다. 빌드는 현재 CSS가 마지막으로 바뀐 Git 커밋을 찾아 파일 바이트를 대조하고 주소를 만든다. 특정 커밋을 코드나 설정에 고정하지 않으며 비공개 디자인 저장소의 주소를 사용하지 않는다.
+
+공통 디자인 자동 전달은 내보내기와 의존성 설치 뒤 변경을 커밋하고 push한다. 홈페이지 검증은 이 push 뒤 실행되므로 바뀐 댓글 CSS도 커밋된 상태에서 주소를 계산한다.
+
+미리보기의 CSS 주소를 직접 정하려면 `config/site.json`의 `comments.themeUrl`에 같은 공통 CSS를 제공하는 공개 HTTPS 주소를 지정한다. Git 이력이 없거나 CSS에 미커밋 변경이 있으면 명시한 주소가 필요하다. 외부 주소는 [giscus 사용자 테마 계약](https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md#data-theme)에 따라 익명 CORS로 CSS를 제공해야 한다. 확인할 때는 공개 응답과 현재 CSS의 SHA-256, HTTP 상태·MIME·CORS 및 실제 iframe의 계산 스타일을 대조한다.
