@@ -1,5 +1,5 @@
 // 블로그 피드와 상세가 같은 글 구조(날짜, 제목, 도입문, 본문, 꼬리말)를 쓰도록 문자열 조각만 조립한다.
-import { escape } from './markdown.mjs';
+import { escape, imageSize } from './markdown.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 
 // 본문 제목의 태그 단계를 문서 안의 위치에 맞춰 옮긴다. 원래 단계는 app-heading-N 클래스로 남는다.
@@ -21,7 +21,9 @@ export function postArticle(post, { detail = false, tags = '', footer = '', afte
 
 export function thumbnailImage(page, eager = false) {
   if (!page.thumbnail) return '';
+  const size = imageSize(page.thumbnail.src);
+  const dimensions = size ? ` width="${size[0]}" height="${size[1]}"` : '';
   const position = page.thumbnail.position;
   const crop = position ? ` style="object-position:${position.x}% ${position.y}%"` : '';
-  return `<img src="${escape(page.thumbnail.src)}" alt="${escape(page.thumbnail.alt)}" width="960" height="540" loading="${eager ? 'eager' : 'lazy'}" decoding="async"${crop}>`;
+  return `<img src="${escape(page.thumbnail.src)}" alt="${escape(page.thumbnail.alt)}"${dimensions} loading="${eager ? 'eager' : 'lazy'}" decoding="async"${crop}>`;
 }
