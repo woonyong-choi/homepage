@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+const [base] = process.argv.slice(2);
+if (!base || base.startsWith('-')) throw new Error('usage: check-design-update.mjs <base>');
+const before = JSON.parse(execFileSync('git', ['show', `${base}:package.json`], { encoding: 'utf8' }));
+const after = JSON.parse(readFileSync('package.json', 'utf8'));
+assert.match(after.devDependencies.daphnis, /^github:woonyong-choi\/daphnis#[a-f0-9]{40}$/);
+delete before.devDependencies.daphnis;
+delete after.devDependencies.daphnis;
+assert.deepEqual(after, before, 'Only the Daphnis revision may change automatically');

@@ -1,1 +1,0 @@
-The OAuth Server API allows you to build custom OAuth consent screens for your application. Only relevant when the OAuth 2.1 server is enabled in Supabase Auth.

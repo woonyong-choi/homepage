@@ -1,10 +1,10 @@
 # Markdown 글 작성
 
-글은 `.md` 파일 하나이며 일반 Markdown만으로 쓴다. `ui:` 구성 요소는 복각 검토 화면용 선택 기능이고 글 작성에 필요하지 않다. 실제 렌더링은 미리보기의 `/articles/markdown-guide/`에서 확인한다. 원문은 `product/examples/blog/markdown-guide.md`이며 `example: true`라 운영 빌드, 검색, RSS, 사이트맵에서 빠진다.
+글은 `.md` 파일 하나이며 일반 Markdown만으로 쓴다. `ui:` 구성 요소는 복각 검토 화면용 선택 기능이고 글 작성에 필요하지 않다. 실제 렌더링은 미리보기의 `/articles/markdown-guide/`에서 확인한다. 원문은 `src/examples/blog/markdown-guide.md`이며 `example: true`라 운영 빌드, 검색, RSS, 사이트맵에서 빠진다.
 
 ## 파일과 메타데이터
 
-`product/publication/`(공개 입력)이나 `product/examples/`(예시)에 하위 폴더에 `.md` 파일을 둔다. 주소는 `slug`, 문서 계층은 `parent`, 내부 분류는 `category`로 결정하며 폴더 경로와 무관하다. `tags`는 공통 태그 목록을 사용하고 빈 배열을 허용한다. 맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
+`src/publication/`(공개 입력)이나 `src/examples/`(예시)에 하위 폴더에 `.md` 파일을 둔다. 주소는 `slug`, 문서 계층은 `parent`, 내부 분류는 `category`로 결정하며 폴더 경로와 무관하다. `tags`는 공통 태그 목록을 사용하고 빈 배열을 허용한다. 맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
 
 | 필드 | 필수 | 내용 |
 |---|---|---|
@@ -51,7 +51,7 @@
 | 정의 목록 | 용어 줄 다음 `: 설명` | `markdown-it-deflist`의 의미를 따른다. 여러 문단과 블록 포함 가능 |
 | 접기 | `<details>`(`open` 선택), `<summary>글자</summary>` | 속성이 없는 두 태그만. 안은 Markdown이며 펜스 코드 안의 `</details>`는 짝이 아니다 |
 | 수식 | `$...$`, `$$...$$` | KaTeX. 아래 절 |
-| 도표 | ` ```mermaid ` | Mermaid. 아래 절 |
+| 도표 | ` ```dap ` | Daphnis. 아래 절 |
 | 키·메뉴 | `:kbd[⌘ K]` `:menu[파일]` | |
 | 아이콘·설명 | `:icon[search]` `:tip[글]{text="설명"}` | 아래 "구성 블록" 절 |
 | 구성 블록 | `:::tabs` `:::note` `:::steps` 등 | 아래 "구성 블록" 절 |
@@ -90,17 +90,21 @@ items:
 
 ### 도표
 
-`mermaid` 코드 펜스는 Mermaid 도표다. 블록 하나는 `figure.app-diagram`으로 나온다. 도표 영역, 열린 `details`의 원문(`app-code` 코드와 복사 버튼), 상태 문구로 이루어진다. 도표가 있는 페이지에만 `mermaid-loader.js`를 연결하고, 도표가 화면 300px 안에 들어오면 로컬 렌더러(`/mermaid/render.js`와 도표 종류별 조각, 필요한 조각만 내려받음)를 한 번 불러와 그린다. 외부 서버나 CDN은 쓰지 않는다. 렌더러는 `securityLevel: 'strict'`로 라벨의 HTML을 인코딩하고 `click`·`javascript:` 링크를 막으며, `secure` 목록으로 글 안의 `%%{init}%%`가 보안 수준과 테마를 바꾸지 못하게 한다. 글꼴과 색은 테마 토큰(`--site-font`, `--site-ink`, `--site-muted`, `--site-soft`, `--site-card`)을 읽는다. 그리기에 성공하면 원문을 접고, 스크립트가 없거나 실패하면 원문이 열린 채 남아 읽고 복사할 수 있다. 도표 ID는 글 ID에 번호를 붙여 페이지 안에서 겹치지 않는다. 문법 오류는 `check:product`가 콘텐츠의 모든 `mermaid` 블록을 구문 분석해 잡는다. 실제 그림은 브라우저에서 확인한다.
+`dap` 펜스에는 `daphnis 2`로 시작하는 원본을 적는다. 문서 빌드가 Daphnis 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
+
+카드·선은 한 번 선언하고 `scene "이름"`으로 장면을 나눈다. 빈 장면은 정지, 이동이 있는 장면은 한 번 재생이 기본이다. 반복은 `mode=loop`, 배속은 `speed=`, 연속 트래픽은 `track … every= …`로 표현한다. 장면 선택 줄은 문서 탭과 같은 공통 부품이다. 문법 복사·HTML 다운로드·전체화면은 도표 프레임에서 제공한다.
+
+차트의 외부 data 파일과 사용자 아이콘 폴더는 문서 삽입에서 허용하지 않는다. 오류는 문서 경로와 함께 빌드를 실패시킨다. 브라우저는 레이아웃을 계산하지 않고 시간표를 재생하며, 필요한 페이지에만 프레임 크기·테마 연결 코드를 싣는다. `mermaid`는 일반 코드 블록으로 표시한다.
 
 ### 지원하지 않는 것
 
 - 임의 HTML, 인라인 스타일, 스크립트, iframe.
-- KaTeX가 신뢰하지 않는 명령, Mermaid의 `click`과 `%%{init}%%` 보안·테마 변경.
-- ` ```math ` 펜스(수식은 `$$`로 쓴다), Mermaid의 아이콘 팩과 외부 URL 로딩.
+- KaTeX가 신뢰하지 않는 명령과 임의의 실행 코드.
+- ` ```math ` 펜스(수식은 `$$`로 쓴다), 도표의 외부 데이터·아이콘 파일 로딩.
 
 ## 구성 블록
 
-기기별 탭, 단계, 영상, 질문과 답, 카드 링크는 `:::` 블록으로 쓴다. 안쪽은 일반 Markdown이라 JSON이나 이스케이프한 문자열이 필요 없다. 기존 ` ```ui:이름 ` 블록은 그대로 동작하고 둘을 섞어 쓸 수 있다. 완성된 글은 `product/examples/software-design/document-composition.md`이고 미리보기의 `/articles/document-composition/`에서 본다.
+기기별 탭, 단계, 영상, 질문과 답, 카드 링크는 `:::` 블록으로 쓴다. 안쪽은 일반 Markdown이라 JSON이나 이스케이프한 문자열이 필요 없다. 기존 ` ```ui:이름 ` 블록은 그대로 동작하고 둘을 섞어 쓸 수 있다. 완성된 글은 `src/examples/software-design/document-composition.md`이고 미리보기의 `/articles/document-composition/`에서 본다.
 
 ````markdown
 :::platform
@@ -169,7 +173,7 @@ items:
 
 - 블록 중첩은 3단계까지다(`tabs` > `tab` > `note` 등). 목록과 인용 안에서는 블록을 쓸 수 없다.
 - `tab`, `note`, `warning` 안에서는 제목, 각주, 코드 블록, 이미지 등 일반 Markdown을 쓸 수 있다. `fineprint`, `steps`, `qa`, `cards`는 위 표의 본문 제한을 따른다. 제목과 각주 ID는 글 전체에서 겹치지 않는다. 숨은 탭 안의 `##`도 목차에 들어간다.
-- `src`와 `poster`는 `product/assets/`에 있는 파일 이름만 쓴다. 경로, `..`, 없는 파일은 오류다.
+- `src`와 `poster`는 `src/assets/`에 있는 파일 이름만 쓴다. 경로, `..`, 없는 파일은 오류다.
 - `href`는 위 "원본 글 요소"와 같은 규칙이다(`https://`, `mailto:`, `#`, `/`로 시작하는 사이트 경로).
 - `cards`의 글 끝 "이어서 읽을 글"에는 `related`를 쓴다. 작은 아이콘, 제목 한 줄, 갈매기표로 된 한 줄 카드이고 `description`은 그려지지 않는다. 긴 제목은 말줄임으로 줄이고(전체 글은 읽기 도구가 읽는다) 좁은 화면에서는 한 열이다. 글 하단에 자동으로 붙는 "함께 읽기"와 "이 문서의 수정 제안" 링크는 없다. 나머지 변형은 다른 용도의 기존 표현이다.
 - `icon`은 테마의 콘텐츠 아이콘 이름이다. 글 앞의 `contentIcon.name`과 같은 목록이다.
@@ -182,13 +186,13 @@ items:
 :::tabs segmented
 @tab 변경 전
 
-![변경 전 화면](/things/assets/repeating-comparison-1-io80.png)
+![변경 전 화면](/assets/repeating-comparison-1-io80.png)
 
 기존 화면입니다.
 
 @tab 변경 후
 
-![변경 후 화면](/things/assets/repeating-comparison-2-io80.png)
+![변경 후 화면](/assets/repeating-comparison-2-io80.png)
 
 개선한 화면입니다.
 
@@ -245,7 +249,7 @@ const message = "넓은 코드블록";
 |---|---|
 | `![대체 글](주소)` | Markdown 이미지. 대체 글을 캡션으로 표시하지 않는다 |
 | `::figure src=파일 alt="설명"` | 로컬 이미지. `caption`을 쓴 경우에만 아래 설명 표시 |
-| `::video src=영상.mp4 poster=미리보기.png alt="설명"` | 로컬 MP4 재생. 영상과 미리보기 파일을 `product/assets/`에 직접 추가 |
+| `::video src=영상.mp4 poster=미리보기.png alt="설명"` | 로컬 MP4 재생. 영상과 미리보기 파일을 `src/assets/`에 직접 추가 |
 | 영상의 `caption` | 작성한 설명을 영상 아래에 표시. 생략하면 설명 없음 |
 | 영상의 재생 조작 | 영상 안에서 시작·일시정지·탐색. 재생이 시작되면 브라우저 재생 막대 표시 |
 | 영상 아래 Play 버튼 | 본문 영상에는 없음. 홈의 프로젝트 영상 보기 링크는 별도 구성 요소로 유지 |
@@ -276,9 +280,9 @@ const message = "넓은 코드블록";
 
 `:::` 블록은 같은 `app-*` 클래스와 마크업을 낸다. 스타일은 `:::steps`의 `.app-steps`와 `:icon`의 `.app-inline-icon`만 테마에 더했다. 동작은 기존 `document.js`(탭 화살표·Home·End, 팝오버 설명)와 `video.js`를 그대로 쓴다. `ui:` 블록은 변경이 없고 `:::` 블록 안에서도, 반대로도 쓸 수 있다.
 
-탭, 강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`product/vendor/theme/assets/components.mjs`, 정의는 design-tokens `docs/styles.md`의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 이 저장소의 `markdown.mjs`, `directive-blocks.mjs`, `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `article-toc.mjs`는 입력을 정리해 넘기는 어댑터다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
+탭, 강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`src/vendor/theme/assets/components.mjs`, 정의는 design-tokens `docs/styles.md`의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 이 저장소의 `markdown.mjs`, `directive-blocks.mjs`, `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `article-toc.mjs`는 입력을 정리해 넘기는 어댑터다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
 
-구현은 `product/directives.mjs`(markdown-it 블록·인라인 규칙), `directive-syntax.mjs`(줄 분류, 속성 읽기, 검사), `directive-blocks.mjs`(블록 정의표)다. 새 블록은 정의표에 허용 속성, 놓을 자리, 본문 규칙, 출력을 한 항목으로 추가한다.
+구현은 `src/directives.mjs`(markdown-it 블록·인라인 규칙), `directive-syntax.mjs`(줄 분류, 속성 읽기, 검사), `directive-blocks.mjs`(블록 정의표)다. 새 블록은 정의표에 허용 속성, 놓을 자리, 본문 규칙, 출력을 한 항목으로 추가한다.
 
 ## 코드 블록
 
@@ -286,19 +290,19 @@ const message = "넓은 코드블록";
 
 ### 구문 역할과 색
 
-[IntelliJ Language Defaults](https://plugins.jetbrains.com/docs/intellij/color-scheme-management.html)의 공통 역할을 참고한다. IntelliJ 테마의 색·글꼴을 가져오지 않는다. `code-highlight.mjs`는 문법 분석 결과의 scope를 역할에 연결하고, 테마의 `SyntaxToken`이 `app-syntax-*` 클래스를 출력한다. 색·굵기는 공통 테마의 `site.syntax-*`와 기존 글꼴 토큰이 정한다. 분석기의 인라인 색과 외부 테마 CSS는 출력하지 않는다. 브라우저는 분석기를 내려받지 않는다.
+[IntelliJ Language Defaults](https://plugins.jetbrains.com/docs/intellij/color-scheme-management.html)의 공통 역할을 참고한다. IntelliJ 테마의 색·글꼴을 가져오지 않는다. `code-highlight.mjs`는 문법 분석 결과의 scope를 역할에 연결하고, 테마의 `SyntaxToken`이 `app-syntax-*` 클래스를 출력한다. 색·굵기는 공통 테마의 `color.syntax-*`와 기존 글꼴 토큰이 정한다. 분석기의 인라인 색과 외부 테마 CSS는 출력하지 않는다. 브라우저는 분석기를 내려받지 않는다.
 
 | 역할 | 연결 대상 | 테마 토큰 |
 |---|---|---|
-| `function` | 함수·메서드 선언과 호출, 셸 명령 | `site.syntax-function` |
-| `type` | 클래스·인터페이스·타입 이름 | `site.syntax-type` |
-| `property` | 프로퍼티·필드, JSON 키, 마크업 속성 | `site.syntax-property` |
-| `parameter` | 문법이 식별한 매개변수 | `site.syntax-parameter` |
-| `variable` | 문법이 식별한 변수 | `site.syntax-variable` |
-| `constant` | 문법이 식별한 상수 | `site.syntax-constant` |
-| `keyword` | 예약어, 불리언·null 리터럴 | `site.syntax-keyword` |
-| `string`, `number`, `comment` | 문자열·숫자·주석 | 같은 이름의 `site.syntax-*` |
-| `operator`, `punctuation`, `annotation` | 연산자·구분자·애노테이션 | 같은 이름의 `site.syntax-*` |
+| `function` | 함수·메서드 선언과 호출, 셸 명령 | `color.syntax-function` |
+| `type` | 클래스·인터페이스·타입 이름 | `color.syntax-type` |
+| `property` | 프로퍼티·필드, JSON 키, 마크업 속성 | `color.syntax-property` |
+| `parameter` | 문법이 식별한 매개변수 | `color.syntax-parameter` |
+| `variable` | 문법이 식별한 변수 | `color.syntax-variable` |
+| `constant` | 문법이 식별한 상수 | `color.syntax-constant` |
+| `keyword` | 예약어, 불리언·null 리터럴 | `color.syntax-keyword` |
+| `string`, `number`, `comment` | 문자열·숫자·주석 | 같은 이름의 `color.syntax-*` |
+| `operator`, `punctuation`, `annotation` | 연산자·구분자·애노테이션 | 같은 이름의 `color.syntax-*` |
 
 Java의 필드 선언과 지역 변수는 문법의 클래스·메서드 범위로 구분한다. Python의 호출·속성 접근과 JSON 키는 해당 문법의 scope를 연결한다. 코드 문자열에 별도 정규식을 덧씌워 함수나 변수를 추정하지 않는다.
 

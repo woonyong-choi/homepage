@@ -1,6 +1,6 @@
 # 홈 설정 가이드
 
-홈은 `product/home.config.yaml` 한 파일로 조립한다. `sections` 목록의 순서가 화면 순서이고, 각 항목의 `enabled: false`가 그 섹션을 끈다. 꺼진 섹션은 HTML, 복사할 자산, 스크립트에 남지 않는다.
+홈은 `src/home.config.yaml` 한 파일로 조립한다. `sections` 목록의 순서가 화면 순서이고, 각 항목의 `enabled: false`가 그 섹션을 끈다. 꺼진 섹션은 HTML, 복사할 자산, 스크립트에 남지 않는다.
 
 기본 설정의 projects는 꺼져 있다. 두 예시 항목과 섹션 렌더러는 재사용을 위해 남긴다. 실제 프로젝트의 제목·설명·링크·이미지로 바꾼 뒤 해당 섹션의 `enabled`를 `true`로 설정하면 표시한다.
 
@@ -11,9 +11,9 @@ npm run check:product     # 계약 테스트
 
 잘못된 설정은 `home.config.yaml sections[1].items[0].link.href: ...`처럼 틀린 경로를 포함한 오류로 빌드를 멈춘다.
 
-공개 전 인터뷰 검토에는 Git에서 제외되는 `product/interviews.local.json`에 카드 배열을 둔다. 미리보기 빌드에서만 활성 인터뷰 섹션 하나의 `items`를 대체하고 같은 검증을 적용한다. 공개 빌드(`npm run build:site -- --production`)는 이 파일을 읽지 않는다. 원본 답변·연락처·비공개 출처는 사이트 입력으로 복사하지 않는다. 공개 범위가 확인된 카드만 `home.config.yaml`로 옮긴다.
+공개 전 인터뷰 검토에는 Git에서 제외되는 `src/interviews.local.json`에 카드 배열을 둔다. 미리보기 빌드에서만 활성 인터뷰 섹션 하나의 `items`를 대체하고 같은 검증을 적용한다. 공개 빌드(`npm run build:site -- --production`)는 이 파일을 읽지 않는다. 원본 답변·연락처·비공개 출처는 사이트 입력으로 복사하지 않는다. 공개 범위가 확인된 카드만 `home.config.yaml`로 옮긴다.
 
-회사 로고는 원본 비율과 색을 유지한다. 출처는 `product/assets/company-logos-NOTICE.txt`에 기록하고 원본 해시는 `token-audit.json`의 `preserved`로 검사한다. 해당 로고를 사용하는 빌드에만 출처 고지를 포함한다.
+회사 로고는 원본 비율과 색을 유지한다. 출처는 `src/assets/company-logos-NOTICE.txt`에 기록하고 원본 해시는 `token-audit.json`의 `preserved`로 검사한다. 해당 로고를 사용하는 빌드에만 출처 고지를 포함한다.
 
 인터뷰 하단은 회사 아이콘·회사명·직무로 구성하며 이름을 표시하지 않는다. 회사명은 더 짧은 공식 영문 표기를 사용할 수 있다. 직무는 클라이언트 개발자·소프트웨어 개발자·3D 디자이너·대표처럼 담당 분야가 드러나는 명칭을 쓴다. 확인되지 않은 직무는 생략한다. 제공받은 로고는 여백까지 포함한 원본 전체를 같은 크기의 이미지 영역에 비율대로 표시한다. 배경이 필요한 로고만 원본 크기를 유지한 배경 합성본을 별도 파일로 둔다.
 
@@ -69,7 +69,7 @@ sections:
 | interviews | 머리 `icon`, `title`(기본 `사람들이 하는 말`), `description`(기본 `동료평가 소개 섹션입니다.`), `links`(`{label, href?, icon?}`). `items`: `id`, `summary` 필수, `profile`(`{image?, title, subtitle?}`), `url`, `example` 선택 |
 | contact | `mode`: `email` 또는 `newsletter` |
 
-- hero: 영상이 있고 `action.href`가 없으면 재생 버튼(`action.label`은 처음 문구)이 된다. `href`를 쓰면 그 링크가 된다. 현재 홈은 사용자가 선택한 인터뷰 영상의 로컬 MP4를 사용한다. 프로젝트 영상 보기에서 같은 페이지 안의 영상 영역이 펼쳐지며 0초부터 재생한다. 출처와 웹 변환 정보는 `product/media/README.md`에 기록한다. `image`는 영상이 없을 때 소개 아래에 크게 보인다. 재생 버튼의 문구는 항상 `action.label`로 고정이고 아이콘만 재생과 일시정지 두 가지다. 영상이 끝나면 재생 아이콘으로 돌아가며 다시 누르면 처음부터 재생한다. 영상은 크롬 등에서 색이 어긋나지 않도록 `yuv420p`, BT.709 H.264로 둔다(변환 방법은 `product/media/README.md`).
+- hero: 영상이 있고 `action.href`가 없으면 재생 버튼(`action.label`은 처음 문구)이 된다. `href`를 쓰면 그 링크가 된다. 현재 홈은 사용자가 선택한 인터뷰 영상의 로컬 MP4를 사용한다. 프로젝트 영상 보기에서 같은 페이지 안의 영상 영역이 펼쳐지며 0초부터 재생한다. 출처와 웹 변환 정보는 `src/media/README.md`에 기록한다. `image`는 영상이 없을 때 소개 아래에 크게 보인다. 재생 버튼의 문구는 항상 `action.label`로 고정이고 아이콘만 재생과 일시정지 두 가지다. 영상이 끝나면 재생 아이콘으로 돌아가며 다시 누르면 처음부터 재생한다. 영상은 크롬 등에서 색이 어긋나지 않도록 `yuv420p`, BT.709 H.264로 둔다(변환 방법은 `src/media/README.md`).
 - projects: 링크 문구는 `link.label`, 이동 주소는 `link.href`이며 둘 다 직접 정한다(예: `label: 기능 보기`, `href: /wiki/`). 기본 예시는 `자세히 보기`다. 항목 하나가 제목 → 소개 → 링크 → 큰 이미지 구간 하나다. 항목을 추가한 만큼 구간이 늘고, 목록이 비면 섹션이 없다. 기본값은 더미 2개이며 자체 placeholder 이미지(`project-placeholder.svg`)와 아이콘(`project-placeholder-icon.svg`)을 쓴다. 두 아이콘과 기술 섹션의 키캡 아이콘(`technology-keycap-icon.svg`)은 원본 PNG처럼 64px 안에서 그림 영역을 x11..53, y12..53(약 42x41)에 맞춘다. 공통 CSS가 투명 패딩을 전제로 마진을 주기 때문이다.
 - technologies, interviews, contact(newsletter)는 projects와 같은 머리(아이콘, 제목, 설명)를 쓰고 그 아래에 기술 로고 흐름, 인터뷰 카드 흐름, 구독 입력이 이어진다. 머리 바탕과 간격은 섹션 종류가 정한다.
 - interviews: `links`는 제목 아래의 링크 행이다. `icon`은 내장 이름(`github`, `rss`, `linkedin`) 또는 이미지 파일이고 생략하면 `label`이 글자로 보인다. 내장 아이콘은 `href`를 비워 둘 수 있으며 그러면 아이콘만 보이고 링크도 클릭도 없다(`aria-label`은 `<label> · 주소 준비 중`). 주소가 생기면 `href`만 채운다. 어떤 계정 주소도 추정해 넣지 않는다.
@@ -100,9 +100,9 @@ items:
 ## 값 규칙
 
 - 링크 `href`: HTTPS 주소, `/`로 시작하는 사이트 경로, `#`으로 시작하는 페이지 안 연결만 허용한다. `javascript:`, `data:`, `//host`, 공백은 거부한다.
-- 이미지와 영상: `/assets/`, `/media/` 아래 파일(빌드 전에 존재 확인) 또는 HTTPS 주소. 파일은 `product/assets/`, `product/media/`에 둔다. 확장자는 이미지 png·jpg·webp·gif·svg·avif, 영상 mp4·webm.
+- 이미지와 영상: `/assets/`, `/media/` 아래 파일(빌드 전에 존재 확인) 또는 HTTPS 주소. 파일은 `src/assets/`, `src/media/`에 둔다. 확장자는 이미지 png·jpg·webp·gif·svg·avif, 영상 mp4·webm.
 - 문자열 값이 숫자나 날짜로 읽히는 경우 따옴표로 감싼다.
 
 ## 더미 자산 출처
 
-기본 프로젝트 예시 01·02는 배치 확인용이다. 아이콘 `fancysection-icon-features-io70.png`, `fancysection-icon-design-io70.png`, `fancysection-icon-newsletter-io70.png`, 이미지 `whatsnew-collage-io60.png`, `meettheallnewthings2-io75.jpg`는 Things 공식 사이트(https://culturedcode.com/things/)의 자산이며 `product/assets.json`에 원본 URL과 해시가 있다. 실제 프로젝트가 아니므로 공개 전에 교체한다. 구간의 구조와 배치는 홈의 Simply Powerful, Things Newsletter 구간(2026-10-09 확인)을 따르고 `simple` 테마의 `app-landing-*`, `app-newsletter` 규칙을 재사용한다.
+프로젝트 구간은 실제 내용을 채우기 전까지 꺼 둔다. 프로젝트 기본 그림은 공통 테마의 `assets/illustrations/`에서 가져온다. 사용 중인 외부 자산의 출처는 `src/assets.json`에 있다. 구간의 구조와 배치는 홈의 Simply Powerful, Things Newsletter 구간(2026-10-09 확인)을 따르고 공통 디자인의 `app-landing-*`, `app-newsletter` 규칙을 재사용한다.
