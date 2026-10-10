@@ -93,7 +93,17 @@ export function wikiLanding(documents, context, field, recent = '') {
   const fields = knowledgeFields(documents, context.topics, field);
   const projects = !field && context.config?.notes?.projects === true ? projectSection(context.config.projects) : '';
   if (field) return `<main id="main" class="app-shell">${searchBox({ large: true })}${ui.CollectionHeader({ title: FIELD_NAMES[field], backHref: '/docs/', backLabel: '돌아가기' })}${fields}</main>`;
-  return `<main id="main" class="app-shell app-body">${searchBox({ large: true })}<h1 class="app-sr">Search</h1>${recent}${projects}${fields}</main>`;
+  return `<main id="main" class="app-shell app-body">${searchBox({ large: true })}<h1 class="app-sr">Search</h1>${recent}${projects}${fields}${guideSections(context.config?.guides ?? [])}</main>`;
+}
+
+function guideSections(guides) {
+  return guides.map(guide => {
+    const cards = guide.items.map((item, index) => ui.Card({
+      ...item, headingLevel: 3, compact: index > 0,
+      icon: index === 0 ? ui.trusted(subjectIcon(guide.icon)) : undefined,
+    }));
+    return `<section class="app-support-group"><h2>${escape(guide.title)}</h2>${ui.CardGroup({ split: true, cards })}</section>`;
+  }).join('');
 }
 
 export function projectSection(projects) {

@@ -45,5 +45,34 @@
   "repository": "woonyong-choi/homepage",
   "notes": {
     "projects": false
-  }
+  },
+  "guides": [
+    {
+      "title": "ThinkFlow",
+      "icon": "hierarchy",
+      "items": [
+        {
+          "title": "ThinkFlow 시작하기",
+          "description": "텍스트로 구조와 흐름을 그리고, 움직이는 그림을 문서에 넣습니다.",
+          "href": "https://github.com/woonyong-choi/thinkflow/blob/main/docs/usage.md"
+        },
+        {
+          "title": "특징과 표현",
+          "href": "https://github.com/woonyong-choi/thinkflow/blob/main/docs/design/expression-coverage.md#지원하는-표현"
+        },
+        {
+          "title": "장면과 애니메이션",
+          "href": "https://github.com/woonyong-choi/thinkflow/blob/main/docs/usage.md#구조에-장면-추가하기"
+        },
+        {
+          "title": "Markdown과 배포",
+          "href": "https://github.com/woonyong-choi/thinkflow/blob/main/docs/design/markdown.md"
+        },
+        {
+          "title": "문제 해결",
+          "href": "https://github.com/woonyong-choi/thinkflow/blob/main/docs/usage.md#문제가-있을-때"
+        }
+      ]
+    }
+  ]
 }
