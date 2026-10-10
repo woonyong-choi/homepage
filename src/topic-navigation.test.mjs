@@ -31,7 +31,7 @@ test('createTopicTrees_keeps_parent_relations_and_excludes_blog_documents', () =
   assert.equal(tree[2].children[0].page.slug, 'f');
   assert.deepEqual(tree[0].children[0].children.map(node => node.page.slug), ['e']);
   assert.strictEqual(tree[0].children[0].children[0].page, pages[4]);
-  const html = articlePage(pages[1], pages, { topicTrees, topics: {
+  const html = articlePage(pages[1], { topicTrees, topics: {
     python: { label: 'Python', group: 'tech', article: 'a' },
     javascript: { label: 'JavaScript', group: 'tech', article: 'foreign' },
   } });
@@ -80,7 +80,7 @@ test('document_pager_uses_sidebar_order_without_crossing_topics_or_including_blo
 test('wiki_pager_follows_source_attribution_and_precedes_comments', () => {
   const root = page('root', null, { sourceUrl: 'https://example.com/source' });
   const pages = [root, page('child', 'root')];
-  const html = articlePage(root, pages, { topicTrees: createTopicTrees(pages),
+  const html = articlePage(root, { topicTrees: createTopicTrees(pages),
     topics: { python: { label: 'Python', article: 'root' } } }, '<section id="comments">댓글</section>');
   const positions = ['app-document-body', 'app-source-link', 'app-document-pager', 'id="comments"']
     .map(marker => html.indexOf(marker));

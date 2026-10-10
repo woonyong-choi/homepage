@@ -47,6 +47,17 @@ test('본문에서만 일치하면 실제 일치 부분을 결과 설명으로 �
   assert.equal(result.entries[0].description, '복사');
 });
 
+test('search_pages_keep_twelve_results_and_clamp_the_last_page_without_losing_entries', () => {
+  const entries = prepareIndex(Array.from({ length: 25 }, (_, id) => ({ ...source[0], id: `document-${String(id).padStart(2, '0')}` })));
+  const pages = [1, 2, 3].map(page => searchDocuments(entries, { ...state, page }));
+  assert.deepEqual(pages.map(result => result.entries.length), [12, 12, 1]);
+  assert.deepEqual(pages.flatMap(result => result.entries.map(entry => entry.id)), entries.map(entry => entry.id));
+  const last = searchDocuments(entries, { ...state, page: 100 });
+  assert.equal(last.page, 3);
+  assert.equal(last.totalPages, 3);
+  assert.deepEqual(last.entries.map(entry => entry.id), ['document-24']);
+});
+
 // 이전 유형 URL도 검색과 태그에서 같은 글 집합을 보여야 한다.
 test('legacy_type_urls_search_both_document_types_from_the_first_page', () => {
   for (const type of ['wiki', 'blog', 'unknown']) {

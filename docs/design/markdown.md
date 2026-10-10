@@ -1,22 +1,23 @@
 # Markdown 글 작성
 
-글은 `.md` 파일 하나이며 일반 Markdown만으로 쓴다. `ui:` 구성 요소는 복각 검토 화면용 선택 기능이고 글 작성에 필요하지 않다. 실제 렌더링은 미리보기의 `/articles/markdown-guide/`에서 확인한다. 원문은 `src/examples/blog/markdown-guide.md`이며 `example: true`라 운영 빌드, 검색, RSS, 사이트맵에서 빠진다.
+글은 `.md` 파일 하나이며 일반 Markdown만으로 쓴다. `ui:` 구성 요소는 복각 검토 화면용 선택 기능이고 글 작성에 필요하지 않다. 실제 렌더링은 미리보기의 `/blog/markdown-guide/`에서 확인한다. 승인 예시는 `src/examples/blog/markdown-guide.md`이며 `example: true`라 운영 빌드, 검색, RSS, 사이트맵에서 빠진다.
 
 ## 파일과 메타데이터
 
-`src/publication/`(공개 입력)이나 `src/examples/`(예시)에 하위 폴더에 `.md` 파일을 둔다. 주소는 `slug`, 문서 계층은 `parent`, 내부 분류는 `category`로 결정하며 폴더 경로와 무관하다. `tags`는 공통 태그 목록을 사용하고 빈 배열을 허용한다. 맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
+비공개 자료 저장소의 원문을 수정하고 승인한 뒤 `content:sync`로 사본을 가져온다. 사본은 `src/publication/`(공개 입력)이나 `src/examples/`(예시)의 하위 폴더에 있으며 직접 수정하지 않는다. 주소는 `slug`, 문서 계층은 `parent`, 내부 분류는 `category`로 결정하며 폴더 경로와 무관하다. `tags`는 공통 태그 목록을 사용하고 빈 배열을 허용한다. 맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
 
 | 필드 | 필수 | 내용 |
 |---|---|---|
 | `id`, `slug` | 예 | 소문자 영문·숫자·하이픈. 댓글 연결과 주소에 쓰며 중복이면 빌드 오류 |
 | `type` | 예 | `wiki` 또는 `blog` |
 | `title`, `description` | 예 | 제목, 목록·검색·도입문에 쓰는 한두 문장 |
-| `tags`, `field`, `topic` | 예 | `topics.json`에 있는 태그 1~5개, 분야, 대표 주제 |
+| `tags` | 아니오 | `tags.json`에 있는 태그 0~5개. 생략하면 빈 배열 |
+| `field` | 예 | `languages`, `cs`, `frameworks`, `infrastructure` 중 하나 |
+| `category` | 예 | `topics.json`에 있는 내부 분류 |
 | `contentIcon.name` | 예 | 테마의 콘텐츠 아이콘 이름 |
 | `visibility` | 예 | `public` 또는 `draft` |
 | `comments` | blog는 `true` | giscus 댓글 |
 | `publishedAt`, `updatedAt` | blog는 발행일 | `YYYY-MM-DD` |
-| `author` | 선택. 글 꼬리말 맨 위에 그대로 표시할 문구 | 문자열 |
 | `parent` | 아니오 | 위키 부모 문서의 slug |
 | `thumbnail` | 아니오 | `src`, `alt`, 선택 `position` |
 | `example` | 아니오 | `true`면 미리보기 전용 |
@@ -79,8 +80,6 @@ items:
   - { src: 10-reminders-mac.png, alt: 알림 화면, caption: 둘째 캡션 }
 ```
 ````
-
-작성자는 글 메타데이터에 `"author": "Posted by 이름"`으로 쓴다.
 
 - `ui:figure`도 `href`와 `rounded`를 받는다. `rounded` 이미지는 원본 글의 인라인 1em 곡률이다.
 

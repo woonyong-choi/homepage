@@ -61,7 +61,7 @@ test('publication_contract_accepts_only_finite_thumbnail_coordinates', () => {
 });
 
 test('blog_pagination_keeps_all_posts_at_approved_boundaries', () => {
-  assert.deepEqual(PAGE_SIZES, { preview: 4, cards: 12, feed: 4, search: 12 });
+  assert.deepEqual(PAGE_SIZES, { preview: 4, cards: 12, feed: 4 });
   for (const count of [0, 1, 3, 4, 5, 8, 9, 12, 13]) {
     const items = Array.from({ length: count }, (_, id) => id);
     for (const size of [4, 12]) {

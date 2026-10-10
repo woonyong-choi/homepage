@@ -51,7 +51,6 @@ export function installDirectives(md, kit) {
       if (line.kind === 'invalid') fail('블록 줄 형식이 잘못되었습니다. :::이름 옵션 또는 닫는 :::end를 쓰세요', at + 1, line.name);
       if (line.kind === 'open') stack.push({ ...line, closer: isTabsForm(state, at, end, line) ? 'end' : 'bare', line: at + 1 });
       else if (line.kind === 'end') {
-        const top = stack.at(-1);
         stack.pop();
         if (!stack.length) return { close: at, marks };
       } else if (line.kind === 'close') {
