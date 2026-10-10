@@ -1,4 +1,6 @@
 // 문서 유형별 집계와 추천은 같은 정규화·필터 규칙을 사용한다.
+const PAGE_SIZE = 12;
+
 export function normalizeQuery(value) {
   return String(value ?? '').normalize('NFC').toLocaleLowerCase('ko').trim().replace(/\s+/g, ' ');
 }
@@ -33,9 +35,9 @@ export function searchDocuments(entries, state) {
   const counts = { all: matches.length, wiki: 0, blog: 0 };
   for (const { entry } of matches) counts[entry.type]++;
   const selected = matches.filter(({ entry }) => state.type === 'all' || state.type === entry.type).map(({ entry }) => entry);
-  const totalPages = Math.max(1, Math.ceil(selected.length / 12));
+  const totalPages = Math.max(1, Math.ceil(selected.length / PAGE_SIZE));
   const page = Math.min(totalPages, state.page);
-  return { entries: selected.slice((page - 1) * 12, page * 12).map(entry => ({ ...entry, excerpt: searchExcerpt(entry, terms) })), all: selected, counts, page, totalPages };
+  return { entries: selected.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map(entry => ({ ...entry, excerpt: searchExcerpt(entry, terms) })), all: selected, counts, page, totalPages };
 }
 
 function searchExcerpt(entry, terms) {

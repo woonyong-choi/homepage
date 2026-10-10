@@ -19,8 +19,7 @@ const order = (html, markers) => markers.map(marker => { const at = html.indexOf
 
 test('blog_detail_follows_the_single_post_structure_without_search_or_title_icon', () => {
   const page = post('blog');
-  const other = { ...page, id: 'other', route: '/articles/other/' };
-  const html = articlePage(page, [page, other], { topics, repositoryUrl: 'https://github.com/example/repo' }, '<section class="app-comments" id="comments"></section>');
+  const html = articlePage(page, { topics, repositoryUrl: 'https://github.com/example/repo' }, '<section class="app-comments" id="comments"></section>');
   assert.doesNotMatch(html, /data-public-search|app-search|app-article-title|app-document-layout|app-toc/);
   assert.doesNotMatch(html.slice(0, html.indexOf('app-article-lead')), /app-content-icon/);
   assert.match(html, /<h1 class="app-post-title" id="post-sample">샘플 글<\/h1>/);
@@ -35,7 +34,7 @@ test('blog_detail_follows_the_single_post_structure_without_search_or_title_icon
 
 test('feed_and_blog_detail_share_header_body_and_footer_markup', () => {
   const page = post('blog');
-  const detail = articlePage(page, [page], { topics });
+  const detail = articlePage(page, { topics });
   const feed = blogFeed([page], topics, 1, { commentConfig: { repo: 'owner/blog', repoId: 'repo-id', category: 'Comments', categoryId: 'category-id' }, commentTheme: 'light' });
   const shared = html => html.match(/<header class="app-post-header">[\s\S]*?<\/header><div class="app-prose app-feed-body">/)[0].replace(/<h[12][^>]*>[\s\S]*?<\/h[12]>/, '');
   assert.equal(shared(detail), shared(feed));
@@ -46,7 +45,7 @@ test('feed_and_blog_detail_share_header_body_and_footer_markup', () => {
 
 test('blog_thumbnail_follows_the_lead_as_a_wide_image_in_detail_and_feed', () => {
   const page = { ...post('blog'), thumbnail: { src: 'https://example.com/cover.jpg', alt: '글 표지', position: { x: 25, y: 50 } } };
-  const detail = articlePage(page, [page], { topics });
+  const detail = articlePage(page, { topics });
   const feed = blogFeed([page], topics, 1, { commentConfig: { repo: 'owner/blog', repoId: 'repo-id', category: 'Comments', categoryId: 'category-id' }, commentTheme: 'light' });
   for (const html of [detail, feed]) {
     const positions = order(html, ['app-post-title', 'app-article-lead', 'app-post-cover', 'sample-절-하나']);
@@ -57,7 +56,7 @@ test('blog_thumbnail_follows_the_lead_as_a_wide_image_in_detail_and_feed', () =>
   }
   assert.match(detail, /loading="eager"/);
   assert.match(feed, /loading="lazy"/);
-  assert.doesNotMatch(articlePage(post('blog'), [page], { topics }), /app-post-cover/);
+  assert.doesNotMatch(articlePage(post('blog'), { topics }), /app-post-cover/);
 });
 
 test('thumbnail_dimensions_preserve_the_registered_wide_and_portrait_sources', () => {
@@ -78,7 +77,7 @@ test('thumbnail_without_registered_dimensions_does_not_guess_an_aspect_ratio', (
 test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column', () => {
   const page = post('wiki');
   const tree = { page, children: [{ page: { ...page, id: 'child', title: '하위 문서', route: '/articles/child/' }, children: [] }] };
-  const html = articlePage(page, [page], { topics, topicTrees: new Map([['python', [tree]]]) });
+  const html = articlePage(page, { topics, topicTrees: new Map([['python', [tree]]]) });
   assert.match(html, /^<main id="main" class="app-shell app-document-shell"><section class="app-search/);
   assert.match(html, /class="app-document-layout" data-document-layout/);
   assert.match(html, /<h1 class="app-article-title"><span class="app-content-icon is-medium">/);

@@ -74,10 +74,10 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   if (preview) for (const page of iconAuditPages()) add(page.route, '아이콘 검증', page.body);
   const commentTheme = origin ? `${origin}/theme/assets/giscus.css?v=${MANIFEST.contentHash}` : 'light';
   const commentConfig = { ...CONFIG.comments, repo: CONFIG.repository };
-  for (const page of documents) add(page.route, page.title, articlePage(page, documents, context, commentsSection(page, commentConfig, commentTheme)), page);
-  for (const [tag, topic] of Object.entries(TAGS)) {
-    const entries = documents.filter(page => page.tags.includes(tag));
-    add(`/tags/${tag}/`, topic.label, tagPage(tag, entries, TAGS));
+  for (const page of documents) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
+  for (const [tagId, tag] of Object.entries(TAGS)) {
+    const entries = documents.filter(page => page.tags.includes(tagId));
+    add(`/tags/${tagId}/`, tag.label, tagPage(tagId, entries, TAGS));
   }
   add('/search/', '검색', `<main class="app-shell app-body" id="main">${searchBox()}<h1 class="app-sr">검색</h1><div data-search-page><div class="app-filter-summary" data-filter-summary></div><div data-full-results><p class="app-empty">검색어를 입력하거나 주제를 선택해 주세요.</p></div>${ui.PageLinks({ label: '검색 페이지', resultPages: true })}</div></main>`);
   for (const [base, size, render] of [['/blog/', PAGE_SIZES.feed, blogFeed], ['/blog/all/', PAGE_SIZES.cards, blogArchive]]) {

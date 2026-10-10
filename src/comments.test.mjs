@@ -23,7 +23,7 @@ test('repository_and_category_changes_reach_comments_and_correction_links', () =
   assert.equal(discussion.pathname, `/${repository}/discussions`);
   assert.equal(discussion.searchParams.get('discussions_q'), 'category:"Product Feedback" stable-id');
   assert.ok(comments.includes(`data-repo="${repository}"`));
-  const html = articlePage(page, [page], { topics: {} });
+  const html = articlePage(page, { topics: {} });
   assert.doesNotMatch(html, /issues\/new|수정 제안/);
 });
 

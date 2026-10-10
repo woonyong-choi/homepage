@@ -36,7 +36,7 @@ function corpus() {
   const pages = ['examples', 'publication'].flatMap(folder => markdownFiles(join(product, folder)).slice(0, folder === 'examples' ? undefined : 3).map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS)));
   const all = pages.map(page => Object.assign(page, renderArticle(md, page)));
   const specimen = md.render(readFileSync(join(product, 'fixtures/syntax-specimen.md'), 'utf8'), { pageId: 'specimen' });
-  return [...all.map(page => articlePage(page, all, { topics: TOPICS, tags: TAGS })), specimen];
+  return [...all.map(page => articlePage(page, { topics: TOPICS, tags: TAGS })), specimen];
 }
 
 test('rendered_markdown_pages_carry_no_consumer_presentation', () => {
