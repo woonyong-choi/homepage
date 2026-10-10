@@ -158,7 +158,6 @@ function cardSlot(item, parentVariant) {
   const mark = variant === 'related' ? (contentName ? contentIcon(contentName, 'small') : '') : item.icon === false ? '' : icon(item.icon);
   return ui.Card({ href: item.href, title: item.title, description: item.description, icon: mark ? trusted(mark) : undefined, variant, compact: item.compact, horizontal: item.horizontal, headingLevel: item.headingLevel });
 }
-export const renderCard = (item, parentVariant) => String(cardSlot(item, parentVariant));
 export function renderGallery(data, id) {
   const slides = Array.isArray(data.slides) ? data.slides.map(slide => ({ image: trusted(image(slide.src, slide.alt ?? slide.label)), caption: slide.caption, label: slide.label })) : data.slides;
   return String(ui.Gallery({ id, title: data.title, wide: data.wide, width: data.width, selected: data.selected, slides }));
