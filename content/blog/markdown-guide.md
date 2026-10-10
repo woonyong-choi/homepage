@@ -26,7 +26,7 @@ category: programming-languages-runtime
 
 ## 글 파일 만들기
 
-글은 `src/publication/` 또는 `src/examples/` 하위 폴더 어디에나 둘 수 있는 `.md` 파일 하나입니다. 폴더 위치를 바꿔도 주소는 `slug`, 하위 관계는 `parent`로 결정합니다. 파일 맨 위에 `---`로 감싼 JSON 또는 YAML 메타데이터를 쓰고, 그 아래에 본문을 씁니다.
+글은 `.md` 파일 하나입니다. 비공개 원문 저장소에서 작성하고 공개 승인한 뒤 동기화하면, 문서는 `content/docs/`, 블로그는 `content/blog/`에 승인 사본으로 들어갑니다. 이 사본은 직접 수정하지 않습니다. 폴더 위치를 바꿔도 주소는 `slug`, 하위 관계는 `parent`로 결정합니다. 파일 맨 위에 `---`로 감싼 JSON 또는 YAML 메타데이터를 쓰고, 그 아래에 본문을 씁니다.
 
 ```yaml
 id: my-first-post
@@ -525,7 +525,7 @@ Things 블로그 글에 있는 작은 글씨 문단과 두 열 이미지 묶음�
 ## 지원하지 않는 것
 
 - 임의 HTML과 스크립트: 글자로 출력하며 실행하지 않습니다. 예: <script>alert(1)</script> <img src=x onerror=alert(1)>
-- `<details>` 외의 HTML 태그, 속성이 있는 `<details>`, 서식이 있는 `<summary>`
+- `<details>`와 `<summary>` 외의 HTML 태그, `open` 외 속성이 있는 `<details>`, 속성이나 HTML 태그가 섞인 `<summary>`. 요약의 Markdown 강조·링크·인라인 코드는 지원합니다.
 - KaTeX가 신뢰하지 않는 명령(`\href`, `\includegraphics` 등)
 
 ## 한글과 긴 낱말

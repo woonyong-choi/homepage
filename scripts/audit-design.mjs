@@ -1,5 +1,5 @@
 // 공통 디자인의 변조와 소비자 소스의 직접 표현 값 정의를 배포 전에 차단한다.
-import { readFileSync, readdirSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { verifyDesign } from '../src/vendor/theme/ui/build/verify.mjs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
