@@ -26,4 +26,4 @@ npm run check:product
 npm run build:site
 ```
 
-정본 변경은 Daphnis 검증을 거친 뒤 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지 빌드는 Daphnis와 디자인 해시가 다르면 실패한다. 자동 PR에는 가져온 디자인과 렌더러 의존성만 허용하며 검사를 통과한 커밋을 병합한다.
+정본 변경은 Daphnis 검증을 거친 뒤 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지 빌드는 Daphnis와 디자인 해시가 다르면 실패한다. 자동 PR에는 가져온 디자인과 렌더러 의존성만 허용하며 검사를 통과한 커밋을 병합한다. 사용자 명의 자동 병합에는 이 저장소 범위의 `DESIGN_AUTOMATION_TOKEN`을 사용한다. fine-grained PAT의 Contents·Pull requests Read and write 권한이 필요하다. 등록되지 않으면 검증한 PR만 준비하며, 사용자 작성자가 아닌 PR은 인증 전환 뒤 사용자 작성 PR로 대체한다.
