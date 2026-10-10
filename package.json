@@ -27,7 +27,7 @@
     "postcss": "8.5.29",
     "purgecss": "7.0.2",
     "shiki": "4.5.0",
-    "thinkflow": "github:woonyong-choi/thinkflow#b95496852e0a674565ea20655d8f09306fd20513",
+    "thinkflow": "github:woonyong-choi/thinkflow#c5e40623530bd65722d1bcf5e929cc94729f9cee",
     "yaml": "^2.9.1"
   },
   "overrides": {
