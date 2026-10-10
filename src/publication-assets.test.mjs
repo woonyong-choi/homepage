@@ -39,13 +39,13 @@ test('static_pages_load_only_the_footer_year_module_and_document_controls_keep_t
   assert.deepEqual([...home.matchAll(/<script[^>]*src="\/([^?"]+)/g)].map(match => match[1]), ['footer-year.js']);
   assert.deepEqual(clientEntrypoints('<section data-public-search></section>'), ['publication.js']);
   assert.deepEqual(clientEntrypoints('<details class="app-document-nav"></details>'), []);
-  const article = documentShell({ route: '/articles/example/', title: '글' }, '<section data-public-search></section><button data-copy></button><div data-comments></div>', context);
+  const article = documentShell({ route: '/articles/example/', title: '글' }, '<section data-public-search></section><button data-tool></button><div data-comments></div>', context);
   for (const file of ['publication.js', 'document.js', 'comments.js']) assert.ok(article.includes(`src="/${file}?v=client"`));
   assert.match(article, /<script type="module" async src="\/publication\.js\?v=client"><\/script><\/body>/);
   assert.ok(article.indexOf('data-comments') < article.indexOf('async src="/publication.js'));
   assert.match(article, /<script type="module" src="\/document\.js\?v=client">/);
-  for (const marker of ['data-tabs', 'data-copy', 'data-keyboard', 'data-tooltip-trigger']) assert.deepEqual(clientEntrypoints(`<div ${marker}></div>`), ['document.js']);
-  assert.deepEqual(clientEntrypoints('<code>&lt;div data-copy&gt;</code>'), []);
+  for (const marker of ['data-tabs', 'data-tool', 'data-keyboard', 'data-tooltip-trigger']) assert.deepEqual(clientEntrypoints(`<div ${marker}></div>`), ['document.js']);
+  assert.deepEqual(clientEntrypoints('<code>&lt;div data-tool&gt;</code>'), []);
 });
 
 test('video_state_icons_are_included_before_the_first_play', () => {

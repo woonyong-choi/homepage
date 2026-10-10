@@ -35,7 +35,7 @@ test('specimen renders every declared document component', () => {
   const source=readFileSync(new URL('./fixtures/syntax-specimen.md',import.meta.url),'utf8').split('\n---\n').slice(1).join('\n---\n');
   const html=createMarkdown().render(source,{});
   for (const kind of ['group','feature','syntax-examples','feature-list','device','demos','feature-pair','callout','details','figure','fineprint','figure-grid','video','gallery','platform','tabs','cards','definitions','speech','keys','tooltip','keyboard','status-board','contact-form','form']) assert.ok(source.includes('ui:' + kind), 'missing specimen: ' + kind);
-  for(const marker of ['<table>','<blockquote>','task-list-item','language-javascript','app-callout','app-help-card is-centered','app-help-card is-grouped','app-inline-links','data-tabs','<video','<details','<dl','<kbd','popover','data-demo-form','footnote-ref']) assert.ok(html.includes(marker),marker);
+  for(const marker of ['<table class="app-table">','<blockquote>','task-list-item','language-javascript','app-callout','app-help-card is-centered','app-help-card is-grouped','app-inline-links','data-tabs','<video','<details','<dl','<kbd','popover','data-demo-form','footnote-ref']) assert.ok(html.includes(marker),marker);
 });
 
 test('fineprint and figure grid map to the reference DOM without raw html', () => {
@@ -99,8 +99,8 @@ test('inline interface labels escape HTML and preserve code and literal syntax',
 test('code_and_syntax_copy_controls_start_hidden_with_independent_status_regions', () => {
   const source = '```javascript\nconst value = "한글 < >";\n```\n\n' + fence('keys', { keys: ['⌘', 'C'] });
   const html = createMarkdown().render(source, { showSyntax: true });
-  assert.equal((html.match(/data-copy aria-label="[^"]+" hidden/g) ?? []).length, 2);
-  assert.equal((html.match(/data-copy-status role="status" aria-live="polite" aria-atomic="true"/g) ?? []).length, 2);
+  assert.equal((html.match(/data-tool="copy" aria-label="[^"]+" title="[^"]+" hidden/g) ?? []).length, 2);
+  assert.equal((html.match(/data-tool-status role="status" aria-live="polite" aria-atomic="true"/g) ?? []).length, 2);
   assert.match(html, /aria-label="코드 복사"/);
   assert.match(html, /aria-label="작성 문법 복사"/);
   assert.match(html, /한글 &lt; &gt;/);

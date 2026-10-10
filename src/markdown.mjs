@@ -23,6 +23,7 @@ export function asset(name) {
   return `/assets/${name}`;
 }
 const CODE_ATTRIBUTES = Object.freeze({ width: WIDTH_OPTION, filename: { type: 'text' } });
+const DIAGRAM_ATTRIBUTES = Object.freeze({ width: WIDTH_OPTION });
 export { codeLanguage };
 const codeBlock = (code, options) => String(ui.CodeBlock({ code: trusted(code), ...options }));
 
@@ -164,10 +165,10 @@ export function renderGallery(data, id) {
 }
 const DIRECTIVE_KIT = Object.freeze({ escape, safeUrl, image, contentIcon, trusted, controlImage, card: cardSlot, figureOf, videoOf, asset, gallery: renderGallery, ui, assetExists: name => existsSync(new URL(`./assets/${name}`, import.meta.url)) });
 
-function fenceOptions(info, token, env) {
+function fenceOptions(info, token, env, attributes = CODE_ATTRIBUTES) {
   const source = info.replace(/^\S+\s*/, '');
   const fail = message => { throw new DirectiveError(message, { page: env.pageId, line: (token.map?.[0] ?? 0) + 1, name: 'code' }); };
-  return parseOptions(source, CODE_ATTRIBUTES, fail);
+  return parseOptions(source, attributes, fail);
 }
 
 export function createMarkdown() {
@@ -200,8 +201,8 @@ export function createMarkdown() {
     if (size) { token.attrSet('width', size[0]); token.attrSet('height', size[1]); }
     return defaultImage(tokens, index, options, env, self);
   };
-  md.renderer.rules.table_open = () => '<div class="app-table-scroll"><table>';
-  md.renderer.rules.table_close = () => '</table></div>';
+  md.renderer.rules.table_open = () => ui.Table.open();
+  md.renderer.rules.table_close = () => ui.Table.close();
   for (const tag of ['th_open', 'td_open']) md.renderer.rules[tag] = (tokens, index, options, env, self) => {
     const token = tokens[index];
     const alignment = token.attrGet('style');
@@ -212,10 +213,11 @@ export function createMarkdown() {
   md.renderer.rules.fence = (tokens, index, options, env) => {
     const token = tokens[index];
     const kind = token.info.trim();
-    if (kind === 'dap') {
+    if (/^dap(?:\s|$)/.test(kind)) {
+      const diagramOptions = fenceOptions(kind, token, env, DIAGRAM_ATTRIBUTES);
       env.diagramSources?.set(token.content, env.pageId);
       const diagram = env.diagrams?.get(token.content);
-      if (diagram) return String(ui.DiagramEmbed(diagram));
+      if (diagram) return String(ui.DiagramEmbed({ ...diagram, ...diagramOptions }));
     }
     if (kind.startsWith('ui:')) {
       const data = parse(token.content, { maxAliasCount: 0 });

@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { browserScripts } from './browser-scripts.mjs';
 import { runInNewContext } from 'node:vm';
 import { test } from 'node:test';
+
+const script = browserScripts(fileURLToPath(new URL('./', import.meta.url))).get('flows.js');
 
 function run(cards, directions = [], shared = true) {
   let now = 0;
@@ -36,7 +39,7 @@ function run(cards, directions = [], shared = true) {
     return Object.assign(row, { rail, viewport, group, track });
   });
   const document = { querySelectorAll: () => rows.map(row => row.rail), addEventListener: (type, fn) => { listeners[type] = fn; }, hidden: false };
-  runInNewContext(readFileSync(new URL('./vendor/theme/ui/runtime/flows.js', import.meta.url), 'utf8'), {
+  runInNewContext(script, {
     document, matchMedia: () => motion, window: { addEventListener: (type, fn) => { listeners[type] = fn; } },
     getComputedStyle: () => ({ getPropertyValue: () => '1000ms', columnGap: '0' }), // tokens-allow: 실제 화면과 독립적으로 이동 속도를 계산하는 테스트 시간
     ResizeObserver: class { constructor(fn) { resize.push(fn); } observe() {} },

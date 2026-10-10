@@ -59,10 +59,13 @@ test('rendered_markdown_pages_carry_no_consumer_presentation', () => {
 
 test('copy_buttons_expose_name_and_live_status_without_visible_text_styling', () => {
   for (const html of corpus()) {
-    for (const [, block] of html.matchAll(/<div class="app-code">([\s\S]*?)<\/div>(?=\s*<|$)/g)) {
-      assert.match(block, /<button type="button" data-copy aria-label="[^"]+" hidden>/);
+    const document = new JSDOM(html).window.document;
+    for (const block of document.querySelectorAll('.app-code')) {
+      const button = block.querySelector('[data-tool="copy"]');
+      assert.ok(button.getAttribute('aria-label'));
+      assert.ok(button.hidden);
+      assert.ok(block.querySelector('[data-tool-status][role=status][aria-live=polite]'));
     }
-    for (const [, block] of html.matchAll(/<div class="app-code">[\s\S]*?<\/pre>([\s\S]*?)<\/div>/g)) assert.match(block, /data-copy-status role="status" aria-live="polite"/);
   }
 });
 
