@@ -147,20 +147,29 @@ test('hero_title_names_the_page_and_icon_and_missing_files_of_disabled_items_are
   assert.throws(() => parseHomeSections(parseYaml(yaml.replace('enabled: false, ', '')), { exists: () => false }), /items\[0\]\.image\.src: 파일이 없습니다/);
 });
 
-test('contact_uses_the_email_link_and_rejects_unsupported_subscription_settings', () => {
-  const base = 'sections:\n  - id: contact\n    type: contact\n    email: hello@example.com';
-  const html = render(base);
-  assert.match(html, /<h2 id="contact-title">함께 만들어 볼까요\?<\/h2>/);
-  assert.match(html, /href="mailto:hello@example.com">메일 보내기<\/a>/);
-  assert.doesNotMatch(html, /<form|<input|<button|구독|준비 중/);
-  for (const setting of ['mode: newsletter', 'endpoint: https://subscribe.example.com/form']) {
-    assert.throws(() => render(`${base}\n    ${setting}`), /알 수 없는 설정/);
-  }
+test('newsletter_without_endpoint_keeps_controls_disabled_and_never_posts', () => {
+  const base = 'sections:\n  - id: contact\n    type: contact\n    mode: newsletter\n    email: hello@example.com';
+  const idle = render(base);
+  assert.doesNotMatch(idle, /action=|method=/);
+  assert.match(idle, /<input[^>]*type="email"[^>]* disabled/);
+  assert.match(idle, /<button type="submit" disabled>구독<\/button>/);
+  assert.match(idle, /구독 서비스를 준비 중입니다/);
+  assert.match(idle, /href="mailto:hello@example.com"/);
+  assert.doesNotMatch(idle, /개인정보|구독했습니다|완료/);
+  const live = render(`${base}\n    endpoint: https://subscribe.example.com/form\n    privacy: { label: 개인정보, href: "https://example.com/privacy" }`);
+  assert.match(live, /<form class="app-newsletter" method="post" action="https:\/\/subscribe.example.com\/form">/);
+  assert.doesNotMatch(live, /disabled|준비 중/);
+  assert.match(live, /<a href="https:\/\/example.com\/privacy">개인정보<\/a>/);
+  assert.throws(() => render(`${base}\n    endpoint: http://subscribe.example.com`), /sections\[0\]\.endpoint.*HTTPS/);
+  assert.match(render('sections:\n  - { id: contact, type: contact, email: hello@example.com }'), /href="mailto:hello@example.com"/);
   const home = loadHomeContent(new Set(Object.keys(getIconCatalog().brands)));
   const shipped = personalHome({ config: { name: '이름' }, home });
-  assert.match(shipped, /<p class="app-hero-title" aria-hidden="true">최우녕<\/p>/);
-  assert.match(shipped, /href="mailto:woonyong.contact@gmail.com">메일 보내기<\/a>/);
-  assert.doesNotMatch(shipped, /<form|<input|구독 서비스를 준비 중/);
+  assert.match(shipped, /<h1 class="app-sr">백엔드 엔지니어<\/h1>/);
+  assert.match(shipped, /<svg[^>]*class="app-hero-logo"[^>]*aria-hidden="true"/);
+  assert.match(shipped, /소식 받아보기<\/h2><p>새 글과 프로젝트 소식을 이메일로 보내 드립니다\.<\/p>/);
+  assert.match(shipped, /<input[^>]*type="email"[^>]* disabled/);
+  assert.match(shipped, /<button type="submit" disabled>구독<\/button>/);
+  assert.match(shipped, /href="mailto:woonyong.contact@gmail.com"/);
 });
 
 test('the_shipped_interviews_section_shows_its_title_description_and_two_social_links', () => {

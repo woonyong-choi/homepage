@@ -24,8 +24,17 @@ test('metadata_uses_one_home_name_and_keeps_preview_without_an_invented_origin',
   const logo = new JSDOM(page).window.document.querySelector('.app-logo');
   assert.equal(logo.getAttribute('href'), '/');
   assert.equal(logo.getAttribute('aria-label'), `${config.name} 홈`);
-  assert.equal(logo.querySelector('[data-control-icon]').getAttribute('data-control-icon'), 'task-done');
+  assert.equal(logo.querySelector('[data-control-icon]'), null);
   assert.equal(logo.textContent, config.name);
+  const branded = { ...config, logo: { src: '/assets/who-knows.svg', alt: 'Who Knows' } };
+  const brandedPage = documentShell({ title: config.name, route: '/' }, '', { ...context, config: branded });
+  const brandedLogo = new JSDOM(brandedPage).window.document.querySelector('.app-logo');
+  assert.equal(brandedLogo.getAttribute('aria-label'), 'Who Knows 홈');
+  assert.equal(brandedLogo.querySelector('svg').getAttribute('aria-hidden'), 'true');
+  assert.equal(brandedLogo.querySelector('img'), null);
+  assert.equal(brandedLogo.querySelector('[data-control-icon]'), null);
+  assert.equal(brandedLogo.textContent, '');
+  assert.throws(() => documentShell({ title: config.name, route: '/' }, '', { ...context, config: { ...branded, logo: { src: '/assets/../secret.svg' } } }), /content SVG must be a file under \/assets/);
 });
 
 test('article_metadata_shares_identity_and_escapes_content_without_exposing_logical_type', () => {

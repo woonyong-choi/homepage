@@ -1,5 +1,9 @@
 {
   "name": "최우녕",
+  "logo": {
+    "src": "/assets/who-knows.svg",
+    "alt": "Who Knows"
+  },
   "description": "문서와 개발 흐름에서 반복되는 문제를 코드로 해결합니다.",
   "github": "https://github.com/woonyong-choi",
   "linkedin": "https://www.linkedin.com/in/woonyong-choi",
