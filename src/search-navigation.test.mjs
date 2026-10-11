@@ -91,6 +91,18 @@ test('tag_fallback_reappears_when_search_request_fails', async () => {
   } finally { browser.dom.window.close(); }
 });
 
+test('history_navigation_restores_query_after_browser_form_state', () => {
+  for (const [persisted, query] of [[false, 'Python'], [true, 'Python'], [true, '']]) {
+    const browser = searchBrowser(`/search/?q=${query}&tag=python`);
+    try {
+      browser.dom.window.dispatchEvent(new browser.dom.window.PageTransitionEvent('pageshow', { persisted }));
+      browser.input.form.reset();
+      assert.equal(browser.input.value, query, `pageshow persisted=${persisted}, query=${query}`);
+      assert.equal(browser.clear.hidden, !query);
+    } finally { browser.dom.window.close(); }
+  }
+});
+
 test('typing_with_tags_keeps_the_intersection_and_resets_pagination', () => {
   for (const [route, tag] of [['/search/?tag=concurrency&tag=testing&page=2', ''], ['/tags/concurrency/?tag=testing', 'concurrency']]) {
     const browser = searchBrowser(route, true, tag);
@@ -102,6 +114,8 @@ test('typing_with_tags_keeps_the_intersection_and_resets_pagination', () => {
       assert.equal(browser.requests[0].state.query, '주문');
       assert.deepEqual([...browser.requests[0].state.tags].sort(), ['concurrency', 'testing']);
       assert.equal(browser.requests[0].state.page, 1);
+      browser.input.form.reset();
+      assert.equal(browser.input.value, '주문');
     } finally { browser.dom.window.close(); }
   }
 });
@@ -160,6 +174,7 @@ function searchBrowser(route, page = true, tag = '', options = {}) {
   const source = readFileSync(new URL('./publication.js', import.meta.url), 'utf8').replace(/^import .+;\n/gm, '');
   runInNewContext(source, {
     document: dom.window.document, window: dom.window, location, history, URL,
+    requestAnimationFrame() {},
     readSearchState, searchUrl,
     queryIndex(action, state) { requests.push({ action, state }); return options.queryIndex ? options.queryIndex(action, state) : new Promise(() => {}); },
     showResultsLoading() {}, renderResults() {}, renderSuggestions() {}, showSearchError() {},
