@@ -1,6 +1,6 @@
 // 완성한 발행 파일 집합을 검사한 다음 기존 산출물을 교체한다.
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, lstatSync, mkdirSync, mkdtempSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { basename, dirname, join, resolve } from 'node:path';
 
 function validateOutput(output, files) {
   for (const [route, html] of output) {
@@ -33,10 +33,42 @@ export function replacePublication(outputRoot, pages, files) {
     }
   }
   validateOutput(pages, output);
-  rmSync(outputRoot, { recursive: true, force: true });
-  for (const [path, content] of output) {
-    const destination = join(outputRoot, path);
-    mkdirSync(dirname(destination), { recursive: true });
-    writeFileSync(destination, content);
+  const requested = resolve(outputRoot);
+  mkdirSync(dirname(requested), { recursive: true });
+  const root = join(realpathSync(dirname(requested)), basename(requested));
+  const lock = `${root}.lock`;
+  try { mkdirSync(lock); }
+  catch (error) {
+    if (error.code === 'EEXIST') throw new Error(`publication is already locked: ${lock}`);
+    throw error;
   }
+  let staged;
+  try {
+    if (existsSync(root) && (!lstatSync(root).isDirectory() || lstatSync(root).isSymbolicLink())) throw new Error(`invalid publication directory: ${root}`);
+    staged = mkdtempSync(`${root}.build-`);
+    for (const [path, content] of output) {
+      const destination = join(staged, path);
+      mkdirSync(dirname(destination), { recursive: true });
+      writeFileSync(destination, content);
+    }
+    installPublication(root, staged);
+  } finally {
+    try { if (staged) rmSync(staged, { recursive: true, force: true }); }
+    finally { rmSync(lock, { recursive: true }); }
+  }
+}
+
+function installPublication(root, staged) {
+  const backup = `${staged}.previous`;
+  const previous = existsSync(root);
+  if (previous) renameSync(root, backup);
+  try { renameSync(staged, root); }
+  catch (error) {
+    if (previous) {
+      try { renameSync(backup, root); }
+      catch (rollbackError) { throw new AggregateError([error, rollbackError], `publication restore failed; previous output remains at ${backup}`); }
+    }
+    throw error;
+  }
+  if (previous) rmSync(backup, { recursive: true });
 }
