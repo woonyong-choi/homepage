@@ -1,0 +1,25 @@
+{
+  "title": "Blog",
+  "description": "",
+  "preview": {
+    "columns": 2,
+    "rows": 2
+  },
+  "collection": {
+    "columns": 3,
+    "rows": 4
+  },
+  "card": {
+    "title": true,
+    "description": true,
+    "media": "image",
+    "tags": true,
+    "date": true,
+    "comments": true
+  },
+  "feedSize": 4,
+  "archiveTitle": "모든 글",
+  "feedLabel": "본문 이어 읽기",
+  "archiveLabel": "전체 글 보기",
+  "autoLoad": true
+}

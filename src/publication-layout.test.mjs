@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { knowledgeFields, wikiLanding, tagPage } from './publication-layout.mjs';
 import { readContentFile } from './content-files.mjs';
 import { JSDOM } from 'jsdom';
+import { LAYOUT } from './layout-config.mjs';
 
 test('a_published_topic_stays_reachable_when_its_overview_is_unpublished', () => {
   const topics = { javascript: { label: 'JavaScript', field: 'languages', group: 'tech', icon: 'javascript', article: 'javascript' } };
@@ -70,9 +71,11 @@ test('tech_and_cs_group_topics_by_navigation_without_changing_source_fields', ()
   assert.equal((html.match(/class="app-card-summary"/g) ?? []).length, 2);
   assert.doesNotMatch(html, /Projects|Languages|Infrastructure/);
   assert.ok(html.indexOf('<h2>CS</h2>') < html.indexOf('<h2>Tech</h2>'));
-  const config = { notes: { projects: false }, projects: [{ title: '프로젝트 사례', href: '/projects/demo/', icon: 'project', description: '구현 사례', links: [] }] };
+  const config = { projects: [{ title: '프로젝트 사례', href: '/projects/demo/', icon: 'project', description: '구현 사례', links: [] }] };
   assert.doesNotMatch(wikiLanding(documents, { topics, config }), /개발 프로젝트/);
-  const active = wikiLanding(documents, { topics, config: { ...config, notes: { projects: true } } }, undefined, '<h2>Blog</h2>');
+  const layout = structuredClone(LAYOUT);
+  layout.search.sections.find(section => section.id === 'projects').enabled = true;
+  const active = wikiLanding(documents, { topics, config, layout }, undefined, '<h2>Blog</h2>');
   assert.ok(active.indexOf('>Blog</h2>') < active.indexOf('개발 프로젝트'));
   assert.ok(active.indexOf('개발 프로젝트') < active.indexOf('<h2>CS</h2>'));
   const old = knowledgeFields(documents, topics, 'infrastructure');
