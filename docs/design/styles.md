@@ -29,3 +29,5 @@ npm run build:site
 정본 변경은 ThinkFlow 검증을 거친 뒤 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지 빌드는 ThinkFlow와 디자인 해시가 다르면 실패한다. 자동 PR에는 가져온 디자인과 렌더러 의존성만 허용하며 검사를 통과한 커밋을 병합한다. 사용자 명의 자동 병합에는 이 저장소 범위의 `DESIGN_AUTOMATION_TOKEN`을 사용한다. fine-grained PAT의 Contents·Pull requests Read and write 권한이 필요하다. 등록되지 않으면 검증한 PR만 준비하며, 사용자 작성자가 아닌 PR은 인증 전환 뒤 사용자 작성 PR로 대체한다.
 
 블로그 제목은 본문 폭을 사용하고 문서 제목 아이콘은 제목의 첫 줄과 정렬한다. 홈 제목의 SVG는 `ContentIconImage`로, PNG는 원본 그림으로 공통 `SectionIntro` 자리에 조립한다. 코드와 도표의 블록 배경은 유지하며 도구 모음은 별도 흰색 면·테두리·그림자를 만들지 않는다. 버튼의 hover·키보드 초점·복사 상태는 두 제품이 같은 공통 동작을 사용한다.
+
+제품 검사는 Node.js 20·22의 최신 패치 버전에서 실행한다. DOM 검사용 jsdom은 두 버전을 지원하는 29.1.1을 사용한다. 수식 렌더러 KaTeX 0.19는 유지하고 CLI에서만 사용하는 Commander를 Node.js 20 호환 14.0.3으로 고정한다. Markdown 수식과 KaTeX CLI를 함께 확인한다. 정본 비교는 Git 공통 디렉터리를 기준으로 메인 저장소의 design-tokens를 찾으며, `DESIGN_TOKENS_DIST`로 명시한 경로가 없으면 실패한다. CI처럼 정본 저장소를 함께 받지 않는 환경은 사본 manifest 검증을 수행하고 직접 대조만 제외한다.
