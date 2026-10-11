@@ -23,6 +23,9 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
   if (page) { input.setAttribute('role', 'searchbox'); input.removeAttribute('aria-autocomplete'); input.removeAttribute('aria-controls'); input.removeAttribute('aria-expanded'); }
   const failureStatus = '검색 자료를 불러오지 못했습니다. 다시 시도해 주세요.';
   function close() { output.hidden = true; if (!page) input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; status.textContent = resultStatus; }
+  function restoreQuery(query) {
+    input.defaultValue = query; input.value = query; clear.hidden = !query;
+  }
   function restorePosition() {
     const position = history.state?.searchPosition;
     if (page && position) requestAnimationFrame(() => window.scrollTo(position.x, position.y));
@@ -53,7 +56,7 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     const request = ++resultRevision;
     const selected = state();
     if (searchUrl(selected) === '/docs/') { location.replace('/docs/'); return; }
-    input.value = selected.query; clear.hidden = !input.value;
+    restoreQuery(selected.query);
     resultStatus = '검색 결과를 불러오는 중입니다.';
     status.textContent = resultStatus;
     showResultsLoading(page, resultStatus);
@@ -109,7 +112,7 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     if (!event.persisted) return;
     revision++; close();
     if (page) {
-      input.value = state().query; clear.hidden = !input.value;
+      restoreQuery(state().query);
       if (page.getAttribute('aria-busy') === 'true') results();
       else restorePosition();
     }
