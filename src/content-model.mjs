@@ -2,7 +2,6 @@
 import { parse } from 'yaml';
 
 const DOCUMENT_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-export const PAGE_SIZES = Object.freeze({ preview: 4, cards: 12, feed: 4 });
 export const TOPIC_GROUPS = Object.freeze(['cs', 'tech']);
 export const FIELDS = Object.freeze(['languages', 'cs', 'frameworks', 'infrastructure']);
 
@@ -54,7 +53,7 @@ export function blogDocuments(documents) {
 export function paginate(items, page, size) {
   const totalPages = Math.max(1, Math.ceil(items.length / size));
   const current = Math.min(totalPages, Math.max(1, Number.isSafeInteger(page) ? page : 1));
-  return { items: items.slice((current - 1) * size, current * size), page: current, total: items.length, totalPages };
+  return { items: size === Infinity ? items.slice() : items.slice((current - 1) * size, current * size), page: current, total: items.length, totalPages };
 }
 
 export function searchEntry(page, tags) {

@@ -10,3 +10,4 @@
 | [스타일 수정 지도](design/styles.md) | 토큰·공통 조각·화면·콘텐츠 문법 중 어디를 고치는지, 홈 type별 클래스 |
 | [개인 사이트 발행](design/publication.md) | 승인·검색·댓글·운영 빌드 계약 |
 | [홈 원고 가이드](design/home-content.md) | 홈 구간·영상·인터뷰 입력 |
+| [영역 설정](design/layout-settings.md) | 홈 메뉴, Search 순서, CS·Tech·Blog의 문구·배치·표시 항목 |

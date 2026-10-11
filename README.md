@@ -20,12 +20,13 @@ npm run dev
 
 | 수정할 내용 | 파일·폴더 |
 |---|---|
-| 홈 소개·영상·구간 순서 | [`content/home.md`](content/home.md) |
+| 홈 소개·영상·구간 순서·상단 메뉴 | [`content/home.md`](content/home.md) |
 | 동료평가 소개·공개 카드 | [`content/interviews.md`](content/interviews.md) |
 | 기술 링크·분야 이름·카드 설명 | [`content/tech.md`](content/tech.md) |
 | 분야별 문서 | `content/docs/<분야>/`의 승인 사본 |
 | 블로그 원고 | `content/blog/`의 승인 사본 |
 | 이미지·영상·출처 고지 | `content/assets/`, `content/media/` |
+| 영역 문구·순서·행·열·카드 표시 | [`config/search.json`](config/search.json), [`cs.json`](config/cs.json), [`tech.json`](config/tech.json), [`blog.json`](config/blog.json) |
 | 사이트·댓글·태그·승인 목록 | `config/` |
 | 해석·검색·댓글·페이지 조립 | `src/` |
 | 공통 디자인 | `src/vendor/theme/`의 해시 검증 사본 |

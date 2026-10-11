@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { readDocument, publicDocuments, blogDocuments, paginate, PAGE_SIZES } from './content-model.mjs';
+import { readDocument, publicDocuments, blogDocuments, paginate } from './content-model.mjs';
 
 const TAGS = { javascript: { label: 'JavaScript', aliases: ['JS'] } };
 function source(changes = {}) {
@@ -61,10 +61,9 @@ test('publication_contract_accepts_only_finite_thumbnail_coordinates', () => {
 });
 
 test('blog_pagination_keeps_all_posts_at_approved_boundaries', () => {
-  assert.deepEqual(PAGE_SIZES, { preview: 4, cards: 12, feed: 4 });
   for (const count of [0, 1, 3, 4, 5, 8, 9, 12, 13]) {
     const items = Array.from({ length: count }, (_, id) => id);
-    for (const size of [4, 12]) {
+    for (const size of [1, 4, 12, Infinity]) {
       const result = Array.from({ length: Math.max(1, Math.ceil(count / size)) }, (_, i) => paginate(items, i + 1, size).items).flat();
       assert.deepEqual(result, items);
     }
