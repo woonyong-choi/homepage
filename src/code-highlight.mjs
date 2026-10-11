@@ -12,6 +12,11 @@ for (const language of hljs.listLanguages()) {
   const grammar = names.find(name => bundledLanguages[name]);
   for (const id of names) LANGUAGES.set(id, { id, label: definition.name ?? language, grammar: bundledLanguages[id] ? id : grammar });
 }
+// 승인 원문의 실행용 펜스는 이 사이트에서 언어와 원문만 표시한다.
+for (const [alias, name] of Object.entries({ 'run-python': 'python', 'run-c': 'c', 'run-javascript': 'javascript', 'run-sql': 'sql', 'run-shell': 'bash', 'run-web': 'html' })) {
+  const language = LANGUAGES.get(name);
+  LANGUAGES.set(alias, { ...language, label: `${language.label} · 실행 미지원` });
+}
 const PLAIN = Object.freeze({ id: 'plaintext', label: 'Plain text' });
 const HIGHLIGHTER = await createHighlighter({
   langs: [...new Set([...LANGUAGES.values()].map(language => language.grammar).filter(Boolean))],
