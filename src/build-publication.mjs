@@ -6,18 +6,18 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
-import { readDocument, publicDocuments, searchEntry, FIELDS, TOPIC_GROUPS, blogDocuments, PAGE_SIZES } from './content-model.mjs';
+import { readDocument, publicDocuments, searchEntry, FIELDS, TOPIC_GROUPS, blogDocuments } from './content-model.mjs';
 import { createMarkdown, escape } from './markdown.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 import { renderArticle } from './article-renderer.mjs';
-import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchBox, tagPage, iconUrl, FIELD_NAMES } from './publication-layout.mjs';
+import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchBox, tagPage, iconUrl, FIELD_NAMES, categoryEntries } from './publication-layout.mjs';
 import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
 import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
 import { publicationAssets } from './publication-assets.mjs';
 import { replacePublication } from './publication-output.mjs';
-import { loadHomeContent } from './home-content.mjs';
+import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { mathAssets } from './math-assets.mjs';
@@ -27,6 +27,7 @@ import { siteOrigin, siteTitle, SITE_ICON } from './publication-metadata.mjs';
 import { siteIdentity } from './site-identity.mjs';
 import { legacyRoutes, redirectPage } from './publication-routes.mjs';
 import { markdownFiles, readContentFile } from './content-files.mjs';
+import { LAYOUT, gridSize } from './layout-config.mjs';
 import { verifyApprovedContent } from './approved-content.mjs';
 
 verifyApprovedContent();
@@ -62,7 +63,7 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   if (diagrams.diagrams.size) renderDocuments(documents, { diagrams: diagrams.diagrams });
   const scripts = browserScripts(ROOT);
   const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))));
-  const context = { config: CONFIG, topics: TOPICS, tags: TAGS, topicTrees, origin, preview, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
+  const context = { config: CONFIG, layout: LAYOUT, navigation: loadHomeNavigation(CONTENT), topics: TOPICS, tags: TAGS, topicTrees, origin, preview, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
   context.home = loadHomeContent(new Set(BRAND_NAMES), CONTENT, { preview });
   const output = new Map();
@@ -71,9 +72,14 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
     output.set(route, documentShell({ route, title, ...metadata }, body, context));
   };
   add('/', siteTitle(CONFIG), personalHome(context));
-  add('/docs/', 'Search', wikiLanding(documents, context, undefined, recentBlog(posts, TAGS)));
+  add('/docs/', LAYOUT.search.title, wikiLanding(documents, context, undefined, recentBlog(posts, TAGS, LAYOUT)));
   const fields = [...new Set([...TOPIC_GROUPS, ...FIELDS])];
-  for (const field of fields) add(`/docs/topics/${field}/`, FIELD_NAMES[field], wikiLanding(documents, context, field));
+  for (const field of fields) {
+    const area = LAYOUT[field] ?? LAYOUT.cs;
+    const count = categoryEntries(documents, TOPICS, field, TOPIC_GROUPS.includes(field) ? area.order : []).length;
+    const pages = Math.max(1, Math.ceil(count / gridSize(area.collection)));
+    for (let page = 1; page <= pages; page++) add(`/docs/topics/${field}/${page === 1 ? '' : `page/${page}/`}`, LAYOUT[field]?.title ?? FIELD_NAMES[field], wikiLanding(documents, context, field, '', page));
+  }
   add('/projects/', 'Projects', `<main class="app-shell" id="main"><h1 class="app-page-heading">Projects</h1>${projectSection(CONFIG.projects)}</main>`);
   const commentTheme = commentThemeUrl(CONFIG, { origin, themeHash: MANIFEST.contentHash });
   const commentConfig = { ...CONFIG.comments, repo: CONFIG.repository };
@@ -83,8 +89,8 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
     add(`/tags/${tagId}/`, tag.label, tagPage(tagId, entries, TAGS));
   }
   add('/search/', '검색', `<main class="app-shell app-body" id="main">${searchBox()}<h1 class="app-sr">검색</h1><div data-search-page><div class="app-filter-summary" data-filter-summary></div><div data-full-results><p class="app-empty">검색어를 입력하거나 주제를 선택해 주세요.</p></div>${ui.PageLinks({ label: '검색 페이지', resultPages: true })}</div></main>`);
-  for (const [base, size, render] of [['/blog/', PAGE_SIZES.feed, blogFeed], ['/blog/all/', PAGE_SIZES.cards, blogArchive]]) {
-    for (let page = 1; page <= Math.max(1, Math.ceil(posts.length / size)); page++) add(page === 1 ? base : `${base}page/${page}/`, 'Blog', render(posts, TAGS, page, { commentConfig, commentTheme }), { type: 'blog' });
+  for (const [base, size, render] of [['/blog/', LAYOUT.blog.feedSize, blogFeed], ['/blog/all/', gridSize(LAYOUT.blog.collection), blogArchive]]) {
+    for (let page = 1; page <= Math.max(1, Math.ceil(posts.length / size)); page++) add(page === 1 ? base : `${base}page/${page}/`, LAYOUT.blog.title, render(posts, TAGS, page, { commentConfig, commentTheme, layout: LAYOUT }), { type: 'blog' });
   }
   context.redirects = legacyRoutes(documents, fields);
   for (const [old, target] of context.redirects) {
