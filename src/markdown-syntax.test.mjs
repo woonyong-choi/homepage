@@ -2,11 +2,13 @@ import { parse } from 'yaml';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
+import { JSDOM } from 'jsdom';
 import hljs from 'highlight.js';
 import { createMarkdown, codeLanguage } from './markdown.mjs';
 import { highlightCode } from './code-highlight.mjs';
 import { renderArticle } from './article-renderer.mjs';
 import { shiftHeadings, feedLevels, detailLevels } from './post-article.mjs';
+import { documentOutline } from './document-navigation.mjs';
 
 const md = createMarkdown();
 const render = source => md.render(source, {});
@@ -36,6 +38,42 @@ test('every_heading_level_keeps_its_written_level_as_a_class_and_ids_never_colli
   const ids = [...html.matchAll(/ id="([^"]+)"/g)].map(match => match[1]);
   assert.equal(new Set(ids).size, ids.length);
   assert.deepEqual(ids, ['제목', '제목-2', '제목-2-2', '제목-3', '제목-4', '제목-5']);
+});
+
+test('heading_outline_uses_readable_text_and_keeps_existing_fragment_ids', () => {
+  const source = '## **안내** `clue diagnose` [설치](/install/)';
+  const env = { pageId: 'sample' };
+  const html = createMarkdown().render(`${source}\n\n${source}`, env);
+
+  assert.deepEqual(env.headings, [
+    { id: 'sample-안내-clue-diagnose-설치-install', title: '안내 clue diagnose 설치', level: 2 },
+    { id: 'sample-안내-clue-diagnose-설치-install-2', title: '안내 clue diagnose 설치', level: 2 },
+  ]);
+  assert.match(html, /<strong>안내<\/strong> <code>clue diagnose<\/code> <a href="\/install\/">설치<\/a>/);
+  const document = new JSDOM(`${documentOutline(env.headings)}${html}`).window.document;
+  for (const link of document.querySelectorAll('nav a')) {
+    assert.equal(link.textContent, '안내 clue diagnose 설치');
+    assert.ok(document.getElementById(link.getAttribute('href').slice(1)));
+  }
+});
+
+test('heading_outline_preserves_literal_math_image_and_interface_label_text_safely', () => {
+  const env = {};
+  createMarkdown().render('## 수식 $x^2$ 키 :kbd[Ctrl] :tip[단어 <b>]{text="설명"} 이미지 ![**대체** `x`](/a.png) \\`문자\\` &amp; `<svg onload=bad>`', env);
+
+  const title = '수식 x^2 키 Ctrl 단어 <b> 이미지 대체 x `문자` & <svg onload=bad>';
+  assert.equal(env.headings[0].title, title);
+  const document = new JSDOM(String(documentOutline(env.headings))).window.document;
+  assert.equal(document.querySelector('a').textContent, title);
+  assert.equal(document.querySelectorAll('svg, b, img, kbd').length, 0);
+});
+
+test('heading_outline_keeps_a_label_when_an_image_has_no_alternative_text', () => {
+  const env = {};
+  createMarkdown().render('## ![](/image.png)', env);
+
+  const document = new JSDOM(String(documentOutline(env.headings))).window.document;
+  assert.equal(document.querySelector('a').textContent, '![](/image.png)');
 });
 
 test('detail_and_feed_move_heading_tags_without_losing_the_written_level', () => {

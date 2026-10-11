@@ -202,7 +202,11 @@ export function installDirectives(md, kit) {
       attrs = parseOptions(source, spec.attrs, fail, checks);
     }
     if (spec.label === 'icon' && checks.icon(label)) fail(checks.icon(label));
-    if (!silent) state.push('html_inline', '', 0).content = spec.render(label, attrs, helpers(state.env));
+    if (!silent) {
+      const token = state.push('html_inline', '', 0);
+      token.content = spec.render(label, attrs, helpers(state.env));
+      token.meta = { plainText: label };
+    }
     state.pos = end;
     return true;
   }
