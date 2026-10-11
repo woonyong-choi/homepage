@@ -288,6 +288,8 @@ const message = "넓은 코드블록";
 
 펜스 첫 낱말이 언어이며 대소문자를 구분하지 않는다. 기존 highlight.js의 193개 언어와 별칭을 유지한다. TextMate 문법이 있는 언어는 빌드 때 Shiki로 분석하고, 나머지는 highlight.js로 분석한다. 정적 빌드에서는 한 줄 분석 시간 제한을 해제해 scope와 토큰이 서로 다른 위치에서 잘리는 것을 방지한다. 대표 언어는 JavaScript(`js`), TypeScript(`ts`), Python(`py`), C, C++(`cpp`, `c++`), C#(`cs`, `c#`), Java, Kotlin(`kt`), Rust(`rs`), Go(`golang`), Swift, Bash(`sh`, `zsh`), SQL, JSON, YAML(`yml`), HTML(`xml`), CSS, Dockerfile(`docker`), Markdown(`md`)이다. 등록되지 않은 언어, 언어 없는 블록, `text`는 `plaintext`로 원문을 이스케이프해 보여 준다.
 
+승인 원문에서 가져온 `run-python`, `run-c`, `run-javascript`, `run-sql`, `run-shell`, `run-web` 펜스는 각각 Python, C, JavaScript, SQL, Bash, HTML 코드로 표시한다. 언어 이름 뒤에 `실행 미지원`을 붙여 원문의 Run·Preview 설명과 이 사이트의 기능을 구분한다. 실행 버튼이나 결과 영역은 만들지 않으며 코드 본문과 복사 원문은 바꾸지 않는다. 등록되지 않은 `run-*`도 다른 알 수 없는 언어처럼 Plain text로 표시한다.
+
 ### 구문 역할과 색
 
 [IntelliJ Language Defaults](https://plugins.jetbrains.com/docs/intellij/color-scheme-management.html)의 공통 역할을 참고한다. IntelliJ 테마의 색·글꼴을 가져오지 않는다. `code-highlight.mjs`는 문법 분석 결과의 scope를 역할에 연결하고, 테마의 `SyntaxToken`이 `app-syntax-*` 클래스를 출력한다. 색·굵기는 공통 테마의 `color.syntax-*`와 기존 글꼴 토큰이 정한다. 분석기의 인라인 색과 외부 테마 CSS는 출력하지 않는다. 브라우저는 분석기를 내려받지 않는다.
