@@ -250,8 +250,10 @@ export function createMarkdown() {
     for (let index = 0; index < state.tokens.length; index += 1) {
       const token = state.tokens[index];
       if (token.type !== 'heading_open') continue;
-      const title = state.tokens[index + 1].content;
-      const slug = title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') || 'section';
+      const inline = state.tokens[index + 1];
+      const title = toHeadingText(inline.children) || inline.content;
+      // 기존 문서의 앵커 주소는 목차 표시 문구와 독립적으로 유지한다.
+      const slug = inline.content.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') || 'section';
       // 다른 제목의 `제목-2` 같은 글자와 겹치지 않도록 예약된 ID는 건너뛴다.
       let count = state.env.headingIds.get(slug) ?? 0;
       let localId;
@@ -265,6 +267,14 @@ export function createMarkdown() {
     }
   });
   return md;
+}
+
+function toHeadingText(tokens) {
+  return tokens.map(token => {
+    if (token.children) return toHeadingText(token.children);
+    if (token.type === 'softbreak' || token.type === 'hardbreak') return ' ';
+    return token.meta?.plainText ?? token.content;
+  }).join('');
 }
 
 function component(kind, data, md, env) {
