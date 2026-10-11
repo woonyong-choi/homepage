@@ -11,3 +11,5 @@ __pycache__/
 
 dist/
 content/interviews.local.md
+.content-sync.lock/
+.content-sync-*/
