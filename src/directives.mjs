@@ -203,7 +203,7 @@ export function installDirectives(md, kit) {
     }
     if (spec.label === 'icon' && checks.icon(label)) fail(checks.icon(label));
     if (!silent) {
-      const token = state.push('html_inline', '', 0);
+      const token = state.push('directive_inline', '', 0);
       token.content = spec.render(label, attrs, helpers(state.env));
       token.meta = { plainText: label };
     }
@@ -213,6 +213,10 @@ export function installDirectives(md, kit) {
 
   md.block.ruler.before('fence', 'directive', block, { alt: ['paragraph', 'reference', 'blockquote', 'list'] });
   md.inline.ruler.before('emphasis', 'interface-label', inline);
+  md.renderer.rules.directive_inline = (tokens, index) => tokens[index].content;
+  const renderInlineAsText = md.renderer.renderInlineAsText.bind(md.renderer);
+  md.renderer.renderInlineAsText = (tokens, options, env) => renderInlineAsText(tokens.map(token =>
+    token.type === 'directive_inline' ? { ...token, type: 'text', content: token.meta.plainText } : token), options, env);
   // 인라인 오류에 줄 번호를 붙이기 위해 기본 inline 규칙을 같은 동작에 오류 변환만 더해 바꾼다.
   md.core.ruler.at('inline', (state) => {
     for (const token of state.tokens) {
