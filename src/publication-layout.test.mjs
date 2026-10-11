@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { knowledgeFields, wikiLanding, tagPage } from './publication-layout.mjs';
+import { knowledgeFields, wikiLanding, tagPage, articlePage, projectSection } from './publication-layout.mjs';
 import { readContentFile } from './content-files.mjs';
 import { JSDOM } from 'jsdom';
+import { LAYOUT } from './layout-config.mjs';
 
 test('a_published_topic_stays_reachable_when_its_overview_is_unpublished', () => {
   const topics = { javascript: { label: 'JavaScript', field: 'languages', group: 'tech', icon: 'javascript', article: 'javascript' } };
@@ -70,9 +71,11 @@ test('tech_and_cs_group_topics_by_navigation_without_changing_source_fields', ()
   assert.equal((html.match(/class="app-card-summary"/g) ?? []).length, 2);
   assert.doesNotMatch(html, /Projects|Languages|Infrastructure/);
   assert.ok(html.indexOf('<h2>CS</h2>') < html.indexOf('<h2>Tech</h2>'));
-  const config = { notes: { projects: false }, projects: [{ title: '프로젝트 사례', href: '/projects/demo/', icon: 'project', description: '구현 사례', links: [] }] };
+  const config = { projects: [{ title: '프로젝트 사례', href: '/projects/demo/', icon: 'project', description: '구현 사례', links: [] }] };
   assert.doesNotMatch(wikiLanding(documents, { topics, config }), /개발 프로젝트/);
-  const active = wikiLanding(documents, { topics, config: { ...config, notes: { projects: true } } }, undefined, '<h2>Blog</h2>');
+  const layout = structuredClone(LAYOUT);
+  layout.search.sections.find(section => section.id === 'projects').enabled = true;
+  const active = wikiLanding(documents, { topics, config, layout }, undefined, '<h2>Blog</h2>');
   assert.ok(active.indexOf('>Blog</h2>') < active.indexOf('개발 프로젝트'));
   assert.ok(active.indexOf('개발 프로젝트') < active.indexOf('<h2>CS</h2>'));
   const old = knowledgeFields(documents, topics, 'infrastructure');
@@ -103,4 +106,26 @@ test('official_guides_link_to_one_source_and_stay_out_of_topic_collections', () 
   assert.equal(cards[0].querySelector('p').textContent, '사용 안내');
   assert.equal(cards[1].querySelector('p'), null);
   assert.doesNotMatch(wikiLanding([], context, 'cs'), /ThinkFlow|app-support-split/);
+});
+
+
+test('source_links_preserve_safe_urls_and_reject_executable_schemes', () => {
+  const page = { id: 'source', slug: 'source', route: '/docs/source/', title: '원문', description: '설명', type: 'wiki', tags: [], headings: [], html: '', contentIcon: { name: 'project' } };
+  for (const sourceUrl of ['https://example.com/wiki/?a=1&b=2#part', 'http://example.com/wiki/', '/docs/original/#part']) {
+    const html = articlePage({ ...page, sourceUrl }, { topics: {} });
+    assert.equal(JSDOM.fragment(html).querySelector('.app-source-link a').getAttribute('href'), sourceUrl);
+    assert.doesNotMatch(html, /&amp;amp;/);
+  }
+  assert.equal(JSDOM.fragment(articlePage(page, { topics: {} })).querySelector('.app-source-link'), null);
+  for (const sourceUrl of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', 'data:text/html,<script>alert(1)</script>', 'vbscript:msgbox(1)', 'file:///etc/passwd', '//example.com/', '/\\example.com/', 'https://example.com/\npath', 'https://example.com/a b']) {
+    assert.throws(() => articlePage({ ...page, sourceUrl }, { topics: {} }), /Unsupported URL/);
+  }
+});
+
+test('project_links_use_the_same_url_boundary_as_shared_components', () => {
+  const project = { title: '프로젝트', description: '설명', icon: 'project', href: 'https://example.com/?a=1&b=2', links: [{ title: '문서', href: '/docs/project/' }] };
+  const links = [...JSDOM.fragment(projectSection([project])).querySelectorAll('a')];
+  assert.deepEqual(links.map(link => link.getAttribute('href')), [project.href, project.links[0].href]);
+  assert.throws(() => projectSection([{ ...project, href: 'javascript:alert(1)' }]), /Unsupported URL/);
+  assert.throws(() => projectSection([{ ...project, links: [{ title: '문서', href: 'data:text/html,bad' }] }]), /Unsupported URL/);
 });

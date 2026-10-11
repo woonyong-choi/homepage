@@ -4,7 +4,10 @@ import { escape } from './markdown.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 import { getIconCatalog, iconFile } from './vendor/theme/ui/build/icons.mjs';
 import { contentIcon, renderContentSvg } from './content-icons.mjs';
-import { TOPIC_GROUPS } from './content-model.mjs';
+import { TOPIC_GROUPS, paginate } from './content-model.mjs';
+import { LAYOUT, gridSize } from './layout-config.mjs';
+import { loadHomeNavigation } from './home-content.mjs';
+import { collectionNavigation } from './collection-navigation.mjs';
 import { clientEntrypoints } from './publication-assets.mjs';
 import { heroSection, projectsSection, technologySection, interviewsSection, contactSection } from './home-sections.mjs';
 import { documentNavigation, documentOutline, documentPager } from './document-navigation.mjs';
@@ -13,6 +16,7 @@ import { publicationMetadata, siteTitle } from './publication-metadata.mjs';
 import { usesMath, MATH_STYLESHEET } from './math-assets.mjs';
 
 const BRANDS = getIconCatalog().brands;
+const NAVIGATION = loadHomeNavigation();
 export const FIELD_NAMES = Object.freeze({ tech: 'Tech', languages: 'Languages', cs: 'CS', frameworks: 'Frameworks', infrastructure: 'Infrastructure' });
 
 export function iconUrl(spec, size = 'small') {
@@ -29,19 +33,18 @@ export function subjectIcon(spec, size = 'card') {
 export function documentShell(page, body, context) {
   const { config, themeHash, scriptHash, scriptHashes = {}, math } = context;
   const hashOf = file => scriptHashes[file] ?? scriptHash;
-  const navigation = [['Search', '/docs/'], ['Blog', '/blog/']];
-  const searching = page.type === 'wiki' || page.route.startsWith('/docs/') || page.route === '/search/' || page.route.startsWith('/tags/');
-  const active = page.type === 'blog' ? '/blog/' : searching ? '/docs/' : page.route;
+  const navigation = context.navigation ?? NAVIGATION;
+  const active = navigation.flatMap(item => item.match.filter(prefix => prefix === '/' ? page.route === '/' : page.route.startsWith(prefix)).map(prefix => ({ href: item.href, length: prefix.length }))).sort((a, b) => b.length - a.length)[0]?.href;
   const footer = personalFooter(config);
   const entries = clientEntrypoints(body + footer);
   const searchScript = entries.includes('publication.js') ? `<script type="module" async src="/publication.js?v=${hashOf('publication.js')}"></script>` : '';
   const scripts = entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
   const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src)) : undefined;
-  return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation.map(([label, href]) => ({ label, href })), active })}${body}${footer}${searchScript}</body></html>`;
+  return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
 }
 
-export function searchBox({ large = false, query = '' } = {}) {
-  return String(ui.SearchBox({ large, query, action: '/search/', labels: { region: '통합 검색', input: '글 검색', placeholder: '어떤 내용을 찾으세요?', clear: '검색어 지우기', suggestions: '추천 검색어:' }, suggestions: large ? ['Python', 'Kubernetes', '운영체제', 'LLM'] : [], fallback: ui.trusted('<p class="app-caption">검색은 JavaScript가 필요합니다. <a href="/docs/">주제별 목록</a>과 <a href="/blog/all/">전체 글</a>은 바로 읽을 수 있습니다.</p>') }));
+export function searchBox({ large = false, query = '', config = LAYOUT.search.box } = {}) {
+  return String(ui.SearchBox({ large, query, action: '/search/', labels: config.labels, suggestions: large ? config.suggestions : [], fallback: ui.trusted('<p class="app-caption">검색은 JavaScript가 필요합니다. <a href="/docs/">주제별 목록</a>과 <a href="/blog/all/">전체 글</a>은 바로 읽을 수 있습니다.</p>') }));
 }
 
 export function tagLinks(page, tags, limit = Infinity) {
@@ -49,29 +52,37 @@ export function tagLinks(page, tags, limit = Infinity) {
   return String(ui.TagList({ tags: page.tags.map(id => ({ href: `/tags/${id}/`, label: tags[id].label })), limit }));
 }
 
-export function documentCard(page, title = page.title, level = 3, variant) {
-  return String(ui.Card({ href: page.route, title, description: page.description, icon: ui.trusted(subjectIcon(page.contentIcon)), headingLevel: level, variant }));
+export function documentCard(page, title = page.title, level = 3, variant, card = LAYOUT.cs.card) {
+  const icon = card.media === 'icon' ? ui.trusted(subjectIcon(page.contentIcon)) : card.media === 'image' && page.thumbnail ? ui.ContentIconImage({ src: page.thumbnail.src, size: 'card' }) : undefined;
+  const description = card.description ? page.description : '';
+  return String(ui.Card({ href: page.route, title, showTitle: card.title || (!icon && !description), description, icon, headingLevel: level, variant }));
 }
 
-function categoryEntries(documents, topics, field) {
+export function categoryEntries(documents, topics, field, order = []) {
+  for (const id of order) if (!topics[id] || (TOPIC_GROUPS.includes(field) && topics[id].group !== field)) throw new Error(`config/${field}.json.order: 영역에 없는 주제입니다: ${id}`);
   const bySlug = new Map(documents.map(page => [page.slug, page]));
-  return Object.entries(topics).filter(([, topic]) => topic.group && (TOPIC_GROUPS.includes(field) ? topic.group === field : topic.field === field)).map(([id, topic]) => {
-      const article = bySlug.get(topic.article) ?? documents.filter(page => (page.topic ?? page.category) === id && page.type === 'wiki').sort((a, b) => a.id.localeCompare(b.id))[0];
-      return article ? { ...topic, page: { ...article, description: topic.group === 'tech' ? '' : topic.description ?? article.description, contentIcon: { name: topic.icon } } } : null;
-    }).filter(Boolean);
+  const ordered = [...order, ...Object.keys(topics).filter(id => !order.includes(id))];
+  return ordered.filter(id => topics[id].group && (TOPIC_GROUPS.includes(field) ? topics[id].group === field : topics[id].field === field)).map(id => {
+    const topic = topics[id];
+    const article = bySlug.get(topic.article) ?? documents.filter(page => (page.topic ?? page.category) === id && page.type === 'wiki').sort((a, b) => a.id.localeCompare(b.id))[0];
+    return article ? { ...topic, page: { ...article, description: topic.description ?? article.description, contentIcon: { name: topic.icon } } } : null;
+  }).filter(Boolean);
 }
 
-export function knowledgeFields(documents, topics, field) {
-  const groups = field ? [field] : TOPIC_GROUPS;
-  return groups.map(value => {
-    const entries = categoryEntries(documents, topics, value);
+export function knowledgeFields(documents, topics, field, { layout = LAYOUT, groups = TOPIC_GROUPS, page = 1 } = {}) {
+  return (field ? [field] : groups).map(value => {
+    const area = layout[value] ?? layout.cs;
+    const entries = categoryEntries(documents, topics, value, TOPIC_GROUPS.includes(value) ? area.order : []);
     if (!entries.length) return '';
-    const limit = value === 'tech' ? 8 : 6;
-    const previewColumns = value === 'tech' ? 4 : 3;
-    const columns = field ? previewColumns + 1 : previewColumns;
-    const shown = field ? entries : entries.slice(0, limit);
-    const level = field ? 1 : 2;
-    return `<section class="app-support-group">${field ? '' : `<h2>${FIELD_NAMES[value]}</h2>`}${ui.CardGroup({ columns, cards: shown.map(topic => ui.trusted(documentCard(topic.page, topic.label, level + 1, 'summary'))) })}${!field && entries.length > limit ? `<p>${ui.NavigationLink({ href: `/docs/topics/${value}/`, text: '전체 보기' })}</p>` : ''}</section>`;
+    const grid = field ? area.collection : area.preview;
+    const limit = gridSize(grid);
+    const result = paginate(entries, field ? page : 1, limit);
+    const level = field ? 2 : 3;
+    const title = layout[value]?.title ?? FIELD_NAMES[value];
+    const intro = `${field ? '' : `<h2>${escape(title)}</h2>`}${area.description ? `<p>${escape(area.description)}</p>` : ''}`;
+    const cards = result.items.map(topic => ui.trusted(documentCard(topic.page, topic.label, level, 'summary', area.card)));
+    const next = field ? collectionNavigation(result, `/docs/topics/${value}/`) : entries.length > limit ? `<p>${ui.NavigationLink({ href: `/docs/topics/${value}/`, text: layout.search.allLabel })}</p>` : '';
+    return `<section class="app-support-group">${intro}${ui.CardGroup({ columns: grid.columns, cards })}${next}</section>`;
   }).join('');
 }
 
@@ -89,11 +100,17 @@ export function personalHome(context) {
   return `<main id="main" class="app-landing"><h1 class="app-sr">${escape(title)}</h1>${context.home.map(section => HOME_SECTIONS[section.type](section, context)).join('')}</main>`;
 }
 
-export function wikiLanding(documents, context, field, recent = '') {
-  const fields = knowledgeFields(documents, context.topics, field);
-  const projects = !field && context.config?.notes?.projects === true ? projectSection(context.config.projects) : '';
-  if (field) return `<main id="main" class="app-shell">${searchBox({ large: true })}${ui.CollectionHeader({ title: FIELD_NAMES[field], backHref: '/docs/', backLabel: '돌아가기' })}${fields}</main>`;
-  return `<main id="main" class="app-shell app-body">${searchBox({ large: true })}<h1 class="app-sr">Search</h1>${recent}${projects}${fields}${guideSections(context.config?.guides ?? [])}</main>`;
+export function wikiLanding(documents, context, field, recent = '', page = 1) {
+  const layout = context.layout ?? LAYOUT;
+  const search = searchBox({ large: true, config: layout.search.box });
+  if (field) return `<main id="main" class="app-shell">${search}${ui.CollectionHeader({ title: layout[field]?.title ?? FIELD_NAMES[field], backHref: '/docs/', backLabel: layout.search.backLabel })}${knowledgeFields(documents, context.topics, field, { layout, page })}</main>`;
+  const sections = layout.search.sections.filter(section => section.enabled).map(section => {
+    if (section.id === 'blog') return recent;
+    if (section.id === 'projects') return projectSection(context.config?.projects ?? [], layout.search.projectsTitle);
+    if (section.id === 'guides') return guideSections(context.config?.guides ?? []);
+    return knowledgeFields(documents, context.topics, undefined, { layout, groups: [section.id] });
+  });
+  return `<main id="main" class="app-shell app-body">${search}<h1 class="app-sr">${escape(layout.search.title)}</h1>${sections.join('')}</main>`;
 }
 
 function guideSections(guides) {
@@ -106,12 +123,12 @@ function guideSections(guides) {
   }).join('');
 }
 
-export function projectSection(projects) {
-  return `<section class="app-knowledge-section"><div class="app-section-heading"><h2>개발 프로젝트</h2></div><div class="app-project-grid">${projects.map(project => `<article class="app-project-entry"><a class="app-knowledge-card" href="${escape(project.href)}">${subjectIcon(project.icon)}<h3>${escape(project.title)}</h3><p>${escape(project.description)}</p></a><div class="app-project-links">${project.links.map(link => `<a href="${escape(link.href)}">${escape(link.title)} →</a>`).join('')}</div></article>`).join('')}</div></section>`;
+export function projectSection(projects, title = LAYOUT.search.projectsTitle) {
+  return `<section class="app-knowledge-section"><div class="app-section-heading"><h2>${escape(title)}</h2></div><div class="app-project-grid">${projects.map(project => `<article class="app-project-entry"><a class="app-knowledge-card" href="${ui.safeUrl(project.href)}">${subjectIcon(project.icon)}<h3>${escape(project.title)}</h3><p>${escape(project.description)}</p></a><div class="app-project-links">${project.links.map(link => `<a href="${ui.safeUrl(link.href)}">${escape(link.title)} →</a>`).join('')}</div></article>`).join('')}</div></section>`;
 }
 
 export function articlePage(page, context, comments = '') {
-  const source = `${page.sourceUrl ? `<p class="app-source-link"><a href="${escape(page.sourceUrl)}">공개 원문</a></p>` : ''}`;
+  const source = `${page.sourceUrl ? `<p class="app-source-link"><a href="${ui.safeUrl(page.sourceUrl)}">공개 원문</a></p>` : ''}`;
   const tail = `${source}${comments}`;
   const example = page.example ? '<p class="app-example-notice">화면 검증을 위한 예시 글입니다. 실제 운영 성과를 나타내지 않습니다.</p>' : '';
   if (page.type === 'blog') {

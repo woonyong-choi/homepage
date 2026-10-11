@@ -1,0 +1,8 @@
+{
+  "title": "CS",
+  "description": "",
+  "preview": { "columns": 3, "rows": 2 },
+  "collection": { "columns": 4, "rows": null },
+  "card": { "title": true, "description": true, "media": "icon" },
+  "order": []
+}
