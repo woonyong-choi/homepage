@@ -122,6 +122,26 @@ test('representative_languages_and_aliases_use_the_registered_highlighter', () =
   assert.match(render(fence('js', 'const a = 1; // 주석\n')), /app-syntax-keyword/);
 });
 
+test('published_run_examples_keep_their_language_and_state_that_execution_is_unavailable', () => {
+  const examples = [
+    ['run-python', 'python', 'Python', 'print("<script>")\n'],
+    ['run-c', 'c', 'C', '#include <stdio.h>\nint main(void) { return 0; }\n'],
+    ['run-javascript', 'javascript', 'JavaScript', 'globalThis.example = "<b>value</b>";\n'],
+    ['run-sql', 'sql', 'SQL', 'SELECT 1;\n'],
+    ['run-shell', 'bash', 'Bash', 'printf "%s\\n" "hello"\n'],
+    ['run-web', 'html', 'HTML, XML', '<script>document.body.textContent = "hello";</script>\n'],
+  ];
+  for (const [info, language, label, source] of examples) {
+    const html = render(fence(info.toUpperCase(), source));
+    assert.equal(labelOf(html), `${label} · 실행 미지원`, info);
+    assert.match(html, new RegExp(`<code class="language-${language}">`));
+    assert.match(html, /app-syntax-/);
+    assert.equal(codeOf(html), source, info);
+    assert.doesNotMatch(html, /<script|<iframe|<form|\son\w+=/);
+  }
+  assert.equal(codeLanguage('run-unknown').id, 'plaintext');
+});
+
 // #107: 언어별 함수 선언과 호출을 같은 역할로 표시하고 문자열·주석은 코드로 판별하지 않는다.
 test('code_roles_distinguish_calls_types_properties_and_parameters', () => {
   const samples = [
