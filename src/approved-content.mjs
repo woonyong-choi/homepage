@@ -1,11 +1,12 @@
 // 공개 승인한 원문의 해시와 일치하는 사본만 홈페이지 입력으로 내보낸다.
 import { createHash } from 'node:crypto';
-import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { readContentFile } from './content-files.mjs';
 import { isDocumentId } from './content-model.mjs';
+import { updateContent } from './content-update.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const APPROVALS = 'config/homepage-approvals.json';
@@ -45,6 +46,10 @@ export function revokeContent(sourceRoot, sources) {
 // vars: b = 승인 원문과 기존 사본의 전체 바이트 수, n = 검증할 파일 수, d = 최대 경로 깊이
 // basis: estimate
 export function syncApprovedContent(sourceRoot, siteRoot = ROOT) {
+  return updateContent(siteRoot, root => prepareContent(sourceRoot, root), verifyApprovedContent);
+}
+
+function prepareContent(sourceRoot, siteRoot) {
   const approvals = readApprovals(sourceRoot);
   const files = {};
   const copies = [];
@@ -70,15 +75,11 @@ export function syncApprovedContent(sourceRoot, siteRoot = ROOT) {
   }
   const manifestPath = safeFile(siteRoot, 'config/publication-manifest.json');
   const manifest = createPublicationManifest(manifestPath, documents);
-  for (const { target, content } of copies) {
-    mkdirSync(dirname(target), { recursive: true });
-    writeFileSync(target, content);
-  }
-  for (const file of Object.keys(previous)) if (!Object.hasOwn(files, file)) unlinkSync(safeFile(siteRoot, file));
-  writeJson(snapshot, { version: 1, files });
-  writeJson(manifestPath, manifest);
-  verifyApprovedContent(siteRoot);
-  return copies.length;
+  const updates = new Map(copies.map(({ target, content }) => [target, content]));
+  for (const file of Object.keys(previous)) if (!Object.hasOwn(files, file)) updates.set(safeFile(siteRoot, file), null);
+  updates.set(snapshot, JSON.stringify({ version: 1, files }, null, 2) + '\n');
+  updates.set(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+  return { files: updates, result: copies.length };
 }
 
 // cost: time O(b+n*(d+log n)), heap O(b+n*d), stack O(d), io O(n*d)
