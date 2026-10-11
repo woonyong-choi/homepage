@@ -23,6 +23,22 @@ npm run check:product     # 계약 테스트
 
 완결된 소개 문장과 인터뷰 요약은 마침표로 끝낸다. 섹션 제목, 버튼 문구, 회사명과 직무 같은 짧은 표기에는 마침표를 넣지 않는다.
 
+## 상단 메뉴
+
+모든 페이지의 오른쪽 위 메뉴는 `content/home.md`의 `navigation` 목록으로 정한다. 목록 순서가 표시 순서이며 각 항목의 `label`은 문구, `href`는 이동 주소다. `match`는 메뉴를 선택 상태로 표시할 URL 접두사 목록이고 생략하면 `href`를 사용한다. 여러 항목에 맞으면 가장 긴 접두사가 우선하며 `/`는 홈에서만 선택된다. 중복 `href`와 안전하지 않은 주소는 빌드 오류다. 빈 목록은 오른쪽 메뉴를 숨긴다.
+
+```yaml
+navigation:
+  - label: Search
+    href: /docs/
+    match: [/docs/, /search/, /tags/]
+  - label: Blog
+    href: /blog/
+    match: [/blog/]
+```
+
+Search·CS·Tech와 블로그 목록의 문구·배치는 [영역 설정](layout-settings.md)에서 관리한다.
+
 ## 공통 필드
 
 | 필드 | 설명 |

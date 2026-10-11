@@ -1,0 +1,8 @@
+{
+  "title": "Tech",
+  "description": "",
+  "preview": { "columns": 4, "rows": 2 },
+  "collection": { "columns": 5, "rows": null },
+  "card": { "title": true, "description": false, "media": "icon" },
+  "order": []
+}

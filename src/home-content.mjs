@@ -228,7 +228,8 @@ export const DERIVED_IDS = {
 const domIds = section => (DERIVED_IDS[section.type] ?? (id => [id]))(section.id);
 
 export function parseHomeSections(data, { technologies = new Set(), exists = () => true } = {}) {
-  const root = record(data ?? {}, '(최상위)', ['sections']);
+  const root = record(data ?? {}, '(최상위)', ['navigation', 'sections']);
+  if (root.navigation !== undefined) parseHomeNavigation(root.navigation);
   const used = new Map(RESERVED_IDS.map(id => [id, '예약된 id']));
   return list(root.sections ?? [], 'sections').flatMap((entry, index) => {
     const path = `sections[${index}]`;
@@ -254,7 +255,7 @@ export function parseHomeSections(data, { technologies = new Set(), exists = () 
 export function loadHomeContent(technologies, root = ROOT, { preview = false } = {}) {
   const options = { technologies, exists: path => existsSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(root, path)) };
   const home = readContentFile(join(root, HOME_CONTENT));
-  record(home.metadata, '(최상위)', ['sections']);
+  record(home.metadata, '(최상위)', ['navigation', 'sections']);
   const entries = list(home.metadata.sections, 'sections').map((entry, index) => {
     if (!entry || !Object.hasOwn(entry, 'source')) return entry;
     const path = `sections[${index}]`;
@@ -281,6 +282,25 @@ export function loadHomeContent(technologies, root = ROOT, { preview = false } =
   if (body.trim()) throw new Error(`${LOCAL_INTERVIEWS}: 카드 내용은 items에 작성합니다`);
   const replacement = { ...interviews[0], items: metadata.items };
   return parseHomeSections({ sections: sections.map(section => section === interviews[0] ? replacement : section) }, options);
+}
+
+export function loadHomeNavigation(root = ROOT) {
+  const { metadata } = readContentFile(join(root, HOME_CONTENT));
+  record(metadata, '(최상위)', ['navigation', 'sections']);
+  return parseHomeNavigation(metadata.navigation ?? []);
+}
+
+export function parseHomeNavigation(value) {
+  const seen = new Set();
+  return list(value, 'navigation').map((entry, index) => {
+    const path = `navigation[${index}]`;
+    const item = record(entry, path, ['label', 'href', 'match']);
+    const target = href(item.href, `${path}.href`);
+    if (seen.has(target)) fail(`${path}.href`, '중복 메뉴 주소입니다');
+    seen.add(target);
+    const match = list(item.match ?? [target], `${path}.match`).map((value, offset) => href(value, `${path}.match[${offset}]`));
+    return { label: text(item.label, `${path}.label`), href: target, match };
+  });
 }
 
 function withIntroduction(section, body, source) {

@@ -1,4 +1,11 @@
 ---
+navigation:
+  - label: Search
+    href: /docs/
+    match: [/docs/, /search/, /tags/]
+  - label: Blog
+    href: /blog/
+    match: [/blog/]
 sections:
   - id: hero
     type: hero
