@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
@@ -21,14 +21,22 @@ const TAGS = JSON.parse(readFileSync(join(product, '../config/tags.json'), 'utf8
 const TOPICS = readContentFile(join(product, '../content/tech.md')).metadata.topics;
 const PAINT = /\s(?:color|fill|stroke|stop-color|flood-color)=["']([^"']*)["']/g;
 
-test('vendored_theme_is_exactly_the_manifest_and_matches_canonical_output_when_present', t => {
+test('vendored_theme_is_exactly_the_manifest', () => {
   const manifest = JSON.parse(readFileSync(join(vendor, 'manifest.json'), 'utf8'));
   const listed = Object.keys(manifest.files).sort();
   for (const name of listed) assert.equal(sha(readFileSync(join(vendor, name))), manifest.files[name], name);
   const extra = files(vendor).filter(name => name !== 'manifest.json' && !listed.includes(name));
   assert.deepEqual(extra, [], '소비자가 가져온 테마 폴더에 정본에 없는 파일을 두면 안 된다');
-  const canonical = fileURLToPath(new URL('../../../design-tokens/design-tokens/dist/', import.meta.url));
-  if (!existsSync(canonical)) return t.skip('design-tokens 작업본이 없어 정본 비교는 건너뜀');
+});
+
+test('vendored_theme_matches_canonical_output_when_present', t => {
+  const common = spawnSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { cwd: product, encoding: 'utf8' });
+  assert.equal(common.status, 0, common.stderr || common.error?.message);
+  const canonical = process.env.DESIGN_TOKENS_DIST || resolve(common.stdout.trim(), '../../../design-tokens/design-tokens/dist');
+  if (!existsSync(canonical)) {
+    assert.ok(!process.env.DESIGN_TOKENS_DIST, `지정한 디자인 정본을 찾을 수 없다: ${canonical}`);
+    return t.skip('design-tokens 작업본이 없어 정본 비교는 건너뜀');
+  }
   assert.equal(sha(readFileSync(join(vendor, 'manifest.json'))), sha(readFileSync(join(canonical, 'manifest.json'))), '가져온 테마가 정본의 현재 빌드와 다르다. npm run design:sync로 다시 가져온다');
 });
 
