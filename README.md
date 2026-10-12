@@ -4,7 +4,7 @@
 
 승인 원문의 Run 코드 예제는 언어별 구문 색과 `실행 미지원` 안내로 표시한다. 코드의 표시·복사를 지원하며 실행 환경은 제공하지 않는다([코드 블록](docs/design/markdown.md#코드-블록)).
 
-Search에서 ThinkFlow 설치·표현·애니메이션·Markdown 발행·문제 해결 안내로 이동한다. 안내 원문은 ThinkFlow 저장소에서 관리한다.
+Search에서 ThinkFlow 설치·표현·애니메이션·Markdown 발행·문제 해결 안내를 `/projects/thinkflow/`의 공통 문서 뷰어로 읽는다. 안내 원문은 ThinkFlow 저장소에서 관리한다. 렌더러 의존성을 갱신한 뒤 `node scripts/sync-project-documents.mjs <ThinkFlow 저장소>`로 같은 커밋의 공개 문서와 자산을 가져온다([발행 계약](docs/design/publication.md)).
 
 ## 실행
 
