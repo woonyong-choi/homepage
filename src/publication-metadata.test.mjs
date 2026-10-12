@@ -8,7 +8,7 @@ import { siteIdentity } from './site-identity.mjs';
 
 const context = {
   config: { name: '이름', description: '사이트 소개' }, origin: 'https://example.invalid', themeHash: 'hash', preview: false,
-  identity: { favicon: '/media/icon-32.png', touch: '/media/icon-180.png', share: '/media/icon-512.png' },
+  identity: { touch: '/media/icon-180.png', share: '/media/icon-512.png' },
   topics: { javascript: { label: '언어 분류' } },
   tags: { javascript: { label: 'JavaScript' } },
 };
@@ -18,7 +18,8 @@ test('metadata_uses_one_home_name_and_keeps_preview_without_an_invented_origin',
   assert.match(home, /<title>이름<\/title>/);
   assert.match(home, /name="robots" content="noindex,nofollow"/);
   assert.doesNotMatch(home, /canonical|og:url|example\.invalid/);
-  assert.match(home, /rel="icon" type="image\/svg\+xml"/);
+  assert.match(home, /rel="icon" type="image\/svg\+xml" href="data:image\/svg\+xml,/);
+  assert.equal(new JSDOM(home).window.document.querySelectorAll('link[rel="icon"]').length, 1);
   const config = { ...context.config, name: '이름 & 글', github: 'https://github.com/example' };
   const page = documentShell({ title: config.name, route: '/' }, '', { ...context, config });
   const logo = new JSDOM(page).window.document.querySelector('.app-logo');
@@ -74,7 +75,7 @@ test('identity_pngs_are_reproducible_from_the_exported_icon_without_system_fonts
   const svg = readIcon('document');
   const first = siteIdentity(svg);
   const second = siteIdentity(svg);
-  for (const [role, size] of [['favicon', 32], ['touch', 180], ['share', 512]]) {
+  for (const [role, size] of [['touch', 180], ['share', 512]]) {
     assert.equal(first[role], second[role]);
     const png = first.assets.get(first[role]);
     assert.equal(png.subarray(1, 4).toString(), 'PNG');
