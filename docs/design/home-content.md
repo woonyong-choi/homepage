@@ -11,6 +11,8 @@ npm run check:product     # 계약 테스트
 
 잘못된 설정은 `home.md sections[1].items[0].link.href: ...`처럼 틀린 경로를 포함한 오류로 빌드를 멈춘다.
 
+공개 홈은 승인된 동료평가 11개를 `content/interviews.md`에서 읽는다.
+
 공개 전 인터뷰 검토에는 Git에서 제외되는 `content/interviews.local.md`를 연결한다. 파일은 `---`로 감싼 YAML의 `items` 카드 목록만 가지고 본문은 비워 둔다. 미리보기 빌드에서만 활성 인터뷰 섹션 하나의 `items`를 대체하고 같은 검증을 적용한다. 공개 빌드(`npm run build:site -- --production`)는 이 파일을 읽지 않는다. 원본 답변·연락처·비공개 출처는 사이트 입력으로 복사하지 않는다. 공개 범위가 확인된 카드만 `content/interviews.md`의 `items`에 옮긴다.
 
 비공개 자료 저장소의 검토용 Markdown을 `content/interviews.local.md` 심볼릭 링크로 연결할 수 있다. 새 worktree에는 Git에서 제외한 이 연결이 생기지 않으므로, 이전 화면을 검수할 때 같은 검토 입력을 연결한다. 원문은 복사하거나 커밋하지 않는다. 미리보기에서 참조하는 회사 로고는 실제 사용 자산이며, 발행 HTML에서 사용한 로고와 출처 고지만 함께 수집한다. 미사용 자산을 정리할 때 공개 설정뿐 아니라 로컬 미리보기 입력의 참조도 대조한다.
