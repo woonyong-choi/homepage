@@ -152,7 +152,9 @@ PurgeCSS는 빌드에서만 사용한다. 버전과 전이 의존성의 고정 �
 
 ## 공식 도구 안내
 
-Search 입구는 CS·Tech 목록 다음에 `config/site.json`의 `guides`를 표시한다. 첫 카드는 시작 안내와 대표 아이콘, 나머지는 짧은 문서 링크다. `Card`와 `CardGroup({ split: true })`의 공통 배치·초점·반응형을 사용한다. ThinkFlow의 사용법·표현·장면·Markdown·배포·문제 해결은 ThinkFlow 저장소 문서가 정본이다. 홈페이지는 안내 링크만 조립하며 문법이나 배포 버전 설명을 복제하지 않는다.
+Search 입구는 CS·Tech 목록 다음에 `config/site.json`의 `guides`를 표시한다. 첫 카드는 시작 안내와 대표 아이콘, 나머지는 짧은 문서 링크다. `Card`와 `CardGroup({ split: true })`의 공통 배치·초점·반응형을 사용한다. ThinkFlow의 사용법·표현·장면·Markdown·배포·문제 해결은 ThinkFlow 저장소 문서가 정본이다. 홈페이지는 `content/projects/thinkflow/`에 고정 버전의 공개 문서와 자산을 가져와 `/projects/thinkflow/` 아래에서 같은 본문·목차·표·코드·도표 뷰어로 보여 준다. 상대 문서 링크와 절 제목은 내부 주소로 연결하고 코드 원문 링크는 해당 Git 커밋으로 연결한다. 문서 본문은 홈페이지에서 편집하지 않는다.
+
+ThinkFlow 의존성을 갱신한 뒤 `node scripts/sync-project-documents.mjs <ThinkFlow 저장소>`를 실행한다. 잠금 파일의 커밋에서 Git blob을 읽으므로 미커밋 원고를 가져오지 않는다. `config/project-documents.json`의 출처·버전·SHA-256과 모든 파일이 일치해야 빌드한다. 갱신 전에 기존 사본의 해시와 심볼릭 링크를 검사하며 로컬 변경이 있으면 중단한다. 사라진 파일은 이전 목록과 해시로 소유권을 확인한 뒤 제거한다. 라이선스와 고지도 발행 자산에 포함한다.
 
 ## 문서와 블로그 탐색
 

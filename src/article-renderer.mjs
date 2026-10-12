@@ -1,5 +1,6 @@
 // 소개와 같은 첫 문단만 옮기며 링크·각주·강조를 그대로 보존한다.
 import { escape } from './markdown.mjs';
+import { prepareProjectTokens } from './project-documents.mjs';
 
 const normalize = text => text.normalize('NFC').replace(/\s+/gu, ' ').trim();
 const formatting = new Set(['em_open', 'em_close', 'strong_open', 'strong_close', 's_open', 's_close', 'link_open', 'link_close', 'mark_open', 'mark_close', 'footnote_ref']);
@@ -17,6 +18,7 @@ function visibleText(tokens) {
 export function renderArticle(md, page, options = {}) {
   const env = { ...options, pageId: page.id, docId: page.id };
   const tokens = md.parse(page.body, env);
+  prepareProjectTokens(tokens, page, env);
   let leadHtml = escape(page.description);
   if (tokens[0]?.type === 'paragraph_open' && tokens[1]?.type === 'inline' && tokens[2]?.type === 'paragraph_close') {
     const first = tokens[1];
