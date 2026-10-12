@@ -68,16 +68,16 @@ test('blog_cards_keep_post_and_tag_links_independent', () => {
     assert.match(html, /alt="상단의 &quot;검색&quot; 입력창"/);
     assert.match(html, /<a class="app-blog-card-link"[^>]+><div class="app-blog-cover"><img[^>]+><\/div>/);
     const card = html.match(/<article class="app-blog-card">[\s\S]*?<\/article>/)[0];
-    assert.equal((card.match(/<a /g) ?? []).length, 2);
+    assert.equal((card.match(/<a /g) ?? []).length, 3);
     const { document } = new JSDOM(card).window;
     assert.equal(document.querySelector('.app-blog-card-tags .app-tag').getAttribute('href'), '/tags/os/');
     assert.equal(document.querySelector('.app-blog-card-link .app-tag'), null);
     assert.equal((card.match(/<a class="app-blog-card-link"/g) ?? []).length, 1);
     assert.match(card, /<a class="app-blog-card-link" href="\/articles\/post-0\/"/);
     assert.match(card, /<p class="app-card-summary">설명<\/p><\/div><\/a><div class="app-blog-card-tags"[\s\S]*?<div class="app-blog-card-meta">.*<time class="app-blog-card-date" datetime="2026-10-01">2026년 10월 1일<\/time>/);
-    assert.match(card, /<span class="app-blog-card-comments">댓글 2개<\/span><\/div><\/article>$/);
+    assert.match(card, /<a class="app-blog-card-comments" href="\/articles\/post-0\/#comments">댓글 2개<\/a><\/div><\/article>$/);
     assert.doesNotMatch(card, /app-blog-card-author|app-blog-card-avatar|작성자/);
-    assert.doesNotMatch(card, /href="\/author\/"|href="\/articles\/post-0\/#comments"/);
+    assert.doesNotMatch(card, /href="\/author\/"/);
     assert.doesNotMatch(card, /app-blog-card-footer/);
     assert.match(html, /app-card-summary/);
     assert.match(html, /app-blog-card-tags/);
@@ -87,6 +87,17 @@ test('blog_cards_keep_post_and_tag_links_independent', () => {
   const fallback = blogCard({ ...post, thumbnail: undefined }, TAGS);
   assert.doesNotMatch(fallback, /app-content-icon/);
   assert.doesNotMatch(fallback, /cover.webp|object-position/);
-  assert.match(blogCard({ ...post, commentCount: undefined }), />댓글 보기<\/span>/);
-  assert.match(blogCard({ ...post, commentCount: 0 }), />댓글 0개<\/span>/);
+  assert.match(blogCard({ ...post, commentCount: undefined }), />댓글 보기<\/a>/);
+  assert.match(blogCard({ ...post, commentCount: 0 }), />댓글 0개<\/a>/);
+});
+
+// 발행일과 수정일은 같은 표시 형식을 쓰고 기계가 읽는 날짜는 ISO로 유지한다.
+test('blog_feed_formats_published_and_updated_dates_consistently', () => {
+  const [post] = posts(1);
+  const dom = new JSDOM(blogFeed([{ ...post, updatedAt: '2026-10-02' }], TAGS, 1)).window.document;
+  assert.deepEqual([...dom.querySelectorAll('time')].map(node => [node.getAttribute('datetime'), node.textContent]), [
+    ['2026-10-01', '2026년 10월 1일'], ['2026-10-02', '2026년 10월 2일'],
+  ]);
+  const same = new JSDOM(blogFeed([{ ...post, updatedAt: post.publishedAt }], TAGS, 1)).window.document;
+  assert.equal(same.querySelectorAll('time').length, 1);
 });

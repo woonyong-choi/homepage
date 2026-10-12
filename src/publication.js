@@ -20,7 +20,6 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     return selected;
   };
   let revision = 0; let resultRevision = 0; let composing = false; let active = -1; let resultStatus = '';
-  if (page) { input.setAttribute('role', 'searchbox'); input.removeAttribute('aria-autocomplete'); input.removeAttribute('aria-controls'); input.removeAttribute('aria-expanded'); }
   const failureStatus = '검색 자료를 불러오지 못했습니다. 다시 시도해 주세요.';
   function close() { output.hidden = true; if (!page) input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; status.textContent = resultStatus; }
   function restoreQuery(query) {

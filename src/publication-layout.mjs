@@ -1,6 +1,7 @@
+import { dateLabel } from './content-model.mjs';
 // 개인 사이트의 탐색과 본문을 하나의 테마와 문서 식별자로 조합한다.
 import { personalFooter } from './publication-footer.mjs';
-import { escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 import { getIconCatalog, iconFile } from './vendor/theme/ui/build/icons.mjs';
 import { contentIcon, renderContentSvg } from './content-icons.mjs';
@@ -43,8 +44,8 @@ export function documentShell(page, body, context) {
   return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
 }
 
-export function searchBox({ large = false, query = '', config = LAYOUT.search.box } = {}) {
-  return String(ui.SearchBox({ large, query, action: '/search/', labels: config.labels, suggestions: large ? config.suggestions : [], fallback: ui.trusted('<p class="app-caption">검색은 JavaScript가 필요합니다. <a href="/docs/">주제별 목록</a>과 <a href="/blog/all/">전체 글</a>은 바로 읽을 수 있습니다.</p>') }));
+export function searchBox({ large = false, query = '', combobox = true, config = LAYOUT.search.box } = {}) {
+  return String(ui.SearchBox({ large, query, combobox, action: '/search/', labels: config.labels, suggestions: large ? config.suggestions : [], fallback: ui.trusted('<p class="app-caption">검색은 JavaScript가 필요합니다. <a href="/docs/">주제별 목록</a>과 <a href="/blog/all/">전체 글</a>은 바로 읽을 수 있습니다.</p>') }));
 }
 
 export function tagLinks(page, tags, limit = Infinity) {
@@ -82,7 +83,7 @@ export function knowledgeFields(documents, topics, field, { layout = LAYOUT, gro
     const intro = `${field ? '' : `<h2>${escape(title)}</h2>`}${area.description ? `<p>${escape(area.description)}</p>` : ''}`;
     const cards = result.items.map(topic => ui.trusted(documentCard(topic.page, topic.label, level, 'summary', area.card)));
     const next = field ? collectionNavigation(result, `/docs/topics/${value}/`) : entries.length > limit ? `<p>${ui.NavigationLink({ href: `/docs/topics/${value}/`, text: layout.search.allLabel })}</p>` : '';
-    return `<section class="app-support-group">${intro}${ui.CardGroup({ columns: grid.columns, cards })}${next}</section>`;
+    return String(ui.ContentGroup({ body: ui.trusted(`${intro}${ui.CardGroup({ columns: grid.columns, cards })}${next}`) }));
   }).join('');
 }
 
@@ -119,12 +120,12 @@ function guideSections(guides) {
       ...item, headingLevel: 3, compact: index > 0,
       icon: index === 0 ? ui.trusted(subjectIcon(guide.icon)) : undefined,
     }));
-    return `<section class="app-support-group"><h2>${escape(guide.title)}</h2>${ui.CardGroup({ split: true, cards })}</section>`;
+    return String(ui.ContentGroup({ title: guide.title, body: ui.CardGroup({ split: true, cards }) }));
   }).join('');
 }
 
 export function projectSection(projects, title = LAYOUT.search.projectsTitle) {
-  return `<section class="app-knowledge-section"><div class="app-section-heading"><h2>${escape(title)}</h2></div><div class="app-project-grid">${projects.map(project => `<article class="app-project-entry"><a class="app-knowledge-card" href="${ui.safeUrl(project.href)}">${subjectIcon(project.icon)}<h3>${escape(project.title)}</h3><p>${escape(project.description)}</p></a><div class="app-project-links">${project.links.map(link => `<a href="${ui.safeUrl(link.href)}">${escape(link.title)} →</a>`).join('')}</div></article>`).join('')}</div></section>`;
+  return String(ui.ProjectList({ title, projects: projects.map(project => ({ ...project, icon: ui.trusted(subjectIcon(project.icon)) })) }));
 }
 
 export function articlePage(page, context, comments = '') {
@@ -146,11 +147,11 @@ export function resultRow(page, tags) {
 
 export function tagPage(tag, entries, tags) {
   const fallback = entries.length ? entries.map(page => resultRow(page, tags)).join('') : '<p>이 태그로 발행한 글이 없습니다.</p>';
-  return `<main class="app-shell app-body" id="main">${searchBox()}<h1 class="app-page-heading">${escape(tags[tag].label)}</h1><div data-search-page data-tag="${tag}"><div class="app-filter-summary" data-filter-summary></div><div data-full-results></div><div data-search-fallback>${ui.Details({ title: '이 태그의 모든 글 보기', body: ui.trusted(`<p class="app-caption">검색어를 적용하지 않은 이 태그의 전체 목록입니다.</p>${fallback}`) })}</div></div></main>`;
+  return `<main class="app-shell app-body" id="main">${searchBox({ combobox: false })}<h1 class="app-page-heading">${escape(tags[tag].label)}</h1><div data-search-page data-tag="${tag}"><div class="app-filter-summary" data-filter-summary></div><div data-full-results></div><div data-search-fallback>${ui.Details({ title: '이 태그의 모든 글 보기', body: ui.trusted(`<p class="app-caption">검색어를 적용하지 않은 이 태그의 전체 목록입니다.</p>${fallback}`) })}</div></div></main>`;
 }
 
 export function dateLine(page) {
-  const published = page.publishedAt ? `<time datetime="${page.publishedAt}">${page.publishedAt}</time>` : '';
-  const updated = page.updatedAt && page.updatedAt !== page.publishedAt ? `<span>수정 <time datetime="${page.updatedAt}">${page.updatedAt}</time></span>` : '';
+  const published = page.publishedAt ? `<time datetime="${page.publishedAt}">${dateLabel(page.publishedAt)}</time>` : '';
+  const updated = page.updatedAt && page.updatedAt !== page.publishedAt ? `<span>수정 <time datetime="${page.updatedAt}">${dateLabel(page.updatedAt)}</time></span>` : '';
   return published || updated ? `<p class="app-document-dates">${published}${updated}</p>` : '';
 }

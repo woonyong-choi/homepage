@@ -5,25 +5,11 @@ import { spawnSync } from 'node:child_process';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { parse } from 'yaml';
+import { parseContent } from './content-model.mjs';
+import { resolveTopicId } from './topic-navigation.mjs';
 import { markdownFiles, readContentFile, writeContentFiles } from './content-files.mjs';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
-const TOPICS = [
-  ['python', 'languages', 'python', ['파이썬']], ['javascript', 'languages', 'javascript', ['JS']],
-  ['nodejs', 'languages', 'nodejs', ['Node.js']], ['programming-languages-runtime', 'languages', 'terminal', ['프로그래밍', '런타임']],
-  ['os', 'cs', 'operating-system', ['운영체제', 'OS']], ['network', 'cs', 'network', ['네트워크']],
-  ['algorithm', 'cs', 'algorithm', ['알고리즘']], ['data-structure', 'cs', 'data-structures', ['자료구조']],
-  ['software-design', 'cs', 'architecture', ['설계', '시스템 설계']], ['ml', 'cs', 'model', ['머신러닝', 'ML']],
-  ['llm', 'cs', 'model', ['LLM', '언어 모델']], ['computer-science', 'cs', 'processor', ['CS', '컴퓨터 과학']],
-  ['spring-boot', 'frameworks', 'spring', ['Spring']], ['frontend', 'frameworks', 'components', ['프론트엔드']],
-  ['backend-services', 'frameworks', 'api', ['백엔드']], ['database', 'infrastructure', 'database', ['DB', '데이터베이스']],
-  ['redis', 'infrastructure', 'redis', ['캐시']], ['kubernetes', 'infrastructure', 'kubernetes', ['K8s']],
-  ['linux', 'infrastructure', 'linux', ['리눅스']], ['security', 'infrastructure', 'security', ['보안']],
-  ['platform-delivery-operations', 'infrastructure', 'deploy', ['DevOps', '인프라']],
-  ['data', 'infrastructure', 'database', ['데이터']], ['projects', 'cs', 'project', ['프로젝트']],
-];
-
 export function importPublication(sourceRoot, assetsRoot) {
   if (!assetsRoot || resolve(assetsRoot).startsWith(resolve(ROOT, '..'))) throw new Error('a separate private assets root is required');
   const validator = join(sourceRoot, 'scripts/check-public-projection.mjs');
@@ -36,23 +22,20 @@ export function importPublication(sourceRoot, assetsRoot) {
   const existingById = new Map(existing.map(entry => [entry.metadata.id, entry.metadata]));
   const documents = readdirSync(input).filter(name => name.endsWith('.md') && name !== 'README.md').map(name => {
     const source = readFileSync(join(input, name), 'utf8');
-    const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-    if (!match) throw new Error(`missing projection metadata: ${name}`);
-    const metadata = parse(match[1], { maxAliasCount: 0 });
+    const { metadata, body } = parseContent(source, `missing projection metadata: ${name}`);
     if (metadata.publication_state !== 'publish' || !/^[a-f0-9]{64}$/.test(metadata.projection_sha256)) throw new Error(`unapproved projection: ${name}`);
     if (/(?:file:\/\/|\/Users\/|source_session_ids?\s*:)/.test(source)) throw new Error(`private data in projection: ${name}`);
-    return { ...metadata, name, source, body: match[2], slug: metadata.permalink.split('/').filter(Boolean).at(-1) };
+    return { ...metadata, name, source, body, slug: metadata.permalink.split('/').filter(Boolean).at(-1) };
   });
   const byId = new Map(documents.map(page => [page.projection_id, page]));
-  const available = new Map(documents.map(page => [page.slug, page]));
-  const display = readContentFile(join(ROOT, '../content/tech.md')).metadata.topics;
-  const topics = { ...display, ...Object.fromEntries(TOPICS.filter(([slug]) => available.has(slug)).map(([slug, field, icon, aliases]) => [slug, { label: display[slug]?.label ?? available.get(slug).title, field, icon, aliases, article: slug, ...(display[slug]?.group ? { group: display[slug].group } : {}), ...(display[slug]?.description ? { description: display[slug].description } : {}) }])) };
+  const topics = readContentFile(join(ROOT, '../content/tech.md')).metadata.topics;
   const manifest = { source: 'https://docs.woonyong.com', documents: [] };
   mkdirSync(output, { recursive: true });
   const entries = [];
   for (const page of documents) {
     if (page.content_status === 'planned') continue;
     const topic = findTopic(page, byId, topics);
+    if (!topics[topic]?.field || !topics[topic]?.icon) throw new Error(`missing topic metadata: ${topic} (${page.slug})`);
     const body = page.body.replace(/^\s*# [^\n]+\n/, '').replace(/^\{: [^\n]+\}\s*$/gm, '').trim();
     const paragraph = body.split(/\n\s*\n/).find(part => !/^(?:#|\||`|>|-|\{)/.test(part.trim())) ?? page.title;
     const id = createHash('sha256').update(page.projection_id).digest('hex').slice(0, 20);
@@ -89,16 +72,18 @@ export function mergePublicationMetadata(imported, existing) {
   return { ...imported, ...retained };
 }
 
-function findTopic(page, byId, topics) {
+export function findTopic(page, byId, topics) {
   const visited = new Set();
   let cursor = page;
   while (cursor && !visited.has(cursor.projection_id)) {
-    if (topics[cursor.slug]) return cursor.slug;
+    if (topics[cursor.slug]) return resolveTopicId(cursor.slug, topics);
+    const entry = Object.entries(topics).find(([, topic]) => topic.article === cursor.slug);
+    if (entry) return entry[0];
     visited.add(cursor.projection_id);
     cursor = byId.get(cursor.public_parent_id);
   }
   const prefix = Object.keys(topics).find(key => page.slug.startsWith(`${key}-`));
-  return prefix ?? 'computer-science';
+  return resolveTopicId(prefix ?? 'computer-science', topics);
 }
 
 function plainText(value) {

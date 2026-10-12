@@ -9,7 +9,7 @@ const option = (name, fallback) => args.includes(name) ? args[args.indexOf(name)
 const port = Number(option('--port', '8796'));
 const host = option('--host', '127.0.0.1');
 const root = resolve(option('--root', fileURLToPath(new URL('../dist/site/', import.meta.url))));
-const mime = { '.html':'text/html; charset=utf-8', '.css':'text/css', '.js':'text/javascript', '.mjs':'text/javascript', '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg', '.mp4':'video/mp4', '.woff2':'font/woff2', '.md':'text/plain; charset=utf-8', '.xml':'application/xml' };
+const mime = { '.html':'text/html; charset=utf-8', '.css':'text/css', '.js':'text/javascript', '.mjs':'text/javascript', '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.gif':'image/gif', '.webp':'image/webp', '.avif':'image/avif', '.webm':'video/webm', '.mp4':'video/mp4', '.woff2':'font/woff2', '.md':'text/plain; charset=utf-8', '.xml':'application/xml' };
 createServer((request, response) => {
   try {
     if (!['GET','HEAD'].includes(request.method)) { response.writeHead(405); response.end(); return; }
@@ -19,7 +19,7 @@ createServer((request, response) => {
     let stat = statSync(path);
     if (stat.isDirectory()) { path = resolve(path, 'index.html'); stat = statSync(path); }
     if (!stat.isFile()) throw new Error('file');
-    const headers = { 'content-type': mime[extname(path)] ?? 'application/octet-stream', 'accept-ranges':'bytes', 'cache-control':'no-cache', 'x-content-type-options':'nosniff' };
+    const headers = { 'content-type': mime[extname(path).toLowerCase()] ?? 'application/octet-stream', 'accept-ranges':'bytes', 'cache-control':'no-cache', 'x-content-type-options':'nosniff' };
     if (pathname.endsWith('/giscus.css')) headers['access-control-allow-origin'] = 'https://giscus.app';
     let start = 0; let end = stat.size - 1; let status = 200;
     if (request.headers.range) {
