@@ -41,7 +41,7 @@ export function documentNavigation(page, context) {
     nodes: roots.map(item) });
 }
 
-export function documentPager(page, context) {
+export function documentPager(page, context, renderIcon = () => undefined) {
   if (page.type !== 'wiki') return '';
   const ordered = [];
   const pending = topicRoots(page, context).toReversed();
@@ -52,9 +52,9 @@ export function documentPager(page, context) {
   }
   const index = ordered.findIndex(candidate => candidate.id === page.id);
   if (index < 0 || ordered.length < 2) return '';
-  const link = (candidate, direction) => candidate && { text: `${direction} 문서: ${candidate.title}`, href: candidate.route };
-  return String(ui.PageLinks({ label: `${context.topics[page.topic ?? page.category].label} 문서 이동`,
-    before: link(ordered[index - 1], '이전'), after: link(ordered[index + 1], '다음') }));
+  const link = candidate => candidate && { title: candidate.title, href: candidate.route, icon: renderIcon(candidate) };
+  return String(ui.DocumentPager({ label: context.topics[page.topic ?? page.category].label,
+    before: link(ordered[index - 1]), after: link(ordered[index + 1]) }));
 }
 
 export function documentOutline(headings) {

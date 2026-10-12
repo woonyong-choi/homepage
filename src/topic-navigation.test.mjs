@@ -98,8 +98,8 @@ test('document_pager_uses_sidebar_order_without_crossing_topics_or_including_blo
   assert.equal(documentPager(page('missing'), context), '');
 });
 
-// #186: 문서 순서 탐색은 수동 관련 카드 뒤에서 방향과 제목을 가진 텍스트 링크로 구분한다.
-test('wiki_pager_keeps_related_cards_and_text_navigation_before_comments', () => {
+// 문서 순서 탐색은 관련 문서 뒤, 댓글 앞에서 공통 카드와 방향 이름을 유지한다.
+test('wiki_pager_keeps_related_cards_and_document_cards_before_comments', () => {
   const body = createMarkdown().render(':::cards related\n::card title="관련 문서" href=/docs/related/\n:::end');
   const root = page('root', null, { sourceUrl: 'https://example.com/source', html: body });
   const pages = [root, page('child', 'root')];
@@ -110,11 +110,13 @@ test('wiki_pager_keeps_related_cards_and_text_navigation_before_comments', () =>
   assert.ok(positions.every(position => position >= 0));
   assert.deepEqual(positions, positions.toSorted((a, b) => a - b));
   const document = JSDOM.fragment(html);
-  assert.equal(document.querySelectorAll('.app-related-link').length, 1);
+  assert.equal(document.querySelectorAll('.app-related-link').length, 2);
   assert.equal(document.querySelector('.app-related-link').getAttribute('href'), '/docs/related/');
   const next = document.querySelector('nav[aria-label="Python 문서 이동"] a');
-  assert.equal(next.textContent, '다음 문서: child');
+  assert.equal(next.getAttribute('aria-label'), '다음 문서: child');
+  assert.equal(next.querySelector('strong').textContent, 'child');
   assert.equal(next.rel, 'next');
   assert.equal(next.getAttribute('href'), '/articles/child/');
-  assert.equal(next.children.length, 0);
+  assert.ok(next.closest('.app-document-pager'));
+  assert.ok(next.querySelector('.app-content-icon'));
 });
