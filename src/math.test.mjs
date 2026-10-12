@@ -43,6 +43,36 @@ test('math_does_not_disturb_headings_footnotes_and_tables', () => {
   assert.match(html, /class="footnote-item"/);
 });
 
+// #244: 완결된 인라인 지시어 뒤에서도 제목과 문단의 수식을 해석한다.
+test('inline_math_next_to_directives_renders_in_headings_and_paragraphs', () => {
+  const directives = [
+    { source: ':kbd[Ctrl]', label: 'Ctrl' },
+    { source: ':menu[파일]', label: '파일' },
+    { source: ':icon[search]', label: 'search' },
+    { source: ':tip[단어 <b>]{text="설명"}', label: '단어 <b>' },
+  ];
+  const combinations = directives.flatMap(({ source, label }) => [
+    { source: `${source} $x^2$`, title: `${label} x^2` },
+    { source: `${source} 수식 $x^2$`, title: `${label} 수식 x^2` },
+    { source: `${source} \`code\` $x^2$`, title: `${label} code x^2` },
+    { source: `$x^2$ ${source}`, title: `x^2 ${label}` },
+  ]);
+  const cases = combinations.flatMap(input => [input, { ...input, source: `## ${input.source}`, heading: true }]);
+
+  for (const input of cases) {
+    const md = createMarkdown();
+    const env = {};
+    const tokens = md.parse(input.source, env);
+    const children = tokens.find(token => token.type === 'inline').children;
+    const html = md.renderer.render(tokens, md.options, env);
+
+    assert.deepEqual(children.filter(token => token.type === 'math_inline').map(token => token.content), ['x^2'], input.source);
+    assert.equal((html.match(/<annotation encoding="application\/x-tex">x\^2<\/annotation>/g) ?? []).length, 1, input.source);
+    assert.doesNotMatch(html, /\$x\^2\$/);
+    if (input.heading) assert.equal(env.headings[0].title, input.title, input.source);
+  }
+});
+
 test('katex_assets_are_selected_only_for_pages_with_math', () => {
   const math = mathAssets();
   const css = math.assets.get(MATH_STYLESHEET).toString();
