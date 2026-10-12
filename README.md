@@ -6,6 +6,8 @@
 
 Search에서 ThinkFlow 설치·표현·애니메이션·Markdown 발행·문제 해결 안내를 `/projects/thinkflow/`의 공통 문서 뷰어로 읽는다. 안내 원문은 ThinkFlow 저장소에서 관리한다. 렌더러 의존성을 갱신한 뒤 `node scripts/sync-project-documents.mjs <ThinkFlow 저장소>`로 같은 커밋의 공개 문서와 자산을 가져온다([발행 계약](docs/design/publication.md)).
 
+같은 카드와 선의 단계는 ThinkFlow `scene`, 서로 다른 그림·글·코드는 문서 `@tab`으로 쓴다. 장면이 둘 이상인 도표를 품은 `:::tabs`(`platform` 제외)는 생략한 위치와 선택 줄만 `top`·`segmented`로 보완해 두 선택 줄을 구분한다([도표](docs/design/markdown.md#도표)).
+
 ## 실행
 
 문서 하단의 이전·다음 탐색은 공통 문서 카드로 표시하며 문서 아이콘·제목과 키보드 초점을 유지한다.

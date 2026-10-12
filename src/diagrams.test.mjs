@@ -48,6 +48,49 @@ test('embedded_sources_reject_external_files_with_the_page_location', async () =
   ]) await assert.rejects(compileDiagrams(new Map([[text, 'private-page']])), /private-page:.*file-based/);
 });
 
+const single = 'thinkflow\nbox a "서버" icon=server\nbox b "저장소" icon=db\na -> b\n';
+const tabsOf = (diagram, options = '') => `:::tabs${options}\n@tab 도표\n\n\`\`\`thinkflow\n${diagram}\`\`\`\n@tab 글\n\n본문\n:::end\n`;
+
+test('multi_scene_diagram_tabs_fill_only_omitted_position_and_selector', async () => {
+  const md = createMarkdown();
+  const sources = new Map();
+  for (const text of [source, single]) md.render(tabsOf(text), { pageId: 'scenes', diagramSources: sources });
+  const { diagrams } = await compileDiagrams(sources);
+  assert.equal(diagrams.get(source).scenes, 2);
+  assert.ok(diagrams.get(single).scenes < 2);
+  const render = (text, options = '', known = diagrams) => md.render(tabsOf(text, options), { pageId: 'scenes', diagrams: known });
+  assert.equal(render(source), render(source, ' top segmented'));
+  assert.notEqual(render(source), render(single));
+  const unscened = new Map([...diagrams].map(([text, diagram]) => [text, { ...diagram, scenes: undefined }]));
+  assert.equal(render(single), render(single, '', unscened));
+  assert.notEqual(render(source, '', unscened), render(source));
+  assert.equal(render(source, ' numbers'), render(source, ' top numbers'));
+  assert.equal(render(source, ' box'), render(source, ' box top segmented'));
+  assert.equal(render(source, ' selector=buttons'), render(source, ' top selector=buttons'));
+  assert.equal(render(source, ' position=bottom'), render(source, ' position=bottom segmented'));
+  assert.notEqual(render(source, ' box'), render(source));
+});
+
+test('platform_tabs_keep_their_behavior_with_multi_scene_diagrams_and_decisions_do_not_leak', async () => {
+  const md = createMarkdown();
+  const sources = new Map([[source, 'p']]);
+  const { diagrams } = await compileDiagrams(sources);
+  const fence = `\`\`\`thinkflow\n${source}\`\`\`\n`;
+  const platformNew = `:::platform\n@tab Mac\n\n${fence}@tab Win\n\n본문\n:::end\n`;
+  const platformLegacy = `::::platform\n:::tab[Mac]\n${fence}:::\n:::tab[Win]\n본문\n:::\n::::\n`;
+  const plain = tabsOf(single);
+  for (const input of [platformNew, platformLegacy]) {
+    const html = md.render(input, { pageId: 'p', diagrams });
+    assert.match(html, /^<section class="app-tabs is-platform" data-tabs data-platform>/);
+    assert.equal(html, md.render(input, { pageId: 'p', diagrams: new Map([[source, { ...diagrams.get(source), scenes: undefined }]]) }));
+  }
+  const first = md.render(tabsOf(source) + plain, { pageId: 'p', diagrams });
+  const sections = first.split('<section').slice(1);
+  assert.equal(sections.length, 2);
+  const alone = md.render(plain, { pageId: 'p', diagrams });
+  assert.equal(`<section${sections[1]}`.replace(/component-p-\d+/g, 'X'), alone.replace(/component-p-\d+/g, 'X'));
+});
+
 test('shared_tabs_wrap_keyboard_navigation_and_leave_one_tab_stop', () => {
   const dom = new JSDOM('<div role="tablist"><button role="tab">A</button><button role="tab">B</button><button role="tab">C</button></div>');
   const { window } = dom;
