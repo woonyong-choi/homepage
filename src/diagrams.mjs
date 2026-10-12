@@ -1,8 +1,7 @@
 // ThinkFlow 문법과 배치는 발행할 때만 실행한다. 같은 원본은 한 번 만들고 모든 페이지에서 재사용한다.
-import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { buildFigure, toHtml } from 'thinkflow';
+import { compileDiagram } from 'seorap-document';
 
 export async function compileDiagrams(sources) {
   const shared = JSON.parse(readFileSync(new URL('./vendor/theme/manifest.json', import.meta.url)));
@@ -12,13 +11,9 @@ export async function compileDiagrams(sources) {
   const assets = new Map();
   for (const [source, page] of sources) {
     try {
-      const result = await buildFigure(source, { allowFileAccess: false });
-      const title = result.figure.title ?? '도표';
-      const html = Buffer.from(await toHtml(result, title));
-      const hash = createHash('sha256').update(html).digest('hex');
-      const src = `/diagrams/${hash}.html`;
-      diagrams.set(source, { src, title, dimensions: { width: result.scene.width, height: result.scene.height }, scenes: result.timeline.steps.length });
-      assets.set(src, html);
+      const { html, ...diagram } = await compileDiagram(source);
+      diagrams.set(source, diagram);
+      assets.set(diagram.src, html);
     } catch (error) {
       throw new Error(`${page}: ThinkFlow 도표를 만들 수 없습니다. ${error.message}`, { cause: error });
     }

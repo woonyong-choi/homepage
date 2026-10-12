@@ -274,13 +274,13 @@ test('footnotes_stay_unique_across_pages_and_link_back', () => {
   assert.match(first, /href="#fnref-a-1"/);
 });
 
-test('the_markdown_guide_example_renders_every_supported_construct_and_round_trips_code', () => {
+test('the_markdown_guide_example_renders_every_supported_construct_and_round_trips_code', async () => {
   const source = readFileSync(new URL('../content/blog/markdown-guide.md', import.meta.url), 'utf8');
   assert.match(source, /example: true/);
   const body = source.split('\n---\n').slice(1).join('\n---\n');
   const meta = parse(source.slice(4, source.indexOf('\n---\n')));
   const page = { ...meta, body: body.replace(/^\n/, '') };
-  const rendered = renderArticle(createMarkdown(), page);
+  const rendered = (await renderArticle(page));
   const fences = [...page.body.matchAll(/^(`{3,})([^\n]*)\n([\s\S]*?)^\1\s*$/gm)].filter(match => !match[2].startsWith('ui:'));
   const blocks = [...rendered.html.matchAll(/<pre><code class="language-[^"]*">([\s\S]*?)<\/code><\/pre>/g)].map(match => text(match[1]));
   assert.equal(blocks.length, fences.length);

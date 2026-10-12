@@ -4,7 +4,7 @@ import { dateLine, searchBox, tagLinks, subjectIcon } from './publication-layout
 import { paginate } from './content-model.mjs';
 import { LAYOUT, gridSize } from './layout-config.mjs';
 import { collectionNavigation } from './collection-navigation.mjs';
-import { escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import { postArticle, thumbnailImage } from './post-article.mjs';
 import { commentsSection } from './comments.mjs';
 

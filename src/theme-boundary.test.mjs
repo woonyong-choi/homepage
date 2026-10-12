@@ -41,17 +41,17 @@ test('vendored_theme_matches_canonical_output_when_present', t => {
 });
 
 // 예시, 구성 요소 견본, 공개 글 한 편을 실제 렌더 경로(마크다운 → 글 페이지)로 렌더해 소비자가 표현 값을 더하지 않는지 본다.
-function corpus() {
+async function corpus() {
   const md = createMarkdown();
   const documents = ['docs', 'blog'].flatMap(folder => markdownFiles(join(product, '../content', folder)).map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS)));
   const pages = [...documents.filter(page => page.example), ...documents.filter(page => !page.example).slice(0, 3)];
-  const all = pages.map(page => Object.assign(page, renderArticle(md, page)));
+  const all = await Promise.all(pages.map(async page => Object.assign(page, await renderArticle(page))));
   const specimen = md.render(readFileSync(join(product, 'fixtures/syntax-specimen.md'), 'utf8'), { pageId: 'specimen' });
   return [...all.map(page => articlePage(page, { topics: TOPICS, tags: TAGS })), specimen];
 }
 
-test('rendered_markdown_pages_carry_no_consumer_presentation', () => {
-  const pages = corpus();
+test('rendered_markdown_pages_carry_no_consumer_presentation', async () => {
+  const pages = await corpus();
   const iconPaint = new Set();
   for (const file of new Set(Object.values(getIconCatalog().icons).map(icon => icon.file))) {
     const svg = readFileSync(join(vendor, 'assets/icons', file), 'utf8');
@@ -85,8 +85,8 @@ function assertThemePaint(html, iconPaint) {
   }
 }
 
-test('copy_buttons_expose_name_and_live_status_without_visible_text_styling', () => {
-  for (const html of corpus()) {
+test('copy_buttons_expose_name_and_live_status_without_visible_text_styling', async () => {
+  for (const html of await corpus()) {
     const document = new JSDOM(html).window.document;
     for (const block of document.querySelectorAll('.app-code')) {
       const button = block.querySelector('[data-tool="copy"]');

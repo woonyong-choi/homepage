@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createMarkdown } from './markdown.mjs';
-import { mathAssets, usesMath, MATH_STYLESHEET } from './math-assets.mjs';
+import { parseArticle, renderArticle } from './article-renderer.mjs';
+import { mathAssets, usesMath, MATH_STYLESHEET } from 'seorap-document';
 import { publicationAssets } from './publication-assets.mjs';
 import { documentShell } from './publication-layout.mjs';
 
-const render = (source, env = {}) => createMarkdown().render(source, env);
+const render = async body => (await renderArticle({ id: 'math', description: '', body })).html;
 
-test('inline_and_block_math_render_to_html_and_mathml_without_scripts', () => {
-  const html = render('분수 $\\frac{1}{2}$ 와\n\n$$\n\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}\n$$\n');
+test('inline_and_block_math_render_to_html_and_mathml_without_scripts', async () => {
+  const html = await render('분수 $\\frac{1}{2}$ 와\n\n$$\n\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}\n$$\n');
   assert.match(html, /<span class="katex"><span class="katex-mathml"><math xmlns="http:\/\/www.w3.org\/1998\/Math\/MathML">/);
   assert.match(html, /<mfrac>/);
   assert.match(html, /<p class="katex-block"><span class="katex-display">/);
@@ -17,8 +17,8 @@ test('inline_and_block_math_render_to_html_and_mathml_without_scripts', () => {
   assert.equal(usesMath(html), true);
 });
 
-test('currency_code_escapes_and_plain_dollars_are_not_math', () => {
-  const html = render('커피 $5, 케이크 $12 입니다. 변수 $HOME 과 $USER.\n\n`$x$` 와 \\$a\\$ 끝\n\n```latex\n$$ \\frac{a}{b} $$ $x^2$\n```\n');
+test('currency_code_escapes_and_plain_dollars_are_not_math', async () => {
+  const html = await render('커피 $5, 케이크 $12 입니다. 변수 $HOME 과 $USER.\n\n`$x$` 와 \\$a\\$ 끝\n\n```latex\n$$ \\frac{a}{b} $$ $x^2$\n```\n');
   assert.equal(usesMath(html), false);
   assert.match(html, /커피 \$5, 케이크 \$12/);
   assert.match(html, /<code>\$x\$<\/code>/);
@@ -27,24 +27,24 @@ test('currency_code_escapes_and_plain_dollars_are_not_math', () => {
   assert.equal(code, '$$ \\frac{a}{b} $$ $x^2$\n');
 });
 
-test('invalid_math_keeps_the_source_and_untrusted_commands_cannot_inject_urls_or_html', () => {
-  const broken = render('틀림 $\\frac{1$ 끝');
+test('invalid_math_keeps_the_source_and_untrusted_commands_cannot_inject_urls_or_html', async () => {
+  const broken = await render('틀림 $\\frac{1$ 끝');
   assert.match(broken, /<span class="katex-error" title="[^"]*"[^>]*>\\frac\{1<\/span> 끝/);
-  const hostile = render('$\\href{javascript:alert(1)}{x}$ $\\includegraphics{http://evil.test/a.png}$ $\\htmlClass{x}{y}$ $\\url{https://evil.test}$ $x<y$ <b>$a$</b>');
+  const hostile = await render('$\\href{javascript:alert(1)}{x}$ $\\includegraphics{http://evil.test/a.png}$ $\\htmlClass{x}{y}$ $\\url{https://evil.test}$ $x<y$ <b>$a$</b>');
   assert.doesNotMatch(hostile, /href=|<img|<script|evil\.test[^<]*<\/a>|<b>|onerror|class="x"/);
-  assert.match(render('$$\n\\text{<img src=x onerror=alert(1)>}\n$$'), /&lt;img src=x onerror=alert\(1\)&gt;/);
-  assert.doesNotMatch(render('$$\n\\text{<img src=x onerror=alert(1)>}\n$$'), /<img/);
+  assert.match(await render('$$\n\\text{<img src=x onerror=alert(1)>}\n$$'), /&lt;img src=x onerror=alert\(1\)&gt;/);
+  assert.doesNotMatch(await render('$$\n\\text{<img src=x onerror=alert(1)>}\n$$'), /<img/);
 });
 
-test('math_does_not_disturb_headings_footnotes_and_tables', () => {
-  const html = render('## 식 $a$\n\n| 식 | 값 |\n|---|---|\n| $x^2$ | 4 |\n\n각주[^1]\n\n[^1]: $y$ 설명');
+test('math_does_not_disturb_headings_footnotes_and_tables', async () => {
+  const html = await render('## 식 $a$\n\n| 식 | 값 |\n|---|---|\n| $x^2$ | 4 |\n\n각주[^1]\n\n[^1]: $y$ 설명');
   assert.equal((html.match(/<annotation encoding="application\/x-tex">/g) ?? []).length, 3);
   assert.match(html, /<h2 id="[^"]+" class="app-heading-2">식 <span class="katex">/);
   assert.match(html, /class="footnote-item"/);
 });
 
 // #244: 완결된 인라인 지시어 뒤에서도 제목과 문단의 수식을 해석한다.
-test('inline_math_next_to_directives_renders_in_headings_and_paragraphs', () => {
+test('inline_math_next_to_directives_renders_in_headings_and_paragraphs', async () => {
   const directives = [
     { source: ':kbd[Ctrl]', label: 'Ctrl' },
     { source: ':menu[파일]', label: '파일' },
@@ -60,20 +60,19 @@ test('inline_math_next_to_directives_renders_in_headings_and_paragraphs', () => 
   const cases = combinations.flatMap(input => [input, { ...input, source: `## ${input.source}`, heading: true }]);
 
   for (const input of cases) {
-    const md = createMarkdown();
-    const env = {};
-    const tokens = md.parse(input.source, env);
-    const children = tokens.find(token => token.type === 'inline').children;
-    const html = md.renderer.render(tokens, md.options, env);
+    const page = { id: 'math', description: '', body: input.source };
+    const document = await parseArticle(page);
+    const children = document.tokens.find(token => token.type === 'inline').children;
+    const { html } = await renderArticle(page, { document });
 
     assert.deepEqual(children.filter(token => token.type === 'math_inline').map(token => token.content), ['x^2'], input.source);
     assert.equal((html.match(/<annotation encoding="application\/x-tex">x\^2<\/annotation>/g) ?? []).length, 1, input.source);
     assert.doesNotMatch(html, /\$x\^2\$/);
-    if (input.heading) assert.equal(env.headings[0].title, input.title, input.source);
+    if (input.heading) assert.equal(document.metadata.headings[0].title, input.title, input.source);
   }
 });
 
-test('katex_assets_are_selected_only_for_pages_with_math', () => {
+test('katex_assets_are_selected_only_for_pages_with_math', async () => {
   const math = mathAssets();
   const css = math.assets.get(MATH_STYLESHEET).toString();
   assert.doesNotMatch(css, /https?:|\.woff\b|\.ttf|@import/);
@@ -82,7 +81,7 @@ test('katex_assets_are_selected_only_for_pages_with_math', () => {
   for (const font of fonts) assert.ok(math.assets.has(`/katex/${font}`), font);
   const context = { config: { name: '이름', description: '소개', github: 'https://github.com/example' }, themeHash: 'theme', scriptHash: 'client', math };
   const plain = documentShell({ route: '/a/', title: '글' }, '<main><p>본문</p></main>', context);
-  const withMath = documentShell({ route: '/b/', title: '글' }, render('$x$'), context);
+  const withMath = documentShell({ route: '/b/', title: '글' }, await render('$x$'), context);
   assert.doesNotMatch(plain, /katex|mermaid/);
   assert.match(withMath, new RegExp(`<link rel="stylesheet" href="${MATH_STYLESHEET}\\?v=${math.hash}">`));
   assert.doesNotMatch(withMath, /mermaid/);
@@ -94,8 +93,8 @@ test('katex_assets_are_selected_only_for_pages_with_math', () => {
 });
 
 
-test('mermaid_is_copyable_plain_code_and_never_loads_a_renderer', () => {
-  const html = render('```mermaid\nflowchart LR\n  A["<script>alert(1)</script>"] --> B\n```');
+test('mermaid_is_copyable_plain_code_and_never_loads_a_renderer', async () => {
+  const html = await render('```mermaid\nflowchart LR\n  A["<script>alert(1)</script>"] --> B\n```');
   assert.match(html, /class="language-plaintext"/);
   assert.match(html, /flowchart LR/);
   assert.match(html, /&lt;script&gt;/);

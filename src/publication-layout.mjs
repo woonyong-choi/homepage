@@ -1,6 +1,6 @@
 // 개인 사이트의 탐색과 본문을 하나의 테마와 문서 식별자로 조합한다.
 import { personalFooter } from './publication-footer.mjs';
-import { escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 import { getIconCatalog, iconFile } from './vendor/theme/ui/build/icons.mjs';
 import { contentIcon, renderContentSvg } from './content-icons.mjs';
@@ -13,7 +13,7 @@ import { heroSection, projectsSection, technologySection, interviewsSection, con
 import { documentNavigation, documentOutline, documentPager } from './document-navigation.mjs';
 import { postArticle, shiftHeadings, detailLevels } from './post-article.mjs';
 import { publicationMetadata, siteTitle } from './publication-metadata.mjs';
-import { usesMath, MATH_STYLESHEET } from './math-assets.mjs';
+import { usesMath, MATH_STYLESHEET } from 'seorap-document';
 
 const BRANDS = getIconCatalog().brands;
 const NAVIGATION = loadHomeNavigation();

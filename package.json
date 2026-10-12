@@ -26,8 +26,9 @@
     "markdown-it-task-lists": "^2.1.1",
     "postcss": "8.5.29",
     "purgecss": "7.0.2",
+    "seorap-document": "file:dist/seorap-document-0.0.0.tgz",
     "shiki": "4.5.0",
-    "thinkflow": "github:woonyong-choi/thinkflow#fbb01319645e3d90b97658dded397ec7d03ef42b",
+    "thinkflow": "github:woonyong-choi/thinkflow#7259ee208785e0468cf8f02298c23247aa8cd6b7",
     "yaml": "^2.9.1"
   },
   "overrides": {

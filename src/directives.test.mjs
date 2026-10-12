@@ -75,14 +75,14 @@ test('tab_bodies_keep_code_images_footnotes_and_ui_components_working', () => {
   assert.equal(new Set(all).size, all.length, `겹치는 ID: ${all}`);
 });
 
-test('headings_and_ids_stay_unique_across_blocks_and_documents', () => {
+test('headings_and_ids_stay_unique_across_blocks_and_documents', async () => {
   const source = '## 설정\n\n::::tabs\n:::tab[A]\n## 설정\n\n### 설정\n:::\n:::tab[B]\n## 설정\n:::\n::::\n';
   const html = render(source);
   const all = ids(html);
   assert.equal(new Set(all).size, all.length);
   assert.equal(all.filter(id => id.startsWith('p-설정')).length, 4);
-  const first = renderArticle(md, { id: 'a', description: '', body: source });
-  const second = renderArticle(md, { id: 'b', description: '', body: source });
+  const first = (await renderArticle({ id: 'a', description: '', body: source }));
+  const second = (await renderArticle({ id: 'b', description: '', body: source }));
   const merged = ids(first.html + second.html);
   assert.equal(new Set(merged).size, merged.length);
 });
@@ -240,22 +240,22 @@ test('attribute_parser_returns_null_prototype_objects_and_rejects_control_charac
   assert.throws(() => parseAttributes('a="\\n"', fail), /이스케이프/);
 });
 
-test('article_lead_and_toc_are_unchanged_when_directives_follow_the_lead', () => {
+test('article_lead_and_toc_are_unchanged_when_directives_follow_the_lead', async () => {
   const page = { id: 'x', description: '도입문입니다.', body: '도입문입니다.\n\n## 첫 절\n\n:::note\n본문\n:::\n' };
-  const result = renderArticle(md, page);
+  const result = (await renderArticle(page));
   assert.equal(result.leadHtml, '도입문입니다.');
   assert.deepEqual(result.headings.map(heading => heading.title), ['첫 절']);
   assert.match(result.html, /app-callout/);
-  assert.throws(() => renderArticle(md, { id: 'bad-page', description: 'd', body: ':::note\n본문\n' }), /bad-page 본문 1줄 :note/);
+  await assert.rejects(async () => (await renderArticle({ id: 'bad-page', description: 'd', body: ':::note\n본문\n' })), /bad-page 본문 1줄 :note/);
 });
 
-test('document_composition_example_renders_every_block_with_unique_ids', () => {
+test('document_composition_example_renders_every_block_with_unique_ids', async () => {
   const text = readFileSync(new URL('../content/docs/software-design/document-composition.md', import.meta.url), 'utf8');
   const meta = parse(/^---\n([\s\S]*?)\n---\n/.exec(text)[1]);
   const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
   assert.equal(meta.slug, 'document-composition');
   assert.equal(meta.example, true);
-  const { html, leadHtml, headings } = renderArticle(md, { ...meta, body });
+  const { html, leadHtml, headings } = (await renderArticle({ ...meta, body }));
   assert.equal(leadHtml, meta.description);
   const document = dom(html);
   assert.equal(document.querySelectorAll('.app-tabs.is-platform [role=tab]').length, 3);
@@ -298,12 +298,12 @@ test('related_cards_share_one_structure_without_tags_and_legacy_variants_stay', 
   assert.ok(document.querySelector('.app-support-grid > a.app-help-card.is-centered .app-content-icon'));
 });
 
-test('article_pages_have_no_automatic_related_section_or_edit_suggestion_but_keep_manual_content_and_footnotes', () => {
+test('article_pages_have_no_automatic_related_section_or_edit_suggestion_but_keep_manual_content_and_footnotes', async () => {
   const body = '## 첫 절\n\n각주가 있는 문장입니다.[^n]\n\n## 이어서 읽을 글\n\n:::cards{variant=related}\n::card{title=직접 href=/articles/b/ icon=document}\n:::\n\n[^n]: 각주 본문\n';
-  const mk = (type, extra = {}) => { const page = { id: 'a', slug: 'a', route: '/articles/a/', type, title: 'A', description: '설명', tags: ['python'], contentIcon: { name: 'document' }, body, comments: false, publishedAt: '2026-01-01', ...extra }; return Object.assign(page, renderArticle(md, page)); };
+  const mk = async (type, extra = {}) => { const page = { id: 'a', slug: 'a', route: '/articles/a/', type, title: 'A', description: '설명', tags: ['python'], contentIcon: { name: 'document' }, body, comments: false, publishedAt: '2026-01-01', ...extra }; return Object.assign(page, (await renderArticle(page))); };
   const topics = { python: { label: 'Python' } };
   for (const type of ['wiki', 'blog']) {
-    const page = mk(type);
+    const page = await mk(type);
     const html = articlePage(page, { topics, repositoryUrl: 'https://github.com/example/repo' });
     assert.doesNotMatch(html, /함께 읽기|수정 제안|app-related"|issues\/new/, type);
     const document = dom(html);
