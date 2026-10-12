@@ -67,3 +67,7 @@ npm run design:sync -- /path/to/design-tokens
 ## 문서
 
 문서는 한국어로 작성한다. [전체 문서](docs/README.md)에서 홈 원고, Markdown 문법, 발행 경계와 스타일 수정 위치를 찾는다.
+
+## 운영 배포
+
+GitHub Actions의 `Deploy woonyong.com`을 main에서 수동 실행한다. 공개용 빌드만 GitHub Pages에 배포하며 운영 주소는 `https://woonyong.com`이다.
