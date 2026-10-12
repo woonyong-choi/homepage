@@ -21,15 +21,15 @@ export function siteOrigin(value, preview) {
 }
 
 export function publicationMetadata(page, context) {
-  const { config, origin = '', preview, identity, themeHash, tags = {} } = context;
+  const { config, origin = '', preview, identity, tags = {} } = context;
   const site = siteTitle(config);
   const pageTitle = page.route === '/' ? site : page.title;
   const title = pageTitle === site ? site : `${pageTitle} · ${site}`;
   const description = page.description ?? config.description;
   const meta = (key, value, attribute = 'property') => `<meta ${attribute}="${key}" content="${escape(value)}">`;
   let html = `<title>${escape(title)}</title>${meta('description', description, 'name')}${preview ? meta('robots', 'noindex,nofollow', 'name') : ''}`;
-  if (identity) html += `<link rel="icon" type="image/png" sizes="32x32" href="${identity.favicon}"><link rel="apple-touch-icon" sizes="180x180" href="${identity.touch}">`;
-  html += `<link rel="icon" type="image/svg+xml" sizes="any" href="${SITE_ICON}?v=${themeHash}">`;
+  if (identity) html += `<link rel="apple-touch-icon" sizes="180x180" href="${identity.touch}">`;
+  html += '<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22/%3E">';
   if (!origin) return html;
   const canonical = origin + page.route;
   html += `<link rel="canonical" href="${escape(canonical)}">`;
