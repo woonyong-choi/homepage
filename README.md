@@ -8,6 +8,8 @@ Search에서 ThinkFlow 설치·표현·애니메이션·Markdown 발행·문제 
 
 같은 카드와 선의 단계는 ThinkFlow `scene`, 서로 다른 그림·글·코드는 문서 `@tab`으로 쓴다. 장면이 둘 이상인 도표를 품은 `:::tabs`(`platform` 제외)는 생략한 위치와 선택 줄만 `top`·`segmented`로 보완해 두 선택 줄을 구분한다([도표](docs/design/markdown.md#도표)).
 
+프로젝트 문서의 도표는 ThinkFlow 코드 블록 하나를 인터랙티브 도표로 보여 준다. 같은 도표를 `thinkflow md`가 정적 SVG와 `<details>` 장면 목록으로 만든 부분은 원문(GitHub·ThinkFlow 저장소)에서만 보이고 홈페이지는 걷어 중복 표시하지 않는다. 걷는 조건은 [발행 계약](docs/design/publication.md)에 있다. 이름 없는 도표의 `n=순번`은 홈페이지가 다시 세지 않고 생성 표식의 값을 읽으며, 확신할 수 없는 구간은 그대로 둔다.
+
 ## 실행
 
 문서 하단의 이전·다음 탐색은 공통 문서 카드로 표시하며 문서 아이콘·제목과 키보드 초점을 유지한다.

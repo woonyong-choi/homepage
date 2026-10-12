@@ -55,6 +55,35 @@ export function projectReference(reference, project) {
   return `https://github.com/${project.manifest.repository}/blob/${project.manifest.revision}/${file}${url.search}${url.hash}`;
 }
 
+const FIGURE_IMAGE = /^!\[[^\]]*\]\(([^)\s]+\.svg)\)\s*<!-- thinkflow -->\s*$/;
+
+// 이 문서의 SVG 자산을 가리키는 ThinkFlow 표식 이미지 한 줄인지 확인한다.
+function isProjectFigure(content, project) {
+  const source = FIGURE_IMAGE.exec(content)?.[1];
+  if (!source) return false;
+  try {
+    return projectReference(source, project).startsWith(ASSETS);
+  } catch {
+    return false;
+  }
+}
+
+// ThinkFlow md가 첫 그림 다음에 만드는 장면 구간이 식별자(이름 있는 울타리는 `name=이름`, 이름 없는 울타리는 시작 표식의 `n=순번`) 소유 표식과 장면별 details·그림으로 온전히 이어지면 그 끝 다음 토큰 번호를 돌려준다. 하나라도 다르면 undefined다.
+function sceneRegionEnd(tokens, fence, id, project) {
+  const level = tokens[fence].level;
+  const shape = ['details_open', 'summary_open', 'inline', 'summary_close', 'paragraph_open', 'inline', 'paragraph_close', 'details_close'];
+  let at = fence + 4;
+  let count = 0;
+  while (tokens[at]?.type === 'details_open') {
+    if (shape.some((type, step) => tokens[at + step]?.type !== type) || tokens[at].level !== level || tokens[at].attrGet('open') !== null || !isProjectFigure(tokens[at + 5].content, project)) return undefined;
+    at += shape.length;
+    count += 1;
+  }
+  const mark = tokens[at + 1];
+  if (!count || tokens[at]?.type !== 'paragraph_open' || mark?.type !== 'inline' || mark.content !== `<!-- /thinkflow scenes v1 ${id} -->` || tokens[at + 2]?.type !== 'paragraph_close') return undefined;
+  return at + 3;
+}
+
 export function prepareProjectTokens(tokens, page, env) {
   if (!page.project) return;
   if (tokens[0]?.type === 'heading_open' && tokens[0].tag === 'h1') {
@@ -65,9 +94,18 @@ export function prepareProjectTokens(tokens, page, env) {
     const token = tokens[index];
     if (token.type === 'fence' && /^thinkflow(?:\s|$)/.test(token.info)) {
       if (!/^thinkflow(?:\s+name=[\w-]+)?\s*$/.test(token.info)) throw new Error(`unsupported project diagram options: ${token.info}`);
+      const name = /name=([\w-]+)/.exec(token.info)?.[1];
       token.info = 'thinkflow';
       const inline = tokens[index + 2];
-      if (tokens[index + 1]?.type === 'paragraph_open' && inline?.type === 'inline' && /^!\[[^\]]*\]\([^)]+\.svg\)\s*<!-- thinkflow -->\s*$/.test(inline.content) && tokens[index + 3]?.type === 'paragraph_close') tokens.splice(index + 1, 3);
+      if (tokens[index + 1]?.type !== 'paragraph_open' || inline?.type !== 'inline' || tokens[index + 3]?.type !== 'paragraph_close') continue;
+      if (/^!\[[^\]]*\]\([^)]+\.svg\)\s*<!-- thinkflow -->\s*$/.test(inline.content)) {
+        tokens.splice(index + 1, 3);
+        continue;
+      }
+      const [figure, mark, ...rest] = inline.content.split('\n');
+      const id = rest.length ? undefined : (name ? `name=${name}` : /^<!-- thinkflow scenes v1 (n=[1-9]\d*) -->$/.exec(mark)?.[1]);
+      const end = id && mark === `<!-- thinkflow scenes v1 ${id} -->` && isProjectFigure(figure, page.project) ? sceneRegionEnd(tokens, index, id, page.project) : undefined;
+      if (end) tokens.splice(index + 1, end - index - 1);
     }
     for (const child of token.children ?? []) {
       for (const attribute of ['href', 'src']) {
