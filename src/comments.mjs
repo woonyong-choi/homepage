@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import { repositoryUrl } from './repository-links.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));

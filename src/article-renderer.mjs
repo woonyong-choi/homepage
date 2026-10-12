@@ -1,5 +1,5 @@
 // 소개와 같은 첫 문단만 옮기며 링크·각주·강조를 그대로 보존한다.
-import { escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import { prepareProjectTokens } from './project-documents.mjs';
 
 const normalize = text => text.normalize('NFC').replace(/\s+/gu, ' ').trim();
