@@ -8,6 +8,8 @@ Search에서 ThinkFlow 설치·표현·애니메이션·Markdown 발행·문제 
 
 ## 실행
 
+문서 하단의 이전·다음 탐색은 공통 문서 카드로 표시하며 문서 아이콘·제목과 키보드 초점을 유지한다.
+
 ```sh
 npm ci
 npm run check:tokens
