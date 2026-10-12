@@ -142,6 +142,15 @@ test('inline_icon_tip_kbd_and_menu_render_inside_sentences', () => {
   assert.match(paragraph.textContent, /:nope\[x\]$/);
 });
 
+// #244: 인라인 지시어의 원본 라벨을 이미지 대체 텍스트에도 남긴다.
+test('image_alternative_text_keeps_directive_labels_and_nested_image_text', () => {
+  const source = '![**키** :kbd[Ctrl] :menu[파일] :icon[search] :tip[단어 <b>]{text="설명"} `code` ![안쪽 :kbd[Enter]](/inner.png)](/outer.png)';
+  const document = dom(render(source));
+
+  assert.equal(document.querySelector('img').getAttribute('alt'), '키 Ctrl 파일 search 단어 <b> code 안쪽 Enter');
+  assert.equal(document.querySelectorAll('kbd, button, svg, b').length, 0);
+});
+
 test('tooltip_ids_stay_unique_inside_ui_components_and_repeated_sentences', () => {
   const html = render('가 :tip[하나]{text=a} 나 :tip[둘]{text=b}\n\n```ui:callout\ntitle: x\nbody: ":tip[셋]{text=c} :tip[넷]{text=d}"\n```\n');
   const all = ids(html);
