@@ -1,4 +1,6 @@
 // 공개 문서의 부모 관계를 검사하고 전체 깊이를 보존한 주제별 목록을 만든다.
+export const resolveTopicId = (id, topics) => topics[id]?.topic ?? id;
+
 export function navigationDocuments(documents, topics) {
   const bySlug = new Map(documents.filter(page => page.type === 'wiki').map(page => [page.slug, page]));
   const entries = new Map(Object.entries(topics).filter(([, topic]) => topic.article).map(([id, topic]) => [topic.article, id]));
@@ -7,7 +9,7 @@ export function navigationDocuments(documents, topics) {
     if (page.type !== 'wiki') return page;
     const visited = new Set();
     let ancestor = page;
-    let topic = topics[page.category]?.topic ?? page.category;
+    let topic = resolveTopicId(page.category, topics);
     while (ancestor && ancestor.category === page.category && !visited.has(ancestor.slug)) {
       if (resolved.has(ancestor.slug) || entries.has(ancestor.slug)) {
         topic = resolved.get(ancestor.slug) ?? entries.get(ancestor.slug);

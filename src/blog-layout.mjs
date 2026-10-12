@@ -1,10 +1,10 @@
 // 같은 발행 글 전체를 설정한 미리보기, 카드 목록과 본문 피드로 나누어 보여준다.
 import * as ui from './vendor/theme/ui/index.mjs';
 import { dateLine, searchBox, tagLinks, subjectIcon } from './publication-layout.mjs';
-import { paginate } from './content-model.mjs';
+import { paginate, dateLabel } from './content-model.mjs';
 import { LAYOUT, gridSize } from './layout-config.mjs';
 import { collectionNavigation } from './collection-navigation.mjs';
-import { escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import { postArticle, thumbnailImage } from './post-article.mjs';
 import { commentsSection } from './comments.mjs';
 
@@ -12,8 +12,7 @@ export function blogCard(page, tags = {}, level = 3, card = LAYOUT.blog.card) {
   const cover = card.media === 'image' ? ui.trusted(thumbnailImage(page)) : card.media === 'icon' ? ui.trusted(subjectIcon(page.contentIcon)) : undefined;
   const description = card.description ? page.description : '';
   const hasMedia = card.media === 'icon' || (card.media === 'image' && page.thumbnail);
-  const dateLabel = page.publishedAt ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(page.publishedAt)) : undefined;
-  return String(ui.BlogCard({ href: page.route, title: page.title, showTitle: card.title || (!hasMedia && !description), level, cover, description, tagItems: (card.tags ? page.tags ?? [] : []).map(id => ({ href: `/tags/${id}/`, label: tags[id]?.label ?? id })), publishedAt: card.date ? page.publishedAt : undefined, dateLabel, commentsHref: card.comments && page.comments ? `${page.route}#comments` : undefined, commentCount: page.commentCount }));
+  return String(ui.BlogCard({ href: page.route, title: page.title, showTitle: card.title || (!hasMedia && !description), level, cover, description, tagItems: (card.tags ? page.tags ?? [] : []).map(id => ({ href: `/tags/${id}/`, label: tags[id]?.label ?? id })), publishedAt: card.date ? page.publishedAt : undefined, dateLabel: dateLabel(page.publishedAt), commentsHref: card.comments && page.comments ? `${page.route}#comments` : undefined, commentCount: page.commentCount }));
 }
 
 export function recentBlog(posts, tags, layout = LAYOUT) {
@@ -21,7 +20,7 @@ export function recentBlog(posts, tags, layout = LAYOUT) {
   const area = layout.blog;
   const limit = gridSize(area.preview);
   const cards = posts.slice(0, limit).map(page => ui.trusted(blogCard(page, tags, 3, area.card)));
-  return `<section class="app-knowledge-section app-support-group"><h2 class="app-page-heading">${escape(area.title)}</h2>${area.description ? `<p>${escape(area.description)}</p>` : ''}${ui.CardGroup({ columns: area.preview.columns, cards })}${posts.length > limit ? `<p>${ui.NavigationLink({ href: '/blog/all/', text: layout.search.allLabel })}</p>` : ''}</section>`;
+  return String(ui.ContentGroup({ collection: true, body: ui.trusted(`<h2 class="app-page-heading">${escape(area.title)}</h2>${area.description ? `<p>${escape(area.description)}</p>` : ''}${ui.CardGroup({ columns: area.preview.columns, cards })}${posts.length > limit ? `<p>${ui.NavigationLink({ href: '/blog/all/', text: layout.search.allLabel })}</p>` : ''}`) }));
 }
 
 export function blogArchive(posts, tags, page, { layout = LAYOUT } = {}) {
@@ -38,7 +37,7 @@ export function blogFeed(posts, tags, page, { commentConfig, commentTheme, layou
 
 export function pagination(result, route, feed = false) {
   return collectionNavigation(result, route, {
-    label: '블로그 페이지', before: `← ${feed ? '최신 글' : '이전'}`, after: `${feed ? '이전 글' : '다음'} →`,
+    label: '블로그 페이지', before: feed ? '최신 글' : '이전', after: feed ? '이전 글' : '다음',
     summary: feed ? `${result.page} / ${result.totalPages}` : undefined,
   });
 }
