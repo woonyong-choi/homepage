@@ -144,7 +144,6 @@ function detailsBlock(state, startLine, endLine, silent) {
 // 수식은 빌드 때 KaTeX가 HTML과 MathML로 만든다. 믿을 수 없는 명령(\\href, \\includegraphics 등)은 실행하지 않고, 틀린 수식은 원문을 그대로 보여 준다.
 const MATH_OPTIONS = Object.freeze({ katex, throwOnError: false, errorColor: 'inherit', strict: 'ignore', trust: false, output: 'htmlAndMathml' });
 
-const CARD_VARIANTS = ['centered', 'grouped', 'inline', 'related'];
 // 그림 입력(`src`, `alt`, `href`, `rounded`, `caption`, 폭)을 구성 요소 속성으로 옮긴다. ui:figure와 :::figure가 같이 쓴다.
 export function figureOf(item) {
   return ui.Figure({ media: trusted(image(item.src, item.alt, item.rounded ? 'is-rounded' : '')), href: item.href, caption: item.caption ?? '', width: ui.contentWidth(item) });
@@ -152,7 +151,7 @@ export function figureOf(item) {
 // 카드 입력(`icon`: 공통 문서 아이콘 이름, `content:이름`, false)을 구성 요소의 속성으로 옮긴다. 이어서 읽을 글(`related`) 카드는 콘텐츠 아이콘만 쓰고 설명은 그리지 않는다.
 function cardSlot(item, parentVariant) {
   const variant = item.variant ?? parentVariant;
-  if (variant && !CARD_VARIANTS.includes(variant)) throw new Error(`Unknown card variant: ${variant}`);
+  if (variant && !ui.CARD_VARIANTS.includes(variant)) throw new Error(`Unknown card variant: ${variant}`);
   const contentName = typeof item.icon === 'string' && item.icon.startsWith('content:') ? item.icon.slice(8) : undefined;
   const mark = variant === 'related' ? (contentName ? contentIcon(contentName, 'small') : '') : item.icon === false ? '' : icon(item.icon);
   return ui.Card({ href: item.href, title: item.title, description: item.description, icon: mark ? trusted(mark) : undefined, variant, compact: item.compact, horizontal: item.horizontal, headingLevel: item.headingLevel });
@@ -326,10 +325,10 @@ function component(kind, data, md, env) {
     case 'platform':
     case 'tabs': {
       if (!Array.isArray(data.items) || !data.items.length) throw new Error('Tabs require items');
-      return String(ui.Tabs({ id, label: data.title ?? '기기별 안내', platform: kind === 'platform', ...(kind === 'platform' ? {} : { position: 'top', selector: 'segmented' }), tabs: data.items.map(item => ({ label: item.label, body: trusted(render(item.body)) })) }));
+      return String(ui.Tabs({ id, label: data.title, platform: kind === 'platform', ...(kind === 'platform' ? {} : { position: 'top', selector: 'segmented' }), tabs: data.items.map(item => ({ label: item.label, body: trusted(render(item.body)) })) }));
     }
     case 'cards': {
-      if (data.variant && !CARD_VARIANTS.includes(data.variant)) throw new Error(`Unknown card variant: ${data.variant}`);
+      if (data.variant && !ui.CARD_VARIANTS.includes(data.variant)) throw new Error(`Unknown card variant: ${data.variant}`);
       return String(ui.CardGroup({ variant: data.variant, columns: data.columns, split: data.split, cards: data.items.map(item => cardSlot({ horizontal: data.horizontal, ...item }, data.variant)) }));
     }
     case 'definitions':

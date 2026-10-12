@@ -1,5 +1,5 @@
 // Markdown 구성 블록과 코드 펜스가 공유하는 옵션 문법.
-import { WIDTHS } from './vendor/theme/ui/index.mjs';
+import { WIDTHS, TAB_FRAMES, TAB_POSITIONS, TAB_SELECTORS } from './vendor/theme/ui/index.mjs';
 export const MAX_DEPTH = 3;
 
 export class DirectiveError extends Error {
@@ -134,9 +134,9 @@ export function parseTabLine(text) {
 
 export const WIDTH_OPTION = Object.freeze({ type: 'enum', values: WIDTHS });
 export const TAB_ATTRIBUTES = Object.freeze({
-  frame: { type: 'enum', values: ['none', 'panel'] },
-  position: { type: 'enum', values: ['bottom', 'top'] },
-  selector: { type: 'enum', values: ['buttons', 'segmented', 'numbers'] },
+  frame: { type: 'enum', values: TAB_FRAMES },
+  position: { type: 'enum', values: TAB_POSITIONS },
+  selector: { type: 'enum', values: TAB_SELECTORS },
   width: WIDTH_OPTION,
 });
 

@@ -1,5 +1,7 @@
 // 블로그 피드와 상세가 같은 글 구조(날짜, 제목, 도입문, 본문, 꼬리말)를 쓰도록 문자열 조각만 조립한다.
-import { escape, imageSize } from './markdown.mjs';
+import { dateLabel } from './content-model.mjs';
+import { imageSize } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 
 // 본문 제목의 태그 단계를 문서 안의 위치에 맞춰 옮긴다. 원래 단계는 app-heading-N 클래스로 남는다.
@@ -15,8 +17,7 @@ export function shiftHeadings(html, levels) {
 }
 
 export function postArticle(post, { detail = false, tags = '', footer = '', after = '' } = {}) {
-  const dateLabel = post.publishedAt ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(post.publishedAt)) : undefined;
-  return String(ui.PostArticle({ id: `post-${post.id}`, detail, href: post.route, title: post.title, date: post.publishedAt, dateLabel, cover: post.thumbnail ? ui.trusted(thumbnailImage(post, detail)) : undefined, lead: ui.trusted(post.leadHtml ?? escape(post.description)), tags: ui.trusted(tags), body: ui.trusted(shiftHeadings(post.html, detail ? detailLevels : feedLevels)), footer: ui.trusted(footer), after: ui.trusted(after) }));
+  return String(ui.PostArticle({ id: `post-${post.id}`, detail, href: post.route, title: post.title, date: post.publishedAt, dateLabel: dateLabel(post.publishedAt), cover: post.thumbnail ? ui.trusted(thumbnailImage(post, detail)) : undefined, lead: ui.trusted(post.leadHtml ?? escape(post.description)), tags: ui.trusted(tags), body: ui.trusted(shiftHeadings(post.html, detail ? detailLevels : feedLevels)), footer: ui.trusted(footer), after: ui.trusted(after) }));
 }
 
 export function thumbnailImage(page, eager = false) {

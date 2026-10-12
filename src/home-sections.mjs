@@ -1,5 +1,5 @@
 // 홈 설정의 섹션 종류마다 독립된 HTML 구성 요소를 만든다.
-import { escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 import { href } from './home-content.mjs';
 import { renderContentSvg } from './content-icons.mjs';

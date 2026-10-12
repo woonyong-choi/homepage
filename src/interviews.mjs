@@ -1,5 +1,5 @@
 // 인터뷰 카드를 만든다. 예시 항목은 미리보기에서만 공개 대상이다.
-import { escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import { QuoteCard, trusted } from './vendor/theme/ui/index.mjs';
 
 // summary는 글자와 [라벨](주소) 링크만 읽는다. HTML, 이미지, 강조 같은 다른 문법은 쓰지 않는다.

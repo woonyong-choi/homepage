@@ -5,12 +5,18 @@ const DOCUMENT_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const TOPIC_GROUPS = Object.freeze(['cs', 'tech']);
 export const FIELDS = Object.freeze(['languages', 'cs', 'frameworks', 'infrastructure']);
 
+export const dateLabel = value => value ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(value)) : undefined;
+
 export function isDocumentId(value) { return typeof value === 'string' && DOCUMENT_ID.test(value); }
 
-export function readDocument(source, tags, now = new Date(), categories = tags) {
+export function parseContent(source, missingMessage = 'missing document metadata') {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  if (!match) throw new Error('missing document metadata');
-  const page = parse(match[1], { maxAliasCount: 0 });
+  if (!match) throw new Error(missingMessage);
+  return { metadata: parse(match[1], { maxAliasCount: 0 }), body: match[2] };
+}
+
+export function readDocument(source, tags, now = new Date(), categories = tags) {
+  const { metadata: page, body } = parseContent(source);
   for (const name of ['id', 'slug']) {
     if (!isDocumentId(page[name])) throw new Error(`invalid document ${name}`);
   }
@@ -34,7 +40,7 @@ export function readDocument(source, tags, now = new Date(), categories = tags) 
   if (page.updatedAt && page.publishedAt && page.updatedAt < page.publishedAt) throw new Error(`update predates publication: ${page.id}`);
   validateThumbnail(page.thumbnail);
   if ((page.type === 'blog' ? ['all', 'page', 'feed'] : ['topics']).includes(page.slug)) throw new Error(`reserved document slug: ${page.slug}`);
-  return { ...page, body: match[2], route: `/${page.type === 'blog' ? 'blog' : 'docs'}/${page.slug}/`,
+  return { ...page, body, route: `/${page.type === 'blog' ? 'blog' : 'docs'}/${page.slug}/`,
     published: page.visibility === 'public' && (!page.publishedAt || page.publishedAt <= now.toISOString().slice(0, 10)) };
 }
 

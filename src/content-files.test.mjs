@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { markdownFiles, documentPaths, readContentFile } from './content-files.mjs';
-import { readDocument } from './content-model.mjs';
-import { mergePublicationMetadata } from './import-publication.mjs';
+import { readDocument, parseContent } from './content-model.mjs';
+import { mergePublicationMetadata, findTopic } from './import-publication.mjs';
 
 const page = (slug, parent, category = 'os') => ({ id: slug, slug, parent, category, type: 'wiki' });
 
@@ -40,4 +40,30 @@ test('nested_publication_files_keep_the_manifest_identity_and_routes', () => {
     assert.equal(page.route, `/docs/${entry.slug}/`);
     assert.equal(page.sourceHash, entry.sourceHash);
   }
+});
+
+test('publication_topics_follow_canonical_aliases_and_entry_articles', () => {
+  const topics = readContentFile(new URL('../content/tech.md', import.meta.url)).metadata.topics;
+  for (const slug of ['ml', 'llm']) {
+    const root = { slug, projection_id: slug };
+    const child = { slug: 'lesson', projection_id: 'child', public_parent_id: slug };
+    const byId = new Map([[slug, root], ['child', child]]);
+    for (const page of [root, child]) {
+      const topic = topics[findTopic(page, byId, topics)];
+      assert.deepEqual([topic.field, topic.icon], ['cs', 'brain-circuit']);
+    }
+  }
+  assert.equal(findTopic({ slug: topics.os.article }, new Map(), topics), 'os');
+  assert.equal(findTopic({ slug: 'unclassified' }, new Map(), topics), 'computer-science');
+});
+
+
+test('shared_content_parser_preserves_body_line_endings_and_rejects_yaml_aliases', () => {
+  for (const newline of ['\n', '\r\n']) {
+    const body = `본문${newline}---${newline}끝${newline}`;
+    assert.deepEqual(parseContent(`---${newline}id: sample${newline}---${newline}${body}`), { metadata: { id: 'sample' }, body });
+  }
+  assert.throws(() => parseContent('본문', 'missing projection metadata: sample'), /missing projection metadata: sample/);
+  assert.throws(() => parseContent('---\nid: &id sample\nslug: *id\n---\n본문'), /alias/i);
+  assert.throws(() => documentPaths([page(123)]), /invalid document path metadata/);
 });

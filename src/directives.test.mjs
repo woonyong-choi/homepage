@@ -182,7 +182,7 @@ test('directive_errors_name_the_page_line_and_block', () => {
     ['경로 이탈 자산', '::figure{src=../secret.png alt=a}\n', /src: 파일 이름만/],
     ['없는 자산', '::figure{src=missing.png alt=a}\n', /src: 없는 자산입니다: missing.png/],
     ['없는 아이콘', ':::cards\n::card{title=a href=/x/ icon=nope}\n:::\n', /icon: 없는 아이콘/],
-    ['열거형', ':::cards{variant=huge}\n::card{title=a href=/x/}\n:::\n', /variant는 centered, grouped, inline, related 중/],
+    ['열거형', ':::cards{variant=huge}\n::card{title=a href=/x/}\n:::\n', /variant는 centered, grouped, inline, related, summary 중/],
     ['불리언', '::video{src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt=a controls=maybe}\n', /controls는 true 또는 false/],
     ['라벨 필요', '::::tabs\n:::tab\n본문\n:::\n::::\n', /라벨이 필요합니다/],
     ['라벨 불가', ':::steps[제목]\n1. a\n:::\n', /라벨을 받지 않는 블록/],

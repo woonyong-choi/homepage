@@ -1,5 +1,5 @@
 // 이전 정적 주소도 쿼리와 앵커를 보존해 새 정본 주소로 연결한다.
-import { escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 
 export function legacyRoutes(documents, fields) {
   return new Map([

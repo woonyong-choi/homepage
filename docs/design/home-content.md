@@ -89,7 +89,7 @@ sections:
 
 ## 섹션
 
-머리 `icon`은 공통 카탈로그 이름(`technology`, `project`) 또는 `{src, alt}` 이미지다. 공통 이름은 정본 `iconFile()`로 경로를 해석한다. 구독과 동료 평가 머리는 공통 자산의 `newsletter.png`, `testimonials.png`를 쓴다. 홈 히어로는 `icon`과 `wordmark`가 없으면 원고의 제목을 표시한다.
+머리 `icon`은 공통 카탈로그 이름(`cpu`, `project`) 또는 `{src, alt}` 이미지다. 공통 이름은 정본 `iconFile()`로 경로를 해석한다. 구독과 동료 평가 머리는 공통 자산의 `newsletter.png`, `testimonials.png`를 쓴다. 홈 히어로는 `icon`과 `wordmark`가 없으면 원고의 제목을 표시한다.
 
 `config/site.json`의 `title`은 탭·공유 정보·RSS의 사이트 이름이고 `name`은 작성자 이름이다. 상단 글자이미지는 같은 설정의 `logo`에 `{src, alt}`로 지정한다. `alt`는 홈페이지 이동 링크의 접근성 이름에 쓰고 저자와 메타데이터의 `name`은 별도로 유지한다. 히어로 글자이미지는 `wordmark: {src, alt}`로 지정하며 홈 본문 제목을 스크린리더용 제목으로 남긴다. `icon`과 `wordmark`는 함께 지정할 수 없다. 콘텐츠 SVG는 공통 정적 SVG 렌더러로 인라인 조립해 공통 글자색을 상속한다. 글자이미지는 공통 `app-hero-wordmark`의 높이와 원본 비례를 사용하고 아이콘의 고정 폭을 따르지 않는다.
 
