@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { readProjectDocuments } from '../src/project-documents.mjs';
 const [base] = process.argv.slice(2);
 if (!base || base.startsWith('-')) throw new Error('usage: check-design-update.mjs <base>');
 const before = JSON.parse(execFileSync('git', ['show', `${base}:package.json`], { encoding: 'utf8' }));
@@ -9,3 +10,4 @@ assert.match(after.devDependencies.thinkflow, /^github:woonyong-choi\/thinkflow#
 delete before.devDependencies.thinkflow;
 delete after.devDependencies.thinkflow;
 assert.deepEqual(after, before, 'Only the ThinkFlow revision may change automatically');
+readProjectDocuments();
