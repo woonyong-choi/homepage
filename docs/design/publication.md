@@ -156,6 +156,8 @@ Search 입구는 CS·Tech 목록 다음에 `config/site.json`의 `guides`를 표
 
 ThinkFlow 의존성을 갱신한 뒤 `node scripts/sync-project-documents.mjs <ThinkFlow 저장소>`를 실행한다. 잠금 파일의 커밋에서 Git blob을 읽으므로 미커밋 원고를 가져오지 않는다. `config/project-documents.json`의 출처·버전·SHA-256과 모든 파일이 일치해야 빌드한다. 갱신 전에 기존 사본의 해시와 심볼릭 링크를 검사하며 로컬 변경이 있으면 중단한다. 사라진 파일은 이전 목록과 해시로 소유권을 확인한 뒤 제거한다. 라이선스와 고지도 발행 자산에 포함한다.
 
+자동 수신은 디자인·렌더러 의존성·공개 ThinkFlow 문서 사본과 버전 목록만 허용한다. 병합 전 패키지의 다른 필드가 바뀌지 않았는지 확인하고, 같은 문서 읽기 함수로 버전·파일 목록·해시를 재검사한다. 수신 브랜치에 애플리케이션 소스 변경이 섞이면 병합하지 않는다.
+
 ## 문서와 블로그 탐색
 
 상단 메뉴 Search는 `docs/` 입구로 이동한다. 입구의 680px 폭과 Blog 2열·CS 3열·Tech 4열은 유지한다. 문서 상세는 `docs/<slug>/`, 블로그 상세는 `blog/<slug>/`, 검색 결과는 `search/`를 사용한다. 기존 `wiki/`·`wiki/<field>/`·`articles/<slug>/`는 새 주소로 연결하고 쿼리·해시를 보존한다. 이전 주소는 사이트맵에서 제외한다. 댓글은 URL과 별개인 고정 문서 ID를 계속 사용한다.

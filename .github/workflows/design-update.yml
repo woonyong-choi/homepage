@@ -27,7 +27,7 @@ jobs:
           git fetch origin main
           git diff --name-only origin/main...HEAD > changed-files.txt
           test -s changed-files.txt
-          if grep -Ev '^(src/vendor/theme/|package\.json$|package-lock\.json$)' changed-files.txt; then
+          if grep -Ev '^(src/vendor/theme/|package\.json$|package-lock\.json$|content/projects/thinkflow/|config/project-documents\.json$)' changed-files.txt; then
             echo '::error::The update includes application changes.'
             exit 1
           fi
@@ -48,7 +48,7 @@ jobs:
           if test -z "$pr"; then
             cat > design-pr.md <<'BODY'
           ## 변경
-          - 검증한 공통 디자인과 같은 디자인을 사용하는 도표 렌더러를 적용한다.
+          - 검증한 공통 디자인과 같은 디자인을 사용하는 도표 렌더러 및 같은 커밋의 공개 문서를 적용한다.
 
           ## 문서
           - 없음: 기존 디자인 상속 계약의 산출물 갱신이다.
