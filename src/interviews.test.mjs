@@ -4,16 +4,14 @@ import { readContentFile } from './content-files.mjs';
 import { publicInterviews, interviewCards, summaryParts } from './interviews.mjs';
 import { href } from './home-content.mjs';
 
-const examples = readContentFile(new URL('../content/interviews.md', import.meta.url)).metadata.items;
+const published = readContentFile(new URL('../content/interviews.md', import.meta.url)).metadata.items;
+const examples = [{ id: 'example', summary: '[@만난 곳](/docs/)에서 함께한 동료평가 내용을 작성하세요.', example: true }];
 
-test('interview_examples_are_five_static_company_placeholders_shown_only_in_preview', () => {
-  assert.equal(publicInterviews(examples, true).length, 5);
-  assert.deepEqual(publicInterviews(examples), []);
-  for (const entry of examples) {
-    assert.equal(entry.example, true);
-    assert.deepEqual([entry.profile.title, entry.profile.subtitle], ['회사명', '직무']);
-  }
-  assert.ok(examples.some(entry => entry.profile.image) && examples.some(entry => !entry.profile.image));
+test('approved_interviews_are_available_in_production_while_examples_remain_preview_only', () => {
+  assert.ok(published.length > 0);
+  assert.deepEqual(publicInterviews(published), published);
+  assert.deepEqual(publicInterviews([...published, ...examples]), published);
+  assert.equal(publicInterviews(examples, true).length, examples.length);
 });
 
 test('profile_values_are_escaped_and_the_card_link_has_a_descriptive_label', () => {
