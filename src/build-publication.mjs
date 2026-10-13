@@ -20,7 +20,7 @@ import { replacePublication } from './publication-output.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
 import { browserScripts } from './browser-scripts.mjs';
-import { mathAssets } from 'seorap-document';
+import { mathAssets } from 'document-engine';
 import { compileDiagrams } from './diagrams.mjs';
 import { compileStyles as publicationStyles } from './vendor/theme/ui/build/styles.mjs';
 import { siteOrigin, siteTitle, SITE_ICON } from './publication-metadata.mjs';

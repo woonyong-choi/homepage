@@ -10,7 +10,10 @@ export function markdownFiles(root) {
 }
 
 export function readContentFile(file) {
-  const source = readFileSync(file, 'utf8');
+  return parseContentSource(readFileSync(file, 'utf8'), file);
+}
+
+export function parseContentSource(source, file) {
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
   if (!match) throw new Error(`missing document metadata: ${file}`);
   return { metadata: parse(match[1], { maxAliasCount: 0 }), body: match[2], file };

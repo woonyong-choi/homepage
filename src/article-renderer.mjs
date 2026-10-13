@@ -1,6 +1,6 @@
 // 소개와 같은 첫 문단만 옮기며 링크·각주·강조를 그대로 보존한다.
 import { readFileSync } from 'node:fs';
-import { DEFAULT_THEME_FILES, parseDocument, renderDocument } from 'seorap-document';
+import { DEFAULT_THEME_FILES, parseDocument, renderDocument } from 'document-engine';
 import { escape } from './vendor/theme/ui/index.mjs';
 import { prepareProjectTokens } from './project-documents.mjs';
 import { documentAssets as assets } from './document-assets.mjs';
@@ -27,8 +27,8 @@ function rejectErrors(output, page) {
   if (output.diagrams?.some(item => item.status === 'failed')) throw new Error(`${page.id}: ThinkFlow 도표를 만들 수 없습니다.`);
 }
 
-export async function parseArticle(page) {
-  const document = await parseDocument(page.body, { id: page.id, pageId: page.id, assets });
+export async function parseArticle(page, options = {}) {
+  const document = await parseDocument(page.body, { id: page.id, pageId: page.id, assets: options.assets ?? assets });
   rejectErrors(document, page);
   const env = { ...document.env, headings: document.metadata.headings };
   prepareProjectTokens(document.tokens, page, env);
@@ -37,10 +37,10 @@ export async function parseArticle(page) {
 }
 
 export async function renderArticle(page, options = {}) {
-  const document = options.document ?? await parseArticle(page);
+  const document = options.document ?? await parseArticle(page, options);
   for (const diagram of document.metadata.diagrams) options.diagramSources?.set(diagram.source, page.id);
   const tokens = [...document.tokens];
-  const context = { assets, diagrams: options.diagrams };
+  const context = { assets: options.assets ?? assets, diagrams: options.diagrams };
   let leadHtml = escape(page.description);
   let lead;
   if (tokens[0]?.type === 'paragraph_open' && tokens[1]?.type === 'inline' && tokens[2]?.type === 'paragraph_close') {

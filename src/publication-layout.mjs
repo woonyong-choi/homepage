@@ -13,7 +13,7 @@ import { heroSection, projectsSection, technologySection, interviewsSection, con
 import { documentNavigation, documentOutline, documentPager } from './document-navigation.mjs';
 import { postArticle, shiftHeadings, detailLevels } from './post-article.mjs';
 import { publicationMetadata, siteTitle } from './publication-metadata.mjs';
-import { usesMath, MATH_STYLESHEET } from 'seorap-document';
+import { usesMath, MATH_STYLESHEET } from 'document-engine';
 
 const BRANDS = getIconCatalog().brands;
 const NAVIGATION = loadHomeNavigation();
@@ -39,7 +39,7 @@ export function documentShell(page, body, context) {
   const entries = clientEntrypoints(body + footer);
   const searchScript = entries.includes('publication.js') ? `<script type="module" async src="/publication.js?v=${hashOf('publication.js')}"></script>` : '';
   const scripts = entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
-  const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src)) : undefined;
+  const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : undefined;
   return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
 }
 
@@ -137,7 +137,7 @@ export function articlePage(page, context, comments = '') {
   }
   const pager = documentPager(page, context, candidate => ui.trusted(subjectIcon(candidate.contentIcon, 'small')));
   const content = ui.DocumentArticle({ title: page.title, icon: ui.trusted(subjectIcon(page.contentIcon, 'medium')), lead: ui.trusted(page.leadHtml ?? escape(page.description)), metadata: ui.trusted(dateLine(page) + tagLinks(page, context.tags ?? context.topics) + example), body: ui.trusted(shiftHeadings(page.html, detailLevels)), after: ui.trusted(source + pager + comments) });
-  return `<main id="main" class="app-shell app-document-shell">${searchBox()}${ui.DocumentLayout({ navigation: documentNavigation(page, context), outline: documentOutline(page.headings), content })}</main>`;
+  return `<main id="main" class="app-shell app-document-shell">${searchBox({ config: (context.layout ?? LAYOUT).search.box })}${ui.DocumentLayout({ navigation: documentNavigation(page, context), outline: documentOutline(page.headings), content })}</main>`;
 }
 
 export function resultRow(page, tags) {

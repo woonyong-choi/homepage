@@ -5,9 +5,9 @@ import { ContentIcon, trusted } from './vendor/theme/ui/index.mjs';
 import { getIconCatalog, readIcon } from './vendor/theme/ui/build/icons.mjs';
 import { renderSvgIcon } from './vendor/theme/ui/svg.mjs';
 
-export function renderContentSvg(source, className = '') {
+export function renderContentSvg(source, className = '', readAsset) {
   if (typeof source !== 'string' || !/^\/assets\/[a-z0-9-]+\.svg$/.test(source)) throw new Error('content SVG must be a file under /assets');
-  return renderSvgIcon(readFileSync(new URL(`../content${source}`, import.meta.url), 'utf8'), { className });
+  return renderSvgIcon(readAsset ? readAsset(source).toString() : readFileSync(new URL(`../content${source}`, import.meta.url), 'utf8'), { className });
 }
 
 export function contentIcon(spec, size = 'card', variant = 'default') {

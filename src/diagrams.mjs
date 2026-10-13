@@ -1,7 +1,7 @@
 // ThinkFlow 문법과 배치는 발행할 때만 실행한다. 같은 원본은 한 번 만들고 모든 페이지에서 재사용한다.
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { compileDiagram } from 'seorap-document';
+import { compileDiagram } from 'document-engine';
 
 export async function compileDiagrams(sources) {
   const shared = JSON.parse(readFileSync(new URL('./vendor/theme/manifest.json', import.meta.url)));
