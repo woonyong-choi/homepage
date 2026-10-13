@@ -17,7 +17,7 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
       url.searchParams.delete('type'); url.searchParams.delete('page');
       history.replaceState({ ...history.state, searchPosition: null }, '', url);
     }
-    return selected;
+    return page && location.pathname === '/docs/' ? { ...selected, baseRoute: '/docs/' } : selected;
   };
   let revision = 0; let resultRevision = 0; let composing = false; let active = -1; let resultStatus = '';
   const failureStatus = '검색 자료를 불러오지 못했습니다. 다시 시도해 주세요.';
@@ -35,7 +35,7 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     close();
     if (page) {
       const next = { ...state(), query: input.value, page: 1 };
-      if (searchUrl(next) === '/docs/') { location.assign('/docs/'); return; }
+      if (searchUrl(next) === '/docs/' && location.pathname !== '/docs/') { location.assign('/docs/'); return; }
       const url = new URL(location.href); url.search = new URL(searchUrl(next), location.origin).search;
       history.replaceState({ ...history.state, searchPosition: null }, '', url);
       results(); return;
@@ -54,7 +54,7 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     if (!page) return;
     const request = ++resultRevision;
     const selected = state();
-    if (searchUrl(selected) === '/docs/') { location.replace('/docs/'); return; }
+    if (searchUrl(selected) === '/docs/' && location.pathname !== '/docs/') { location.replace('/docs/'); return; }
     restoreQuery(selected.query);
     resultStatus = '검색 결과를 불러오는 중입니다.';
     status.textContent = resultStatus;
@@ -98,7 +98,13 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
       input.setAttribute('aria-activedescendant', options[active].id); options[active].scrollIntoView({ block: 'nearest' });
     } else if (event.key === 'Enter' && !output.hidden && active >= 0) { event.preventDefault(); options[active].click(); }
   });
-  form.addEventListener('submit', event => { event.preventDefault(); if (!composing) propose(); });
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (composing) return;
+    if (page) { propose(); return; }
+    const href = searchUrl({ ...state(), query: input.value, page: 1 });
+    if (href !== '/docs/') location.assign(href);
+  });
   box.addEventListener('click', event => {
     const suggestion = event.target.closest('[data-query]');
     if (!suggestion) return;

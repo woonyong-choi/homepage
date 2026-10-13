@@ -14,6 +14,8 @@ Search에서 ThinkFlow 설치·표현·애니메이션·Markdown 발행·문제 
 
 저장 전 원고의 전체 페이지 미리보기는 `renderPagePreview`로 HTML과 자산을 메모리에 반환한다. 공통 테마의 라이트·다크와 하위 폴더의 홈 원고를 지원하며 원고나 발행 결과를 수정하지 않는다. 최종 HTML 링크도 반환해 호스트가 비공개 문서 이동을 검사할 수 있다. 기존 자산 경로 변환은 빌드·미리보기·호스트 검증에서 `normalizePublicationAssets`를 공유한다([미리보기 계약](docs/design/publication.md#저장-전-페이지-미리보기)).
 
+검색은 Worker를 우선 사용하며, 격리된 미리보기처럼 Worker를 실행할 수 없는 환경에서는 같은 검색 모델로 처리한다. 검색 결과의 아이콘은 선택 사항이며, 색인 연결 실패는 다시 시도할 수 있다. `renderPagePreview`의 `kind: search`는 기존 전체 검색 페이지와 자산을 반환한다.
+
 실제 사이트의 절대 링크를 내부 문서로 검사하려면 미리보기의 `origin` 또는 `SITE_ORIGIN`을 지정한다. 검증된 origin은 미리보기 결과에도 포함된다.
 
 ## 실행
