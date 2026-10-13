@@ -260,4 +260,6 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 미리보기 성공 결과의 `links`는 최종 HTML의 `a[href]`, `area[href]`에서 수집한 문자열 배열이다. frontmatter와 설정에서 출력된 메뉴도 포함한다. `publicationLinks(html, route, origin)`는 상대 링크를 페이지 경로 기준으로 해석해 같은 출처는 경로·쿼리·앵커, 외부는 전체 URL로 반환한다. 기본 origin은 검사 전용 `https://publication.invalid`다. 실제 사이트의 절대 주소까지 내부로 검사하려면 해당 origin을 전달한다. 잘못된 URL은 오류로 발행을 막으며 미리보기 API에서는 diagnostics로 반환한다. JavaScript 실행 후 추가되는 링크는 정적 수집 범위 밖이다.
 
-`documentRoute(value, baseRoute, origin)`는 `docs`, `blog`, `wiki`, `articles`의 단일 문서 주소를 `{ kind, slug, fragment }`로 판정한다. 끝 `/`는 선택이며 fragment는 `#`를 제외한 인코딩 값이다. 외부·목록·중첩 주제 주소와 잘못된 URL·인코딩은 `null`을 반환한다. 문서의 존재와 공개 여부는 호스트가 승인 목록으로 판정한다. 두 함수는 `src/page-preview.mjs`에서도 내보낸다. 최종 발행 검사도 같은 링크 수집기로 상대 문서 링크를 검사한다.
+`documentRoute(value, baseRoute, origin)`는 `docs`, `blog`, `wiki`, `articles`의 단일 문서 주소를 `{ kind, slug, fragment }`로 판정한다. 끝 `/`는 선택이며 fragment는 `#`를 제외한 인코딩 값이다. 외부·목록·중첩 주제 주소와 잘못된 URL·인코딩은 `null`을 반환한다. Wiki 주제 목록은 빌드와 같은 `TOPIC_GROUPS`, `FIELDS`를 사용해 제외한다. 공용 옛 주소인 `articles`에는 blog 전용 예약어를 적용하지 않는다. 문서의 존재와 공개 여부는 호스트가 승인 목록으로 판정한다. 두 함수는 `src/page-preview.mjs`에서도 내보낸다. 최종 발행 검사도 같은 링크 수집기로 상대 문서 링크를 검사한다.
+
+`renderPagePreview`의 `origin` 입력은 정식 빌드와 같은 `siteOrigin`으로 검증하며 생략하면 `SITE_ORIGIN`을 사용한다. 검증된 origin을 결과에 돌려주고 최종 링크 수집에도 전달한다. 둘 다 없으면 반환 origin은 빈 문자열이며, 실제 사이트의 절대 주소를 내부 링크로 식별하는 것은 보장하지 않는다. 발행 호스트는 공개 링크 검사 전에 실제 배포 origin을 지정해야 한다.

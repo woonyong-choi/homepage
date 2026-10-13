@@ -1,6 +1,6 @@
 // 이전 정적 주소도 쿼리와 앵커를 보존해 새 정본 주소로 연결한다.
 import { JSDOM } from 'jsdom';
-import { isDocumentId } from './content-model.mjs';
+import { isDocumentId, FIELDS, TOPIC_GROUPS } from './content-model.mjs';
 import { escape } from './vendor/theme/ui/index.mjs';
 
 export function legacyRoutes(documents, fields) {
@@ -36,6 +36,8 @@ export function documentRoute(value, baseRoute = '/', origin = LINK_ORIGIN) {
   let slug;
   try { slug = decodeURIComponent(encoded); } catch { return null; }
   if (!isDocumentId(slug)) return null;
-  if ((kind === 'blog' ? ['all', 'page', 'feed'] : ['topics']).includes(slug)) return null;
+  if (kind === 'blog' && ['all', 'page', 'feed'].includes(slug)) return null;
+  if (kind === 'docs' && slug === 'topics') return null;
+  if (kind === 'wiki' && [...TOPIC_GROUPS, ...FIELDS].includes(slug)) return null;
   return { kind, slug, fragment: url.hash.slice(1) };
 }

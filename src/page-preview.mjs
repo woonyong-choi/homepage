@@ -13,6 +13,7 @@ import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { loadLayoutConfig } from './layout-config.mjs';
 import { articlePage, documentShell, personalHome } from './publication-layout.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
+import { siteOrigin } from './publication-metadata.mjs';
 import { publicationLinks } from './publication-routes.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { compileDiagrams } from './diagrams.mjs';
@@ -37,10 +38,11 @@ export async function renderPagePreview(input) {
   }
 }
 
-async function renderPreview({ source, file, id, kind = 'article', siteRoot, contentRoot, assets = {}, colorScheme = 'light', topicsFile = 'tech.md', readContent: readSource }) {
+async function renderPreview({ source, file, id, kind = 'article', siteRoot, contentRoot, assets = {}, colorScheme = 'light', topicsFile = 'tech.md', readContent: readSource, origin = process.env.SITE_ORIGIN ?? '' }) {
   if (typeof source !== 'string') throw new TypeError('preview source must be a string');
   if (!['light', 'dark'].includes(colorScheme)) throw new TypeError('invalid preview color scheme');
   if (!['article', 'home'].includes(kind)) throw new TypeError('invalid preview kind');
+  origin = siteOrigin(origin, true);
   const root = realpathSync(contentRoot);
   const selected = within(root, file);
   const configRoot = realpathSync(join(siteRoot, 'config'));
@@ -61,7 +63,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   const context = {
     config: json('site.json'), tags: json('tags.json'), layout: loadLayoutConfig(pathToFileURL(configRoot + sep)),
     topics: readContent(within(root, topicsFile)).metadata.topics, colorScheme,
-    navigation: loadHomeNavigation(root, readContent), preview: true, origin: '', math,
+    navigation: loadHomeNavigation(root, readContent), preview: true, origin, math,
     themeHash: manifest.contentHash,
     scriptHash: createHash('sha256').update([...scripts.values()].join('\n')).digest('hex'),
   };
@@ -106,7 +108,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   const files = publicationAssets(new Map([[page.route, html]]), [], readAsset);
   for (const [name, bytes] of scripts) files.set(`/${name}`, bytes);
   for (const [name, bytes] of diagrams.assets) files.set(name, bytes);
-  return { html, assets: files, links: publicationLinks(html, page.route), diagnostics, route: page.route, id: page.id };
+  return { html, assets: files, links: publicationLinks(html, page.route, origin || undefined), origin, diagnostics, route: page.route, id: page.id };
 }
 
 function within(root, name) {

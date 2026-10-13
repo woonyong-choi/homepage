@@ -128,3 +128,13 @@ test('preview_and_publication_share_existing_asset_prefixes', async () => {
   assert.ok(result.assets.has('/assets/preview-prefix.png'));
   assert.match(source, /\/things\/assets\//);
 });
+
+test('preview_normalizes_same_site_absolute_links_using_the_build_origin_contract', async () => {
+  const source = saved('blog/bounded-queue.md') + '\n\n[문서](https://example.test/docs/private/)\n';
+  const result = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md', source, origin: 'https://example.test' });
+  assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.origin, 'https://example.test');
+  assert.ok(result.links.includes('/docs/private/'));
+  const bad = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md', source, origin: 'https://example.test/path' });
+  assert.match(bad.diagnostics[0].message, /invalid site origin/);
+});
