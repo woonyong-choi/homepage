@@ -10,7 +10,7 @@ Search에서 ThinkFlow 설치·표현·애니메이션·Markdown 발행·문제 
 
 프로젝트 문서의 도표는 ThinkFlow 코드 블록 하나를 인터랙티브 도표로 보여 준다. 같은 도표를 `thinkflow md`가 정적 SVG와 `<details>` 장면 목록으로 만든 부분은 원문(GitHub·ThinkFlow 저장소)에서만 보이고 홈페이지는 걷어 중복 표시하지 않는다. 걷는 조건은 [발행 계약](docs/design/publication.md)에 있다. 이름 없는 도표의 `n=순번`은 홈페이지가 다시 세지 않고 생성 표식의 값을 읽으며, 확신할 수 없는 구간은 그대로 둔다.
 
-본문은 고정된 공통 문서 엔진으로 한 번 해석하고 도표를 컴파일한 뒤 출력한다. 프로젝트 전처리와 발행 오류 차단은 홈페이지가 유지한다. 현재 비공개 패키지 입력이 설치 전에 필요하며, 공개 CI 공급 연결은 미완료다([발행 계약](docs/design/publication.md#공통-문서-엔진-연결)).
+본문은 고정된 공통 문서 엔진으로 한 번 해석하고 도표를 컴파일한 뒤 출력한다. 프로젝트 전처리와 발행 오류 차단은 홈페이지가 유지한다. 검증·배포 워크플로는 고정한 원본에서 비공개 패키지를 만들고 해시를 검증한 뒤 설치한다([발행 계약](docs/design/publication.md#공통-문서-엔진-연결)).
 
 저장 전 원고의 전체 페이지 미리보기는 `renderPagePreview`로 HTML과 자산을 메모리에 반환한다. 공통 테마의 라이트·다크와 하위 폴더의 홈 원고를 지원하며 원고나 발행 결과를 수정하지 않는다. 최종 HTML 링크도 반환해 호스트가 비공개 문서 이동을 검사할 수 있다. 기존 자산 경로 변환은 빌드·미리보기·호스트 검증에서 `normalizePublicationAssets`를 공유한다([미리보기 계약](docs/design/publication.md#저장-전-페이지-미리보기)).
 
@@ -30,13 +30,15 @@ npm run dev
 
 미리보기는 `http://localhost:8796/`이다. `/docs/`에서 문서와 블로그를 함께 검색하고 `/blog/all/`에서 블로그 카드를 본다. `dist/site/`가 정적 산출물이다. 운영 발행은 확정된 HTTPS 주소를 `SITE_ORIGIN`으로 지정하고 `npm run build:site -- --production`을 실행한다. 운영 빌드는 예시 글과 비공개 입력을 제외한다.
 
+브라우저 탭은 문서 모양 파비콘 없이 제목을 표시한다. 홈 소개는 공통 제목 영역에서 줄바꿈하며 좁은 화면에서는 여러 줄을 허용한다.
+
 ## 수정할 위치
 
 | 수정할 내용 | 파일·폴더 |
 |---|---|
 | 홈 소개·영상·구간 순서·상단 메뉴 | [`content/home.md`](content/home.md) |
-| 동료평가 소개·공개 카드 | [`content/interviews.md`](content/interviews.md) |
-| 기술 링크·분야 이름·카드 설명 | [`content/tech.md`](content/tech.md) |
+| 동료평가 소개·공개 카드 | [`content/interviews/index.md`](content/interviews/index.md) |
+| 기술 링크·분야 이름·카드 설명 | [`content/pages/tech.md`](content/pages/tech.md) |
 | 분야별 문서 | `content/docs/<분야>/`의 승인 사본 |
 | 블로그 원고 | `content/blog/`의 승인 사본 |
 | 이미지·영상·출처 고지 | `content/assets/`, `content/media/` |
@@ -49,7 +51,7 @@ npm run dev
 
 홈의 세 Markdown 파일은 직접 편집한다. 제목과 소개는 본문에, 카드·링크·영상 속성은 맨 위 YAML에 작성한다. 같은 내용을 JSON에 다시 적지 않는다. 분야별 문서와 블로그는 비공개 원본을 수정하고 승인한 뒤 아래 명령으로 가져온다. 비공개 인터뷰 미리보기 연결은 [홈 원고 가이드](docs/design/home-content.md)를 따른다.
 
-색·간격·글꼴·아이콘·공통 마크업·동작은 디자인 저장소에서 관리한다. 홈페이지는 가져온 `src/vendor/theme/ui/index.mjs`의 구성 요소에 콘텐츠와 경로를 넘긴다. `src/vendor/theme/`를 직접 수정하지 않는다.
+색·간격·글꼴·아이콘·공통 마크업·동작은 디자인 저장소에서 관리한다. 홈페이지는 가져온 `src/vendor/theme/ui/index.mjs`의 구성 요소에 콘텐츠와 경로를 넘긴다. `src/vendor/theme/`를 직접 수정하지 않는다. 현재 발행 화면은 라이트 테마로 고정하며 시스템 테마 자동 전환과 테마 선택 UI는 제공하지 않는다([발행 테마](docs/design/styles.md#발행-테마)).
 
 ## 콘텐츠 승인
 
@@ -72,7 +74,7 @@ npm run content:sync-vault -- <vault-root>
 npm run design:sync -- /path/to/design-tokens
 ```
 
-정본의 `main` 변경은 ThinkFlow 검증을 거쳐 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지는 `build/repo-design-tokens` 브랜치에서 디자인 해시 일치와 전체 빌드·테스트를 확인하고 PR을 만든다. 사용자 명의 `DESIGN_AUTOMATION_TOKEN`이 등록된 경우에만 검증한 커밋을 자동 병합한다. 토큰이 없으면 검증된 PR까지 준비한다. 허용된 디자인 사본·렌더러 의존성 이외의 변경은 자동 병합하지 않는다. 인증과 갱신 경계는 [스타일 수정 지도](docs/design/styles.md)에 정리한다.
+정본의 `main` 변경은 ThinkFlow 검증을 거쳐 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지는 `build/repo-design-tokens` 브랜치에서 디자인 해시 일치와 전체 빌드·테스트를 확인하고 PR을 만든다. 사용자 명의 `DESIGN_AUTOMATION_TOKEN`이 등록된 경우에만 검증한 커밋을 자동 병합한다. 토큰이 없으면 검증된 PR까지 준비한다. 허용된 디자인 사본·ThinkFlow 고정 커밋 의존성·`content/projects/thinkflow/`·`config/project-documents.json` 이외의 변경은 자동 병합하지 않는다. 인증과 갱신 경계는 [스타일 수정 지도](docs/design/styles.md)에 정리한다.
 
 토큰 파일은 그대로 보관하고 발행 CSS는 실제 HTML과 동작이 참조하는 선택자·변수만 남긴다.
 
@@ -81,3 +83,7 @@ npm run design:sync -- /path/to/design-tokens
 문서는 한국어로 작성한다. [전체 문서](docs/README.md)에서 홈 원고, Markdown 문법, 발행 경계와 스타일 수정 위치를 찾는다.
 
 Vault 입력은 `tooling/dist/publication.json`에 나열된 원고·작성 설정·자산만 가져온다. 최초 전환은 기존 파일의 해시를 기록한 이관 receipt를 확인하고, 이후에는 생성 사본의 변경을 감지한다. 실제 원고 이관과 배포는 별도 실행이다([발행 입력 계약](docs/design/publication.md#vault-발행-입력)).
+
+## 운영 배포
+
+GitHub Actions의 `Deploy woonyong.com`을 main에서 수동 실행한다. 공개용 빌드만 GitHub Pages에 배포하며 운영 주소는 `https://woonyong.com`이다.

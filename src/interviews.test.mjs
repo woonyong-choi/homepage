@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { readContentFile } from './content-files.mjs';
 import { publicInterviews, interviewCards, summaryParts } from './interviews.mjs';
 import { href } from './home-content.mjs';
 
@@ -48,4 +49,10 @@ test('summary_links_are_the_only_markup_and_unsafe_or_plain_mentions_never_becom
 
 test('the_first_example_links_a_meeting_place_to_a_site_path', () => {
   assert.match(interviewCards([examples[0]], href), /<a href="\/docs\/">@만난 곳<\/a>에서 함께한 동료평가 내용을 작성하세요\./);
+});
+
+test('approved_interviews_remain_available_in_production', () => {
+  const published = readContentFile(new URL('../content/interviews/index.md', import.meta.url)).metadata.items;
+  assert.ok(published.length > 0);
+  assert.deepEqual(publicInterviews([...published, ...examples]), published);
 });

@@ -12,7 +12,7 @@
 
 ## 구조
 
-- `content/home.md`, `content/interviews.md`, `content/tech.md`: 직접 편집하는 홈 원고
+- `content/home.md`, `content/interviews/index.md`, `content/pages/tech.md`: Vault에서 승인받아 가져오는 홈 원고
 - `config/`: 사이트·댓글·태그, Search·CS·Tech·Blog 표시 설정과 승인 목록
 - `src/`: 콘텐츠 해석, 검색·댓글, 경로와 페이지 조립
 - `src/vendor/theme/`: 해시 검증된 디자인 완성본. 직접 수정 금지

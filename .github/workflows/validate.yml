@@ -22,6 +22,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: ./.github/actions/document-engine
+        with:
+          repository: ${{ secrets.ENGINE_SOURCE_REPOSITORY }}
+          ssh-key: ${{ secrets.ENGINE_SOURCE_SSH_KEY }}
       - run: npm ci
       - run: npm run check:tokens
       - run: npm run check:product

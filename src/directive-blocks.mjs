@@ -1,5 +1,6 @@
 // 디렉티브 블록과 인라인 표기의 정의. 각 항목이 허용 속성, 놓을 수 있는 자리, 본문 규칙, 출력을 정한다.
 // 출력 HTML은 기존 `ui:` 구성 요소가 쓰는 클래스를 그대로 쓴다.
+import { CARD_VARIANTS } from './vendor/theme/ui/index.mjs';
 import { TAB_ATTRIBUTES, WIDTH_OPTION } from './directive-syntax.mjs';
 
 const PLACES = ['root', 'tab'];
@@ -88,7 +89,7 @@ export const BLOCKS = Object.freeze({
   },
   cards: {
     label: 'none',
-    attrs: { variant: { type: 'enum', values: ['centered', 'grouped', 'inline', 'related'] }, columns: { type: 'enum', values: ['1', '2'] } },
+    attrs: { variant: { type: 'enum', values: CARD_VARIANTS }, columns: { type: 'enum', values: ['1', '2'] } },
     within: PLACES,
     body: { only: ['directive:card'], min: 1 },
     prepare: (meta, children) => children.forEach(child => { child.meta.variant = meta.attrs.variant; }),
