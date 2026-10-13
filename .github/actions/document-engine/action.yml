@@ -7,6 +7,9 @@ inputs:
   ssh-key:
     required: true
     description: Read-only source deploy key
+  design-ssh-key:
+    required: true
+    description: Read-only design source deploy key
 runs:
   using: composite
   steps:
@@ -31,6 +34,7 @@ runs:
     - uses: actions/checkout@v4
       with:
         repository: woonyong-choi/design-tokens
+        ssh-key: ${{ inputs.design-ssh-key }}
         ref: ${{ steps.pins.outputs.designCommit }}
         persist-credentials: false
         path: dist/design-source

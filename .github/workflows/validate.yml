@@ -26,6 +26,7 @@ jobs:
         with:
           repository: ${{ secrets.ENGINE_SOURCE_REPOSITORY }}
           ssh-key: ${{ secrets.ENGINE_SOURCE_SSH_KEY }}
+          design-ssh-key: ${{ secrets.DESIGN_SOURCE_SSH_KEY }}
       - run: npm ci
       - run: npm run check:tokens
       - run: npm run check:product
