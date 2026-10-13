@@ -8,7 +8,7 @@ import { JSDOM } from 'jsdom';
 
 import { tagPage } from './publication-layout.mjs';
 import { readSearchState, searchUrl } from './search-model.mjs';
-import { renderResults } from './search-view.mjs';
+import { renderResults, renderSuggestions, showSearchError } from './search-view.mjs';
 
 test('search_filter_links_keep_remaining_conditions_or_return_to_entry', () => {
   const cases = [
@@ -181,3 +181,40 @@ function searchBrowser(route, page = true, tag = '', options = {}) {
   });
   return { dom, visits, requests, input: dom.window.document.querySelector('input'), clear: dom.window.document.querySelector('button') };
 }
+
+// #275: 아이콘이 없는 문서도 결과·제안에 표시하고 오류의 재시도 조작을 유지한다.
+test('search_view_optional_icon_and_retry_keep_content_and_actions', () => {
+  const dom = new JSDOM('<div data-filter-summary></div><div data-full-results></div><div id="suggestions" role="listbox"></div>');
+  globalThis.document = dom.window.document;
+  try {
+    const entry = { route: '/docs/plain.md', title: '일반 문서', description: '본문 설명', tags: [] };
+    const state = { query: '문서', tags: [], page: 1, type: 'all' };
+    renderResults(document.body, { entries: [entry], totalPages: 1, page: 1 }, state, {});
+    assert.equal(document.querySelector('[data-full-results] img'), null);
+    assert.match(document.querySelector('[data-full-results]').textContent, /일반 문서/);
+    const output = document.querySelector('#suggestions');
+    renderSuggestions(output, { queries: [], tags: [], entries: [entry], count: 1 }, state);
+    assert.equal(output.querySelector('img'), null);
+    assert.equal(output.querySelector('.app-search-result-link').getAttribute('href'), '/docs/plain.md');
+    let retries = 0;
+    showSearchError(output, () => { retries++; });
+    assert.equal(output.querySelector('p').innerHTML, '검색 자료를 불러오지 못했습니다.<br>연결을 확인해 주세요.');
+    const button = output.querySelector('button');
+    assert.equal(button.getAttribute('role'), 'option');
+    button.click();
+    assert.equal(retries, 1);
+  } finally { delete globalThis.document; dom.window.close(); }
+});
+
+// #275: 입구에서 Enter를 누르면 자동완성 개수와 무관하게 전체 결과를 연다.
+test('search_submit_opens_full_results_and_preserves_composition', () => {
+  for (const composing of [false, true]) {
+    const browser = searchBrowser('/docs/', false);
+    try {
+      browser.input.value = 'Promise';
+      if (composing) browser.input.dispatchEvent(new browser.dom.window.CompositionEvent('compositionstart'));
+      browser.input.form.dispatchEvent(new browser.dom.window.Event('submit', { cancelable: true }));
+      assert.deepEqual(browser.visits, composing ? [] : [{ method: 'assign', href: '/search/?q=Promise' }]);
+    } finally { browser.dom.window.close(); }
+  }
+});

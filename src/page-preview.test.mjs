@@ -138,3 +138,18 @@ test('preview_normalizes_same_site_absolute_links_using_the_build_origin_contrac
   const bad = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md', source, origin: 'https://example.test/path' });
   assert.match(bad.diagnostics[0].message, /invalid site origin/);
 });
+
+// #275: 자동완성의 Enter와 전체 결과 링크가 기존 검색 페이지를 연다.
+test('renderPagePreview_search_reuses_results_page_and_returns_assets', async () => {
+  const before = stamp();
+  const result = await renderPagePreview({ ...input, file: 'home.md', source: saved('home.md'), kind: 'search', colorScheme: 'dark' });
+  assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.route, '/search/');
+  assert.match(result.html, /data-search-page/);
+  assert.match(result.html, /data-full-results/);
+  assert.match(result.html, /data-theme="dark"/);
+  assert.ok(result.assets.has('/publication.js'));
+  assert.ok(result.assets.has('/search-worker.mjs'));
+  assert.equal(result.assets.has('/search-index.json'), false);
+  assert.deepEqual(stamp(), before);
+});

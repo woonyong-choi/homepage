@@ -98,7 +98,13 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
       input.setAttribute('aria-activedescendant', options[active].id); options[active].scrollIntoView({ block: 'nearest' });
     } else if (event.key === 'Enter' && !output.hidden && active >= 0) { event.preventDefault(); options[active].click(); }
   });
-  form.addEventListener('submit', event => { event.preventDefault(); if (!composing) propose(); });
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (composing) return;
+    if (page) { propose(); return; }
+    const href = searchUrl({ ...state(), query: input.value, page: 1 });
+    if (href !== '/docs/') location.assign(href);
+  });
   box.addEventListener('click', event => {
     const suggestion = event.target.closest('[data-query]');
     if (!suggestion) return;
