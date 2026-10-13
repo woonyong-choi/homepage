@@ -122,11 +122,11 @@ test('syncVaultPublication_rejects_unlisted_home_section', t => {
 });
 
 
-test('syncVaultPublication_publishes_articles_but_rejects_explicit_private_or_draft', async t => {
+test('syncVaultPublication_publishes_publish_entries_but_rejects_explicit_private_or_draft', async t => {
   for (const extra of ['', 'publish: false\n', 'status: draft\n']) {
     await t.test(extra || 'public article', t => {
       const f = fixture(t);
-      f.put('articles/entry.md', 'content/blog/entry.md', `---\nid: entry\nslug: entry\ntype: blog\n${extra}---\n# Article\n`);
+      f.put('publish/entry.md', 'content/blog/entry.md', `---\nid: entry\nslug: entry\ntype: blog\n${extra}---\n# Article\n`);
       f.save();
       if (extra) assert.throws(() => syncVaultPublication(f.vault, f.site), /private or draft/);
       else {
@@ -147,4 +147,20 @@ test('syncVaultPublication_limits_asset_text_to_license_notices', t => {
   f.save();
   assert.throws(() => syncVaultPublication(f.vault, f.site), /disallowed asset text/);
   assert.equal(existsSync(join(f.site, 'content/assets/notes.txt')), false);
+});
+
+// #279: 입력 폴더 변경은 공개 주소와 별개이며 기존 메타데이터 검증을 유지한다.
+test('syncVaultPublication_rejects_old_source_and_invalid_publish_metadata', async t => {
+  for (const [source, metadata, url] of [
+    ['articles/entry.md', 'id: entry\nslug: entry\ntype: blog', '/blog/entry/'],
+    ['publish/entry.md', 'id: entry\nslug: entry\ntype: wiki', '/blog/entry/'],
+    ['publish/entry.md', 'id: entry\nslug: entry\ntype: blog', '/docs/entry/'],
+    ['publish/entry.md', 'slug: entry\ntype: blog', '/blog/entry/'],
+  ]) await t.test(`${source} ${metadata} ${url}`, t => {
+    const f = fixture(t);
+    f.put(source, 'content/blog/entry.md', `---\n${metadata}\n---\n# Entry\n`, { url });
+    f.save();
+    assert.throws(() => syncVaultPublication(f.vault, f.site));
+    assert.equal(existsSync(join(f.site, 'content/home.md')), false);
+  });
 });
