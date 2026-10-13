@@ -161,7 +161,7 @@ function searchBrowser(route, page = true, tag = '', options = {}) {
   const requests = [];
   const url = new URL(route, 'https://example.com');
   const location = {
-    href: url.href, origin: url.origin, search: url.search,
+    href: url.href, origin: url.origin, search: url.search, pathname: url.pathname,
     assign: href => visits.push({ method: 'assign', href }),
     replace: href => visits.push({ method: 'replace', href }),
   };
@@ -217,4 +217,19 @@ test('search_submit_opens_full_results_and_preserves_composition', () => {
       assert.deepEqual(browser.visits, composing ? [] : [{ method: 'assign', href: '/search/?q=Promise' }]);
     } finally { browser.dom.window.close(); }
   }
+});
+
+// #275: 호스트가 전체 로컬 검색을 /docs/에 연결해도 빈 검색 재로드를 반복하지 않는다.
+test('docs_results_page_empty_query_lists_entries_without_reloading', () => {
+  const browser = searchBrowser('/docs/', true);
+  try {
+    assert.deepEqual(browser.visits, []);
+    assert.equal(browser.requests.length, 1);
+    assert.equal(browser.requests[0].state.query, '');
+    browser.input.value = 'Promise';
+    browser.clear.click();
+    assert.deepEqual(browser.visits, []);
+    assert.equal(browser.requests.length, 2);
+    assert.equal(browser.requests[1].state.query, '');
+  } finally { browser.dom.window.close(); }
 });
