@@ -225,7 +225,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 ### 저장 전 페이지 미리보기
 
-`src/page-preview.mjs`의 `renderPagePreview({ source, file, id, kind, siteRoot, contentRoot, assets, colorScheme, topicsFile })`는 전체 Markdown 문자열을 기존 페이지 조립 함수에 전달한다. `file`은 `contentRoot` 상대 경로이며 아직 저장하지 않은 파일도 허용한다. `kind`는 `article`(기본값) 또는 `home`이다. 기사 원고에는 현재 홈페이지의 필수 frontmatter가 필요하다. `id`를 전달하면 원고의 ID와 일치해야 한다.
+`src/page-preview.mjs`의 `renderPagePreview({ source, file, id, kind, siteRoot, contentRoot, assets, colorScheme, topicsFile, readContent })`는 전체 Markdown 문자열을 기존 페이지 조립 함수에 전달한다. `file`은 `contentRoot` 상대 경로이며 아직 저장하지 않은 파일도 허용한다. `kind`는 `article`(기본값) 또는 `home`이다. 기사 원고에는 현재 홈페이지의 필수 frontmatter가 필요하다. `id`를 전달하면 원고의 ID와 일치해야 한다.
 
 `siteRoot/config`에서 사이트·태그·표시 설정과 이미지 크기를 읽는다. `contentRoot`에서는 명시된 `home.md`, `tech.md`와 홈이 참조한 섹션 원고만 읽으며 문서 폴더를 순회하지 않는다. 선택한 파일에는 디스크 대신 `source`를 사용한다. 같은 홈 입력 로더, `parseArticle`·`renderArticle`, `personalHome`·`articlePage`·`documentShell`을 재사용한다. 인접 문서 목록을 읽지 않으므로 전체 문서 트리와 검색 색인은 만들지 않는다.
 
@@ -237,3 +237,6 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 미리보기의 `colorScheme`은 `light`(기본값) 또는 `dark`다. 기존 테마의 `data-theme`과 `color-scheme` 계약을 사용하고 도표는 공통 host runtime의 테마 메시지를 받는다. 스타일 사본은 만들지 않는다. 운영 빌드는 값을 지정하지 않으므로 기존 밝은 기본값을 유지한다.
 
 홈의 `sections[].source`는 `pages/intro.md`, `interviews/index.md`처럼 콘텐츠 루트 안의 상대 Markdown 경로를 허용한다. 절대 경로·상위 이동·역슬래시는 거부한다. 미리보기 호스트는 `topicsFile`(기본 `tech.md`)로 이동한 주제 설정 원고의 상대 경로를 지정한다. 선택 파일의 `file`과 참조 경로가 일치하면 저장 전 `source`를 사용한다. 실제 원고 이동과 설정 변경은 이 API가 수행하지 않는다.
+
+
+호스트가 공개 입력 범위를 제한할 때는 `readContent(relativePath, editedSource?)`를 제공한다. 선택 원고와 홈·주제·참조 섹션 원고가 모두 이 함수를 통과한다. 경로는 콘텐츠 루트 기준이며 선택한 원고에는 저장 전 문자열이 두 번째 인자로 전달된다. 호스트는 허용 목록·공개 상태·실제 경로를 확인하고, 검사한 동일 문자열을 동기 반환하거나 거절 시 예외를 던진다. 어댑터는 반환 문자열을 다시 파일에서 읽지 않으며 콜백 거절 시 기본 읽기로 우회하지 않는다. 콜백 제공 시 파일 열기와 심볼릭 링크 검증의 책임은 호스트에 있다. 콜백을 생략한 기존 소비자는 입력 루트 안의 파일 읽기를 유지한다. 자산 접근은 별도의 `assets.read` 경계를 따른다.

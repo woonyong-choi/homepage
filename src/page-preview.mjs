@@ -33,7 +33,7 @@ export async function renderPagePreview(input) {
   }
 }
 
-async function renderPreview({ source, file, id, kind = 'article', siteRoot, contentRoot, assets = {}, colorScheme = 'light', topicsFile = 'tech.md' }) {
+async function renderPreview({ source, file, id, kind = 'article', siteRoot, contentRoot, assets = {}, colorScheme = 'light', topicsFile = 'tech.md', readContent: readSource }) {
   if (typeof source !== 'string') throw new TypeError('preview source must be a string');
   if (!['light', 'dark'].includes(colorScheme)) throw new TypeError('invalid preview color scheme');
   if (!['article', 'home'].includes(kind)) throw new TypeError('invalid preview kind');
@@ -41,11 +41,16 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   const selected = within(root, file);
   const configRoot = realpathSync(join(siteRoot, 'config'));
   const json = name => JSON.parse(readFileSync(containedFile(configRoot, name), 'utf8'));
-  const readContent = path => {
+  const loadSource = path => {
     const name = relative(root, path);
     within(root, name);
-    return parseContentSource(path === selected ? source : readFileSync(containedFile(root, name), 'utf8'), name);
+    const edited = path === selected ? source : undefined;
+    const text = readSource ? readSource(name, edited) : edited ?? readFileSync(containedFile(root, name), 'utf8');
+    if (typeof text !== 'string') throw new TypeError(`preview content reader must return a string: ${name}`);
+    return text;
   };
+  const selectedSource = loadSource(selected);
+  const readContent = path => parseContentSource(path === selected ? selectedSource : loadSource(path), relative(root, path));
   const manifest = JSON.parse(readFileSync(join(THEME_ROOT, 'manifest.json'), 'utf8'));
   const math = mathAssets();
   const scripts = browserScripts(SOURCE_ROOT);
@@ -84,7 +89,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     page = { route: '/', title: context.config.title ?? context.config.name };
     body = personalHome(context);
   } else {
-    page = readDocument(source, context.tags, new Date(), context.topics);
+    page = readDocument(selectedSource, context.tags, new Date(), context.topics);
     if (id !== undefined && id !== page.id) throw new Error('preview document id does not match source');
     const document = await parseArticle(page, { assets: documentAssets });
     diagrams = await compileDiagrams(new Map(document.metadata.diagrams.map(item => [item.source, page.id])));
