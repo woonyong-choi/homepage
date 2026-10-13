@@ -144,3 +144,5 @@ items:
 `content/assets/who-knows.svg`는 상단 브랜드이며 공통 `assets/fonts/inter-display-black.woff2`의 Inter Display Black을 사용한다. `content/assets/backend-engineer.svg`는 소개 제목이며 공통 `assets/fonts/pretendard-variable.woff2`의 Black(900)을 사용한다. 두 SVG는 글꼴의 기본 kerning과 글자 윤곽을 도형으로 변환한 콘텐츠 자산이다. 화면에는 윤곽만 삽입하므로 추가 웹폰트를 요청하지 않는다. 글꼴 원본과 SIL Open Font License는 공통 `assets/fonts/`에서 관리한다.
 
 [Things 공식 사이트](https://culturedcode.com/things/)의 로고 이미지를 획과 비례의 참고로 삼았다. 로고의 정확한 글꼴 이름은 확인되지 않았으며 Inter가 원본 글꼴이라는 뜻은 아니다. [Inter 공식 안내](https://rsms.me/inter/)의 Display 디자인과 Black 굵기를 비교해 선택했다.
+
+영상의 초기 접힘은 공통 디자인 CSS가 담당한다. 스크립트 초기화를 기다리지 않으며, 재생 요청 뒤 기존 플레이어 상태로 펼친다. 스크립트 미사용 환경에서는 명시적 영상 링크로 기본 재생 컨트롤에 접근한다.
