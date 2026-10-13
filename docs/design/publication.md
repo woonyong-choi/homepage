@@ -220,7 +220,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 문법·출력 오류 진단과 실패한 도표는 파일을 발행하기 전에 예외로 바꾼다. 승인 원고 확인, front matter, 검색·댓글, 경로와 출력 저장은 홈페이지가 소유한다. 공통 엔진의 오류 HTML을 정상 발행 결과로 받아들이지 않는다. 수식 감지와 KaTeX 자산도 엔진의 공개 API를 사용해 렌더러와 같은 버전을 싣는다. 홈페이지 자산의 존재와 이미지 크기 조회는 `document-assets.mjs`가 제공한다.
 
-현재 패키지 입력은 Git에서 제외된 `dist/document-engine-0.0.0.tgz`이며 `package-lock.json`의 integrity로 고정한다. 공급받은 정확한 파일을 준비한 뒤 설치한다. 현재 입력은 엔진 커밋 `f747e5f6c375eb01a3ea840bfa30d6236855062e`에서 만든 패키지이며 SHA-256은 `5ae0a4b3f931d691d508f9e01535fecb5b272e6c8521ad232fcad92e6787a9e7`이다. 디자인 비교는 엔진의 `design-input.json`이 지정한 정본 커밋의 `dist`를 `DESIGN_TOKENS_DIST`로 전달한다. 이는 최신 디자인 main과의 동기화 완료를 뜻하지 않는다. 비공개 패키지는 이 저장소에 올리지 않는다. 공개 CI가 이 입력을 재현할 공급 경로는 아직 연결하지 않았으므로 독립 clone의 설치·CI 완료를 주장하지 않는다.
+현재 패키지 입력은 Git에서 제외된 `dist/document-engine-0.0.0.tgz`이며 `package-lock.json`의 integrity로 고정한다. 공급받은 정확한 파일을 준비한 뒤 설치한다. 현재 입력은 엔진 커밋 `870cfab7fa6c483e876b8d91230329a1fb829298`에서 만든 패키지이며 SHA-256은 `4c0f8b968e60b824d451614eb5e9efdab9effa79926ad18a45ff1fba7b098cf7`이다. 디자인 비교는 엔진의 `design-input.json`이 지정한 정본 커밋의 `dist`를 `DESIGN_TOKENS_DIST`로 전달한다. 이는 최신 디자인 main과의 동기화 완료를 뜻하지 않는다. 비공개 패키지는 이 저장소에 올리지 않는다. 공개 CI가 이 입력을 재현할 공급 경로는 아직 연결하지 않았으므로 독립 clone의 설치·CI 완료를 주장하지 않는다.
 
 
 ### 저장 전 페이지 미리보기
@@ -240,3 +240,18 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 
 호스트가 공개 입력 범위를 제한할 때는 `readContent(relativePath, editedSource?)`를 제공한다. 선택 원고와 홈·주제·참조 섹션 원고가 모두 이 함수를 통과한다. 경로는 콘텐츠 루트 기준이며 선택한 원고에는 저장 전 문자열이 두 번째 인자로 전달된다. 호스트는 허용 목록·공개 상태·실제 경로를 확인하고, 검사한 동일 문자열을 동기 반환하거나 거절 시 예외를 던진다. 어댑터는 반환 문자열을 다시 파일에서 읽지 않으며 콜백 거절 시 기본 읽기로 우회하지 않는다. 콜백 제공 시 파일 열기와 심볼릭 링크 검증의 책임은 호스트에 있다. 콜백을 생략한 기존 소비자는 입력 루트 안의 파일 읽기를 유지한다. 자산 접근은 별도의 `assets.read` 경계를 따른다.
+
+
+### Vault 발행 입력
+
+`npm run content:sync-vault -- <vault-root>`는 `tooling/dist/publication.json`의 `version: 1`, `files` 목록만 소비한다. 각 항목은 Vault 상대 `source`, 홈페이지 상대 `target`, 동일 바이트의 `sha256`을 갖는다. 문서의 선택 `id`, `slug`, `url`은 원고 메타데이터와 대조한다. 원고 트리 전체를 탐색하거나 목록이 없을 때 옛 승인 입력으로 복귀하지 않는다.
+
+홈은 `homepage/home.md`, 주제 설정은 `homepage/pages/tech.md`이며 홈페이지의 `content/` 아래 같은 상대 위치로 가져온다. 홈이 참조하는 각 절도 목록에 있어야 한다. `docs/`는 `content/docs/`, `articles/`는 `content/blog/`로 가져온다. 문서는 명시적인 공개 지정과 기존 문서 ID·slug·종류 계약을 확인한다. 비공개·초안·예약 원고, 중복 경로·ID·slug, 경로 이탈·심볼릭 링크, 해시가 달라진 입력은 반영 전에 거부한다. 비공개 링크·임베드의 의미 검사는 발행 목록 생성기와 기존 홈페이지 렌더 검증이 맡는다.
+
+자산 텍스트는 `-NOTICE.txt`·`-LICENSE.txt` 고지만 허용한다.
+
+작성 설정은 `site`, `tags`, `search`, `cs`, `tech`, `blog`의 JSON 여섯 개만 받는다. 이미지 치수·자산 목록·프로젝트 문서 연결·승인 정보는 생성 정보로 유지한다. 미리보기 호스트가 `assets.size`를 제공하면 `config/image-sizes.json`을 읽지 않고 그 콜백을 사용한다.
+
+동기화는 기존 잠금·복구 트랜잭션을 사용한다. 목록에서 제거된 기존 관리 파일은 같은 트랜잭션으로 제거하며, 직접 수정된 생성 사본이 있으면 중단한다. 최초 전환에서 이미 존재하는 작성 파일을 바꾸려면 `tooling/migration-receipt.json`의 `homepageAdoption`에 `sourceCommit`, `before` 경로별 SHA-256, `retire` 경로 목록, `applied: false`를 명시한다. 현재 바이트와 `before`가 다르면 중단한다. 제거 가능한 옛 경로는 `content/tech.md`, `content/interviews.md`뿐이며 두 경로도 이전 해시가 필요하다. 발행 목록으로 덮어쓰거나 명시적으로 제거하지 않는 이전 경로는 허용하지 않는다.
+
+전환 후 승인 스냅샷의 `origin: vault`가 발행 입력 소유권을 나타내며 주제 설정은 `content/pages/tech.md`에서 읽는다. 후속 동기화는 이관 receipt를 재적용하지 않고 생성 사본의 해시를 검사한다. 옛 assets 승인 동기화로 돌아가는 것도 거부한다. 이 명령은 원본 Vault를 수정하거나 배포하지 않는다.

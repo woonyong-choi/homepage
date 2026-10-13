@@ -10,6 +10,7 @@
     "build:site": "node src/build-publication.mjs",
     "content:approve": "node src/approved-content.mjs approve",
     "content:revoke": "node src/approved-content.mjs revoke",
+    "content:sync-vault": "node src/approved-content.mjs sync-vault",
     "content:sync": "node src/approved-content.mjs sync",
     "content:check": "node src/approved-content.mjs check",
     "design:sync": "node src/vendor/theme/ui/build/sync.mjs"
@@ -17,6 +18,7 @@
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",
     "@vscode/markdown-it-katex": "^1.1.2",
+    "document-engine": "file:dist/document-engine-0.0.0.tgz",
     "esbuild": "0.28.2",
     "highlight.js": "^11.12.0",
     "jsdom": "29.1.1",
@@ -26,9 +28,8 @@
     "markdown-it-task-lists": "^2.1.1",
     "postcss": "8.5.29",
     "purgecss": "7.0.2",
-    "document-engine": "file:dist/document-engine-0.0.0.tgz",
     "shiki": "4.5.0",
-    "thinkflow": "github:woonyong-choi/thinkflow#7259ee208785e0468cf8f02298c23247aa8cd6b7",
+    "thinkflow": "github:woonyong-choi/thinkflow#e480667ccc594563b408db5305c5ef2fe6263e10",
     "yaml": "^2.9.1"
   },
   "overrides": {

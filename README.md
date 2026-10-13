@@ -56,6 +56,8 @@ npm run dev
 ```sh
 npm run content:check
 npm run content:sync -- <assets-root>
+# Vault가 생성한 명시적 발행 목록으로 전환할 때
+npm run content:sync-vault -- <vault-root>
 ```
 
 `<assets-root>`는 승인 목록이 있는 비공개 원문 저장소의 루트다. 승인·회수 명령, 폴더와 프런트매터의 관계는 [개인 사이트 발행](docs/design/publication.md)에 있다.
@@ -75,3 +77,5 @@ npm run design:sync -- /path/to/design-tokens
 ## 문서
 
 문서는 한국어로 작성한다. [전체 문서](docs/README.md)에서 홈 원고, Markdown 문법, 발행 경계와 스타일 수정 위치를 찾는다.
+
+Vault 입력은 `tooling/dist/publication.json`에 나열된 원고·작성 설정·자산만 가져온다. 최초 전환은 기존 파일의 해시를 기록한 이관 receipt를 확인하고, 이후에는 생성 사본의 변경을 감지한다. 실제 원고 이관과 배포는 별도 실행이다([발행 입력 계약](docs/design/publication.md#vault-발행-입력)).

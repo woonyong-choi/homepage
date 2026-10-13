@@ -69,7 +69,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     return readFileSync(containedFile(root, path.slice(1)));
   };
   context.readAsset = readAsset;
-  const sizes = json('image-sizes.json');
+  const sizes = assets.size ? {} : json('image-sizes.json');
   const documentAssets = {
     size: name => Object.hasOwn(sizes, name) ? sizes[name] : undefined,
     ...assets,

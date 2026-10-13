@@ -28,7 +28,7 @@ import { siteIdentity } from './site-identity.mjs';
 import { legacyRoutes, redirectPage } from './publication-routes.mjs';
 import { markdownFiles, readContentFile } from './content-files.mjs';
 import { LAYOUT, gridSize } from './layout-config.mjs';
-import { verifyApprovedContent } from './approved-content.mjs';
+import { verifyApprovedContent, publicationTopicsFile } from './approved-content.mjs';
 import { readProjectDocuments } from './project-documents.mjs';
 
 verifyApprovedContent();
@@ -38,7 +38,7 @@ const CONTENT = fileURLToPath(new URL('../content/', import.meta.url));
 const SETTINGS = fileURLToPath(new URL('../config/', import.meta.url));
 const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
 const CONFIG = JSON.parse(readFileSync(join(SETTINGS, 'site.json')));
-const TOPICS = readContentFile(join(CONTENT, 'tech.md')).metadata.topics;
+const TOPICS = readContentFile(join(CONTENT, publicationTopicsFile())).metadata.topics;
 const TAGS = JSON.parse(readFileSync(join(SETTINGS, 'tags.json')));
 const THEME = join(ROOT, 'vendor/theme');
 const MANIFEST = JSON.parse(readFileSync(join(THEME, 'manifest.json')));

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
 import { test } from 'node:test';
-import { readFileSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, statSync, mkdirSync, copyFileSync, rmSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { renderPagePreview } from './page-preview.mjs';
 
@@ -98,4 +99,19 @@ test('renderPagePreview_applies_host_reader_to_edited_and_referenced_content_wit
   assert.match(edited.diagnostics[0].message, /content not allowed: docs\/private.md/);
   const invalid = await renderPagePreview({ ...input, file: 'home.md', source, kind: 'home', readContent: () => undefined });
   assert.match(invalid.diagnostics[0].message, /reader must return a string/);
+});
+
+
+test('renderPagePreview_host_asset_sizes_do_not_require_generated_config', async t => {
+  const root = siteRoot + 'dist/test/preview-' + randomUUID();
+  mkdirSync(root + '/config', { recursive: true });
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const name of ['site', 'tags', 'search', 'cs', 'tech', 'blog']) {
+    copyFileSync(siteRoot + 'config/' + name + '.json', root + '/config/' + name + '.json');
+  }
+  const result = await renderPagePreview({ ...input, siteRoot: root, file: 'home.md',
+    source: saved('home.md'), kind: 'home', assets: { size: () => undefined } });
+  assert.deepEqual(result.diagnostics, []);
+  assert.match(result.html, /app-landing/);
+  assert.equal(existsSync(root + '/config/image-sizes.json'), false);
 });
