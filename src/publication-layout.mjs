@@ -146,6 +146,10 @@ export function resultRow(page, tags) {
   return String(ui.SearchResult({ href: page.route, icon: ui.trusted(subjectIcon(page.contentIcon, 'small')), title: page.title, example: page.example, description: page.description, tags: page.tags.map(id => ({ href: `/tags/${id}/`, label: tags[id].label })) }));
 }
 
+export function searchPage() {
+  return `<main class="app-shell app-body" id="main">${searchBox({ combobox: false })}<h1 class="app-sr">검색</h1><div data-search-page><div class="app-filter-summary" data-filter-summary></div><div data-full-results><p class="app-empty">검색어를 입력하거나 주제를 선택해 주세요.</p></div>${ui.PageLinks({ label: '검색 페이지', resultPages: true })}</div></main>`;
+}
+
 export function tagPage(tag, entries, tags) {
   const fallback = entries.length ? entries.map(page => resultRow(page, tags)).join('') : '<p>이 태그로 발행한 글이 없습니다.</p>';
   return `<main class="app-shell app-body" id="main">${searchBox({ combobox: false })}<h1 class="app-page-heading">${escape(tags[tag].label)}</h1><div data-search-page data-tag="${tag}"><div class="app-filter-summary" data-filter-summary></div><div data-full-results></div><div data-search-fallback>${ui.Details({ title: '이 태그의 모든 글 보기', body: ui.trusted(`<p class="app-caption">검색어를 적용하지 않은 이 태그의 전체 목록입니다.</p>${fallback}`) })}</div></div></main>`;
