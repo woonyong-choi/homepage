@@ -35,6 +35,7 @@ test('broken_links_anchors_and_duplicate_ids_preserve_the_previous_publication',
   const root = fixture(t);
   for (const [html, error] of [
     ['<a href="/missing/">누락</a>', /broken link/],
+    ['<nav><a href="../private/">비공개</a></nav>', /broken link/],
     ['<img src="/stale.png">', /broken link/],
     ['<video poster="/stale.png"></video>', /broken link/],
     ['<a href="#missing">누락</a>', /broken anchor/],

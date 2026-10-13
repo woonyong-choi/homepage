@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 8f603628fe173efd0a11
 slug: lrn-sql
 type: wiki

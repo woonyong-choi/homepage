@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 8190a7c66abf1ef22fef
 slug: network
 type: wiki

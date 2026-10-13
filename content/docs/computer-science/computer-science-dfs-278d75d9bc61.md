@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 8b248f2d55ca3928a055
 slug: computer-science-dfs-278d75d9bc61
 type: wiki

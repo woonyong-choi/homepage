@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 579b289408e9e9ced123
 slug: k8s-clue-reference-migration
 type: wiki

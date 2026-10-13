@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 8817fc9bfd0d6de71c05
 slug: k8s-clue-ai-privacy
 type: wiki

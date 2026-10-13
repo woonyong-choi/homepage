@@ -7,20 +7,20 @@ import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
 import { readDocument, publicDocuments, searchEntry, FIELDS, TOPIC_GROUPS, blogDocuments } from './content-model.mjs';
-import { createMarkdown, escape } from './markdown.mjs';
+import { escape } from './vendor/theme/ui/index.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
-import { renderArticle } from './article-renderer.mjs';
+import { parseArticle, renderArticle } from './article-renderer.mjs';
 import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchBox, tagPage, iconUrl, FIELD_NAMES, categoryEntries } from './publication-layout.mjs';
 import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
 import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
-import { publicationAssets } from './publication-assets.mjs';
+import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
 import { replacePublication } from './publication-output.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
 import { browserScripts } from './browser-scripts.mjs';
-import { mathAssets } from './math-assets.mjs';
+import { mathAssets } from 'document-engine';
 import { compileDiagrams } from './diagrams.mjs';
 import { compileStyles as publicationStyles } from './vendor/theme/ui/build/styles.mjs';
 import { siteOrigin, siteTitle, SITE_ICON } from './publication-metadata.mjs';
@@ -28,7 +28,7 @@ import { siteIdentity } from './site-identity.mjs';
 import { legacyRoutes, redirectPage } from './publication-routes.mjs';
 import { markdownFiles, readContentFile } from './content-files.mjs';
 import { LAYOUT, gridSize } from './layout-config.mjs';
-import { verifyApprovedContent } from './approved-content.mjs';
+import { verifyApprovedContent, publicationTopicsFile } from './approved-content.mjs';
 import { readProjectDocuments } from './project-documents.mjs';
 
 verifyApprovedContent();
@@ -38,7 +38,7 @@ const CONTENT = fileURLToPath(new URL('../content/', import.meta.url));
 const SETTINGS = fileURLToPath(new URL('../config/', import.meta.url));
 const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
 const CONFIG = JSON.parse(readFileSync(join(SETTINGS, 'site.json')));
-const TOPICS = readContentFile(join(CONTENT, 'tech.md')).metadata.topics;
+const TOPICS = readContentFile(join(CONTENT, publicationTopicsFile())).metadata.topics;
 const TAGS = JSON.parse(readFileSync(join(SETTINGS, 'tags.json')));
 const THEME = join(ROOT, 'vendor/theme');
 const MANIFEST = JSON.parse(readFileSync(join(THEME, 'manifest.json')));
@@ -61,9 +61,14 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   }
   const topicTrees = createTopicTrees(documents);
   const diagramSources = new Map();
-  renderDocuments(documents, { diagramSources });
+  const parsed = new Map();
+  for (const page of documents) {
+    const document = await parseArticle(page);
+    parsed.set(page.id, document);
+    for (const diagram of document.metadata.diagrams) diagramSources.set(diagram.source, page.id);
+  }
   const diagrams = await compileDiagrams(diagramSources);
-  if (diagrams.diagrams.size) renderDocuments(documents, { diagrams: diagrams.diagrams });
+  await renderDocuments(documents, { diagrams: diagrams.diagrams, parsed });
   const scripts = browserScripts(ROOT);
   const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))));
   const context = { config: CONFIG, layout: LAYOUT, navigation: loadHomeNavigation(CONTENT), topics: TOPICS, tags: TAGS, topicTrees, origin, preview, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
@@ -105,10 +110,9 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   return { pages: output.size, documents: documents.length, themeHash: MANIFEST.contentHash };
 }
 
-function renderDocuments(documents, options) {
-  const md = createMarkdown();
+async function renderDocuments(documents, options) {
   for (const page of documents) {
-    Object.assign(page, renderArticle(md, page, options));
+    Object.assign(page, await renderArticle(page, { ...options, document: options.parsed.get(page.id) }));
   }
   const bySlug = new Map(documents.map(page => [page.slug, page]));
   for (const page of documents) {
@@ -123,9 +127,9 @@ function renderDocuments(documents, options) {
       if ((page.leadHtml + page.html).includes(`id="${fragment}"`)) return original;
       const prefixed = `${page.id}-${decodeURIComponent(fragment)}`;
       return (page.leadHtml + page.html).includes(`id="${prefixed}"`) ? `href="#${prefixed}"` : original;
-    }).replaceAll('/things/assets/', '/assets/').replaceAll('/things/theme/', '/theme/');
-    page.leadHtml = rewrite(page.leadHtml);
-    page.html = rewrite(page.html);
+    });
+    page.leadHtml = normalizePublicationAssets(rewrite(page.leadHtml));
+    page.html = normalizePublicationAssets(rewrite(page.html));
   }
 }
 

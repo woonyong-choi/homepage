@@ -1,4 +1,5 @@
 ---
+publish: true
 id: db73c8752a7e3caad5eb
 slug: spring-boot
 type: wiki

@@ -1,4 +1,5 @@
 ---
+publish: true
 id: ba272ed1690da13f8ddc
 slug: file-system-fsync
 type: wiki

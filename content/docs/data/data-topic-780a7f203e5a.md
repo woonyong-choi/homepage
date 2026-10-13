@@ -1,4 +1,5 @@
 ---
+publish: true
 id: c44c4dfbb814e78768da
 slug: data-topic-780a7f203e5a
 type: wiki

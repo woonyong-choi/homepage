@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 7d2e124359bf28e3d8db
 slug: ai-machine-learning
 type: wiki

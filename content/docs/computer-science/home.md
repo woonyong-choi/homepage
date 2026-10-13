@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 985752d97bdad22da5a8
 slug: home
 type: wiki

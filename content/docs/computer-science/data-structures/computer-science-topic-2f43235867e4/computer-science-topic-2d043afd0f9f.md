@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 77d89c697439f0ef9148
 slug: computer-science-topic-2d043afd0f9f
 type: wiki

@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 57bd07d65f307b2cf9c4
 slug: frontend-effect-4cf810ca362a
 type: wiki

@@ -1,4 +1,5 @@
 ---
+publish: true
 id: a41de21af6c15973afa0
 slug: k8s-clue-data-security-trust
 type: wiki

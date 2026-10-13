@@ -1,4 +1,5 @@
 ---
+publish: true
 id: d414d381c87ae7e1c911
 slug: software-design
 type: wiki

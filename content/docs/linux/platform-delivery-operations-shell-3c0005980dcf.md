@@ -1,4 +1,5 @@
 ---
+publish: true
 id: cb3dd4a298fd4c6be41c
 slug: platform-delivery-operations-shell-3c0005980dcf
 type: wiki

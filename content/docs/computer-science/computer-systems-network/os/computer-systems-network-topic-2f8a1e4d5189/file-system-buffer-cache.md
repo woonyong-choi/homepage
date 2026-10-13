@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 8760c31b8dc18dd14f6d
 slug: file-system-buffer-cache
 type: wiki

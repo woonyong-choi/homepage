@@ -1,4 +1,5 @@
 ---
+publish: true
 id: db0626ffff881f1c4da7
 slug: k8s-clue-product-definition
 type: wiki

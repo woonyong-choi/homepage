@@ -1,4 +1,5 @@
 ---
+publish: true
 id: d786e3606b7190ca1ac2
 slug: computer-systems-network-cpu-93d8800bdefe
 type: wiki

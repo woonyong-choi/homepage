@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 18e23cae5942a1be0b20
 slug: k8s-clue-refactor-handoff-map
 type: wiki

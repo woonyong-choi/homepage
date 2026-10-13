@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 6b4dfb86bfbc5cd5b8b4
 slug: data
 type: wiki
