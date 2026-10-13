@@ -227,7 +227,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 ### 저장 전 페이지 미리보기
 
-`src/page-preview.mjs`의 `renderPagePreview({ source, file, id, kind, siteRoot, contentRoot, assets, colorScheme, topicsFile, readContent })`는 전체 Markdown 문자열을 기존 페이지 조립 함수에 전달한다. `file`은 `contentRoot` 상대 경로이며 아직 저장하지 않은 파일도 허용한다. `kind`는 `article`(기본값), `home`, `search`다. `search`는 정식 빌드와 같은 검색 페이지를 `/search/` 경로로 반환한다. 호스트는 쿼리를 유지해 이 경로를 제공하고 기존 `/docs/` 입구로 돌아가는 이동도 처리한다. 호스트가 이 결과 페이지를 `/docs/`에도 제공하면 빈 검색 조건으로 전체 색인을 조회한다. 공개 `/docs/`의 기존 주제 목록과 `/search/`의 빈 조건 복귀는 유지한다. 검색 색인은 호스트가 제공하며 이 함수는 비공개 문서를 수집하지 않는다. 기사 원고에는 현재 홈페이지의 필수 frontmatter가 필요하다. `id`를 전달하면 원고의 ID와 일치해야 한다.
+`src/page-preview.mjs`의 `renderPagePreview({ source, file, id, kind, siteRoot, contentRoot, assets, colorScheme, topicsFile, readContent })`는 전체 Markdown 문자열을 기존 페이지 조립 함수에 전달한다. `file`은 `contentRoot` 상대 경로이며 아직 저장하지 않은 파일도 허용한다. `kind`는 `article`(기본값), `home`, `search`다. `search`는 정식 빌드와 같은 검색 페이지를 `/search/` 경로로 반환한다. 호스트는 쿼리를 유지해 이 경로를 제공하고 기존 `/docs/` 입구로 돌아가는 이동도 처리한다. 호스트가 이 결과 페이지를 `/docs/`에도 제공하면 빈 검색 조건으로 전체 색인을 조회하고 쪽 이동의 `page` 값을 같은 `/docs/` 경로에 보존한다. 공개 `/docs/`의 기존 주제 목록과 `/search/`의 빈 조건 복귀는 유지한다. 검색 색인은 호스트가 제공하며 이 함수는 비공개 문서를 수집하지 않는다. 기사 원고에는 현재 홈페이지의 필수 frontmatter가 필요하다. `id`를 전달하면 원고의 ID와 일치해야 한다.
 
 `siteRoot/config`에서 사이트·태그·표시 설정과 이미지 크기를 읽는다. `contentRoot`에서는 명시된 `home.md`, `tech.md`와 홈이 참조한 섹션 원고만 읽으며 문서 폴더를 순회하지 않는다. 선택한 파일에는 디스크 대신 `source`를 사용한다. 같은 홈 입력 로더, `parseArticle`·`renderArticle`, `personalHome`·`articlePage`·`documentShell`을 재사용한다. 인접 문서 목록을 읽지 않으므로 전체 문서 트리와 검색 색인은 만들지 않는다.
 

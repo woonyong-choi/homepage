@@ -233,3 +233,12 @@ test('docs_results_page_empty_query_lists_entries_without_reloading', () => {
     assert.equal(browser.requests[1].state.query, '');
   } finally { browser.dom.window.close(); }
 });
+
+// #275: 로컬 전체목록의 빈 조건 쪽 이동만 /docs/의 page 값을 보존한다.
+test('docs_results_pagination_preserves_empty_query_page', () => {
+  const state = { query: '', tags: [], page: 2, type: 'all', baseRoute: '/docs/' };
+  assert.equal(searchUrl(state), '/docs/?page=2');
+  assert.equal(searchUrl({ ...state, page: 1 }), '/docs/');
+  assert.equal(searchUrl({ ...state, query: 'LLM' }), '/docs/?q=LLM&page=2');
+  assert.equal(searchUrl({ ...state, baseRoute: undefined }), '/docs/');
+});

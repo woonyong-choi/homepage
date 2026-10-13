@@ -17,7 +17,7 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
       url.searchParams.delete('type'); url.searchParams.delete('page');
       history.replaceState({ ...history.state, searchPosition: null }, '', url);
     }
-    return selected;
+    return page && location.pathname === '/docs/' ? { ...selected, baseRoute: '/docs/' } : selected;
   };
   let revision = 0; let resultRevision = 0; let composing = false; let active = -1; let resultStatus = '';
   const failureStatus = '검색 자료를 불러오지 못했습니다. 다시 시도해 주세요.';
