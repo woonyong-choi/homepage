@@ -255,3 +255,5 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 동기화는 기존 잠금·복구 트랜잭션을 사용한다. 목록에서 제거된 기존 관리 파일은 같은 트랜잭션으로 제거하며, 직접 수정된 생성 사본이 있으면 중단한다. 최초 전환에서 이미 존재하는 작성 파일을 바꾸려면 `tooling/migration-receipt.json`의 `homepageAdoption`에 `sourceCommit`, `before` 경로별 SHA-256, `retire` 경로 목록, `applied: false`를 명시한다. 현재 바이트와 `before`가 다르면 중단한다. 제거 가능한 옛 경로는 `content/tech.md`, `content/interviews.md`뿐이며 두 경로도 이전 해시가 필요하다. 발행 목록으로 덮어쓰거나 명시적으로 제거하지 않는 이전 경로는 허용하지 않는다.
 
 전환 후 승인 스냅샷의 `origin: vault`가 발행 입력 소유권을 나타내며 주제 설정은 `content/pages/tech.md`에서 읽는다. 후속 동기화는 이관 receipt를 재적용하지 않고 생성 사본의 해시를 검사한다. 옛 assets 승인 동기화로 돌아가는 것도 거부한다. 이 명령은 원본 Vault를 수정하거나 배포하지 않는다.
+
+`src/page-preview.mjs`가 내보내는 `normalizePublicationAssets(value)`는 기존 원문의 `/things/assets/`, `/things/theme/`를 발행 경로 `/assets/`, `/theme/`로 바꾼다. 정식 빌드와 미리보기가 같은 함수를 사용하며 호스트의 자산 검사에도 사용할 수 있다. 경로 또는 HTML 문자열을 받아 문자열을 반환하고 원고는 수정하지 않는다. 문서 주소와 앵커 해석은 이 함수의 범위가 아니다.

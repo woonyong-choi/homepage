@@ -15,7 +15,7 @@ import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
 import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
-import { publicationAssets } from './publication-assets.mjs';
+import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
 import { replacePublication } from './publication-output.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
@@ -127,9 +127,9 @@ async function renderDocuments(documents, options) {
       if ((page.leadHtml + page.html).includes(`id="${fragment}"`)) return original;
       const prefixed = `${page.id}-${decodeURIComponent(fragment)}`;
       return (page.leadHtml + page.html).includes(`id="${prefixed}"`) ? `href="#${prefixed}"` : original;
-    }).replaceAll('/things/assets/', '/assets/').replaceAll('/things/theme/', '/theme/');
-    page.leadHtml = rewrite(page.leadHtml);
-    page.html = rewrite(page.html);
+    });
+    page.leadHtml = normalizePublicationAssets(rewrite(page.leadHtml));
+    page.html = normalizePublicationAssets(rewrite(page.html));
   }
 }
 
