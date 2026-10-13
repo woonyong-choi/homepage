@@ -1,4 +1,5 @@
 ---
+publish: true
 id: example-request-flow
 slug: request-flow
 type: wiki

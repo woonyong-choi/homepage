@@ -1,4 +1,5 @@
 ---
+publish: true
 id: a25386d21a6552764d29
 slug: data-structures
 type: wiki

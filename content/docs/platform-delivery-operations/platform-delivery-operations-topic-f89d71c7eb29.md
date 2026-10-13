@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 3712de407fe170c9512e
 slug: platform-delivery-operations-topic-f89d71c7eb29
 type: wiki

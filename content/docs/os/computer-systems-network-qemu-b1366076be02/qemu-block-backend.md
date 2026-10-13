@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 103b92d7c08ce13df1c9
 slug: qemu-block-backend
 type: wiki

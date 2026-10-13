@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 73b707106d9d1c562c7e
 slug: application-security
 type: wiki

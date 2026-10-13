@@ -95,7 +95,11 @@ items:
 
 `thinkflow` 펜스에는 첫 줄에 `thinkflow`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 ThinkFlow 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
 
-카드·선은 한 번 선언하고 `scene "이름"`으로 장면을 나눈다. 빈 장면은 정지, 이동이 있는 장면은 한 번 재생이 기본이다. 반복은 `mode=loop`, 배속은 `speed=`, 연속 트래픽은 `track … every= …`로 표현한다. 장면 선택 줄은 문서 탭과 같은 공통 부품이다. 문법 복사·HTML 다운로드·전체화면은 도표 프레임에서 제공한다.
+카드·선은 한 번 선언하고 `scene "이름"`으로 장면을 나눈다. 빈 장면은 정지, 이동이 있는 장면은 한 번 재생이 기본이다. 반복은 `mode=loop`, 배속은 `speed=`, 연속 트래픽은 `track … every= …`로 표현한다. 장면 선택 줄은 문서 탭과 같은 공통 부품이다.
+
+작성 기준은 하나다. 같은 카드와 선이 단계별로 바뀌면 ThinkFlow `scene`으로, 서로 다른 그림·글·코드를 나란히 두면 문서 `@tab`으로 쓴다. 이름 집합의 유사도로 이를 강제하거나 경고하지 않는다.
+
+장면이 둘 이상인 도표를 품은 `:::tabs` 묶음은 바깥 선택 줄과 안쪽 장면 선택 줄의 역할이 갈리도록 생략한 `position`을 `top`, 생략한 `selector`를 `segmented`로 보완한다. 장면 수는 도표 컴파일 결과의 `timeline.steps.length`이며(`compileDiagrams`가 `scenes`로 전달) 원문이나 HTML을 다시 읽어 세지 않는다. 탭 묶음은 이 값을 렌더 전에 한 번 정해 열기와 닫기가 같은 결과를 쓴다. 명시한 옵션은 그대로 두고 `box` 테두리는 더하지 않는다. 장면이 하나인 도표와 장면 없는 탭은 기본값이 바뀌지 않는다. `:::platform`(신규 `@tab`과 옛 형식 모두)은 테두리 있는 고정 모양이라 이 보완에서 제외하며 장면이 몇 개든 기존 동작 그대로다. 결정은 도표를 품은 탭 묶음 하나에만 걸리고 뒤따르는 다른 탭 묶음에는 전해지지 않는다. 문법 복사·HTML 다운로드·전체화면은 도표 프레임에서 제공한다.
 
 차트의 외부 data 파일과 사용자 아이콘 폴더는 문서 삽입에서 허용하지 않는다. 오류는 문서 경로와 함께 빌드를 실패시킨다. 브라우저는 레이아웃을 계산하지 않고 시간표를 재생하며, 필요한 페이지에만 프레임 크기·테마 연결 코드를 싣는다. `mermaid`는 일반 코드 블록으로 표시한다.
 
@@ -284,7 +288,7 @@ const message = "넓은 코드블록";
 
 `:::` 블록은 같은 `app-*` 클래스와 마크업을 낸다. 스타일은 `:::steps`의 `.app-steps`와 `:icon`의 `.app-inline-icon`만 테마에 더했다. 동작은 기존 `document.js`(탭 화살표·Home·End, 팝오버 설명)와 `video.js`를 그대로 쓴다. `ui:` 블록은 변경이 없고 `:::` 블록 안에서도, 반대로도 쓸 수 있다.
 
-탭, 강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`src/vendor/theme/ui/index.mjs`, 정의는 design-tokens `docs/styles.md`의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 이 저장소의 `markdown.mjs`, `directive-blocks.mjs`, `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `document-navigation.mjs`는 입력을 정리해 넘기는 어댑터다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
+탭, 강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`src/vendor/theme/ui/index.mjs`, 정의는 design-tokens `docs/styles.md`의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 본문의 문법 해석과 구성 요소 조립은 공통 문서 엔진이 맡고, `article-renderer.mjs`는 프로젝트 문서 정리와 소개 문단 분리를 연결한다. 페이지 조립은 `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `document-navigation.mjs`가 맡는다. 기존 `markdown.mjs`와 지시어 해석기는 현재 비교 검사에 남아 있으며 발행 경로에서는 불러오지 않는다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
 
 구현은 `src/directives.mjs`(markdown-it 블록·인라인 규칙), `directive-syntax.mjs`(줄 분류, 속성 읽기, 검사), `directive-blocks.mjs`(블록 정의표)다. 새 블록은 정의표에 허용 속성, 놓을 자리, 본문 규칙, 출력을 한 항목으로 추가한다.
 

@@ -10,15 +10,15 @@ import { token, px, box } from './theme-measure.mjs';
 
 const near = (value, expected) => assert.equal(Math.round(value * 10000) / 10000, expected);
 const topics = { python: { label: 'Python', group: 'tech', article: 'sample' } };
-function post(type, body = '리드 문장\n\n# 큰 제목\n\n## 절 하나\n\n내용\n\n### 하위\n\n## 절 둘\n\n끝') {
+async function post(type, body = '리드 문장\n\n# 큰 제목\n\n## 절 하나\n\n내용\n\n### 하위\n\n## 절 둘\n\n끝') {
   const page = { id: 'sample', slug: 'sample', route: '/articles/sample/', title: '샘플 글', description: '리드 문장', body, type, category: 'python', tags: ['python'],
     contentIcon: { name: 'python' }, comments: true, publishedAt: '2026-01-02', updatedAt: '2026-02-03' };
-  return Object.assign(page, renderArticle(createMarkdown(), page));
+  return Object.assign(page, (await renderArticle(page)));
 }
 const order = (html, markers) => markers.map(marker => { const at = html.indexOf(marker); assert.ok(at >= 0, marker); return at; });
 
-test('blog_detail_follows_the_single_post_structure_without_search_or_title_icon', () => {
-  const page = post('blog');
+test('blog_detail_follows_the_single_post_structure_without_search_or_title_icon', async () => {
+  const page = (await post('blog'));
   const html = articlePage(page, { topics, repositoryUrl: 'https://github.com/example/repo' }, '<section class="app-comments" id="comments"></section>');
   assert.doesNotMatch(html, /data-public-search|app-search|app-article-title|app-document-layout|app-toc/);
   assert.doesNotMatch(html.slice(0, html.indexOf('app-article-lead')), /app-content-icon/);
@@ -32,8 +32,8 @@ test('blog_detail_follows_the_single_post_structure_without_search_or_title_icon
   assert.doesNotMatch(html, /class="app-related"|함께 읽기|수정 제안/);
 });
 
-test('feed_and_blog_detail_share_header_body_and_footer_markup', () => {
-  const page = post('blog');
+test('feed_and_blog_detail_share_header_body_and_footer_markup', async () => {
+  const page = (await post('blog'));
   const detail = articlePage(page, { topics });
   const feed = blogFeed([page], topics, 1, { commentConfig: { repo: 'owner/blog', repoId: 'repo-id', category: 'Comments', categoryId: 'category-id' }, commentTheme: 'light' });
   const shared = html => html.match(/<header class="app-post-header">[\s\S]*?<\/header><div class="app-prose app-feed-body">/)[0].replace(/<h[12][^>]*>[\s\S]*?<\/h[12]>/, '');
@@ -43,8 +43,8 @@ test('feed_and_blog_detail_share_header_body_and_footer_markup', () => {
   assert.match(detail, /<h2 id="sample-절-하나" class="app-heading-2">/);
 });
 
-test('blog_thumbnail_follows_the_lead_as_a_wide_image_in_detail_and_feed', () => {
-  const page = { ...post('blog'), thumbnail: { src: 'https://example.com/cover.jpg', alt: '글 표지', position: { x: 25, y: 50 } } };
+test('blog_thumbnail_follows_the_lead_as_a_wide_image_in_detail_and_feed', async () => {
+  const page = { ...(await post('blog')), thumbnail: { src: 'https://example.com/cover.jpg', alt: '글 표지', position: { x: 25, y: 50 } } };
   const detail = articlePage(page, { topics });
   const feed = blogFeed([page], topics, 1, { commentConfig: { repo: 'owner/blog', repoId: 'repo-id', category: 'Comments', categoryId: 'category-id' }, commentTheme: 'light' });
   for (const html of [detail, feed]) {
@@ -56,7 +56,7 @@ test('blog_thumbnail_follows_the_lead_as_a_wide_image_in_detail_and_feed', () =>
   }
   assert.match(detail, /loading="eager"/);
   assert.match(feed, /loading="lazy"/);
-  assert.doesNotMatch(articlePage(post('blog'), { topics }), /app-post-cover/);
+  assert.doesNotMatch(articlePage((await post('blog')), { topics }), /app-post-cover/);
 });
 
 test('thumbnail_dimensions_preserve_the_registered_wide_and_portrait_sources', () => {
@@ -74,8 +74,8 @@ test('thumbnail_without_registered_dimensions_does_not_guess_an_aspect_ratio', (
   assert.doesNotMatch(html, /\s(?:width|height)=/);
 });
 
-test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column', () => {
-  const page = post('wiki');
+test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column', async () => {
+  const page = (await post('wiki'));
   const tree = { page, children: [{ page: { ...page, id: 'child', title: '하위 문서', route: '/articles/child/' }, children: [] }] };
   const html = articlePage(page, { topics, topicTrees: new Map([['python', [tree]]]) });
   assert.match(html, /^<main id="main" class="app-shell app-document-shell"><section class="app-search/);

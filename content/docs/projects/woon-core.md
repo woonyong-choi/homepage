@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 35db58db9006cec20605
 slug: woon-core
 type: wiki

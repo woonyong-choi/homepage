@@ -1,4 +1,5 @@
 ---
+publish: true
 id: e6126b01baba998a3d47
 slug: pintos-file-descriptors
 type: wiki

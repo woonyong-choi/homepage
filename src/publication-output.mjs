@@ -1,12 +1,13 @@
 // 완성한 발행 파일 집합을 검사한 다음 기존 산출물을 교체한다.
 import { existsSync, lstatSync, mkdirSync, mkdtempSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { publicationLinks } from './publication-routes.mjs';
 import { basename, dirname, join, resolve } from 'node:path';
 
 function validateOutput(output, files) {
   for (const [route, html] of output) {
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
     if (new Set(ids).size !== ids.length) throw new Error(`duplicate HTML id: ${route}`);
-    for (const [, url] of html.matchAll(/(?:href|src|poster)="([^"]+)"/g)) {
+    for (const url of new Set([...publicationLinks(html, route), ...[...html.matchAll(/(?:href|src|poster)="([^"]+)"/g)].map(match => match[1])])) {
       if (!url.startsWith('/') && !url.startsWith('#')) continue;
       const [path, fragment] = url.split('#');
       const target = path.split('?')[0] || route;

@@ -11,7 +11,10 @@ export function markdownFiles(root) {
 }
 
 export function readContentFile(file) {
-  const source = readFileSync(file, 'utf8');
+  return parseContentSource(readFileSync(file, 'utf8'), file);
+}
+
+export function parseContentSource(source, file) {
   return { ...parseContent(source, `missing document metadata: ${file}`), file };
 }
 

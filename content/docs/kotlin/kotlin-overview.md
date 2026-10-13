@@ -1,4 +1,5 @@
 ---
+publish: true
 id: example-kotlin-overview
 slug: kotlin-overview
 type: wiki

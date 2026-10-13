@@ -10,6 +10,6 @@
 - [기록 탐색과 화면 구성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/knowledge-navigation.md): CS·Tech, 카드 배치, 전체 목록과 문서 계층
 - [Markdown 글 작성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/markdown.md): 글 파일, 지원 문법, 코드 블록 언어와 복사, 미지원 항목
 - [스타일 수정 지도](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/styles.md): 토큰·공통 조각·화면·콘텐츠 문법 중 어디를 고치는지, 홈 type별 클래스
-- [개인 사이트 발행](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/publication.md): 승인·검색·댓글·운영 빌드 계약
+- [개인 사이트 발행](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/publication.md): 공통 문서 엔진 연결, 승인·검색·댓글·운영 빌드 계약
 - [홈 원고 가이드](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/home-content.md): 홈 구간·영상·인터뷰 입력
 - [영역 설정](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/layout-settings.md): 홈 메뉴, Search 순서, CS·Tech·Blog의 문구·배치·표시 항목

@@ -1,4 +1,5 @@
 ---
+publish: true
 id: ce2d90e59018068d4ecc
 slug: projects
 type: wiki

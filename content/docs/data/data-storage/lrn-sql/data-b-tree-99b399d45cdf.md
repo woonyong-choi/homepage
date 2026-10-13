@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 4391bee409618cc015d0
 slug: data-b-tree-99b399d45cdf
 type: wiki

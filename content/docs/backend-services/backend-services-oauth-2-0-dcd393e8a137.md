@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 0074fca2c91dac3c7b9d
 slug: backend-services-oauth-2-0-dcd393e8a137
 type: wiki

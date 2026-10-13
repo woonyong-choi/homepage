@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 5128fc0208b928d2f1d3
 slug: pintos
 type: wiki

@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 01acc9b33bbf48c8cb19
 slug: backend-services-pki-136c318c4542
 type: wiki

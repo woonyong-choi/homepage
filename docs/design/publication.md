@@ -154,6 +154,8 @@ PurgeCSS는 빌드에서만 사용한다. 버전과 전이 의존성의 고정 �
 
 Search 입구는 CS·Tech 목록 다음에 `config/site.json`의 `guides`를 표시한다. 첫 카드는 시작 안내와 대표 아이콘, 나머지는 짧은 문서 링크다. `Card`와 `CardGroup({ split: true })`의 공통 배치·초점·반응형을 사용한다. ThinkFlow의 사용법·표현·장면·Markdown·배포·문제 해결은 ThinkFlow 저장소 문서가 정본이다. 홈페이지는 `content/projects/thinkflow/`에 고정 버전의 공개 문서와 자산을 가져와 `/projects/thinkflow/` 아래에서 같은 본문·목차·표·코드·도표 뷰어로 보여 준다. 상대 문서 링크와 절 제목은 내부 주소로 연결하고 코드 원문 링크는 해당 Git 커밋으로 연결한다. 문서 본문은 홈페이지에서 편집하지 않는다.
 
+도표 울타리 다음의 첫 SVG는 인터랙티브 도표와 겹치므로 Markdown 토큰 단계에서 걷는다. ThinkFlow md가 그 바로 뒤에 만든 장면 구간(`thinkflow scenes v1` 표식)도 같은 이유로 걷되, 울타리의 식별자와 같은 시작·끝 표식, 장면마다 닫힌 `<details>`와 `<summary>`, 이 문서 자산 목록에 있는 SVG 이미지 한 줄이 모두 맞을 때만 걷는다. 식별자는 이름 있는 울타리는 그 `name=이름`과 표식이 같아야 한다. 이름 없는 울타리는 순번을 홈페이지가 다시 세지 않고, 바로 뒤 생성 그림 다음 시작 표식의 `n=` 값(1 이상의 정수, 앞자리 0·부호·문자 제외)을 생성기의 원자료 계약으로 읽는다. 끝 표식은 같은 `n=` 값이어야 하고 `name=` 표식은 허용하지 않는다. 블록 선택과 순번 문법(예: 표식 없는 인용 안 울타리 제외)을 소비자가 복제하면 생성기와 어긋나므로, 이 값의 재검증 대신 프로젝트 SVG 자산·인접성·온전한 생성 구간 검사로 소유를 판단한다. 이미지 파일명 규칙은 따로 검사하지 않는다. 사용자 `<details>`, 불완전한 표식, 코드 예제, 프로젝트 밖 글은 그대로 두며 판단이 불확실하면 지우지 않는다. 표식 문법은 해석하지 않고 기존 `details` 토큰 구조와 `projectReference`의 자산 판정을 쓴다.
+
 ThinkFlow 의존성을 갱신한 뒤 `node scripts/sync-project-documents.mjs <ThinkFlow 저장소>`를 실행한다. 잠금 파일의 커밋에서 Git blob을 읽으므로 미커밋 원고를 가져오지 않는다. `config/project-documents.json`의 출처·버전·SHA-256과 모든 파일이 일치해야 빌드한다. 갱신 전에 기존 사본의 해시와 심볼릭 링크를 검사하며 로컬 변경이 있으면 중단한다. 사라진 파일은 이전 목록과 해시로 소유권을 확인한 뒤 제거한다. 라이선스와 고지도 발행 자산에 포함한다.
 
 자동 수신은 디자인·렌더러 의존성·공개 ThinkFlow 문서 사본과 버전 목록만 허용한다. 병합 전 패키지의 다른 필드가 바뀌지 않았는지 확인하고, 같은 문서 읽기 함수로 버전·파일 목록·해시를 재검사한다. 수신 브랜치에 애플리케이션 소스 변경이 섞이면 병합하지 않는다.
@@ -211,3 +213,53 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 미리보기의 CSS 주소를 직접 정하려면 `config/site.json`의 `comments.themeUrl`에 같은 공통 CSS를 제공하는 공개 HTTPS 주소를 지정한다. Git 이력이 없거나 CSS에 미커밋 변경이 있으면 명시한 주소가 필요하다. 외부 주소는 [giscus 사용자 테마 계약](https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md#data-theme)에 따라 익명 CORS로 CSS를 제공해야 한다. 확인할 때는 공개 응답과 현재 CSS의 SHA-256, HTTP 상태·MIME·CORS 및 실제 iframe의 계산 스타일을 대조한다.
 
 발행 파일은 같은 부모 폴더의 새 작업 폴더에 모두 쓴 뒤 기존 결과와 교체한다. 파일 쓰기가 실패하면 기존 결과를 유지하고, 새 폴더 설치가 실패하면 이전 폴더를 복원한다. 같은 실제 출력 경로는 잠금 폴더로 직렬화하며 다른 실행은 즉시 중단한다. 교체 사이에는 짧은 경로 공백이 있으므로 무중단 운영 배포를 보장하지 않는다. 강제 종료로 남은 잠금은 다른 빌드가 없는지 확인한 뒤 제거한다. 복원까지 실패하면 오류에 표시된 이전 결과 폴더를 보존한다.
+
+## 공통 문서 엔진 연결
+
+본문 발행은 `parseArticle`에서 공통 엔진의 `parseDocument`를 호출한 뒤 프로젝트 제목·생성 장면·상대 경로를 정리한다. 해석 결과는 페이지별로 보관하며, 모은 도표를 컴파일한 다음 `renderArticle`이 같은 결과를 `renderDocument`에 전달한다. 소개 문단은 원래 inline 토큰으로 렌더하고 각주 환경을 본문과 공유한다. 소개와 본문의 자산·런타임 목록은 합치고 수식 여부는 어느 한쪽에 있어도 유지한다.
+
+문법·출력 오류 진단과 실패한 도표는 파일을 발행하기 전에 예외로 바꾼다. 승인 원고 확인, front matter, 검색·댓글, 경로와 출력 저장은 홈페이지가 소유한다. 공통 엔진의 오류 HTML을 정상 발행 결과로 받아들이지 않는다. 수식 감지와 KaTeX 자산도 엔진의 공개 API를 사용해 렌더러와 같은 버전을 싣는다. 홈페이지 자산의 존재와 이미지 크기 조회는 `document-assets.mjs`가 제공한다.
+
+패키지 입력은 Git에서 제외된 `dist/document-engine-0.0.0.tgz`이며 `package-lock.json`의 integrity로 고정한다. `config/document-engine.json`은 엔진·디자인 커밋과 패키지 SHA-256을 소유한다. 검증과 배포 워크플로는 같은 composite action으로 고정된 원본을 읽기 전용 키로 가져와 패키지를 만들고 해시를 확인한 뒤 설치한다. 저장소 주소와 키는 Actions secrets로 전달한다. 비공개 소스와 패키지는 공개 저장소·배포 산출물에 포함하지 않으며, 배포에는 `dist/site`만 업로드한다. 로컬에서는 같은 패키지를 준비한 뒤 설치한다.
+
+
+### 저장 전 페이지 미리보기
+
+`src/page-preview.mjs`의 `renderPagePreview({ source, file, id, kind, siteRoot, contentRoot, assets, colorScheme, topicsFile, readContent })`는 전체 Markdown 문자열을 기존 페이지 조립 함수에 전달한다. `file`은 `contentRoot` 상대 경로이며 아직 저장하지 않은 파일도 허용한다. `kind`는 `article`(기본값) 또는 `home`이다. 기사 원고에는 현재 홈페이지의 필수 frontmatter가 필요하다. `id`를 전달하면 원고의 ID와 일치해야 한다.
+
+`siteRoot/config`에서 사이트·태그·표시 설정과 이미지 크기를 읽는다. `contentRoot`에서는 명시된 `home.md`, `tech.md`와 홈이 참조한 섹션 원고만 읽으며 문서 폴더를 순회하지 않는다. 선택한 파일에는 디스크 대신 `source`를 사용한다. 같은 홈 입력 로더, `parseArticle`·`renderArticle`, `personalHome`·`articlePage`·`documentShell`을 재사용한다. 인접 문서 목록을 읽지 않으므로 전체 문서 트리와 검색 색인은 만들지 않는다.
+
+`assets`의 `exists`·`url`·`size`는 공통 엔진 계약을 따른다. 선택적인 `read(path)`는 신뢰할 수 있는 호출자가 제공하며 공개 자산 URL을 받아 바이트를 반환한다. 생략하면 자산을 입력 루트 안에서만 읽고 심볼릭 링크를 통한 외부 접근도 차단한다. 테마와 runtime은 홈페이지가 소비하는 동일 배포물이다.
+
+결과는 `{ html, assets: Map, diagnostics, route, id }`이다. `assets`에는 스타일·글꼴·runtime·도표 HTML 등 참조 자산을 담는다. 실패하면 빈 HTML·자산과 파일·ID가 포함된 오류 진단을 반환한다. 파일·발행 결과를 쓰지 않으며 배포를 실행하지 않는다. 호스트는 반환된 자산만 격리된 미리보기 주소로 제공하고 내부 문서 이동·요청 순서·자원 해제를 관리한다. 미리보기 성공은 발행 승인이나 배포 완료를 뜻하지 않는다.
+
+
+미리보기의 `colorScheme`은 `light`(기본값) 또는 `dark`다. 기존 테마의 `data-theme`과 `color-scheme` 계약을 사용하고 도표는 공통 host runtime의 테마 메시지를 받는다. 스타일 사본은 만들지 않는다. 운영 빌드는 값을 지정하지 않으므로 기존 밝은 기본값을 유지한다.
+
+홈의 `sections[].source`는 `pages/intro.md`, `interviews/index.md`처럼 콘텐츠 루트 안의 상대 Markdown 경로를 허용한다. 절대 경로·상위 이동·역슬래시는 거부한다. 미리보기 호스트는 `topicsFile`(기본 `tech.md`)로 이동한 주제 설정 원고의 상대 경로를 지정한다. 선택 파일의 `file`과 참조 경로가 일치하면 저장 전 `source`를 사용한다. 실제 원고 이동과 설정 변경은 이 API가 수행하지 않는다.
+
+
+호스트가 공개 입력 범위를 제한할 때는 `readContent(relativePath, editedSource?)`를 제공한다. 선택 원고와 홈·주제·참조 섹션 원고가 모두 이 함수를 통과한다. 경로는 콘텐츠 루트 기준이며 선택한 원고에는 저장 전 문자열이 두 번째 인자로 전달된다. 호스트는 허용 목록·공개 상태·실제 경로를 확인하고, 검사한 동일 문자열을 동기 반환하거나 거절 시 예외를 던진다. 어댑터는 반환 문자열을 다시 파일에서 읽지 않으며 콜백 거절 시 기본 읽기로 우회하지 않는다. 콜백 제공 시 파일 열기와 심볼릭 링크 검증의 책임은 호스트에 있다. 콜백을 생략한 기존 소비자는 입력 루트 안의 파일 읽기를 유지한다. 자산 접근은 별도의 `assets.read` 경계를 따른다.
+
+
+### Vault 발행 입력
+
+`npm run content:sync-vault -- <vault-root>`는 `tooling/dist/publication.json`의 `version: 1`, `files` 목록만 소비한다. 각 항목은 Vault 상대 `source`, 홈페이지 상대 `target`, 동일 바이트의 `sha256`을 갖는다. 문서의 선택 `id`, `slug`, `url`은 원고 메타데이터와 대조한다. 원고 트리 전체를 탐색하거나 목록이 없을 때 옛 승인 입력으로 복귀하지 않는다.
+
+홈은 `homepage/home.md`, 주제 설정은 `homepage/pages/tech.md`이며 홈페이지의 `content/` 아래 같은 상대 위치로 가져온다. 홈이 참조하는 각 절도 목록에 있어야 한다. `docs/`는 `content/docs/`, `articles/`는 `content/blog/`로 가져온다. 문서는 명시적인 공개 지정과 기존 문서 ID·slug·종류 계약을 확인한다. 비공개·초안·예약 원고, 중복 경로·ID·slug, 경로 이탈·심볼릭 링크, 해시가 달라진 입력은 반영 전에 거부한다. 비공개 링크·임베드의 의미 검사는 발행 목록 생성기와 기존 홈페이지 렌더 검증이 맡는다.
+
+자산 텍스트는 `-NOTICE.txt`·`-LICENSE.txt` 고지만 허용한다.
+
+작성 설정은 `site`, `tags`, `search`, `cs`, `tech`, `blog`의 JSON 여섯 개만 받는다. 이미지 치수·자산 목록·프로젝트 문서 연결·승인 정보는 생성 정보로 유지한다. 미리보기 호스트가 `assets.size`를 제공하면 `config/image-sizes.json`을 읽지 않고 그 콜백을 사용한다.
+
+동기화는 기존 잠금·복구 트랜잭션을 사용한다. 목록에서 제거된 기존 관리 파일은 같은 트랜잭션으로 제거하며, 직접 수정된 생성 사본이 있으면 중단한다. 최초 전환에서 이미 존재하는 작성 파일을 바꾸려면 `tooling/migration-receipt.json`의 `homepageAdoption`에 `sourceCommit`, `before` 경로별 SHA-256, `retire` 경로 목록, `applied: false`를 명시한다. 현재 바이트와 `before`가 다르면 중단한다. 제거 가능한 옛 경로는 `content/tech.md`, `content/interviews.md`뿐이며 두 경로도 이전 해시가 필요하다. 발행 목록으로 덮어쓰거나 명시적으로 제거하지 않는 이전 경로는 허용하지 않는다.
+
+전환 후 승인 스냅샷의 `origin: vault`가 발행 입력 소유권을 나타내며 주제 설정은 `content/pages/tech.md`에서 읽는다. 후속 동기화는 이관 receipt를 재적용하지 않고 생성 사본의 해시를 검사한다. 옛 assets 승인 동기화로 돌아가는 것도 거부한다. 이 명령은 원본 Vault를 수정하거나 배포하지 않는다.
+
+`src/page-preview.mjs`가 내보내는 `normalizePublicationAssets(value)`는 기존 원문의 `/things/assets/`, `/things/theme/`를 발행 경로 `/assets/`, `/theme/`로 바꾼다. 정식 빌드와 미리보기가 같은 함수를 사용하며 호스트의 자산 검사에도 사용할 수 있다. 경로 또는 HTML 문자열을 받아 문자열을 반환하고 원고는 수정하지 않는다. 문서 주소와 앵커 해석은 이 함수의 범위가 아니다.
+
+미리보기 성공 결과의 `links`는 최종 HTML의 `a[href]`, `area[href]`에서 수집한 문자열 배열이다. frontmatter와 설정에서 출력된 메뉴도 포함한다. `publicationLinks(html, route, origin)`는 상대 링크를 페이지 경로 기준으로 해석해 같은 출처는 경로·쿼리·앵커, 외부는 전체 URL로 반환한다. 기본 origin은 검사 전용 `https://publication.invalid`다. 실제 사이트의 절대 주소까지 내부로 검사하려면 해당 origin을 전달한다. 잘못된 URL은 오류로 발행을 막으며 미리보기 API에서는 diagnostics로 반환한다. JavaScript 실행 후 추가되는 링크는 정적 수집 범위 밖이다.
+
+`documentRoute(value, baseRoute, origin)`는 `docs`, `blog`, `wiki`, `articles`의 단일 문서 주소를 `{ kind, slug, fragment }`로 판정한다. 끝 `/`는 선택이며 fragment는 `#`를 제외한 인코딩 값이다. 외부·목록·중첩 주제 주소와 잘못된 URL·인코딩은 `null`을 반환한다. Wiki 주제 목록은 빌드와 같은 `TOPIC_GROUPS`, `FIELDS`를 사용해 제외한다. 공용 옛 주소인 `articles`에는 blog 전용 예약어를 적용하지 않는다. 문서의 존재와 공개 여부는 호스트가 승인 목록으로 판정한다. 두 함수는 `src/page-preview.mjs`에서도 내보낸다. 최종 발행 검사도 같은 링크 수집기로 상대 문서 링크를 검사한다.
+
+`renderPagePreview`의 `origin` 입력은 정식 빌드와 같은 `siteOrigin`으로 검증하며 생략하면 `SITE_ORIGIN`을 사용한다. 검증된 origin을 결과에 돌려주고 최종 링크 수집에도 전달한다. 둘 다 없으면 반환 origin은 빈 문자열이며, 실제 사이트의 절대 주소를 내부 링크로 식별하는 것은 보장하지 않는다. 발행 호스트는 공개 링크 검사 전에 실제 배포 origin을 지정해야 한다.

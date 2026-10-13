@@ -1,4 +1,5 @@
 ---
+publish: true
 id: baeec4b59c6e67bc9d74
 slug: computer-systems-network-swap-11630540adf8
 type: wiki

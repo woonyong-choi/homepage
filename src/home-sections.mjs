@@ -23,12 +23,12 @@ function heroShowcase({ id, video, image }) {
   return image ? String(ui.Panorama({ id, label: image.alt || '히어로 이미지', image: trusted(picture(image)) })) : '';
 }
 
-export function heroSection(hero) {
+export function heroSection(hero, context = {}) {
   const action = heroAction(hero);
   const image = hero.wordmark ?? hero.icon;
   const className = hero.wordmark ? 'app-hero-wordmark' : 'app-hero-logo';
   const logo = image?.src.endsWith('.svg') && image.src.startsWith('/assets/')
-    ? renderContentSvg(image.src, className)
+    ? renderContentSvg(image.src, className, context.readAsset)
     : image ? picture({ ...image, alt: image.alt || hero.title || '' }, className, 'eager') : undefined;
   return String(ui.Hero({ id: hero.id, title: hero.title, description: hero.description, icon: logo ? trusted(logo) : undefined, action: action ? trusted(action) : undefined, showcase: trusted(heroShowcase(hero)) }));
 }

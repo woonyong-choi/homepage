@@ -40,8 +40,8 @@ sections:
         image:
           src: /theme/assets/illustrations/project-placeholder.svg
           alt: 더미 프로젝트 이미지
-  - source: tech.md
-  - source: interviews.md
+  - source: pages/tech.md
+  - source: interviews/index.md
   - id: contact
     type: contact
     enabled: true

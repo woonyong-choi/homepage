@@ -1,4 +1,5 @@
 ---
+publish: true
 id: b8940825d59998db6db1
 slug: computer-systems-network-topic-d160fea60072
 type: wiki

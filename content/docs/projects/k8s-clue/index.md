@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 34f4fddedb9451ba43e3
 slug: k8s-clue
 type: wiki

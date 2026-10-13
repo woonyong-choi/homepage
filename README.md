@@ -6,6 +6,16 @@
 
 Search에서 ThinkFlow 설치·표현·애니메이션·Markdown 발행·문제 해결 안내를 `/projects/thinkflow/`의 공통 문서 뷰어로 읽는다. 안내 원문은 ThinkFlow 저장소에서 관리한다. 렌더러 의존성을 갱신한 뒤 `node scripts/sync-project-documents.mjs <ThinkFlow 저장소>`로 같은 커밋의 공개 문서와 자산을 가져온다([발행 계약](docs/design/publication.md)).
 
+같은 카드와 선의 단계는 ThinkFlow `scene`, 서로 다른 그림·글·코드는 문서 `@tab`으로 쓴다. 장면이 둘 이상인 도표를 품은 `:::tabs`(`platform` 제외)는 생략한 위치와 선택 줄만 `top`·`segmented`로 보완해 두 선택 줄을 구분한다([도표](docs/design/markdown.md#도표)).
+
+프로젝트 문서의 도표는 ThinkFlow 코드 블록 하나를 인터랙티브 도표로 보여 준다. 같은 도표를 `thinkflow md`가 정적 SVG와 `<details>` 장면 목록으로 만든 부분은 원문(GitHub·ThinkFlow 저장소)에서만 보이고 홈페이지는 걷어 중복 표시하지 않는다. 걷는 조건은 [발행 계약](docs/design/publication.md)에 있다. 이름 없는 도표의 `n=순번`은 홈페이지가 다시 세지 않고 생성 표식의 값을 읽으며, 확신할 수 없는 구간은 그대로 둔다.
+
+본문은 고정된 공통 문서 엔진으로 한 번 해석하고 도표를 컴파일한 뒤 출력한다. 프로젝트 전처리와 발행 오류 차단은 홈페이지가 유지한다. 검증·배포 워크플로는 고정한 원본에서 비공개 패키지를 만들고 해시를 검증한 뒤 설치한다([발행 계약](docs/design/publication.md#공통-문서-엔진-연결)).
+
+저장 전 원고의 전체 페이지 미리보기는 `renderPagePreview`로 HTML과 자산을 메모리에 반환한다. 공통 테마의 라이트·다크와 하위 폴더의 홈 원고를 지원하며 원고나 발행 결과를 수정하지 않는다. 최종 HTML 링크도 반환해 호스트가 비공개 문서 이동을 검사할 수 있다. 기존 자산 경로 변환은 빌드·미리보기·호스트 검증에서 `normalizePublicationAssets`를 공유한다([미리보기 계약](docs/design/publication.md#저장-전-페이지-미리보기)).
+
+실제 사이트의 절대 링크를 내부 문서로 검사하려면 미리보기의 `origin` 또는 `SITE_ORIGIN`을 지정한다. 검증된 origin은 미리보기 결과에도 포함된다.
+
 ## 실행
 
 문서 하단의 이전·다음 탐색은 공통 문서 카드로 표시하며 문서 아이콘·제목과 키보드 초점을 유지한다.
@@ -27,8 +37,8 @@ npm run dev
 | 수정할 내용 | 파일·폴더 |
 |---|---|
 | 홈 소개·영상·구간 순서·상단 메뉴 | [`content/home.md`](content/home.md) |
-| 동료평가 소개·공개 카드 | [`content/interviews.md`](content/interviews.md) |
-| 기술 링크·분야 이름·카드 설명 | [`content/tech.md`](content/tech.md) |
+| 동료평가 소개·공개 카드 | [`content/interviews/index.md`](content/interviews/index.md) |
+| 기술 링크·분야 이름·카드 설명 | [`content/pages/tech.md`](content/pages/tech.md) |
 | 분야별 문서 | `content/docs/<분야>/`의 승인 사본 |
 | 블로그 원고 | `content/blog/`의 승인 사본 |
 | 이미지·영상·출처 고지 | `content/assets/`, `content/media/` |
@@ -50,6 +60,8 @@ npm run dev
 ```sh
 npm run content:check
 npm run content:sync -- <assets-root>
+# Vault가 생성한 명시적 발행 목록으로 전환할 때
+npm run content:sync-vault -- <vault-root>
 ```
 
 `<assets-root>`는 승인 목록이 있는 비공개 원문 저장소의 루트다. 승인·회수 명령, 폴더와 프런트매터의 관계는 [개인 사이트 발행](docs/design/publication.md)에 있다.
@@ -69,6 +81,8 @@ npm run design:sync -- /path/to/design-tokens
 ## 문서
 
 문서는 한국어로 작성한다. [전체 문서](docs/README.md)에서 홈 원고, Markdown 문법, 발행 경계와 스타일 수정 위치를 찾는다.
+
+Vault 입력은 `tooling/dist/publication.json`에 나열된 원고·작성 설정·자산만 가져온다. 최초 전환은 기존 파일의 해시를 기록한 이관 receipt를 확인하고, 이후에는 생성 사본의 변경을 감지한다. 실제 원고 이관과 배포는 별도 실행이다([발행 입력 계약](docs/design/publication.md#vault-발행-입력)).
 
 ## 운영 배포
 

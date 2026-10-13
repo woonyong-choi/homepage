@@ -1,0 +1,54 @@
+name: Prepare document engine
+description: Build the pinned private engine without publishing its source
+inputs:
+  repository:
+    required: true
+    description: Private source repository
+  ssh-key:
+    required: true
+    description: Read-only source deploy key
+  design-ssh-key:
+    required: true
+    description: Read-only design source deploy key
+runs:
+  using: composite
+  steps:
+    - id: pins
+      shell: bash
+      run: |
+        node --input-type=module - <<'JS' >> "$GITHUB_OUTPUT"
+        import { readFileSync } from 'node:fs';
+        const pin = JSON.parse(readFileSync('config/document-engine.json', 'utf8'));
+        for (const key of ['sourceCommit', 'designCommit']) {
+          if (!/^[a-f0-9]{40}$/.test(pin[key])) throw new Error(`invalid ${key}`);
+          console.log(`${key}=${pin[key]}`);
+        }
+        JS
+    - uses: actions/checkout@v4
+      with:
+        repository: ${{ inputs.repository }}
+        ref: ${{ steps.pins.outputs.sourceCommit }}
+        ssh-key: ${{ inputs.ssh-key }}
+        persist-credentials: false
+        path: dist/engine-source
+    - uses: actions/checkout@v4
+      with:
+        repository: woonyong-choi/design-tokens
+        ssh-key: ${{ inputs.design-ssh-key }}
+        ref: ${{ steps.pins.outputs.designCommit }}
+        persist-credentials: false
+        path: dist/design-source
+    - shell: bash
+      working-directory: dist/engine-source
+      run: |
+        npm ci --ignore-scripts --workspace document-engine --include-workspace-root=false
+        SEORAP_DESIGN_SOURCE="$GITHUB_WORKSPACE/dist/design-source" npm pack --workspace document-engine --pack-destination "$GITHUB_WORKSPACE/dist"
+    - shell: bash
+      run: |
+        node --input-type=module - <<'JS'
+        import { readFileSync } from 'node:fs';
+        import { createHash } from 'node:crypto';
+        const pin = JSON.parse(readFileSync('config/document-engine.json', 'utf8'));
+        const actual = createHash('sha256').update(readFileSync('dist/document-engine-0.0.0.tgz')).digest('hex');
+        if (actual !== pin.sha256) throw new Error('document engine package hash mismatch');
+        JS

@@ -1,4 +1,5 @@
 ---
+publish: true
 id: a8fc98eef0034a2ccf78
 slug: frontend-hooks-5f0c93de5131
 type: wiki

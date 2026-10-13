@@ -252,17 +252,17 @@ export function parseHomeSections(data, { technologies = new Set(), exists = () 
 // cost: time O(b+n), heap O(b+n), stack O(d), io O(n)
 // vars: b = 홈 원고 전체 바이트 수, n = 섹션과 카드 수, d = YAML 최대 중첩 깊이
 // basis: estimate
-export function loadHomeContent(technologies, root = ROOT, { preview = false } = {}) {
-  const options = { technologies, exists: path => existsSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(root, path)) };
-  const home = readContentFile(join(root, HOME_CONTENT));
+export function loadHomeContent(technologies, root = ROOT, { preview = false, readContent = readContentFile, exists } = {}) {
+  const options = { technologies, exists: exists ?? (path => existsSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(root, path))) };
+  const home = readContent(join(root, HOME_CONTENT));
   record(home.metadata, '(최상위)', ['navigation', 'sections']);
   const entries = list(home.metadata.sections, 'sections').map((entry, index) => {
     if (!entry || !Object.hasOwn(entry, 'source')) return entry;
     const path = `sections[${index}]`;
     record(entry, path, ['source']);
     const source = text(entry.source, `${path}.source`);
-    if (!/^[a-z][a-z0-9-]*\.md$/.test(source)) fail(`${path}.source`, '같은 content 폴더의 Markdown 파일 이름이어야 합니다');
-    const { metadata, body } = readContentFile(join(root, source));
+    if (!/^(?:[a-z][a-z0-9-]*\/)*[a-z][a-z0-9-]*\.md$/.test(source)) fail(`${path}.source`, 'content 안의 상대 Markdown 경로여야 합니다');
+    const { metadata, body } = readContent(join(root, source));
     const section = { ...metadata };
     if (section.type === 'technologies') delete section.topics;
     return withIntroduction(section, body, source);
@@ -277,15 +277,15 @@ export function loadHomeContent(technologies, root = ROOT, { preview = false } =
   if (!preview || !existsSync(local)) return sections;
   const interviews = sections.filter(section => section.type === 'interviews');
   if (interviews.length !== 1) throw new Error(`${LOCAL_INTERVIEWS}: 활성 인터뷰 섹션이 하나여야 합니다`);
-  const { metadata, body } = readContentFile(local);
+  const { metadata, body } = readContent(local);
   record(metadata, LOCAL_INTERVIEWS, ['items']);
   if (body.trim()) throw new Error(`${LOCAL_INTERVIEWS}: 카드 내용은 items에 작성합니다`);
   const replacement = { ...interviews[0], items: metadata.items };
   return parseHomeSections({ sections: sections.map(section => section === interviews[0] ? replacement : section) }, options);
 }
 
-export function loadHomeNavigation(root = ROOT) {
-  const { metadata } = readContentFile(join(root, HOME_CONTENT));
+export function loadHomeNavigation(root = ROOT, readContent = readContentFile) {
+  const { metadata } = readContent(join(root, HOME_CONTENT));
   record(metadata, '(최상위)', ['navigation', 'sections']);
   return parseHomeNavigation(metadata.navigation ?? []);
 }
