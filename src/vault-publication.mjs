@@ -47,8 +47,8 @@ function validateEntry(entry) {
     if (VAULT_CONFIGS.some(value => name === `${value}.json`)) target = `config/${name}`;
   } else if (/^homepage\/(?:home\.md|(?:pages|interviews)\/.+\.md)$/.test(entry.source)) {
     target = `content/${entry.source.slice('homepage/'.length)}`;
-  } else if (/^(docs|articles)\/.+\.md$/.test(entry.source)) {
-    target = entry.source.replace(/^docs\//, 'content/docs/').replace(/^articles\//, 'content/blog/');
+  } else if (/^(docs|publish)\/.+\.md$/.test(entry.source)) {
+    target = entry.source.replace(/^docs\//, 'content/docs/').replace(/^publish\//, 'content/blog/');
   } else if (entry.source.startsWith('assets/') && /^content\/(assets|media)\/.+\.(?:png|jpe?g|gif|webp|svg|avif|mp4|webm|mp3|wav|ogg|pdf|woff2?|txt)$/i.test(entry.target)) {
     target = entry.target;
   }
@@ -59,7 +59,7 @@ function validateEntry(entry) {
 function validateMetadata(entry, metadata, identities) {
   if (!metadata || typeof metadata !== 'object') throw new Error(`invalid Vault metadata: ${entry.source}`);
   const docs = entry.source.startsWith('docs/');
-  const article = entry.source.startsWith('articles/');
+  const article = entry.source.startsWith('publish/');
   if ((docs && metadata.publish !== true) || metadata.publish === false || metadata.status === 'draft' || (metadata.visibility !== undefined && metadata.visibility !== 'public')) {
     throw new Error(`private or draft Vault source: ${entry.source}`);
   }
