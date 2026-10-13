@@ -14,12 +14,13 @@ export function readSearchState(query, defaultTag = '') {
 }
 
 export function searchUrl(state) {
-  if (!normalizeQuery(state.query) && !state.tags.length) return '/docs/';
+  const baseRoute = state.baseRoute === '/docs/' ? '/docs/' : '/search/';
+  if (!normalizeQuery(state.query) && !state.tags.length && baseRoute !== '/docs/') return '/docs/';
   const params = new URLSearchParams();
   if (state.query) params.set('q', state.query);
   for (const tag of state.tags) params.append('tag', tag);
   if (state.page > 1) params.set('page', state.page);
-  return `/search/${params.size ? '?' + params : ''}`;
+  return `${baseRoute}${params.size ? '?' + params : ''}`;
 }
 
 export function prepareIndex(entries) {

@@ -10,7 +10,7 @@ import { readDocument, publicDocuments, searchEntry, FIELDS, TOPIC_GROUPS, blogD
 import { escape } from './vendor/theme/ui/index.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
-import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchBox, tagPage, iconUrl, FIELD_NAMES, categoryEntries } from './publication-layout.mjs';
+import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchPage, tagPage, iconUrl, FIELD_NAMES, categoryEntries } from './publication-layout.mjs';
 import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
 import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
@@ -97,7 +97,7 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
     const entries = documents.filter(page => page.tags.includes(tagId));
     add(`/tags/${tagId}/`, tag.label, tagPage(tagId, entries, TAGS));
   }
-  add('/search/', '검색', `<main class="app-shell app-body" id="main">${searchBox({ combobox: false })}<h1 class="app-sr">검색</h1><div data-search-page><div class="app-filter-summary" data-filter-summary></div><div data-full-results><p class="app-empty">검색어를 입력하거나 주제를 선택해 주세요.</p></div>${ui.PageLinks({ label: '검색 페이지', resultPages: true })}</div></main>`);
+  add('/search/', '검색', searchPage());
   for (const [base, size, render] of [['/blog/', LAYOUT.blog.feedSize, blogFeed], ['/blog/all/', gridSize(LAYOUT.blog.collection), blogArchive]]) {
     for (let page = 1; page <= Math.max(1, Math.ceil(posts.length / size)); page++) add(page === 1 ? base : `${base}page/${page}/`, LAYOUT.blog.title, render(posts, TAGS, page, { commentConfig, commentTheme, layout: LAYOUT }), { type: 'blog' });
   }

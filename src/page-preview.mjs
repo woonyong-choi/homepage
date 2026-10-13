@@ -11,7 +11,7 @@ import { readDocument } from './content-model.mjs';
 import { parseContentSource } from './content-files.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { loadLayoutConfig } from './layout-config.mjs';
-import { articlePage, documentShell, personalHome } from './publication-layout.mjs';
+import { articlePage, documentShell, personalHome, searchPage } from './publication-layout.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
 import { siteOrigin } from './publication-metadata.mjs';
 import { publicationLinks } from './publication-routes.mjs';
@@ -41,7 +41,7 @@ export async function renderPagePreview(input) {
 async function renderPreview({ source, file, id, kind = 'article', siteRoot, contentRoot, assets = {}, colorScheme = 'light', topicsFile = 'tech.md', readContent: readSource, origin = process.env.SITE_ORIGIN ?? '' }) {
   if (typeof source !== 'string') throw new TypeError('preview source must be a string');
   if (!['light', 'dark'].includes(colorScheme)) throw new TypeError('invalid preview color scheme');
-  if (!['article', 'home'].includes(kind)) throw new TypeError('invalid preview kind');
+  if (!['article', 'home', 'search'].includes(kind)) throw new TypeError('invalid preview kind');
   origin = siteOrigin(origin, true);
   const root = realpathSync(contentRoot);
   const selected = within(root, file);
@@ -94,6 +94,9 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     } });
     page = { route: '/', title: context.config.title ?? context.config.name };
     body = personalHome(context);
+  } else if (kind === 'search') {
+    page = { route: '/search/', title: '검색' };
+    body = searchPage();
   } else {
     page = readDocument(selectedSource, context.tags, new Date(), context.topics);
     if (id !== undefined && id !== page.id) throw new Error('preview document id does not match source');
