@@ -87,3 +87,5 @@ Vault 입력은 `tooling/dist/publication.json`에 나열된 원고·작성 설�
 ## 운영 배포
 
 GitHub Actions의 `Deploy woonyong.com`을 main에서 수동 실행한다. 공개용 빌드만 GitHub Pages에 배포하며 운영 주소는 `https://woonyong.com`이다.
+
+홈의 프로젝트 영상은 첫 화면부터 접혀 있으며, 영상 보기 링크로 엽니다. 스크립트가 실행되지 않아도 같은 링크에서 기본 영상 컨트롤에 접근할 수 있습니다.
