@@ -1,4 +1,5 @@
 ---
+publish: true
 id: baceb32a7bfc14ccfc54
 slug: computer-systems-network-qemu-b1366076be02
 type: wiki

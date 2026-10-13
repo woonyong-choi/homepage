@@ -1,4 +1,5 @@
 ---
+publish: true
 id: df88721f656fa5332644
 slug: cryptography
 type: wiki

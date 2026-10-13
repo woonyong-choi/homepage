@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 771a01c25553fadd2e7a
 slug: k8s-clue-java-architecture-decision
 type: wiki

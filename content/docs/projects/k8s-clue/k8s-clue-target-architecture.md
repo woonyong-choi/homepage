@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 203dcf2f51bc53c89623
 slug: k8s-clue-target-architecture
 type: wiki

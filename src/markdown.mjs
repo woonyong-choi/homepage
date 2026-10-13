@@ -1,5 +1,5 @@
 // Markdown과 명시적인 문서 구성 요소를 정적 HTML로 변환한다.
-import { existsSync, readFileSync } from 'node:fs';
+import { documentAssets, imageSize } from './document-assets.mjs';
 import MarkdownIt from './vendor/markdown-it/markdown-it.mjs';
 import footnote from 'markdown-it-footnote';
 import deflist from 'markdown-it-deflist';
@@ -13,7 +13,6 @@ import { DirectiveError, parseOptions, WIDTH_OPTION } from './directive-syntax.m
 import { codeLanguage, highlightCode } from './code-highlight.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
 
-const IMAGE_SIZES = JSON.parse(readFileSync(new URL('../config/image-sizes.json', import.meta.url)));
 // HTML 모양과 변형은 가져온 테마의 구성 요소가 정의한다. 아래 함수는 입력을 정리해 그 구성 요소에 넘기는 어댑터다.
 const { escape, safeUrl, trusted } = ui;
 export { escape, safeUrl };
@@ -31,7 +30,7 @@ export function icon(name = 'question') {
   if (typeof name === 'string' && name.startsWith('content:')) return contentIcon(name.slice(8));
   return String(ui.ArticleIcon(name));
 }
-export const imageSize = source => Object.hasOwn(IMAGE_SIZES, source) ? IMAGE_SIZES[source] : undefined;
+export { imageSize };
 export function image(name, alt = '', className = '') {
   const size = imageSize(name);
   return `<img${size ? ` width="${size[0]}" height="${size[1]}"` : ''} class="${className}" src="${asset(name)}" alt="${escape(alt)}" loading="lazy" decoding="async">`;
@@ -160,7 +159,7 @@ export function renderGallery(data, id) {
   const slides = Array.isArray(data.slides) ? data.slides.map(slide => ({ image: trusted(image(slide.src, slide.alt ?? slide.label)), caption: slide.caption, label: slide.label })) : data.slides;
   return String(ui.Gallery({ id, title: data.title, width: ui.contentWidth(data), selected: data.selected, slides }));
 }
-const DIRECTIVE_KIT = Object.freeze({ escape, safeUrl, image, contentIcon, trusted, card: cardSlot, figureOf, videoOf, asset, gallery: renderGallery, ui, assetExists: name => existsSync(new URL(`../content/assets/${name}`, import.meta.url)) });
+const DIRECTIVE_KIT = Object.freeze({ escape, safeUrl, image, contentIcon, trusted, card: cardSlot, figureOf, videoOf, asset, gallery: renderGallery, ui, assetExists: documentAssets.exists });
 
 function fenceOptions(info, token, env, attributes = CODE_ATTRIBUTES) {
   const source = info.replace(/^\S+\s*/, '');

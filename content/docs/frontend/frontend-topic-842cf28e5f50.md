@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 5fe797f51be382fd5258
 slug: frontend-topic-842cf28e5f50
 type: wiki

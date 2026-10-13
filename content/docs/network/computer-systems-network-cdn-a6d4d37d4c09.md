@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 73613a6421c94f6cee73
 slug: computer-systems-network-cdn-a6d4d37d4c09
 type: wiki

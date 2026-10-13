@@ -1,4 +1,5 @@
 ---
+publish: true
 id: fa5d5320b185cff9ec54
 slug: computer-systems-network-dns-c7fd180532b4
 type: wiki

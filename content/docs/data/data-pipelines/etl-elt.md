@@ -1,4 +1,5 @@
 ---
+publish: true
 id: bf0526230453e16fd860
 slug: etl-elt
 type: wiki

@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 93d181f06fe6ee2c5fc4
 slug: ai-machine-learning-transformer-924ea08dd69a
 type: wiki

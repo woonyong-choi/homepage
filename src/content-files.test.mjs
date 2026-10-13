@@ -31,9 +31,9 @@ test('import_preserves_site_metadata_and_refreshes_source_content_fields', () =>
 test('nested_publication_files_keep_the_manifest_identity_and_routes', () => {
   const root = fileURLToPath(new URL('../content/docs/', import.meta.url));
   const tags = JSON.parse(readFileSync(new URL('../config/tags.json', import.meta.url)));
-  const categories = readContentFile(new URL('../content/tech.md', import.meta.url)).metadata.topics;
+  const categories = readContentFile(new URL('../content/pages/tech.md', import.meta.url)).metadata.topics;
   const manifest = JSON.parse(readFileSync(new URL('../config/publication-manifest.json', import.meta.url)));
-  const pages = markdownFiles(root).map(file => readDocument(readFileSync(file, 'utf8'), tags, new Date(), categories)).filter(page => !page.example);
+  const pages = markdownFiles(root).map(file => readDocument(readFileSync(file, 'utf8'), tags, new Date(), categories));
   assert.equal(pages.length, manifest.documents.length);
   for (const entry of manifest.documents) {
     const page = pages.find(page => page.id === entry.id);
@@ -43,7 +43,7 @@ test('nested_publication_files_keep_the_manifest_identity_and_routes', () => {
 });
 
 test('publication_topics_follow_canonical_aliases_and_entry_articles', () => {
-  const topics = readContentFile(new URL('../content/tech.md', import.meta.url)).metadata.topics;
+  const topics = readContentFile(new URL('../content/pages/tech.md', import.meta.url)).metadata.topics;
   for (const slug of ['ml', 'llm']) {
     const root = { slug, projection_id: slug };
     const child = { slug: 'lesson', projection_id: 'child', public_parent_id: slug };

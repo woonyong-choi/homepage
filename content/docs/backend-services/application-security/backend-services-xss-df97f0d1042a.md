@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 16ce5cf713ddbb407b76
 slug: backend-services-xss-df97f0d1042a
 type: wiki

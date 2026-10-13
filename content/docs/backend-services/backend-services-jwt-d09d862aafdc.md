@@ -1,4 +1,5 @@
 ---
+publish: true
 id: c868c4bb89fbc0032316
 slug: backend-services-jwt-d09d862aafdc
 type: wiki

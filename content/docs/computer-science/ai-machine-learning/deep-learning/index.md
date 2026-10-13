@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 239fa2fa951b91bcd14f
 slug: deep-learning
 type: wiki

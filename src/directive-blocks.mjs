@@ -8,7 +8,11 @@ const PLACES = ['root', 'tab'];
 // 옛 `::::tabs`+`:::tab[이름]` 형식은 선택 줄이 위에 오는 분할 모양이다. 새 `@tab` 형식은 meta.options(없으면 테마 기본값)를 쓴다.
 const LEGACY_TABS = Object.freeze({ position: 'top', selector: 'segmented' });
 
-const tabOptions = (meta, platform) => meta.options ?? { ...(platform ? {} : LEGACY_TABS), ...meta.attrs };
+// 장면 선택 줄이 있는 도표를 품은 일반 탭은 바깥 선택 줄과 구분되도록 생략한 position과 selector만 보완한다. 명시한 값과 platform은 그대로 둔다.
+const tabOptions = (meta, platform) => {
+  const options = meta.options ?? { ...(platform ? {} : LEGACY_TABS), ...meta.attrs };
+  return meta.scenes && !platform ? { ...LEGACY_TABS, ...options } : options;
+};
 
 function tabSet(platform) {
   return {

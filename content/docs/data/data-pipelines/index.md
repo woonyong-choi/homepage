@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 89e9168cd434338a383d
 slug: data-pipelines
 type: wiki

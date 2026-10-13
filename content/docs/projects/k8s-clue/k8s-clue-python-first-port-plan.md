@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 9c9ade9b1ff38487f997
 slug: k8s-clue-python-first-port-plan
 type: wiki

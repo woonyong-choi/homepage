@@ -1,4 +1,5 @@
 ---
+publish: true
 id: c6b1e079c6f91f27a5d4
 slug: computer-systems-network-cpu-4b05d739f0f6
 type: wiki

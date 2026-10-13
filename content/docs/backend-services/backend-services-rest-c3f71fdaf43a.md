@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 7e6d7f784daee0e95de9
 slug: backend-services-rest-c3f71fdaf43a
 type: wiki

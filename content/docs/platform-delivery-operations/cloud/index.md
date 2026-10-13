@@ -1,4 +1,5 @@
 ---
+publish: true
 id: e8f82bc90a2a659d2a85
 slug: cloud
 type: wiki

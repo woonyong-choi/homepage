@@ -1,4 +1,5 @@
 ---
+publish: true
 id: f258fd7fd14917a13d0d
 slug: k8s-clue-diagnosis-remediation
 type: wiki

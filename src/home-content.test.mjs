@@ -86,3 +86,23 @@ test('interview_summary_links_use_the_link_href_rules', () => {
   assert.equal(parse(item('@만난 곳'))[0].items[0].summary, '@만난 곳');
   for (const url of ['javascript:x', 'data:text/html,x', '//evil.example.com', 'http://example.com']) rejects(item(`[@x](${url})`), /items\[0\]\.summary 링크/);
 });
+
+test('loadHomeContent_reads_nested_section_sources_and_rejects_parent_paths', () => {
+  const root = '/virtual-content';
+  const section = { metadata: { type: 'hero', id: 'intro', enabled: true }, body: '# 제목\n\n소개' };
+  const reads = [];
+  const readContent = file => {
+    reads.push(file);
+    return file === `${root}/home.md`
+      ? { metadata: { sections: [{ source: 'pages/intro.md' }] }, body: '' }
+      : section;
+  };
+  const result = loadHomeContent(new Set(), root, { readContent, exists: () => true });
+  assert.equal(result[0].title, '제목');
+  assert.deepEqual(reads, [`${root}/home.md`, `${root}/pages/intro.md`]);
+  for (const source of ['../secret.md', '/secret.md', 'pages/../../secret.md', 'pages\\secret.md']) {
+    assert.throws(() => loadHomeContent(new Set(), root, {
+      readContent: () => ({ metadata: { sections: [{ source }] }, body: '' }),
+    }), /상대 Markdown 경로/);
+  }
+});

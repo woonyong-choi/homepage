@@ -1,4 +1,5 @@
 ---
+publish: true
 id: c8b646af4f54fd361ecd
 slug: programming-languages-runtime-topic-2ac2dfca2dd1
 type: wiki

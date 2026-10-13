@@ -1,4 +1,5 @@
 ---
+publish: true
 id: example-document-composition
 slug: document-composition
 type: wiki

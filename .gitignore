@@ -1,4 +1,4 @@
-pages/
+/pages/
 search-index.json
 .DS_Store
 node_modules/

@@ -229,6 +229,16 @@ export function installDirectives(md, kit) {
       }
     }
   });
+  // 탭 묶음이 장면 둘 이상인 ThinkFlow 도표를 품는지 렌더 전에 한 번 정한다. 장면 수는 컴파일 결과의 값이고 열기와 닫기가 같은 결과를 읽는다.
+  // platform 묶음은 기존 동작을 보존하므로 대상이 아니다.
+  md.core.ruler.push('tab-scenes', (state) => {
+    const open = [];
+    for (const token of state.tokens) {
+      if (token.type === 'directive_open' && token.meta.name === 'tabs') open.push(token.meta);
+      else if (token.type === 'directive_close' && token.meta === open.at(-1)) open.pop();
+      else if (token.type === 'fence' && open.length && /^thinkflow(?:\s|$)/.test(token.info.trim()) && state.env.diagrams?.get(token.content)?.scenes > 1) open.at(-1).scenes = true;
+    }
+  });
   const render = (tokens, index, options, env) => {
     const { meta } = tokens[index];
     const spec = BLOCKS[meta.name];

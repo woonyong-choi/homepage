@@ -1,4 +1,5 @@
 ---
+publish: true
 id: f7a4c0bc9424115c4a69
 slug: redis
 type: wiki

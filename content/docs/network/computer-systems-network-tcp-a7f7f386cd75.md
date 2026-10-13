@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 39ab08ede9057ce291a2
 slug: computer-systems-network-tcp-a7f7f386cd75
 type: wiki

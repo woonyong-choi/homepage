@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 3df99d0a20ab3dfebdfe
 slug: data-numpy-7479f207e1f2
 type: wiki

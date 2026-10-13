@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 2c46678daa341b3ff8b7
 slug: indexes
 type: wiki

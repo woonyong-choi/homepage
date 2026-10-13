@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 151db28b667fa8715fb9
 slug: backend-services-sql-injection-3d2e3a0d8df5
 type: wiki
