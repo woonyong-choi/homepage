@@ -248,7 +248,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 `npm run content:sync-vault -- <vault-root>`는 `tooling/dist/publication.json`의 `version: 1`, `files` 목록만 소비한다. 각 항목은 Vault 상대 `source`, 홈페이지 상대 `target`, 동일 바이트의 `sha256`을 갖는다. 문서의 선택 `id`, `slug`, `url`은 원고 메타데이터와 대조한다. 원고 트리 전체를 탐색하거나 목록이 없을 때 옛 승인 입력으로 복귀하지 않는다.
 
-홈은 `homepage/home.md`, 주제 설정은 `homepage/pages/tech.md`이며 홈페이지의 `content/` 아래 같은 상대 위치로 가져온다. 홈이 참조하는 각 절도 목록에 있어야 한다. `docs/`는 `content/docs/`, `articles/`는 `content/blog/`로 가져온다. 문서는 명시적인 공개 지정과 기존 문서 ID·slug·종류 계약을 확인한다. 비공개·초안·예약 원고, 중복 경로·ID·slug, 경로 이탈·심볼릭 링크, 해시가 달라진 입력은 반영 전에 거부한다. 비공개 링크·임베드의 의미 검사는 발행 목록 생성기와 기존 홈페이지 렌더 검증이 맡는다.
+홈은 `homepage/home.md`, 주제 설정은 `homepage/pages/tech.md`이며 홈페이지의 `content/` 아래 같은 상대 위치로 가져온다. 홈이 참조하는 각 절도 목록에 있어야 한다. `docs/`는 `content/docs/`, `publish/`는 `content/blog/`로 가져온다. 문서는 명시적인 공개 지정과 기존 문서 ID·slug·종류 계약을 확인한다. 비공개·초안·예약 원고, 중복 경로·ID·slug, 경로 이탈·심볼릭 링크, 해시가 달라진 입력은 반영 전에 거부한다. 비공개 링크·임베드의 의미 검사는 발행 목록 생성기와 기존 홈페이지 렌더 검증이 맡는다.
 
 자산 텍스트는 `-NOTICE.txt`·`-LICENSE.txt` 고지만 허용한다.
 
