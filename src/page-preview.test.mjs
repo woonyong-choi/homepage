@@ -62,3 +62,17 @@ test('renderPagePreview_compiles_diagrams_and_returns_iframe_bytes', async () =>
   assert.match(result.assets.get(path).toString(), /서버/);
   assert.ok(result.assets.has('/diagram.js'));
 });
+
+
+test('renderPagePreview_selects_shared_dark_tokens_and_keeps_light_as_default', async () => {
+  const source = saved('home.md');
+  const light = await renderPagePreview({ ...input, file: 'home.md', source, kind: 'home' });
+  const dark = await renderPagePreview({ ...input, file: 'home.md', source, kind: 'home', colorScheme: 'dark' });
+  assert.deepEqual(dark.diagnostics, []);
+  assert.match(light.html, /data-theme="light"/);
+  assert.match(dark.html, /data-theme="dark"/);
+  assert.match(dark.html, /name="color-scheme" content="dark"/);
+  assert.deepEqual(dark.assets, light.assets);
+  const bad = await renderPagePreview({ ...input, file: 'home.md', source, colorScheme: 'unknown' });
+  assert.match(bad.diagnostics[0].message, /color scheme/);
+});

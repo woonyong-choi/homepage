@@ -261,7 +261,7 @@ export function loadHomeContent(technologies, root = ROOT, { preview = false, re
     const path = `sections[${index}]`;
     record(entry, path, ['source']);
     const source = text(entry.source, `${path}.source`);
-    if (!/^[a-z][a-z0-9-]*\.md$/.test(source)) fail(`${path}.source`, '같은 content 폴더의 Markdown 파일 이름이어야 합니다');
+    if (!/^(?:[a-z][a-z0-9-]*\/)*[a-z][a-z0-9-]*\.md$/.test(source)) fail(`${path}.source`, 'content 안의 상대 Markdown 경로여야 합니다');
     const { metadata, body } = readContent(join(root, source));
     const section = { ...metadata };
     if (section.type === 'technologies') delete section.topics;

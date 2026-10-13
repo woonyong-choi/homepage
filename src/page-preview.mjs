@@ -33,8 +33,9 @@ export async function renderPagePreview(input) {
   }
 }
 
-async function renderPreview({ source, file, id, kind = 'article', siteRoot, contentRoot, assets = {} }) {
+async function renderPreview({ source, file, id, kind = 'article', siteRoot, contentRoot, assets = {}, colorScheme = 'light', topicsFile = 'tech.md' }) {
   if (typeof source !== 'string') throw new TypeError('preview source must be a string');
+  if (!['light', 'dark'].includes(colorScheme)) throw new TypeError('invalid preview color scheme');
   if (!['article', 'home'].includes(kind)) throw new TypeError('invalid preview kind');
   const root = realpathSync(contentRoot);
   const selected = within(root, file);
@@ -50,7 +51,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   const scripts = browserScripts(SOURCE_ROOT);
   const context = {
     config: json('site.json'), tags: json('tags.json'), layout: loadLayoutConfig(pathToFileURL(configRoot + sep)),
-    topics: readContent(join(root, 'tech.md')).metadata.topics,
+    topics: readContent(within(root, topicsFile)).metadata.topics, colorScheme,
     navigation: loadHomeNavigation(root, readContent), preview: true, origin: '', math,
     themeHash: manifest.contentHash,
     scriptHash: createHash('sha256').update([...scripts.values()].join('\n')).digest('hex'),
