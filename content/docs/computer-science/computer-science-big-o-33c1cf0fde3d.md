@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 90e86c4e7b7d0bd5d393
 slug: computer-science-big-o-33c1cf0fde3d
 type: wiki

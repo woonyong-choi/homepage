@@ -1,4 +1,5 @@
 ---
+publish: true
 id: ac93238811debfeabd51
 slug: k8s-clue-user-experience
 type: wiki

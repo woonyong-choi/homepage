@@ -1,4 +1,5 @@
 ---
+publish: true
 id: c8891b11a4ece4ad3320
 slug: backend-services-cors-dd387fc45dd4
 type: wiki

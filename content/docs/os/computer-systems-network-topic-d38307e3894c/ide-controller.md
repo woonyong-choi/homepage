@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 7480850922f5dcb1d1c3
 slug: ide-controller
 type: wiki

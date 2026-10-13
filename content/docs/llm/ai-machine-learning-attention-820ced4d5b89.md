@@ -1,4 +1,5 @@
 ---
+publish: true
 id: e9a5580809515d73c7e6
 slug: ai-machine-learning-attention-820ced4d5b89
 type: wiki

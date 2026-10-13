@@ -83,7 +83,7 @@ test('tech_and_cs_group_topics_by_navigation_without_changing_source_fields', ()
   assert.match(old, /Data/);
 
   // #200: 확정한 11개 분류 이름과 순서는 원문의 짧은 제목과 독립적이다.
-  const configuredTopics = readContentFile(new URL('../content/tech.md', import.meta.url)).metadata.topics;
+  const configuredTopics = readContentFile(new URL('../content/pages/tech.md', import.meta.url)).metadata.topics;
   const configuredDocuments = Object.entries(configuredTopics).filter(([, topic]) => topic.group === 'cs')
     .map(([category, topic]) => ({ id: category, slug: topic.article, category, type: 'wiki', route: `/docs/${topic.article}/`, title: category }));
   const collection = JSDOM.fragment(wikiLanding(configuredDocuments, { topics: configuredTopics }, 'cs'));

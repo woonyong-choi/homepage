@@ -40,8 +40,8 @@ sections:
         image:
           src: /theme/assets/illustrations/project-placeholder.svg
           alt: 더미 프로젝트 이미지
-  - source: tech.md
-  - source: interviews.md
+  - source: pages/tech.md
+  - source: interviews/index.md
   - id: contact
     type: contact
     enabled: true
@@ -57,4 +57,4 @@ sections:
 
 # 백엔드 엔지니어
 
-흩어진 지식을 연결해, 다시 꺼내 쓸 수 있는 도구를 만듭니다.
+기능 개발과 프로젝트 운영을 맡아 왔으며, 지금은 백엔드 개발에 집중하고 있습니다.

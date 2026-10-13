@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 9a50105031564f901eb8
 slug: frontend
 type: wiki

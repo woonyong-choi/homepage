@@ -7,7 +7,7 @@ import { renderPagePreview, normalizePublicationAssets } from './page-preview.mj
 
 const siteRoot = fileURLToPath(new URL('../', import.meta.url));
 const contentRoot = siteRoot + 'content';
-const input = { siteRoot, contentRoot };
+const input = { siteRoot, contentRoot, topicsFile: 'pages/tech.md' };
 const saved = file => readFileSync(`${contentRoot}/${file}`, 'utf8');
 const output = siteRoot + 'dist/site/index.html';
 const stamp = () => existsSync(output) ? [statSync(output).mtimeMs, readFileSync(output, 'utf8')] : null;
@@ -80,7 +80,7 @@ test('renderPagePreview_selects_shared_dark_tokens_and_keeps_light_as_default', 
 
 
 test('renderPagePreview_applies_host_reader_to_edited_and_referenced_content_without_fallback', async () => {
-  const files = new Map(['home.md', 'tech.md', 'interviews.md'].map(name => [name, saved(name)]));
+  const files = new Map(['home.md', 'pages/tech.md', 'interviews/index.md'].map(name => [name, saved(name)]));
   const reads = [];
   const readContent = (name, edited) => {
     reads.push(name);
@@ -92,7 +92,7 @@ test('renderPagePreview_applies_host_reader_to_edited_and_referenced_content_wit
   assert.deepEqual(success.diagnostics, []);
   assert.match(success.html, /호스트가 검사한 바이트/);
   assert.equal(reads.filter(name => name === 'home.md').length, 1);
-  const denied = await renderPagePreview({ ...input, file: 'home.md', kind: 'home', source: source.replace('interviews.md', 'drafts/private.md'), readContent });
+  const denied = await renderPagePreview({ ...input, file: 'home.md', kind: 'home', source: source.replace('interviews/index.md', 'drafts/private.md'), readContent });
   assert.match(denied.diagnostics[0].message, /content not allowed: drafts\/private.md/);
   assert.equal(denied.html, '');
   const edited = await renderPagePreview({ ...input, file: 'docs/private.md', source: saved('blog/bounded-queue.md'), readContent });

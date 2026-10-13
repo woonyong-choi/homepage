@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 3a4428d101ad36a13e74
 slug: k8s-clue-implementation-roadmap
 type: wiki

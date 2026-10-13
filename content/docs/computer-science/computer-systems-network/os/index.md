@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 221875cddc6dbd366b6a
 slug: os
 type: wiki

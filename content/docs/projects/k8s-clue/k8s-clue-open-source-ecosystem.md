@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 0a706f7d1437409846db
 slug: k8s-clue-open-source-ecosystem
 type: wiki

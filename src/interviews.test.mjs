@@ -1,13 +1,15 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { readContentFile } from './content-files.mjs';
 import { publicInterviews, interviewCards, summaryParts } from './interviews.mjs';
 import { href } from './home-content.mjs';
 
-const examples = readContentFile(new URL('../content/interviews.md', import.meta.url)).metadata.items;
+const examples = [
+  { id: 'example-1', example: true, summary: '[@만난 곳](/docs/)에서 함께한 동료평가 내용을 작성하세요.', profile: { title: '회사명', subtitle: '직무', image: { src: '/assets/example.png', alt: '회사' } } },
+  { id: 'example-2', example: true, summary: '예시 동료평가', profile: { title: '회사명', subtitle: '직무' } },
+];
 
-test('interview_examples_are_five_static_company_placeholders_shown_only_in_preview', () => {
-  assert.equal(publicInterviews(examples, true).length, 5);
+test('interview_examples_are_shown_only_in_preview', () => {
+  assert.equal(publicInterviews(examples, true).length, 2);
   assert.deepEqual(publicInterviews(examples), []);
   for (const entry of examples) {
     assert.equal(entry.example, true);

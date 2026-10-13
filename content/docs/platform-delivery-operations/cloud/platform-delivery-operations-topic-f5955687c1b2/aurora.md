@@ -1,4 +1,5 @@
 ---
+publish: true
 id: db60491829d707feea56
 slug: aurora
 type: wiki

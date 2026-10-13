@@ -18,7 +18,7 @@ const vendor = join(product, 'vendor/theme');
 const sha = value => createHash('sha256').update(value).digest('hex');
 const files = folder => readdirSync(folder, { recursive: true, withFileTypes: true }).filter(entry => entry.isFile()).map(entry => join(entry.parentPath, entry.name).slice(folder.length + 1)).sort();
 const TAGS = JSON.parse(readFileSync(join(product, '../config/tags.json'), 'utf8'));
-const TOPICS = readContentFile(join(product, '../content/tech.md')).metadata.topics;
+const TOPICS = readContentFile(join(product, '../content/pages/tech.md')).metadata.topics;
 const PAINT = /\s(?:color|fill|stroke|stop-color|flood-color)=["']([^"']*)["']/g;
 
 test('vendored_theme_is_exactly_the_manifest', () => {

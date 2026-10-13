@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 04e4a7327e0e1bfbbc20
 slug: computer-systems-network-alarm-clock-4f0f0546530e
 type: wiki

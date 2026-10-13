@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 888e9b05ff7d33b736be
 slug: computer-systems-network-mmap-838e9b0f7e0a
 type: wiki

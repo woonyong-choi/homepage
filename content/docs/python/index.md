@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 698ee087fd36f91df5ab
 slug: python
 type: wiki

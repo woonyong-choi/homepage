@@ -1,4 +1,5 @@
 ---
+publish: true
 id: c845792a652ffc5166f3
 slug: computer-systems-network-mlfqs-db815d97f954
 type: wiki

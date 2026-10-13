@@ -1,4 +1,5 @@
 ---
+publish: true
 id: example-docker-overview
 slug: docker-overview
 type: wiki

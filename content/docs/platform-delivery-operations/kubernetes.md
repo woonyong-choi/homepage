@@ -1,4 +1,5 @@
 ---
+publish: true
 id: f4d16eeced2f7801c2c5
 slug: kubernetes
 type: wiki

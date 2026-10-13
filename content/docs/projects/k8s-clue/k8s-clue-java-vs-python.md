@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 156e986c16c1b7cb7e34
 slug: k8s-clue-java-vs-python
 type: wiki

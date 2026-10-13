@@ -1,4 +1,5 @@
 ---
+publish: true
 id: b9078e42a87dec76e19d
 slug: jungle-dev-kit
 type: wiki

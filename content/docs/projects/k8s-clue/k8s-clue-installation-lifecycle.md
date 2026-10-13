@@ -1,4 +1,5 @@
 ---
+publish: true
 id: 4af349735aa735c46df7
 slug: k8s-clue-installation-lifecycle
 type: wiki

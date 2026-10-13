@@ -1,4 +1,5 @@
 ---
+publish: true
 id: cae484f38697ad913e9e
 slug: amazon-bedrock
 type: wiki
