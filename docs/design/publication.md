@@ -257,3 +257,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 전환 후 승인 스냅샷의 `origin: vault`가 발행 입력 소유권을 나타내며 주제 설정은 `content/pages/tech.md`에서 읽는다. 후속 동기화는 이관 receipt를 재적용하지 않고 생성 사본의 해시를 검사한다. 옛 assets 승인 동기화로 돌아가는 것도 거부한다. 이 명령은 원본 Vault를 수정하거나 배포하지 않는다.
 
 `src/page-preview.mjs`가 내보내는 `normalizePublicationAssets(value)`는 기존 원문의 `/things/assets/`, `/things/theme/`를 발행 경로 `/assets/`, `/theme/`로 바꾼다. 정식 빌드와 미리보기가 같은 함수를 사용하며 호스트의 자산 검사에도 사용할 수 있다. 경로 또는 HTML 문자열을 받아 문자열을 반환하고 원고는 수정하지 않는다. 문서 주소와 앵커 해석은 이 함수의 범위가 아니다.
+
+미리보기 성공 결과의 `links`는 최종 HTML의 `a[href]`, `area[href]`에서 수집한 문자열 배열이다. frontmatter와 설정에서 출력된 메뉴도 포함한다. `publicationLinks(html, route, origin)`는 상대 링크를 페이지 경로 기준으로 해석해 같은 출처는 경로·쿼리·앵커, 외부는 전체 URL로 반환한다. 기본 origin은 검사 전용 `https://publication.invalid`다. 실제 사이트의 절대 주소까지 내부로 검사하려면 해당 origin을 전달한다. 잘못된 URL은 오류로 발행을 막으며 미리보기 API에서는 diagnostics로 반환한다. JavaScript 실행 후 추가되는 링크는 정적 수집 범위 밖이다.
+
+`documentRoute(value, baseRoute, origin)`는 `docs`, `blog`, `wiki`, `articles`의 단일 문서 주소를 `{ kind, slug, fragment }`로 판정한다. 끝 `/`는 선택이며 fragment는 `#`를 제외한 인코딩 값이다. 외부·목록·중첩 주제 주소와 잘못된 URL·인코딩은 `null`을 반환한다. 문서의 존재와 공개 여부는 호스트가 승인 목록으로 판정한다. 두 함수는 `src/page-preview.mjs`에서도 내보낸다. 최종 발행 검사도 같은 링크 수집기로 상대 문서 링크를 검사한다.

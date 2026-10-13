@@ -13,10 +13,12 @@ import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { loadLayoutConfig } from './layout-config.mjs';
 import { articlePage, documentShell, personalHome } from './publication-layout.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
+import { publicationLinks } from './publication-routes.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { compileDiagrams } from './diagrams.mjs';
 import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
 
+export { publicationLinks, documentRoute } from './publication-routes.mjs';
 export { normalizePublicationAssets } from './publication-assets.mjs';
 
 const SOURCE_ROOT = fileURLToPath(new URL('.', import.meta.url));
@@ -104,7 +106,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   const files = publicationAssets(new Map([[page.route, html]]), [], readAsset);
   for (const [name, bytes] of scripts) files.set(`/${name}`, bytes);
   for (const [name, bytes] of diagrams.assets) files.set(name, bytes);
-  return { html, assets: files, diagnostics, route: page.route, id: page.id };
+  return { html, assets: files, links: publicationLinks(html, page.route), diagnostics, route: page.route, id: page.id };
 }
 
 function within(root, name) {
