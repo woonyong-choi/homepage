@@ -91,7 +91,7 @@ npm run build:site
 
 ```ui:figure
 {
-  "src": "2-today-mac.png",
+  "src": "sample-a.png",
   "alt": "캡션이 있는 이미지 예시",
   "caption": "캡션이 있는 이미지 예시",
   "width": "content"
@@ -108,8 +108,8 @@ npm run build:site
 {
   "columns": 2,
   "items": [
-    { "src": "2-today-mac.png", "alt": "첫 이미지", "caption": "첫 캡션", "rounded": true },
-    { "src": "10-reminders-mac.png", "alt": "둘째 이미지", "caption": "둘째 캡션" }
+    { "src": "sample-a.png", "alt": "첫 이미지", "caption": "첫 캡션", "rounded": true },
+    { "src": "sample-b.png", "alt": "둘째 이미지", "caption": "둘째 캡션" }
   ]
 }
 ```
@@ -169,23 +169,23 @@ npm run build:site
   "title": "다섯 단계 예시",
   "slides": [
     {
-      "src": "2-today-mac.png",
+      "src": "sample-a.png",
       "alt": "앱 화면 1"
     },
     {
-      "src": "3-upcoming-mac-2.png",
+      "src": "sample-c.png",
       "alt": "앱 화면 2"
     },
     {
-      "src": "4-headings-mac.png",
+      "src": "sample-d.png",
       "alt": "앱 화면 3"
     },
     {
-      "src": "5-checklists-mac-2.png",
+      "src": "sample-e.png",
       "alt": "앱 화면 4"
     },
     {
-      "src": "7-quickfind-mac.png",
+      "src": "sample-f.png",
       "alt": "앱 화면 5"
     }
   ]
@@ -199,13 +199,13 @@ npm run build:site
   "selected": 1,
   "slides": [
     {
-      "src": "repeating-comparison-1-io80.png",
+      "src": "sample-before.png",
       "label": "Before",
       "alt": "변경 전 반복 작업",
       "caption": "변경 전에는 반복 작업의 표시가 달랐습니다."
     },
     {
-      "src": "repeating-comparison-2-io80.png",
+      "src": "sample-after.png",
       "label": "Now",
       "alt": "변경 후 반복 작업",
       "caption": "변경 후에는 체크 상자가 함께 표시됩니다."
@@ -218,8 +218,8 @@ npm run build:site
 
 ```ui:video
 {
-  "src": "3-upcoming-mac-2.mp4",
-  "poster": "3-upcoming-mac-2.png",
+  "src": "sample-c.mp4",
+  "poster": "sample-c.png",
   "title": "기능 소개 영상"
 }
 ```
@@ -331,7 +331,7 @@ right: 오른쪽 설명에는 사용 흐름을 적습니다.
 ## Device frame
 
 ```ui:device
-src: 3-upcoming-iphone.png
+src: sample-phone.png
 title: 실제 기기 프레임에 맞춘 화면
 ```
 
@@ -341,14 +341,14 @@ title: 실제 기기 프레임에 맞춘 화면
 
 ```ui:demos
 title: 여러 동작의 공유 플레이어
-poster: 3-upcoming-iphone.png
+poster: sample-phone.png
 items:
   - title: iPhone
     body: 첫 번째 동작을 선택합니다.
-    src: 3-upcoming-iphone.mp4
+    src: sample-phone.mp4
   - title: Mac
     body: 같은 화면에서 다음 동작으로 전환합니다.
-    src: 3-upcoming-mac-2.mp4
+    src: sample-c.mp4
 ```
 
 
@@ -375,7 +375,7 @@ items:
 items:
   - title: 선택하기
     body: 설명과 기기 화면을 나란히 배치합니다.
-media: "![화면](/assets/10-reminders-mac.png)"
+media: "![화면](/assets/sample-b.png)"
 ```
 
 ## Icon catalog

@@ -1,74 +1,85 @@
 [
   {
-    "url": "https://culturedcode.com/frozen/2026/08/repeating-comparison-1-io80.png",
-    "file": "assets/repeating-comparison-1-io80.png",
-    "bytes": 22370,
-    "sha256": "7b07f2ed1e6394d322e5ee201b07f9ddcb41acbee5e0534f97211a9ff044af41"
+    "file": "assets/backend-engineer.svg",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "Pretendard Black(900) 글자 윤곽을 도형으로 변환한 제목. 글꼴(OFL-1.1)은 design-tokens assets/fonts에서 관리한다."
   },
   {
-    "url": "https://culturedcode.com/frozen/2026/08/repeating-comparison-2-io80.png",
-    "file": "assets/repeating-comparison-2-io80.png",
-    "bytes": 23264,
-    "sha256": "c0e9eaf2092f8cebd863b3420cc8a5ccf384b3bbf0a0860065d372987a59d16a"
+    "file": "assets/who-knows.svg",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "Inter Display Black 글자 윤곽을 도형으로 변환한 브랜드. 글꼴(OFL-1.1)은 design-tokens assets/fonts에서 관리한다."
   },
   {
-    "url": "https://culturedcode.com/global/shared/2024-02-20/images/bezel-iphone6-overlay.svg",
-    "file": "assets/bezel-iphone6-overlay.svg",
-    "bytes": 2034,
-    "sha256": "1f183f61d1b76a08ea22d785d3024fba54d79fda4a1be5c7252c15a35d238167"
+    "file": "assets/company-j2ysoft.png",
+    "origin": "user-provided",
+    "license": "trademark of the respective company; identification only",
+    "notice": "assets/company-logos-NOTICE.txt"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/10-reminders-mac.png",
-    "file": "assets/10-reminders-mac.png",
-    "bytes": 85786,
-    "sha256": "76693ec843a01d7cb4b096c311bcecc04525840ec61e1c81873c83ec33d00fb0"
+    "file": "assets/company-jusin-background.png",
+    "origin": "user-provided",
+    "license": "trademark of the respective company; identification only",
+    "notice": "assets/company-logos-NOTICE.txt"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/2-today-mac.png",
-    "file": "assets/2-today-mac.png",
-    "bytes": 51887,
-    "sha256": "9827400d01800517af8d7cddcb86fb3a1d50c1e79b6904082fc5f6b14a55fbe6"
+    "file": "assets/company-neople-background.png",
+    "origin": "user-provided",
+    "license": "trademark of the respective company; identification only",
+    "notice": "assets/company-logos-NOTICE.txt"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/3-upcoming-iphone.mp4",
-    "file": "assets/3-upcoming-iphone.mp4",
-    "bytes": 757934,
-    "sha256": "35cffdfe3fccc5fcce3b97aea3a2ee9ee097b35b88da4a2d242a74b29cb1a872"
+    "file": "assets/company-nexon.png",
+    "origin": "user-provided",
+    "license": "trademark of the respective company; identification only",
+    "notice": "assets/company-logos-NOTICE.txt"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/3-upcoming-iphone.png",
-    "file": "assets/3-upcoming-iphone.png",
-    "bytes": 35073,
-    "sha256": "6b013993d293b2b6d7cec66535723da3afed53b8636c3bbd9ea151d494a3a934"
+    "file": "assets/company-roborobo.png",
+    "origin": "user-provided",
+    "license": "trademark of the respective company; identification only",
+    "notice": "assets/company-logos-NOTICE.txt"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/3-upcoming-mac-2.mp4",
-    "file": "assets/3-upcoming-mac-2.mp4",
-    "bytes": 1756381,
-    "sha256": "66e31133d335a32d9f0edb7d2087762b4ba9541eb736e819954968c7f2a095f5"
+    "file": "assets/company-logos-NOTICE.txt",
+    "origin": "project-original",
+    "license": "MIT"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/3-upcoming-mac-2.png",
-    "file": "assets/3-upcoming-mac-2.png",
-    "bytes": 67902,
-    "sha256": "7042d6df7dd2b8d7b5314cd172d6b2a0f47f21fa96e2f8f411599084f782f732"
+    "file": "media/manta-code-blocks-poster.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "source": "https://github.com/woonyong-choi/manta-code-blocks",
+    "notice": "media/manta-code-blocks-LICENSE.txt"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/4-headings-mac.png",
-    "file": "assets/4-headings-mac.png",
-    "bytes": 56128,
-    "sha256": "8f3a287fbd2608950a309e6c857b0a6f15931e307d7bfc8e00c339e9deae3aa0"
+    "file": "media/manta-code-blocks-LICENSE.txt",
+    "origin": "project-original",
+    "license": "MIT"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/5-checklists-mac-2.png",
-    "file": "assets/5-checklists-mac-2.png",
-    "bytes": 71955,
-    "sha256": "cf32e8450b27a2246eb9ee24e11ae8918b9502e29cfd83eb929bf3d2f972aa80"
+    "file": "media/woonyong-interview.mp4",
+    "origin": "third-party",
+    "license": "used with the source notice",
+    "url": "https://www.youtube.com/watch?v=phc1NHab8u8",
+    "notice": "media/woonyong-interview-NOTICE.txt"
   },
   {
-    "url": "https://static.culturedcode.com/things/videos/2017-05-18-website-videos/7-quickfind-mac.png",
-    "file": "assets/7-quickfind-mac.png",
-    "bytes": 60421,
-    "sha256": "b877d54b57f6c2288f04de633114da2530094d413e83edd2f6b56f46d03a9f69"
+    "file": "media/woonyong-interview-poster.jpg",
+    "origin": "third-party",
+    "license": "used with the source notice",
+    "url": "https://www.youtube.com/watch?v=phc1NHab8u8",
+    "notice": "media/woonyong-interview-NOTICE.txt"
+  },
+  {
+    "file": "media/woonyong-interview-NOTICE.txt",
+    "origin": "project-original",
+    "license": "MIT"
+  },
+  {
+    "file": "media/README.md",
+    "origin": "project-original",
+    "license": "MIT"
   }
 ]
