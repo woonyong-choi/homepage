@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { clientEntrypoints, publicationAssets } from './publication-assets.mjs';
 import { documentShell } from './publication-layout.mjs';
+import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
 
 test('publication_includes_nested_css_and_search_assets_without_shipping_authoring_files', () => {
   const source = new Map(Object.entries({
@@ -81,8 +82,12 @@ test('used_licensed_assets_include_notices_and_unused_assets_do_not', () => {
   }
   const unused = publicationAssets(new Map([['/', '<main>자산 없음</main>']]), [], () => Buffer.from(''));
   for (const [, notice] of dependencies) assert.ok(!unused.has(notice));
-  for (const name of ['collected-icons', 'devicon', 'simple-icons', 'bootstrap', 'apache-2.0']) {
-    const notice = `/theme/assets/icons/licenses/${name}.txt`;
+  // 인라인 아이콘 고지는 테마 카탈로그가 가리키는 라이브러리·브랜드 고지 전체다.
+  const catalog = getIconCatalog();
+  const iconNotices = [...new Set([...catalog.libraries, ...Object.values(catalog.brands)].map(item => item.notice).filter(Boolean))];
+  assert.ok(iconNotices.includes('licenses/collected-icons.txt'));
+  for (const file of iconNotices) {
+    const notice = `/theme/assets/icons/${file}`;
     assert.ok(unused.has(notice), `inline icon notice: ${notice}`);
     assert.throws(() => publicationAssets(new Map(), [], path => {
       if (path === notice) throw new Error('missing icon notice');
