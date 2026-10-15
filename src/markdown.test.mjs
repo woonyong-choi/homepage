@@ -30,7 +30,7 @@ test('unknown component and malformed data fail the build', () => {
   assert.throws(()=>md.render(fence('cards',{variant:'unknown',items:[]})));
   assert.throws(()=>md.render(fence('cards',{items:[{variant:'unknown',title:'Invalid',href:'/things/'}]})));
   assert.throws(()=>md.render('```ui:tabs\nitems: [\n```'));
-  for (const [kind, data] of [['figure', { src: '2-today-mac.png', alt: '화면' }], ['gallery', { slides: [{ src: '2-today-mac.png', label: '화면' }] }]]) {
+  for (const [kind, data] of [['figure', { src: 'sample-a.png', alt: '화면' }], ['gallery', { slides: [{ src: 'sample-a.png', label: '화면' }] }]]) {
     for (const [alias, value] of [['wide', false], ['size', 'compact']]) {
       assert.throws(() => md.render(fence(kind, { ...data, [alias]: value })), new RegExp(`Use width instead of ${alias}`));
     }
@@ -46,13 +46,13 @@ test('specimen renders every declared document component', () => {
 test('fineprint and figure grid map to the reference DOM without raw html', () => {
   const md = createMarkdown();
   assert.equal(md.render(fence('fineprint', { body: '작은 *글씨* [링크](https://example.com/)' })), '<p class="app-fineprint">작은 <em>글씨</em> <a href="https://example.com/">링크</a></p>');
-  const html = md.render(fence('figure-grid', { columns: 2, items: [{ src: '2-today-mac.png', alt: 'a', caption: 'one', rounded: true, href: 'https://example.com/' }, { src: '10-reminders-mac.png', alt: 'b', caption: 'two' }] }));
+  const html = md.render(fence('figure-grid', { columns: 2, items: [{ src: 'sample-a.png', alt: 'a', caption: 'one', rounded: true, href: 'https://example.com/' }, { src: 'sample-b.png', alt: 'b', caption: 'two' }] }));
   assert.match(html, /^<div class="app-figure-grid has-two-columns"><div class="app-figure-grid-item"><figure class="app-figure"><a href="https:\/\/example.com\/"><img [^>]*class="is-rounded"/);
   assert.equal((html.match(/<figcaption>/g) ?? []).length, 2);
-  assert.match(md.render(fence('figure-grid', { size: 'large', items: [{ src: '2-today-mac.png', alt: 'a' }] })), /app-figure-grid is-large"/);
-  assert.throws(() => md.render(fence('figure-grid', { columns: 7, items: [{ src: '2-today-mac.png', alt: 'a' }] })));
-  assert.match(md.render(fence('figure-grid', { columns: '3', items: [{ src: '2-today-mac.png', alt: 'a' }] })), /has-three-columns/);
-  for (const columns of ['constructor', '__proto__', 'toString', 'hasOwnProperty', ['2'], { 2: 1 }, null, 0]) assert.throws(() => md.render(fence('figure-grid', { columns, items: [{ src: '2-today-mac.png', alt: 'a' }] })), /Invalid columns/, String(columns));
+  assert.match(md.render(fence('figure-grid', { size: 'large', items: [{ src: 'sample-a.png', alt: 'a' }] })), /app-figure-grid is-large"/);
+  assert.throws(() => md.render(fence('figure-grid', { columns: 7, items: [{ src: 'sample-a.png', alt: 'a' }] })));
+  assert.match(md.render(fence('figure-grid', { columns: '3', items: [{ src: 'sample-a.png', alt: 'a' }] })), /has-three-columns/);
+  for (const columns of ['constructor', '__proto__', 'toString', 'hasOwnProperty', ['2'], { 2: 1 }, null, 0]) assert.throws(() => md.render(fence('figure-grid', { columns, items: [{ src: 'sample-a.png', alt: 'a' }] })), /Invalid columns/, String(columns));
   assert.throws(() => md.render(fence('figure-grid', { items: [] })));
   assert.match(md.render(fence('fineprint', { body: '<script>x</script>' })), /&lt;script&gt;x&lt;\/script&gt;/);
 });
@@ -80,11 +80,11 @@ test('task_labels_preserve_inline_content_and_exclude_nested_tasks', () => {
 
 test('gallery preserves selected slide, captions and validates its initial index', () => {
   const md = createMarkdown();
-  const slides = [{src:'repeating-comparison-1-io80.png',label:'Before',caption:'<before>'},{src:'repeating-comparison-2-io80.png',label:'Now',caption:'after'}];
+  const slides = [{src:'sample-before.png',label:'Before',caption:'<before>'},{src:'sample-after.png',label:'Now',caption:'after'}];
   const html = md.render(fence('gallery',{selected:1,slides}));
   assert.match(html, /app-tabs is-selector-segmented/);
   assert.match(html, /id="[^"]*-tab-1" role="tab" aria-selected="true"/);
-  assert.match(html, /role="tabpanel"[^>]*tabindex="0"><figure class="app-figure"><img[^>]*repeating-comparison-2/);
+  assert.match(html, /role="tabpanel"[^>]*tabindex="0"><figure class="app-figure"><img[^>]*sample-after/);
   assert.doesNotMatch(html, /data-gallery|app-gallery/);
   assert.ok(html.includes('<figcaption>&lt;before&gt;</figcaption>'));
   assert.throws(() => md.render(fence('gallery',{selected:2,slides})));

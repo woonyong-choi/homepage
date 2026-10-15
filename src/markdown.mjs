@@ -36,11 +36,13 @@ export function image(name, alt = '', className = '') {
   return `<img${size ? ` width="${size[0]}" height="${size[1]}"` : ''} class="${className}" src="${asset(name)}" alt="${escape(alt)}" loading="lazy" decoding="async">`;
 }
 
+// 기기 틀은 공통 CSS가 그린다. 가져온 테마의 Device가 overlay 슬롯을 요구하는 동안 빈 슬롯을 넘긴다.
+const NO_DEVICE_OVERLAY = trusted('');
 export const player = (data, id, controls = false) => String(ui.Player({ id, src: asset(data.src), poster: asset(data.poster), title: data.title, width: data.width, height: data.height, controls, overlay: data.overlay, wide: data.wide }));
 export const remote = (id, src = '') => String(ui.RemoteButton({ id, src: src ? asset(src) : undefined, icon: ui.ControlIcon('play') }));
 
 // 영상 입력을 구성 요소 속성으로 옮긴다. ui:video(`width`·`height`·`wide`는 플레이어 값)와 ::video(`width`는 블록 폭)가 같이 쓴다.
-export const videoOf = (data, id) => String(ui.Video({ id, src: asset(data.src), poster: asset(data.poster), title: data.title, caption: data.caption ?? '', frame: data.frame === 'iphone' ? 'iphone' : undefined, playerWidth: data.playerWidth, playerHeight: data.playerHeight, playerWide: data.playerWide, width: ui.contentWidth(data), deviceOverlay: trusted(image('bezel-iphone6-overlay.svg', '', 'app-device-overlay')) }));
+export const videoOf = (data, id) => String(ui.Video({ id, src: asset(data.src), poster: asset(data.poster), title: data.title, caption: data.caption ?? '', frame: data.frame === 'iphone' ? 'iphone' : undefined, playerWidth: data.playerWidth, playerHeight: data.playerHeight, playerWide: data.playerWide, width: ui.contentWidth(data), deviceOverlay: NO_DEVICE_OVERLAY }));
 
 // 같은 낱말 표식 `::강조::`, `==강조==`로 mark를 만든다. 공백으로 시작하거나 끝나는 표식은 글자 그대로 둔다.
 function markRule(marker) {
@@ -301,9 +303,9 @@ function component(kind, data, md, env) {
     case 'feature-list':
       return String(ui.FeatureList({ items: data.items.map(item => ({ ...item, body: trusted(render(item.body)) })) }));
     case 'device':
-      return `${ui.Device({ screen: trusted(data.video ? player(data, id) : image(data.src, data.title ?? '기기 화면')), overlay: trusted(image('bezel-iphone6-overlay.svg', '', 'app-device-overlay')), label: data.title ?? 'iPhone 화면' })}${data.video ? ui.MediaControls({ remote: trusted(remote(id)) }) : ''}`;
+      return `${ui.Device({ screen: trusted(data.video ? player(data, id) : image(data.src, data.title ?? '기기 화면')), overlay: NO_DEVICE_OVERLAY, label: data.title ?? 'iPhone 화면' })}${data.video ? ui.MediaControls({ remote: trusted(remote(id)) }) : ''}`;
     case 'demos':
-      return String(ui.FeatureDemos({ items: data.items.map(item => ({ title: item.title, body: trusted(render(item.body)), action: data.singleControl ? undefined : trusted(remote(id, item.src)) })), media: trusted(`${ui.Device({ screen: trusted(player({ ...data, src: data.src ?? data.items[0].src }, id)), overlay: trusted(image('bezel-iphone6-overlay.svg', '', 'app-device-overlay')), figure: true })}${data.singleControl ? ui.MediaControls({ remote: trusted(remote(id)) }) : ''}`), after: data.after ? trusted(render(data.after)) : undefined }));
+      return String(ui.FeatureDemos({ items: data.items.map(item => ({ title: item.title, body: trusted(render(item.body)), action: data.singleControl ? undefined : trusted(remote(id, item.src)) })), media: trusted(`${ui.Device({ screen: trusted(player({ ...data, src: data.src ?? data.items[0].src }, id)), overlay: NO_DEVICE_OVERLAY, figure: true })}${data.singleControl ? ui.MediaControls({ remote: trusted(remote(id)) }) : ''}`), after: data.after ? trusted(render(data.after)) : undefined }));
     case 'feature-pair':
       return String(ui.FeatureDemos({ items: data.items.map(item => ({ ...item, body: trusted(render(item.body)) })), media: trusted(render(data.media)), mediaFirst: data.mediaFirst }));
     case 'callout':

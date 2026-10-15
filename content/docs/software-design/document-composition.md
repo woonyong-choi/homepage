@@ -31,8 +31,6 @@ category: software-design
 3. 사이드바에서 :icon[document] 표시가 붙은 항목이 새 목록입니다.
 :::end
 
-::video src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt="Mac에서 예정 목록을 쓰는 화면"
-
 :::fineprint
 :kbd[⌘ Return] 대신 화면의 완료 버튼을 눌러도 됩니다.
 :::end
@@ -42,8 +40,6 @@ category: software-design
 2. 이름을 입력하고 키보드의 완료를 누릅니다.
 3. 목록 상단의 :icon[document] 표시로 새 목록을 구분합니다.
 :::end
-
-::video src=3-upcoming-iphone.mp4 poster=3-upcoming-iphone.png alt="iPhone에서 예정 목록을 쓰는 화면" frame-iphone
 
 :::note[알아 두기]
 가로 모드에서는 목록과 상세가 나란히 보입니다. 단계는 같습니다.
@@ -73,18 +69,14 @@ iPhone에서 만든 목록을 읽기만 합니다.
 
 :::end
 
-`segmented`는 분할 선택 줄입니다. 같은 크기의 그림 두 장과 캡션 문단으로 만든 예시입니다.
+`segmented`는 분할 선택 줄입니다. 탭마다 문단 하나로 만든 예시입니다.
 
 :::tabs segmented
 @tab 변경 전
 
-![변경 전 화면](/things/assets/repeating-comparison-1-io80.png)
-
 기존 화면입니다.
 
 @tab 변경 후
-
-![변경 후 화면](/things/assets/repeating-comparison-2-io80.png)
 
 개선한 화면입니다.
 
@@ -96,13 +88,9 @@ iPhone에서 만든 목록을 읽기만 합니다.
 :::tabs segmented
 @tab 변경 전
 
-![변경 전 화면](/things/assets/repeating-comparison-1-io80.png)
-
 기존 화면입니다.
 
 @tab 변경 후
-
-![변경 후 화면](/things/assets/repeating-comparison-2-io80.png)
 
 개선한 화면입니다.
 
@@ -114,13 +102,9 @@ iPhone에서 만든 목록을 읽기만 합니다.
 :::tabs segmented
 @tab 변경 전
 
-![변경 전 화면](/things/assets/repeating-comparison-1-io80.png)
-
 기존 화면입니다.
 
 @tab 변경 변경 변경 후
-
-![변경 후 화면](/things/assets/repeating-comparison-2-io80.png)
 
 개선한 화면입니다.
 
@@ -131,19 +115,15 @@ iPhone에서 만든 목록을 읽기만 합니다.
 :::tabs segmented
 @tab 요약
 
-![변경 전 화면](/things/assets/repeating-comparison-1-io80.png)
-
-그림이 있는 탭입니다.
+내용이 짧은 탭입니다.
 
 @tab 자세한 변경 내용과 이유
 
-![변경 후 화면](/things/assets/repeating-comparison-2-io80.png)
-
-같은 크기의 그림이지만 이름이 깁니다.
+내용은 짧지만 이름이 깁니다.
 
 @tab 문제가 생겼을 때 되돌리는 방법
 
-그림이 없는 탭은 높이가 낮습니다. 선택 줄이 내용 바로 아래로 올라오는지 확인해 보세요.
+이 탭은 내용이 조금 더 깁니다. 탭마다 내용 높이가 달라도 선택 줄은 지금 보이는 내용 바로 아래에 있습니다. 탭을 바꿔 가며 선택 줄이 내용 바로 아래로 옮겨 가는지 확인해 보세요.
 
 :::end
 
@@ -156,53 +136,66 @@ iPhone에서 만든 목록을 읽기만 합니다.
 
 ## 화면을 차례로 보여 주기
 
-번호 선택 줄(`numbers`)은 갤러리처럼 쓸 수 있습니다. 자동으로 넘어가지 않고, 단추를 누르거나 키보드 화살표·Home·End로 고릅니다. 그림 높이가 달라도 보이는 그림만 자리를 차지합니다.
+번호 선택 줄(`numbers`)은 갤러리처럼 쓸 수 있습니다. 자동으로 넘어가지 않고, 단추를 누르거나 키보드 화살표·Home·End로 고릅니다. 내용 높이가 달라도 보이는 탭의 내용만 자리를 차지합니다.
 
 :::tabs numbers
 @tab 오늘 목록
 
-::figure src=2-today-mac.png alt="오늘 목록 화면" caption="오늘 할 일을 한곳에 모읍니다."
+오늘 할 일을 한곳에 모읍니다.
 
 @tab 예정 목록
 
-::figure src=3-upcoming-mac-2.png alt="예정 목록 화면" caption="날짜가 정해진 항목을 날짜순으로 봅니다."
+날짜가 정해진 항목을 날짜순으로 봅니다.
 
 @tab 소제목
 
-::figure src=4-headings-mac.png alt="소제목으로 나눈 목록" caption="긴 목록은 소제목으로 나눕니다."
+긴 목록은 소제목으로 나눕니다.
 
 @tab 체크리스트
 
-::figure src=5-checklists-mac-2.png alt="체크리스트 화면" caption="항목 안에 세부 단계를 둡니다."
+항목 안에 세부 단계를 둡니다.
 
 @tab 빠른 찾기
 
-::figure src=7-quickfind-mac.png alt="빠른 찾기 화면" caption="이름을 입력해 바로 이동합니다."
+이름을 입력해 바로 이동합니다.
 
 :::end
+
+탭 안에는 그림도 넣을 수 있습니다. `src`에는 `assets` 폴더의 그림 파일 이름을 적습니다.
+
+````markdown
+:::tabs numbers
+@tab 첫 화면
+
+::figure src=screen-1.png alt="첫 화면" caption="첫 화면의 설명입니다."
+
+@tab 둘째 화면
+
+::figure src=screen-2.png alt="둘째 화면" caption="둘째 화면의 설명입니다."
+
+:::end
+````
 
 ## 폭을 맞춰 보여 주기
 
 그림, 영상, 탭, 코드는 폭을 고를 수 있습니다. 문단은 항상 본문 폭입니다.
 
-폭 옵션을 생략하면 본문 폭입니다.
+폭 옵션을 생략하면 본문 폭이고, `w-narrow`는 본문보다 좁게 가운데에 두며, `w-wide`는 본문 밖으로 넓게 펼칩니다. 그림·영상·탭·코드블록 모두 같은 옵션을 씁니다.
 
-::figure src=2-today-mac.png alt="본문 폭 그림" caption="폭 옵션 생략: 본문 폭"
+````markdown
+::figure src=screen-1.png alt="본문 폭 그림" caption="폭 옵션 생략: 본문 폭"
 
-`w-narrow`는 본문보다 좁게 가운데에 둡니다.
-
-::figure src=4-headings-mac.png alt="좁은 그림" caption="w-narrow" w-narrow
-
-`w-wide`는 본문 밖으로 넓게 펼칩니다. 그림·영상·탭·코드블록 모두 같은 옵션을 씁니다.
+::figure src=screen-1.png alt="좁은 그림" caption="w-narrow" w-narrow
+````
 
 :::tabs numbers w-wide
 @tab 예정 목록
 
-::figure src=3-upcoming-mac-2.png alt="예정 목록" caption="w-wide 탭"
+w-wide 탭은 본문 밖으로 넓게 펼쳐집니다.
 
 @tab 체크리스트
 
-::figure src=5-checklists-mac-2.png alt="체크리스트" caption="같은 폭 규칙"
+탭 안의 내용도 같은 폭 규칙을 따릅니다.
 
 :::end
 

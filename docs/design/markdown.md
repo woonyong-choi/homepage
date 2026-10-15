@@ -78,8 +78,8 @@ body: 이 글은 평소보다 기술적입니다. [요약](#summary)만 읽어�
 ```ui:figure-grid
 columns: 2
 items:
-  - { src: 2-today-mac.png, alt: 오늘 화면, caption: 첫 캡션, href: /articles/foo/, rounded: true }
-  - { src: 10-reminders-mac.png, alt: 알림 화면, caption: 둘째 캡션 }
+  - { src: sample-a.png, alt: 오늘 화면, caption: 첫 캡션, href: /articles/foo/, rounded: true }
+  - { src: sample-b.png, alt: 알림 화면, caption: 둘째 캡션 }
 ```
 ````
 
@@ -121,7 +121,7 @@ items:
 2. 사이드바의 :icon[document] 표시를 확인합니다.
 :::end
 
-::video src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt="Mac 화면" caption="목록을 만드는 과정"
+::video src=sample-c.mp4 poster=sample-c.png alt="Mac 화면" caption="목록을 만드는 과정"
 
 :::note
 일반 Markdown **안내문**
@@ -156,7 +156,7 @@ items:
 | 카드 모양 | `related`, `centered`, `grouped`, `inline` | 카드 목록 |
 | 카드 열 수 | `cols-1`, `cols-2` | 기본·가운데·그룹 카드 목록 |
 | 그림 모서리 | `rounded` | 그림 |
-| 기기 프레임 | `frame-iphone` | 영상 |
+| 기기 프레임 | `frame-iphone` | 영상. 틀은 공통 CSS가 그리며 별도 그림을 쓰지 않는다 |
 
 내용 속성과 표시 옵션은 `parseOptions` 하나에서 읽고 각 블록의 속성 명세로 검사한다. 폭 값은 테마의 `WIDTHS`를 공유한다. 스타일 값을 글마다 직접 지정하지 않는다.
 
@@ -193,13 +193,13 @@ items:
 :::tabs segmented
 @tab 변경 전
 
-![변경 전 화면](/assets/repeating-comparison-1-io80.png)
+![변경 전 화면](/assets/sample-before.png)
 
 기존 화면입니다.
 
 @tab 변경 후
 
-![변경 후 화면](/assets/repeating-comparison-2-io80.png)
+![변경 후 화면](/assets/sample-after.png)
 
 개선한 화면입니다.
 
@@ -236,9 +236,9 @@ items:
 | `w-wide` | 넓은 미디어 폭(`width-wide`: 최대 900px)으로 본문 밖까지 확장. 좁은 화면은 양쪽 여백 유지 |
 
 ````markdown
-::figure w-narrow rounded src=2-today-mac.png alt="오늘 화면"
+::figure w-narrow rounded src=sample-a.png alt="오늘 화면"
 
-::video w-wide src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt="Mac 화면"
+::video w-wide src=sample-c.mp4 poster=sample-c.png alt="Mac 화면"
 
 ```js w-wide filename=main.js
 const message = "넓은 코드블록";
