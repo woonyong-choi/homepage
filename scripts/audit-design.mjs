@@ -8,8 +8,8 @@ import { THEME_ROOT as theme } from '../src/design-package.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const source = join(root, 'src');
-// 제외는 제3자 사본인 src/vendor와 시험 자료 src/fixtures에만 적용한다.
-const targets = readdirSync(source).filter(name => !['vendor', 'fixtures'].includes(name)).map(name => join(source, name));
+// 제외는 시험 자료 src/fixtures에만 적용한다.
+const targets = readdirSync(source).filter(name => name !== 'fixtures').map(name => join(source, name));
 const files = [...iterFiles([...targets, join(root, 'scripts')], {
   ...TOKEN_SOURCES,
   wants: name => TOKEN_SOURCES.wants(name) && !/\.test\.[^.]+$/.test(name),
