@@ -1,11 +1,11 @@
 {
   "repository": "woonyong-choi/thinkflow",
-  "revision": "168ca3f957ecdd0824e1614f7be613cd47987dee",
+  "revision": "97e1fe1c429ed496d504a9be4a2698cf2e9fd3fd",
   "files": {
     "LICENSE": "a8f027cdd5c4c95cca2adbc704a36b7e803c89f84c81ecbfc18199c6c6b6d754",
     "NOTICE": "50beed8698a737b1439cac81bc262b1f72db4809b0f3c42f4ad6dab9075cfcd8",
     "docs/README.md": "318f2c171016182fc34eda0ee10dc3e93a3fb9df1ade6057699dcb41373c0277",
-    "docs/architecture.md": "608f54e769d74675fafb924964172a8b62700079d3a9e67431bb3376b7011e6d",
+    "docs/architecture.md": "268108900d1b8dea7c323a41aa7c77ef4411aae4138d72c744646602963cd193",
     "docs/assets/how-it-works-dark.svg": "a36e29dc6b66f262159a3f98a98f09cbdcc4ad81328f7a84f91a688870cc9ac2",
     "docs/assets/how-it-works-light.svg": "9d47106c39b46306cafc9fdaef4b2f64abb118d32d2d533d1cff60d7d3de992e",
     "docs/assets/how-it-works.svg": "9e4a80f511044a1c1ca7b29289f68bd0cfe4a2322491d87ffc1682b96434d944",
