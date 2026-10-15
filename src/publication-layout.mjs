@@ -133,11 +133,19 @@ export function articlePage(page, context, comments = '') {
   const example = page.example ? '<p class="app-example-notice">화면 검증을 위한 예시 글입니다. 실제 운영 성과를 나타내지 않습니다.</p>' : '';
   if (page.type === 'blog') {
     const updated = page.updatedAt && page.updatedAt !== page.publishedAt ? dateLine({ updatedAt: page.updatedAt }) : '';
-    return `<main id="main" class="app-shell">${postArticle(page, { detail: true, tags: tagLinks(page, context.tags ?? context.topics), footer: `${updated}${example}`, after: tail })}</main>`;
+    return `<main id="main" class="app-shell">${postArticle({ ...page, html: page.html + relatedPostsSection(page) }, { detail: true, tags: tagLinks(page, context.tags ?? context.topics), footer: `${updated}${example}`, after: tail })}</main>`;
   }
   const pager = documentPager(page, context, candidate => ui.trusted(subjectIcon(candidate.contentIcon, 'small')));
   const content = ui.DocumentArticle({ title: page.title, icon: ui.trusted(subjectIcon(page.contentIcon, 'medium')), lead: ui.trusted(page.leadHtml ?? escape(page.description)), metadata: ui.trusted(dateLine(page) + tagLinks(page, context.tags ?? context.topics) + example), body: ui.trusted(shiftHeadings(page.html, detailLevels)), after: ui.trusted(source + pager + comments) });
   return `<main id="main" class="app-shell app-document-shell">${searchBox({ config: (context.layout ?? LAYOUT).search.box })}${ui.DocumentLayout({ navigation: documentNavigation(page, context), outline: documentOutline(page.headings), content })}</main>`;
+}
+
+// 관련 글은 본문 끝의 제목과 공통 related 카드 묶음이다. 작성자가 본문에 쓰는 이어서 읽을 글과 같은 구조를 쓴다.
+export function relatedPostsSection(page) {
+  const posts = page.related ?? [];
+  if (!posts.length) return '';
+  const cards = posts.map(post => ui.Card({ href: post.route, title: post.title, variant: 'related', icon: post.contentIcon ? ui.trusted(subjectIcon(post.contentIcon, 'small')) : undefined }));
+  return `<h2 id="${escape(page.id)}-related-posts">관련 글</h2>${ui.CardGroup({ variant: 'related', cards })}`;
 }
 
 export function resultRow(page, tags) {

@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
-import { readDocument, publicDocuments, searchEntry, FIELDS, TOPIC_GROUPS, blogDocuments } from './content-model.mjs';
+import { readDocument, publicDocuments, searchEntry, FIELDS, TOPIC_GROUPS, blogDocuments, relatedPosts } from './content-model.mjs';
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
@@ -54,6 +54,7 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   const comments = readCommentCounts(posts, CONFIG);
   for (const post of posts) {
     post.commentCount = comments.counts.get(post.id);
+    post.related = relatedPosts(post, posts);
   }
   const topicTrees = createTopicTrees(documents);
   const diagramSources = new Map();

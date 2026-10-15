@@ -56,6 +56,17 @@ export function blogDocuments(documents) {
   return documents.filter(page => page.type === 'blog').sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id));
 }
 
+// 블로그 상세 하단의 관련 글. 같은 분류이거나 태그를 하나 이상 공유하는 다른 블로그 글만 후보이며,
+// 최근 발행한 글이 앞에 오고 같은 날짜는 문서 ID 순서로 고정한다. 후보가 모자라도 관련 없는 글로 채우지 않는다.
+export const RELATED_POST_LIMIT = 4;
+export function relatedPosts(page, posts, limit = RELATED_POST_LIMIT) {
+  const tags = new Set(page.tags ?? []);
+  return posts
+    .filter(post => post.type === 'blog' && post.id !== page.id && (post.category === page.category || (post.tags ?? []).some(tag => tags.has(tag))))
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id))
+    .slice(0, limit);
+}
+
 export function paginate(items, page, size) {
   const totalPages = Math.max(1, Math.ceil(items.length / size));
   const current = Math.min(totalPages, Math.max(1, Number.isSafeInteger(page) ? page : 1));
