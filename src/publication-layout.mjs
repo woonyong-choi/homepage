@@ -3,7 +3,8 @@ import { dateLabel } from './content-model.mjs';
 import { personalFooter } from './publication-footer.mjs';
 import { escape } from './vendor/theme/ui/index.mjs';
 import * as ui from './vendor/theme/ui/index.mjs';
-import { getIconCatalog, iconFile } from './vendor/theme/ui/build/icons.mjs';
+import { iconFile } from './vendor/theme/ui/build/icons.mjs';
+import { brandIcon } from './brand-icons.mjs';
 import { contentIcon, renderContentSvg } from './content-icons.mjs';
 import { TOPIC_GROUPS, paginate } from './content-model.mjs';
 import { LAYOUT, gridSize } from './layout-config.mjs';
@@ -16,18 +17,15 @@ import { postArticle, shiftHeadings, detailLevels } from './post-article.mjs';
 import { publicationMetadata, siteTitle } from './publication-metadata.mjs';
 import { usesMath, MATH_STYLESHEET } from 'document-engine';
 
-const BRANDS = getIconCatalog().brands;
 const NAVIGATION = loadHomeNavigation();
 export const FIELD_NAMES = Object.freeze({ tech: 'Tech', languages: 'Languages', cs: 'CS', frameworks: 'Frameworks', infrastructure: 'Infrastructure' });
 
 export function iconUrl(spec, size = 'small') {
   const name = typeof spec === 'string' ? spec : spec.name;
-  return `/theme/assets/icons/${iconFile(name, { variant: size === 'small' ? 'default' : 'detail' })}`;
+  return brandIcon(name)?.src ?? `/theme/assets/icons/${iconFile(name, { variant: size === 'small' ? 'default' : 'detail' })}`;
 }
 
 export function subjectIcon(spec, size = 'card') {
-  const name = typeof spec === 'string' ? spec : spec.name;
-  if (Object.hasOwn(BRANDS, name)) return String(ui.ContentIconImage({ src: iconUrl(spec, size), size }));
   return contentIcon(spec, size, 'detail');
 }
 
@@ -92,7 +90,7 @@ export function knowledgeFields(documents, topics, field, { layout = LAYOUT, gro
 const HOME_SECTIONS = {
   hero: heroSection,
   projects: projectsSection,
-  technologies: section => technologySection(section, BRANDS),
+  technologies: section => technologySection(section, brandIcon),
   interviews: (section, context) => interviewsSection(section, { preview: context.preview }),
   contact: contactSection,
 };

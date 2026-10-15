@@ -17,7 +17,7 @@ import { siteOrigin } from './publication-metadata.mjs';
 import { publicationLinks } from './publication-routes.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { compileDiagrams } from './diagrams.mjs';
-import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
+import { brandNames, readBrandAsset } from './brand-icons.mjs';
 
 export { publicationLinks, documentRoute } from './publication-routes.mjs';
 export { normalizePublicationAssets } from './publication-assets.mjs';
@@ -70,6 +70,8 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   const readAsset = path => {
     if (math.assets.has(path)) return math.assets.get(path);
     if (path.startsWith('/theme/')) return readFileSync(containedFile(THEME_ROOT, path.slice('/theme/'.length)));
+    const brand = readBrandAsset(path);
+    if (brand) return brand;
     if (assets.read) return assets.read(path);
     if (!/^\/(assets|media)\//.test(path)) throw new Error(`unsupported preview asset: ${path}`);
     return readFileSync(containedFile(root, path.slice(1)));
@@ -89,7 +91,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   let diagrams = { assets: new Map() };
   let diagnostics = [];
   if (kind === 'home') {
-    context.home = loadHomeContent(new Set(Object.keys(getIconCatalog().brands)), root, { readContent, exists: path => {
+    context.home = loadHomeContent(brandNames(), root, { readContent, exists: path => {
       try { readAsset(path.startsWith('/') ? path : `/${path}`); return true; } catch { return false; }
     } });
     page = { route: '/', title: context.config.title ?? context.config.name };
