@@ -1,5 +1,4 @@
 // 공개 입력을 정적 페이지와 검색 색인으로 만들며 깨진 내부 연결을 차단한다.
-import { verifyDesign } from './vendor/theme/ui/build/verify.mjs';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -7,14 +6,14 @@ import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
 import { readDocument, publicDocuments, searchEntry, FIELDS, TOPIC_GROUPS, blogDocuments } from './content-model.mjs';
-import { escape } from './vendor/theme/ui/index.mjs';
-import * as ui from './vendor/theme/ui/index.mjs';
+import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
+import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
 import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchPage, tagPage, iconUrl, FIELD_NAMES, categoryEntries } from './publication-layout.mjs';
 import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
 import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
-import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
+import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
 import { replacePublication } from './publication-output.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
@@ -22,7 +21,8 @@ import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { mathAssets } from 'document-engine';
 import { compileDiagrams } from './diagrams.mjs';
-import { compileStyles as publicationStyles } from './vendor/theme/ui/build/styles.mjs';
+import { compileStyles as publicationStyles } from '@woonyong-choi/design-tokens/ui/build/styles.mjs';
+import { THEME_ROOT as THEME, THEME_MANIFEST as MANIFEST } from './design-package.mjs';
 import { siteOrigin, siteTitle, SITE_ICON } from './publication-metadata.mjs';
 import { siteIdentity } from './site-identity.mjs';
 import { legacyRoutes, redirectPage } from './publication-routes.mjs';
@@ -40,14 +40,11 @@ const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
 const CONFIG = JSON.parse(readFileSync(join(SETTINGS, 'site.json')));
 const TOPICS = readContentFile(join(CONTENT, publicationTopicsFile())).metadata.topics;
 const TAGS = JSON.parse(readFileSync(join(SETTINGS, 'tags.json')));
-const THEME = join(ROOT, 'vendor/theme');
-const MANIFEST = JSON.parse(readFileSync(join(THEME, 'manifest.json')));
 const BRAND_NAMES = Object.keys(getIconCatalog().brands);
 const digest = value => createHash('sha256').update(value).digest('hex');
 
 export async function buildPublication({ origin = '', preview = true } = {}) {
   origin = siteOrigin(origin, preview);
-  verifyDesign(THEME);
   const entries = ['docs', 'blog'].flatMap(folder => markdownFiles(join(CONTENT, folder)))
     .sort().map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS));
   const projects = readProjectDocuments();

@@ -7,6 +7,7 @@ import { articlePage } from './publication-layout.mjs';
 import { blogFeed } from './blog-layout.mjs';
 import { thumbnailImage } from './post-article.mjs';
 import { token, px, box } from './theme-measure.mjs';
+import { THEME_ROOT } from './design-package.mjs';
 
 const near = (value, expected) => assert.equal(Math.round(value * 10000) / 10000, expected);
 const topics = { python: { label: 'Python', group: 'tech', article: 'sample' } };
@@ -89,7 +90,7 @@ test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
 });
 
-const css = readFileSync(new URL('./vendor/theme/styles.css', import.meta.url), 'utf8');
+const css = readFileSync(`${THEME_ROOT}/styles.css`, 'utf8');
 const rule = selector => { const match = css.match(new RegExp(`(?:^|\\n)${selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\{([^}]*)\\}`)); assert.ok(match, selector); return match[1]; };
 
 test('document_column_keeps_reading_width_and_soft_wrapping_between_navigation_columns', () => {

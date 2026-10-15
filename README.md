@@ -47,13 +47,13 @@ npm run dev
 | 영역 문구·순서·행·열·카드 표시 | [`config/search.json`](config/search.json), [`cs.json`](config/cs.json), [`tech.json`](config/tech.json), [`blog.json`](config/blog.json) |
 | 사이트·댓글·태그·승인 목록 | `config/` |
 | 해석·검색·댓글·페이지 조립 | `src/` |
-| 공통 디자인 | `src/vendor/theme/`의 해시 검증 사본 |
+| 공통 디자인·도표·문서 엔진 | 고정 commit의 Git 의존성(`@woonyong-choi/design-tokens`, `thinkflow`, `document-engine`) |
 | 설계·작성 안내와 검사 | `docs/`, `scripts/` |
 | 생성된 사이트 | `dist/site/` — 빌드가 다시 생성 |
 
 홈의 세 Markdown 파일은 직접 편집한다. 제목과 소개는 본문에, 카드·링크·영상 속성은 맨 위 YAML에 작성한다. 같은 내용을 JSON에 다시 적지 않는다. 분야별 문서와 블로그는 비공개 원본을 수정하고 승인한 뒤 아래 명령으로 가져온다. 비공개 인터뷰 미리보기 연결은 [홈 원고 가이드](docs/design/home-content.md)를 따른다.
 
-색·간격·글꼴·아이콘·공통 마크업·동작은 디자인 저장소에서 관리한다. 홈페이지는 가져온 `src/vendor/theme/ui/index.mjs`의 구성 요소에 콘텐츠와 경로를 넘긴다. `src/vendor/theme/`를 직접 수정하지 않는다. 현재 발행 화면은 라이트 테마로 고정하며 시스템 테마 자동 전환과 테마 선택 UI는 제공하지 않는다([발행 테마](docs/design/styles.md#발행-테마)).
+색·간격·글꼴·아이콘·공통 마크업·동작은 디자인 저장소에서 관리한다. 홈페이지는 설치한 `@woonyong-choi/design-tokens/ui/index.mjs`의 구성 요소에 콘텐츠와 경로를 넘긴다. `node_modules`의 설치본을 직접 수정하지 않는다. 현재 발행 화면은 라이트 테마로 고정하며 시스템 테마 자동 전환과 테마 선택 UI는 제공하지 않는다([발행 테마](docs/design/styles.md#발행-테마)).
 
 ## 콘텐츠 승인
 
@@ -68,15 +68,19 @@ npm run content:sync-vault -- <vault-root>
 
 `<assets-root>`는 승인 목록이 있는 비공개 원문 저장소의 루트다. 승인·회수 명령, 폴더와 프런트매터의 관계는 [개인 사이트 발행](docs/design/publication.md)에 있다.
 
-## 디자인 갱신
+## 디자인·도표·엔진 갱신
 
-로컬 디자인 변경을 검토할 때만 정본 경로를 지정한다.
+세 부품은 공개 저장소의 고정 commit을 의존성으로 설치한다. 버전은 홈페이지가 정하고 ThinkFlow와 문서 엔진은 홈페이지가 설치한 디자인을 peer 의존성으로 함께 읽는다. 사본이나 다른 저장소의 자동 전달은 없다.
 
 ```sh
-npm run design:sync -- /path/to/design-tokens
+npm install --save-dev github:woonyong-choi/design-tokens#<commit>
+npm install --save-dev github:woonyong-choi/thinkflow#<commit>
+node scripts/sync-project-documents.mjs <ThinkFlow 저장소>   # ThinkFlow를 올렸을 때
+npm install --save-dev github:woonyong-choi/document-engine#<commit>
+npm run check:tokens && npm run check:product && npm run build:site
 ```
 
-정본의 `main` 변경은 ThinkFlow 검증을 거쳐 같은 디자인 사본과 고정된 렌더러 커밋으로 전달된다. 홈페이지는 `build/repo-design-tokens` 브랜치에서 디자인 해시 일치와 전체 빌드·테스트를 확인하고 PR을 만든다. 사용자 명의 `DESIGN_AUTOMATION_TOKEN`이 등록된 경우에만 검증한 커밋을 자동 병합한다. 토큰이 없으면 검증된 PR까지 준비한다. 허용된 디자인 사본·ThinkFlow 고정 커밋 의존성·`content/projects/thinkflow/`·`config/project-documents.json` 이외의 변경은 자동 병합하지 않는다. 인증과 갱신 경계는 [스타일 수정 지도](docs/design/styles.md)에 정리한다.
+검사를 통과한 변경을 일반 PR로 올린다. 갱신 경계는 [스타일 수정 지도](docs/design/styles.md#갱신)에 정리한다.
 
 토큰 파일은 그대로 보관하고 발행 CSS는 실제 HTML과 동작이 참조하는 선택자·변수만 남긴다.
 

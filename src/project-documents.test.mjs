@@ -26,6 +26,8 @@ test('project_links_use_local_documents_and_assets_and_reject_missing_docs', () 
   assert.equal(projectReference('https://example.com/', project), 'https://example.com/');
   assert.throws(() => projectReference('missing.md', project), /missing/);
   assert.throws(() => projectReference('%5cprivate.md', project), /invalid/);
+  assert.throws(() => projectReference('assets/missing.svg', project), /missing/);
+  assert.equal(projectReference('assets/sources.json', project), `https://github.com/${project.manifest.repository}/blob/${project.manifest.revision}/docs/assets/sources.json`);
   assert.equal(projectReference('../package.json', project), `https://github.com/${project.manifest.repository}/blob/${project.manifest.revision}/package.json`);
 });
 

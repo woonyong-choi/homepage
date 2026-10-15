@@ -1,11 +1,11 @@
 // 홈 설정의 섹션 종류마다 독립된 HTML 구성 요소를 만든다.
-import { escape } from './vendor/theme/ui/index.mjs';
-import * as ui from './vendor/theme/ui/index.mjs';
+import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
+import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { href } from './home-content.mjs';
 import { renderContentSvg } from './content-icons.mjs';
 import { interviewCards, publicInterviews } from './interviews.mjs';
-import { SocialIcon as socialIcon } from './vendor/theme/ui/index.mjs';
-import { iconFile } from './vendor/theme/ui/build/icons.mjs';
+import { SocialIcon as socialIcon } from '@woonyong-choi/design-tokens/ui/index.mjs';
+import { iconFile } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 
 const paragraphs = value => value.split(/\n\s*\n/).map(part => `<p>${escape(part.replace(/\s*\n\s*/g, ' ').trim())}</p>`).join('');
 const { trusted } = ui;

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { compileStyles as publicationStyles } from './vendor/theme/ui/build/styles.mjs';
+import { compileStyles as publicationStyles } from '@woonyong-choi/design-tokens/ui/build/styles.mjs';
 import { publicationAssets } from './publication-assets.mjs';
 
 test('published_styles_keep_dynamic_states_and_drop_unused_asset_dependencies', async () => {

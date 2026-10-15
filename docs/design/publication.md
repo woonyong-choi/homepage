@@ -154,13 +154,13 @@ PurgeCSS는 빌드에서만 사용한다. 버전과 전이 의존성의 고정 �
 
 ## 공식 도구 안내
 
-Search 입구는 CS·Tech 목록 다음에 `config/site.json`의 `guides`를 표시한다. 첫 카드는 시작 안내와 대표 아이콘, 나머지는 짧은 문서 링크다. `Card`와 `CardGroup({ split: true })`의 공통 배치·초점·반응형을 사용한다. ThinkFlow의 사용법·표현·장면·Markdown·배포·문제 해결은 ThinkFlow 저장소 문서가 정본이다. 홈페이지는 `content/projects/thinkflow/`에 고정 버전의 공개 문서와 자산을 가져와 `/projects/thinkflow/` 아래에서 같은 본문·목차·표·코드·도표 뷰어로 보여 준다. 상대 문서 링크와 절 제목은 내부 주소로 연결하고 코드 원문 링크는 해당 Git 커밋으로 연결한다. 문서 본문은 홈페이지에서 편집하지 않는다.
+Search 입구는 CS·Tech 목록 다음에 `config/site.json`의 `guides`를 표시한다. 첫 카드는 시작 안내와 대표 아이콘, 나머지는 짧은 문서 링크다. `Card`와 `CardGroup({ split: true })`의 공통 배치·초점·반응형을 사용한다. ThinkFlow의 사용법·표현·장면·Markdown·배포·문제 해결은 ThinkFlow 저장소 문서가 정본이다. 홈페이지는 `content/projects/thinkflow/`에 고정 버전의 공개 문서와 자산을 가져와 `/projects/thinkflow/` 아래에서 같은 본문·목차·표·코드·도표 뷰어로 보여 준다. 상대 문서 링크와 절 제목은 내부 주소로 연결하고 코드 원문 링크는 해당 Git 커밋으로 연결한다. `docs/` 안의 문서·그림(`.md`, `.svg`, `.png`, `.jpg`, `.webp`)이 가져온 목록에 없으면 빌드를 멈추고, 발행하지 않는 형식(출처 JSON 등)은 같은 커밋의 GitHub 원본으로 연결한다. 문서 본문은 홈페이지에서 편집하지 않는다.
 
 도표 울타리 다음의 첫 SVG는 인터랙티브 도표와 겹치므로 Markdown 토큰 단계에서 걷는다. ThinkFlow md가 그 바로 뒤에 만든 장면 구간(`thinkflow scenes v1` 표식)도 같은 이유로 걷되, 울타리의 식별자와 같은 시작·끝 표식, 장면마다 닫힌 `<details>`와 `<summary>`, 이 문서 자산 목록에 있는 SVG 이미지 한 줄이 모두 맞을 때만 걷는다. 식별자는 이름 있는 울타리는 그 `name=이름`과 표식이 같아야 한다. 이름 없는 울타리는 순번을 홈페이지가 다시 세지 않고, 바로 뒤 생성 그림 다음 시작 표식의 `n=` 값(1 이상의 정수, 앞자리 0·부호·문자 제외)을 생성기의 원자료 계약으로 읽는다. 끝 표식은 같은 `n=` 값이어야 하고 `name=` 표식은 허용하지 않는다. 블록 선택과 순번 문법(예: 표식 없는 인용 안 울타리 제외)을 소비자가 복제하면 생성기와 어긋나므로, 이 값의 재검증 대신 프로젝트 SVG 자산·인접성·온전한 생성 구간 검사로 소유를 판단한다. 이미지 파일명 규칙은 따로 검사하지 않는다. 사용자 `<details>`, 불완전한 표식, 코드 예제, 프로젝트 밖 글은 그대로 두며 판단이 불확실하면 지우지 않는다. 표식 문법은 해석하지 않고 기존 `details` 토큰 구조와 `projectReference`의 자산 판정을 쓴다.
 
 ThinkFlow 의존성을 갱신한 뒤 `node scripts/sync-project-documents.mjs <ThinkFlow 저장소>`를 실행한다. 잠금 파일의 커밋에서 Git blob을 읽으므로 미커밋 원고를 가져오지 않는다. `config/project-documents.json`의 출처·버전·SHA-256과 모든 파일이 일치해야 빌드한다. 갱신 전에 기존 사본의 해시와 심볼릭 링크를 검사하며 로컬 변경이 있으면 중단한다. 사라진 파일은 이전 목록과 해시로 소유권을 확인한 뒤 제거한다. 라이선스와 고지도 발행 자산에 포함한다.
 
-자동 수신은 디자인·렌더러 의존성·공개 ThinkFlow 문서 사본과 버전 목록만 허용한다. 병합 전 패키지의 다른 필드가 바뀌지 않았는지 확인하고, 같은 문서 읽기 함수로 버전·파일 목록·해시를 재검사한다. 수신 브랜치에 애플리케이션 소스 변경이 섞이면 병합하지 않는다.
+디자인·ThinkFlow·문서 엔진의 고정 commit은 홈페이지의 `package.json`이 정한다. 갱신은 `npm install --save-dev github:woonyong-choi/<저장소>#<commit>`, ThinkFlow를 올렸다면 문서 동기화, `npm run check:tokens`, `npm run check:product`, `npm run build:site`를 거친 일반 PR로 한다. 다른 저장소가 이 저장소로 변경을 밀어 넣는 자동 수신은 없다.
 
 ## 문서와 블로그 탐색
 
@@ -222,7 +222,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 문법·출력 오류 진단과 실패한 도표는 파일을 발행하기 전에 예외로 바꾼다. 승인 원고 확인, front matter, 검색·댓글, 경로와 출력 저장은 홈페이지가 소유한다. 공통 엔진의 오류 HTML을 정상 발행 결과로 받아들이지 않는다. 수식 감지와 KaTeX 자산도 엔진의 공개 API를 사용해 렌더러와 같은 버전을 싣는다. 홈페이지 자산의 존재와 이미지 크기 조회는 `document-assets.mjs`가 제공한다.
 
-패키지 입력은 Git에서 제외된 `dist/document-engine-0.0.0.tgz`이며 `package-lock.json`의 integrity로 고정한다. `config/document-engine.json`은 엔진·디자인 커밋과 패키지 SHA-256을 소유한다. 검증과 배포 워크플로는 같은 composite action으로 고정된 원본을 읽기 전용 키로 가져와 패키지를 만들고 해시를 확인한 뒤 설치한다. 저장소 주소와 키는 Actions secrets로 전달한다. 비공개 소스와 패키지는 공개 저장소·배포 산출물에 포함하지 않으며, 배포에는 `dist/site`만 업로드한다. 로컬에서는 같은 패키지를 준비한 뒤 설치한다.
+문서 엔진은 공개 저장소의 고정 commit(`github:woonyong-choi/document-engine#<commit>`)을 Git 의존성으로 설치하고 `package-lock.json`이 commit을 고정한다. 엔진은 디자인과 ThinkFlow를 peer 의존성으로 받아 홈페이지가 설치한 같은 패키지를 읽는다. `article-renderer.mjs`는 엔진의 `DEFAULT_THEME_FILES.root`가 홈페이지의 디자인 패키지 위치와 같은지 확인하고, 엔진은 ThinkFlow가 같은 디자인을 읽는지 확인한다. 검증과 배포 워크플로는 `npm ci`만으로 설치하며 비공개 저장소나 배포 키를 쓰지 않는다. 배포에는 `dist/site`만 업로드한다.
 
 
 ### 저장 전 페이지 미리보기
