@@ -5,7 +5,6 @@ import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
 import { fileURLToPath } from 'node:url';
-import { createMarkdown } from './markdown.mjs';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { readDocument } from './content-model.mjs';
@@ -29,11 +28,10 @@ test('design_is_an_installed_package_pinned_to_a_commit_without_a_copy', () => {
 
 // 예시, 구성 요소 견본, 공개 글 한 편을 실제 렌더 경로(마크다운 → 글 페이지)로 렌더해 소비자가 표현 값을 더하지 않는지 본다.
 async function corpus() {
-  const md = createMarkdown();
   const documents = ['docs', 'blog'].flatMap(folder => markdownFiles(join(product, '../content', folder)).map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS)));
   const pages = [...documents.filter(page => page.example), ...documents.filter(page => !page.example).slice(0, 3)];
   const all = await Promise.all(pages.map(async page => Object.assign(page, await renderArticle(page))));
-  const specimen = md.render(readFileSync(join(product, 'fixtures/syntax-specimen.md'), 'utf8'), { pageId: 'specimen' });
+  const specimen = (await renderArticle({ id: 'specimen', description: '', body: readFileSync(join(product, 'fixtures/syntax-specimen.md'), 'utf8') })).html;
   return [...all.map(page => articlePage(page, { topics: TOPICS, tags: TAGS })), specimen];
 }
 
@@ -106,7 +104,7 @@ test('consumer_sources_never_write_markup_of_components_the_theme_owns', async (
   const offenders = sources.map(name => [name, ownedClassHits(readFileSync(join(product, name), 'utf8'), OWNED_CLASSES)]).filter(([, hits]) => hits.length);
   assert.deepEqual(offenders, [], '테마 구성 요소가 소유한 클래스를 소비자가 직접 출력한다. @woonyong-choi/design-tokens/ui/index.mjs를 가져다 쓴다');
   // 어댑터는 같은 하나의 구성 요소 모듈을 가져온다. 브라우저 검색 화면도 포함한다.
-  for (const name of ['markdown.mjs', 'publication-layout.mjs', 'search-view.mjs', 'home-sections.mjs', 'blog-layout.mjs']) assert.match(readFileSync(join(product, name), 'utf8'), /from '@woonyong-choi\/design-tokens\/ui\/index\.mjs'/, name);
+  for (const name of ['article-renderer.mjs', 'publication-layout.mjs', 'search-view.mjs', 'home-sections.mjs', 'blog-layout.mjs']) assert.match(readFileSync(join(product, name), 'utf8'), /from '@woonyong-choi\/design-tokens\/ui\/index\.mjs'/, name);
 });
 
 test('browser_search_view_renders_through_theme_components_and_only_converts_their_output', async () => {
@@ -140,5 +138,5 @@ test('browser_search_view_renders_through_theme_components_and_only_converts_the
 test('component_slots_reject_untrusted_strings_from_consumer_adapters', async () => {
   const ui = await import('@woonyong-choi/design-tokens/ui/index.mjs');
   assert.throws(() => ui.Gallery({ id: 'g', slides: [{ image: '<img>' }] }), /must be trusted/);
-  assert.throws(() => createMarkdown().render('::::tabs\n:::tab[A]\n본문\n:::\n::::\n', { pageId: 'bad id' }), /Invalid id/);
+  await assert.rejects(renderArticle({ id: 'bad id', description: '', body: '::::tabs\n:::tab[A]\n본문\n:::\n::::\n' }), /pageId must match/);
 });
