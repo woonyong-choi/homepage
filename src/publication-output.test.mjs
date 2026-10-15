@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { publicationAssets } from './publication-assets.mjs';
-import { replacePublication } from './publication-output.mjs';
+import { replacePublication, NOT_FOUND_FILE } from './publication-output.mjs';
 
 function fixture(t) {
   const root = fileURLToPath(new URL(`../dist/test/output-${randomUUID()}/`, import.meta.url));
@@ -73,4 +73,12 @@ test('output_collisions_and_path_escape_fail_before_replacement', t => {
     assert.throws(() => replacePublication(root, new Map([['/', '<main></main>']]), files), error);
     previousPublicationIsIntact(root);
   }
+});
+
+test('not_found_document_is_written_at_the_root_and_its_links_are_validated', t => {
+  const root = fixture(t);
+  assert.throws(() => replacePublication(root, new Map([['/', '<main></main>']]), new Map([[NOT_FOUND_FILE, '<a href="/missing/">누락</a>']])), /broken link: \/404\.html/);
+  previousPublicationIsIntact(root);
+  replacePublication(root, new Map([['/', '<main></main>']]), new Map([[NOT_FOUND_FILE, '<a href="/">홈</a>']]));
+  assert.equal(readFileSync(join(root, '404.html'), 'utf8'), '<a href="/">홈</a>');
 });

@@ -3,6 +3,9 @@ import { existsSync, lstatSync, mkdirSync, mkdtempSync, realpathSync, renameSync
 import { publicationLinks } from './publication-routes.mjs';
 import { basename, dirname, join, resolve } from 'node:path';
 
+// GitHub Pages와 로컬 미리보기가 없는 경로에 돌려주는 파일.
+export const NOT_FOUND_FILE = '/404.html';
+
 function validateOutput(output, files) {
   for (const [route, html] of output) {
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
@@ -33,7 +36,7 @@ export function replacePublication(outputRoot, pages, files) {
       if (output.has(parent)) throw new Error(`publication path conflict: ${parent} -> ${path}`);
     }
   }
-  validateOutput(pages, output);
+  validateOutput(output.has(NOT_FOUND_FILE) ? new Map([...pages, [NOT_FOUND_FILE, output.get(NOT_FOUND_FILE)]]) : pages, output);
   const requested = resolve(outputRoot);
   mkdirSync(dirname(requested), { recursive: true });
   const root = join(realpathSync(dirname(requested)), basename(requested));

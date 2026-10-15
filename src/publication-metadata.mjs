@@ -27,10 +27,10 @@ export function publicationMetadata(page, context) {
   const title = pageTitle === site ? site : `${pageTitle} · ${site}`;
   const description = page.description ?? config.description;
   const meta = (key, value, attribute = 'property') => `<meta ${attribute}="${key}" content="${escape(value)}">`;
-  let html = `<title>${escape(title)}</title>${meta('description', description, 'name')}${preview ? meta('robots', 'noindex,nofollow', 'name') : ''}`;
+  let html = `<title>${escape(title)}</title>${meta('description', description, 'name')}${preview || page.noindex ? meta('robots', 'noindex,nofollow', 'name') : ''}`;
   if (identity) html += `<link rel="apple-touch-icon" sizes="180x180" href="${identity.touch}">`;
   html += '<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22/%3E">';
-  if (!origin) return html;
+  if (!origin || page.noindex) return html;
   const canonical = origin + page.route;
   html += `<link rel="canonical" href="${escape(canonical)}">`;
   html += meta('og:title', pageTitle) + meta('og:description', description) + meta('og:type', page.id ? 'article' : 'website') + meta('og:url', canonical) + meta('og:site_name', site) + meta('og:locale', 'ko_KR');

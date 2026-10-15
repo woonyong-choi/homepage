@@ -148,6 +148,11 @@ export function searchPage() {
   return `<main class="app-shell app-body" id="main">${searchBox({ combobox: false })}<h1 class="app-sr">검색</h1><div data-search-page><div class="app-filter-summary" data-filter-summary></div><div data-full-results><p class="app-empty">검색어를 입력하거나 주제를 선택해 주세요.</p></div>${ui.PageLinks({ label: '검색 페이지', resultPages: true })}</div></main>`;
 }
 
+// 없는 주소의 응답. 어느 경로에서든 읽히므로 링크는 모두 루트 기준이다.
+export function notFoundPage() {
+  return `<main class="app-shell app-body" id="main">${searchBox()}<h1 class="app-page-heading">페이지를 찾을 수 없습니다</h1><p class="app-empty">주소가 바뀌었거나 없는 페이지입니다. <a href="/">홈</a>이나 <a href="/docs/">주제별 목록</a>에서 찾거나 검색해 주세요.</p></main>`;
+}
+
 export function tagPage(tag, entries, tags) {
   const fallback = entries.length ? entries.map(page => resultRow(page, tags)).join('') : '<p>이 태그로 발행한 글이 없습니다.</p>';
   return `<main class="app-shell app-body" id="main">${searchBox({ combobox: false })}<h1 class="app-page-heading">${escape(tags[tag].label)}</h1><div data-search-page data-tag="${tag}"><div class="app-filter-summary" data-filter-summary></div><div data-full-results></div><div data-search-fallback>${ui.Details({ title: '이 태그의 모든 글 보기', body: ui.trusted(`<p class="app-caption">검색어를 적용하지 않은 이 태그의 전체 목록입니다.</p>${fallback}`) })}</div></div></main>`;
