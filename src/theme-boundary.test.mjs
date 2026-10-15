@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
@@ -11,33 +10,21 @@ import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { readDocument } from './content-model.mjs';
 import { markdownFiles, readContentFile } from './content-files.mjs';
-import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
+import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { THEME_ROOT } from './design-package.mjs';
 
 const product = fileURLToPath(new URL('./', import.meta.url));
-const vendor = join(product, 'vendor/theme');
-const sha = value => createHash('sha256').update(value).digest('hex');
-const files = folder => readdirSync(folder, { recursive: true, withFileTypes: true }).filter(entry => entry.isFile()).map(entry => join(entry.parentPath, entry.name).slice(folder.length + 1)).sort();
 const TAGS = JSON.parse(readFileSync(join(product, '../config/tags.json'), 'utf8'));
 const TOPICS = readContentFile(join(product, '../content/pages/tech.md')).metadata.topics;
 const PAINT = /\s(?:color|fill|stroke|stop-color|flood-color)=["']([^"']*)["']/g;
 
-test('vendored_theme_is_exactly_the_manifest', () => {
-  const manifest = JSON.parse(readFileSync(join(vendor, 'manifest.json'), 'utf8'));
-  const listed = Object.keys(manifest.files).sort();
-  for (const name of listed) assert.equal(sha(readFileSync(join(vendor, name))), manifest.files[name], name);
-  const extra = files(vendor).filter(name => name !== 'manifest.json' && !listed.includes(name));
-  assert.deepEqual(extra, [], '소비자가 가져온 테마 폴더에 정본에 없는 파일을 두면 안 된다');
-});
-
-test('vendored_theme_matches_canonical_output_when_present', t => {
-  const common = spawnSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { cwd: product, encoding: 'utf8' });
-  assert.equal(common.status, 0, common.stderr || common.error?.message);
-  const canonical = process.env.DESIGN_TOKENS_DIST || resolve(common.stdout.trim(), '../../../design-tokens/design-tokens/dist');
-  if (!existsSync(canonical)) {
-    assert.ok(!process.env.DESIGN_TOKENS_DIST, `지정한 디자인 정본을 찾을 수 없다: ${canonical}`);
-    return t.skip('design-tokens 작업본이 없어 정본 비교는 건너뜀');
+test('design_is_an_installed_package_pinned_to_a_commit_without_a_copy', () => {
+  const pkg = JSON.parse(readFileSync(join(product, '../package.json'), 'utf8'));
+  for (const name of ['@woonyong-choi/design-tokens', 'thinkflow', 'document-engine']) {
+    assert.match(pkg.devDependencies[name], /^github:woonyong-choi\/[\w.-]+#[a-f0-9]{40}$/, name);
   }
-  assert.equal(sha(readFileSync(join(vendor, 'manifest.json'))), sha(readFileSync(join(canonical, 'manifest.json'))), '가져온 테마가 정본의 현재 빌드와 다르다. npm run design:sync로 다시 가져온다');
+  assert.equal(existsSync(join(product, 'vendor/theme')), false, '디자인 사본을 두지 않고 설치한 패키지를 읽는다');
+  assert.ok(existsSync(join(THEME_ROOT, 'ui/index.mjs')));
 });
 
 // 예시, 구성 요소 견본, 공개 글 한 편을 실제 렌더 경로(마크다운 → 글 페이지)로 렌더해 소비자가 표현 값을 더하지 않는지 본다.
@@ -54,7 +41,7 @@ test('rendered_markdown_pages_carry_no_consumer_presentation', async () => {
   const pages = await corpus();
   const iconPaint = new Set();
   for (const file of new Set(Object.values(getIconCatalog().icons).map(icon => icon.file))) {
-    const svg = readFileSync(join(vendor, 'assets/icons', file), 'utf8');
+    const svg = readFileSync(join(THEME_ROOT, 'assets/icons', file), 'utf8');
     for (const [, value] of svg.matchAll(PAINT)) iconPaint.add(value);
   }
   assert.ok(!iconPaint.has('#010203'));
@@ -114,12 +101,12 @@ function ownedClassHits(source, owned) {
 }
 
 test('consumer_sources_never_write_markup_of_components_the_theme_owns', async () => {
-  const { OWNED_CLASSES } = await import('./vendor/theme/ui/index.mjs');
+  const { OWNED_CLASSES } = await import('@woonyong-choi/design-tokens/ui/index.mjs');
   const sources = readdirSync(product).filter(name => /\.(mjs|js)$/.test(name) && !name.endsWith('.test.mjs'));
   const offenders = sources.map(name => [name, ownedClassHits(readFileSync(join(product, name), 'utf8'), OWNED_CLASSES)]).filter(([, hits]) => hits.length);
-  assert.deepEqual(offenders, [], '테마 구성 요소가 소유한 클래스를 소비자가 직접 출력한다. vendor/theme/ui/index.mjs를 가져다 쓴다');
+  assert.deepEqual(offenders, [], '테마 구성 요소가 소유한 클래스를 소비자가 직접 출력한다. @woonyong-choi/design-tokens/ui/index.mjs를 가져다 쓴다');
   // 어댑터는 같은 하나의 구성 요소 모듈을 가져온다. 브라우저 검색 화면도 포함한다.
-  for (const name of ['markdown.mjs', 'publication-layout.mjs', 'search-view.mjs', 'home-sections.mjs', 'blog-layout.mjs']) assert.match(readFileSync(join(product, name), 'utf8'), /from '\.\/vendor\/theme\/ui\/index\.mjs'/, name);
+  for (const name of ['markdown.mjs', 'publication-layout.mjs', 'search-view.mjs', 'home-sections.mjs', 'blog-layout.mjs']) assert.match(readFileSync(join(product, name), 'utf8'), /from '@woonyong-choi\/design-tokens\/ui\/index\.mjs'/, name);
 });
 
 test('browser_search_view_renders_through_theme_components_and_only_converts_their_output', async () => {
@@ -151,7 +138,7 @@ test('browser_search_view_renders_through_theme_components_and_only_converts_the
 });
 
 test('component_slots_reject_untrusted_strings_from_consumer_adapters', async () => {
-  const ui = await import('./vendor/theme/ui/index.mjs');
+  const ui = await import('@woonyong-choi/design-tokens/ui/index.mjs');
   assert.throws(() => ui.Gallery({ id: 'g', slides: [{ image: '<img>' }] }), /must be trusted/);
   assert.throws(() => createMarkdown().render('::::tabs\n:::tab[A]\n본문\n:::\n::::\n', { pageId: 'bad id' }), /Invalid id/);
 });

@@ -1,6 +1,6 @@
 // 결과 줄, 쪽 이동, 태그 칩은 테마 구성 요소가 이스케이프해 만든 출력만 DOM으로 옮긴다. 메시지, 제안 라벨, 선택 링크, 다시 시도 단추는 텍스트 노드로 만든다. 입력과 본문을 직접 HTML로 해석하지 않는다.
 import { searchUrl } from './search-model.mjs';
-import * as ui from './vendor/theme/ui/index.mjs';
+import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 // 구성 요소가 만든 결과만 DOM으로 바꾼다. 글자는 구성 요소가 이스케이프하고 주소는 검사하므로 임의의 HTML이 들어오지 않는다.
 function nodeFrom(component) {

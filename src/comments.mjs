@@ -1,14 +1,14 @@
 // 문서의 이름과 위치가 바뀌어도 토론 연결은 고정 ID를 유지한다.
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { escape } from './vendor/theme/ui/index.mjs';
+import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { repositoryUrl } from './repository-links.mjs';
+import { DESIGN_PACKAGE } from './design-package.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
-const THEME_PATH = 'src/vendor/theme/assets/giscus.css';
+const THEME_PATH = 'dist/assets/giscus.css';
 
 export function commentThemeUrl(config, { origin = '', themeHash } = {}) {
   if (origin.startsWith('https://')) return `${origin}/theme/assets/giscus.css?v=${themeHash}`;
@@ -18,18 +18,11 @@ export function commentThemeUrl(config, { origin = '', themeHash } = {}) {
     if (url.protocol !== 'https:' || url.username || url.password) throw new Error('comments.themeUrl must be an HTTPS URL without credentials');
     return url.href;
   }
-  repositoryUrl(config.repository);
-  const options = { cwd: ROOT, timeout: 5000, stdio: ['ignore', 'pipe', 'pipe'] };
-  let revision;
-  try {
-    revision = execFileSync('git', ['log', '-1', '--format=%H', '--', THEME_PATH], { ...options, encoding: 'utf8' }).trim();
-    if (!/^[a-f0-9]{40}$/.test(revision)) throw new Error('missing comments CSS revision');
-    const committed = execFileSync('git', ['show', `${revision}:${THEME_PATH}`], options);
-    if (!committed.equals(readFileSync(join(ROOT, THEME_PATH)))) throw new Error('uncommitted comments CSS');
-  } catch (cause) {
-    throw new Error('cannot resolve a public revision for comments CSS; set comments.themeUrl to a matching public HTTPS stylesheet', { cause });
-  }
-  return `https://cdn.jsdelivr.net/gh/${config.repository}@${revision}/${THEME_PATH}`;
+  // 운영 주소가 없으면 설치한 디자인 패키지의 고정 commit에 있는 같은 파일을 공개 CDN에서 읽는다.
+  const spec = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).devDependencies?.[DESIGN_PACKAGE] ?? '';
+  const pinned = /^github:([\w.-]+\/[\w.-]+)#([a-f0-9]{40})$/.exec(spec);
+  if (!pinned) throw new Error('cannot resolve a public revision for comments CSS; set comments.themeUrl to a matching public HTTPS stylesheet');
+  return `https://cdn.jsdelivr.net/gh/${pinned[1]}@${pinned[2]}/${THEME_PATH}`;
 }
 
 export function commentsSection(page, config = {}, themeUrl, { preview = false, returnRoute = '' } = {}) {

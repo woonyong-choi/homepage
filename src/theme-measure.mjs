@@ -1,7 +1,8 @@
 // 가져온 테마의 토큰 사슬을 따라 본문 치수를 계산해 원본 실측값과 대조한다.
 import { readFileSync } from 'node:fs';
+import { THEME_ROOT } from './design-package.mjs';
 
-const CSS = readFileSync(new URL('./vendor/theme/tokens.css', import.meta.url), 'utf8');
+const CSS = readFileSync(`${THEME_ROOT}/tokens.css`, 'utf8');
 const DEFINITIONS = new Map([...CSS.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(match => [match[1], match[2].trim()]));
 
 export function token(name) {

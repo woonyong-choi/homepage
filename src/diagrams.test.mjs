@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom';
 import { renderArticle } from './article-renderer.mjs';
 const renderMarkup = async (body, options = {}) => (await renderArticle({ id: options.pageId ?? 'diagram', description: '', body }, options)).html;
 import { compileDiagrams } from './diagrams.mjs';
-import { bindTabs } from './vendor/theme/ui/runtime/tabs.js';
+import { bindTabs } from '@woonyong-choi/design-tokens/ui/runtime/tabs.js';
 
 const source = 'thinkflow\nbox a "서버" icon=server\nbox b "저장소" icon=db\na -> b\nscene "구조"\nscene "트래픽" mode=loop for=3s\n  track a -> b every=1s time=500ms\n';
 

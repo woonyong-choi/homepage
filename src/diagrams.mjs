@@ -1,12 +1,8 @@
 // ThinkFlow 문법과 배치는 발행할 때만 실행한다. 같은 원본은 한 번 만들고 모든 페이지에서 재사용한다.
-import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
+// 디자인 일치는 문서 엔진이 확인한다: 엔진과 ThinkFlow가 홈페이지가 설치한 같은 디자인 패키지를 읽어야 도표를 만든다.
 import { compileDiagram } from 'document-engine';
 
 export async function compileDiagrams(sources) {
-  const shared = JSON.parse(readFileSync(new URL('./vendor/theme/manifest.json', import.meta.url)));
-  const renderer = JSON.parse(readFileSync(createRequire(import.meta.url).resolve('thinkflow/design-manifest.json')));
-  if (shared.contentHash !== renderer.contentHash) throw new Error('ThinkFlow와 홈페이지의 공통 디자인 버전이 다릅니다.');
   const diagrams = new Map();
   const assets = new Map();
   for (const [source, page] of sources) {

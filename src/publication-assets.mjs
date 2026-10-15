@@ -1,6 +1,6 @@
 // 발행 HTML과 런타임 색인의 의존 파일만 복사 대상으로 모은다.
-import { runtimeEntrypoints } from './vendor/theme/ui/manifest.mjs';
-import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
+import { runtimeEntrypoints } from '@woonyong-choi/design-tokens/ui/manifest.mjs';
+import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 const ORIGIN = 'https://publication.invalid';
 const ICON_CATALOG = getIconCatalog();
 const ICON_NOTICES = [...new Set([...ICON_CATALOG.libraries, ...Object.values(ICON_CATALOG.brands)].map(item => item.notice).filter(Boolean))].map(file => `/theme/assets/icons/${file}`);
