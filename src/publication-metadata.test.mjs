@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
 import { readIcon } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 import { publicationMetadata, siteOrigin } from './publication-metadata.mjs';
-import { documentShell } from './publication-layout.mjs';
+import { documentShell, notFoundPage } from './publication-layout.mjs';
 import { siteIdentity } from './site-identity.mjs';
 
 const context = {
@@ -84,4 +84,20 @@ test('identity_pngs_are_reproducible_from_the_exported_icon_without_system_fonts
     assert.ok(png.equals(second.assets.get(second[role])));
   }
   assert.throws(() => siteIdentity('invalid SVG'));
+});
+
+test('not_found_document_keeps_the_site_shell_and_is_excluded_from_indexing', () => {
+  const html = documentShell({ route: '/404.html', title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), { ...context, config: { ...context.config, github: 'https://github.com/example', linkedin: 'https://www.linkedin.com/in/example' } });
+  const document = new JSDOM(html).window.document;
+  assert.equal(document.title, '페이지를 찾을 수 없습니다 · 이름');
+  assert.equal(document.querySelector('meta[name=robots]').content, 'noindex,nofollow');
+  assert.equal(document.querySelector('link[rel=canonical], meta[property="og:url"]'), null);
+  assert.ok(document.querySelector('header nav'), '사이트 메뉴');
+  assert.ok(document.querySelector('main#main form[action="/search/"]'), '검색');
+  assert.equal(document.querySelector('main h1').textContent, '페이지를 찾을 수 없습니다');
+  // 어느 경로에서 읽혀도 같은 대상을 가리키도록 모든 내부 주소는 루트 기준이다.
+  for (const node of document.querySelectorAll('[href], [src]')) {
+    const value = node.getAttribute('href') ?? node.getAttribute('src');
+    assert.match(value, /^(?:\/|#|https?:|data:|mailto:)/, value);
+  }
 });
