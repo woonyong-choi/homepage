@@ -1,4 +1,4 @@
-import { SiteFooter } from './vendor/theme/ui/index.mjs';
+import { SiteFooter } from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 export function personalFooter(config, year = new Date().getFullYear()) {
   const links = [{ href: config.github, label: 'GitHub', icon: 'github' }];

@@ -1,9 +1,9 @@
 import { dateLabel } from './content-model.mjs';
 // 개인 사이트의 탐색과 본문을 하나의 테마와 문서 식별자로 조합한다.
 import { personalFooter } from './publication-footer.mjs';
-import { escape } from './vendor/theme/ui/index.mjs';
-import * as ui from './vendor/theme/ui/index.mjs';
-import { getIconCatalog, iconFile } from './vendor/theme/ui/build/icons.mjs';
+import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
+import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
+import { getIconCatalog, iconFile } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 import { contentIcon, renderContentSvg } from './content-icons.mjs';
 import { TOPIC_GROUPS, paginate } from './content-model.mjs';
 import { LAYOUT, gridSize } from './layout-config.mjs';

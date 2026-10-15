@@ -51,7 +51,8 @@ export function projectReference(reference, project) {
     return projectRoute(file) + url.search + fragment;
   }
   if (Object.hasOwn(project.manifest.files, file)) return ASSETS + file + url.search + url.hash;
-  if (file.startsWith('docs/')) throw new Error(`missing project reference: ${reference}`);
+  // 발행하는 형식(문서·그림)이 목록에 없으면 오류다. 그 밖의 원본 파일(출처 JSON 등)은 고정 commit의 GitHub 원본으로 잇는다.
+  if (file.startsWith('docs/') && /\.(?:md|svg|png|jpg|webp)$/.test(file)) throw new Error(`missing project reference: ${reference}`);
   return `https://github.com/${project.manifest.repository}/blob/${project.manifest.revision}/${file}${url.search}${url.hash}`;
 }
 

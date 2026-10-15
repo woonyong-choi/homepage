@@ -1,6 +1,5 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -18,20 +17,15 @@ test('comment_theme_keeps_https_origin_and_requires_https_preview_overrides', ()
   }
 });
 
-test('preview_comment_theme_requires_a_revision_with_the_current_css_bytes', () => {
+test('preview_comment_theme_reads_the_installed_design_commit_from_a_public_cdn', () => {
   const root = fileURLToPath(new URL('../', import.meta.url));
-  const path = 'src/vendor/theme/assets/giscus.css';
-  const revision = execFileSync('git', ['log', '-1', '--format=%H', '--', path], { cwd: root, encoding: 'utf8' }).trim();
-  const committed = execFileSync('git', ['show', `${revision}:${path}`], { cwd: root });
-  if (!committed.equals(readFileSync(new URL('./vendor/theme/assets/giscus.css', import.meta.url)))) {
-    assert.throws(() => commentThemeUrl({ repository: 'owner/blog' }), /cannot resolve a public revision/);
-    return;
-  }
+  const spec = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).devDependencies['@woonyong-choi/design-tokens'];
+  const [, repository, revision] = /^github:([\w.-]+\/[\w.-]+)#([a-f0-9]{40})$/.exec(spec);
   const themeUrl = commentThemeUrl({ repository: 'owner/blog' });
-  const match = themeUrl.match(/^https:\/\/cdn\.jsdelivr\.net\/gh\/owner\/blog@([a-f0-9]{40})\/(src\/vendor\/theme\/assets\/giscus\.css)$/);
-  assert.ok(match, themeUrl);
-  const published = execFileSync('git', ['show', `${match[1]}:${match[2]}`], { cwd: root });
-  assert.deepEqual(published, readFileSync(new URL('./vendor/theme/assets/giscus.css', import.meta.url)));
+  assert.equal(themeUrl, `https://cdn.jsdelivr.net/gh/${repository}@${revision}/dist/assets/giscus.css`);
+  const lock = JSON.parse(readFileSync(new URL('../package-lock.json', import.meta.url), 'utf8'));
+  assert.match(lock.packages['node_modules/@woonyong-choi/design-tokens'].resolved, new RegExp(`#${revision}$`));
+  assert.ok(readFileSync(new URL('assets/giscus.css', `file://${root}node_modules/@woonyong-choi/design-tokens/dist/`)).length > 0);
   assert.match(commentsSection({ id: 'stable-id', comments: true }, config, themeUrl), /data-theme="https:\/\/cdn\.jsdelivr\.net\/gh\//);
 });
 

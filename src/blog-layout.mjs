@@ -1,10 +1,10 @@
 // 같은 발행 글 전체를 설정한 미리보기, 카드 목록과 본문 피드로 나누어 보여준다.
-import * as ui from './vendor/theme/ui/index.mjs';
+import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { dateLine, searchBox, tagLinks, subjectIcon } from './publication-layout.mjs';
 import { paginate, dateLabel } from './content-model.mjs';
 import { LAYOUT, gridSize } from './layout-config.mjs';
 import { collectionNavigation } from './collection-navigation.mjs';
-import { escape } from './vendor/theme/ui/index.mjs';
+import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { postArticle, thumbnailImage } from './post-article.mjs';
 import { commentsSection } from './comments.mjs';
 

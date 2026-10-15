@@ -12,13 +12,13 @@
     "content:revoke": "node src/approved-content.mjs revoke",
     "content:sync-vault": "node src/approved-content.mjs sync-vault",
     "content:sync": "node src/approved-content.mjs sync",
-    "content:check": "node src/approved-content.mjs check",
-    "design:sync": "node src/vendor/theme/ui/build/sync.mjs"
+    "content:check": "node src/approved-content.mjs check"
   },
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",
     "@vscode/markdown-it-katex": "^1.1.2",
-    "document-engine": "file:dist/document-engine-0.0.0.tgz",
+    "@woonyong-choi/design-tokens": "github:woonyong-choi/design-tokens#12f1c53a4379f6a000c5a0536402affd514c3e23",
+    "document-engine": "github:woonyong-choi/document-engine#172e878182c22efea2d728e126851427daebd57f",
     "esbuild": "0.28.2",
     "highlight.js": "^11.12.0",
     "jsdom": "29.1.1",
@@ -29,7 +29,7 @@
     "postcss": "8.5.29",
     "purgecss": "7.0.2",
     "shiki": "4.5.0",
-    "thinkflow": "github:woonyong-choi/thinkflow#168ca3f957ecdd0824e1614f7be613cd47987dee",
+    "thinkflow": "github:woonyong-choi/thinkflow#629d1909479ebcb674d3b0f0119bf93bd75b0c62",
     "yaml": "^2.9.1"
   },
   "overrides": {

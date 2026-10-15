@@ -1,13 +1,14 @@
 // 소개와 같은 첫 문단만 옮기며 링크·각주·강조를 그대로 보존한다.
-import { readFileSync } from 'node:fs';
+import { realpathSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { DEFAULT_THEME_FILES, parseDocument, renderDocument } from 'document-engine';
-import { escape } from './vendor/theme/ui/index.mjs';
+import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { prepareProjectTokens } from './project-documents.mjs';
 import { documentAssets as assets } from './document-assets.mjs';
+import { THEME_ROOT } from './design-package.mjs';
 
-const engineTheme = JSON.parse(readFileSync(new URL('receipt.json', DEFAULT_THEME_FILES.root)));
-const siteTheme = JSON.parse(readFileSync(new URL('./vendor/theme/manifest.json', import.meta.url)));
-if (engineTheme.contentHash !== siteTheme.contentHash) throw new Error('문서 엔진과 홈페이지의 공통 디자인 버전이 다릅니다.');
+// 문서 엔진은 디자인을 peer 의존성으로 받는다. 홈페이지가 설치한 같은 패키지를 읽는지 확인한다.
+if (realpathSync(fileURLToPath(DEFAULT_THEME_FILES.root)) !== realpathSync(THEME_ROOT)) throw new Error('문서 엔진과 홈페이지가 서로 다른 공통 디자인 패키지를 읽습니다.');
 const normalize = text => text.normalize('NFC').replace(/\s+/gu, ' ').trim();
 const formatting = new Set(['em_open', 'em_close', 'strong_open', 'strong_close', 's_open', 's_close', 'link_open', 'link_close', 'mark_open', 'mark_close', 'footnote_ref']);
 

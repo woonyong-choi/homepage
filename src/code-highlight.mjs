@@ -2,7 +2,7 @@
 import hljs from 'highlight.js';
 import { bundledLanguages, createHighlighter } from 'shiki';
 
-import { escape, syntaxClass, SyntaxToken } from './vendor/theme/ui/index.mjs';
+import { escape, syntaxClass, SyntaxToken } from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 const LANGUAGE_NAME = /^[\w+#.-]+$/;
 const LANGUAGES = new Map();

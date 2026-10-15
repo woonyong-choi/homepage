@@ -1,5 +1,5 @@
 // 공개 문서의 부모 관계와 주제 입구를 탐색 구성 요소에 연결한다.
-import * as ui from './vendor/theme/ui/index.mjs';
+import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 function topicRoots(page, context) {
   const roots = context.topicTrees?.get(page.topic ?? page.category) ?? [];
