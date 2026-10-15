@@ -99,7 +99,7 @@ sections:
 |---|---|
 | hero | 홈 본문의 제목과 소개를 사용한다. 제목은 페이지 제목과 이미지 대체 글이며 `icon`과 `wordmark`가 없으면 화면에 표시한다. 나머지 속성: `icon`, `wordmark`, `image`(`{src, alt}`), `video`(`{src, title}` 필수, `poster` 선택), `action`(`{label, href}`) |
 | projects | `items` 목록. 항목마다 `title`, `description` 필수와 `enabled`, `link`(`{label, href}`), `icon`, `image` |
-| technologies | 본문의 제목·소개와 머리 `icon`. `items`는 아이콘 카탈로그 이름 목록이며 같은 이름의 태그 글로 연결 |
+| technologies | 본문의 제목·소개와 머리 `icon`. `items`는 기술 로고 이름 목록이며 같은 이름의 태그 글로 연결. 이름은 [기술 로고](#기술-로고) 순서로 찾는다 |
 | interviews | 본문의 제목·소개와 머리 `icon`, `links`(`{label, href?, icon?}`). `items`: `id`, `summary` 필수, `profile`(`{image?, title, subtitle?}`), `url`, `example` 선택 |
 | contact | `mode`: `email` 또는 `newsletter`. 공통 속성: `icon`, `title`, `description`, `button`, `email` |
 
@@ -146,3 +146,9 @@ items:
 [Things 공식 사이트](https://culturedcode.com/things/)의 로고 이미지를 획과 비례의 참고로 삼았다. 로고의 정확한 글꼴 이름은 확인되지 않았으며 Inter가 원본 글꼴이라는 뜻은 아니다. [Inter 공식 안내](https://rsms.me/inter/)의 Display 디자인과 Black 굵기를 비교해 선택했다.
 
 영상의 초기 접힘은 공통 디자인 CSS가 담당한다. 스크립트 초기화를 기다리지 않으며, 재생 요청 뒤 기존 플레이어 상태로 펼친다. 스크립트 미사용 환경에서는 명시적 영상 링크로 기본 재생 컨트롤에 접근한다.
+
+### 기술 로고
+
+기술 이름을 가리키는 로고는 홈페이지만 쓰므로 홈페이지가 소유한다. 파일은 `content/assets/brands/<이름>.svg`이고 `/assets/brands/`로 발행한다. 각 파일은 `config/assets.json`에 제3자 상표(`origin: third-party`, 식별 목적 사용), 원배포 주소, 선택한 변형·원본 해시·처리 방식, 파일 SHA-256, 표시 이름(`brand.label`)과 고지 `assets/brands/technology-logos-NOTICE.txt`를 기록한다. SVG는 공통 테마가 발행하던 바이트를 그대로 옮긴 것이며 도형과 색을 고치지 않는다.
+
+`src/brand-icons.mjs`가 이름을 홈페이지 로고 → 공통 카탈로그의 `brands` 순서로 찾는다. 기술 줄, 문서·카드·검색 결과의 아이콘(`contentIcon`), 검색 색인의 `iconUrl`이 이 조회 하나를 쓰고 로고는 파일 그림(`ContentIconImage`, `LogoItem`)으로 싣는다. ThinkFlow 그림에도 쓰는 Git·PostgreSQL·Redis·NGINX와 공통 바닥글·소셜 링크가 쓰는 GitHub·LinkedIn은 공통 카탈로그에 남는다. 로고를 추가할 때는 같은 폴더의 SVG, `config/assets.json`의 기록, 고지 파일의 출처를 함께 추가한다. 발행본은 로고를 쓴 빌드에만 고지를 포함하고, 미리보기는 원고 폴더와 관계없이 홈페이지의 로고 파일을 읽는다. `src/brand-icons.test.mjs`가 기록·바이트·고지·조회 순서를 검사한다.
