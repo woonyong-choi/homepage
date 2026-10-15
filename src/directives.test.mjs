@@ -10,6 +10,8 @@ import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { DirectiveError, parseAttributes } from './directive-syntax.mjs';
 
+// 문법 검사는 자산 존재만 확인하고 형식은 보지 않는다. 그림·영상 자리에는 실제로 있는 자체 제작 자산 이름을 쓴다.
+
 const md = createMarkdown();
 const render = (source, env = {}) => md.render(source, { pageId: 'p', ...env });
 const dom = html => new JSDOM(`<body>${html}</body>`).window.document;
@@ -57,7 +59,7 @@ test('tab_bodies_keep_code_images_footnotes_and_ui_components_working', () => {
   const html = render([
     '::::tabs', ':::tab[코드]', '```bash', 'echo ":::tab[가짜]"', ':::', '```', '',
     '~~~md', '::::', '~~~', '',
-    '    :::note', '', '![스크린샷](/assets/sample-a.png "제목")', '',
+    '    :::note', '', '![스크린샷](/assets/who-knows.svg "제목")', '',
     '각주[^a]', '', '```ui:callout', 'title: 호환', 'body: ui 블록도 그대로', '```', ':::', ':::tab[둘째]', '둘째 각주[^b]', ':::', '::::', '',
     '[^a]: 첫째', '[^b]: 둘째', '',
   ].join('\n'));
@@ -100,9 +102,9 @@ test('steps_fineprint_and_qa_reuse_list_paragraph_and_definition_markup', () => 
 
 test('figure_video_and_cards_use_explicit_attributes', () => {
   const document = dom(render([
-    '::figure{src=sample-a.png alt="오늘 화면" caption="캡션 \\"인용\\"" href=/articles/markdown-guide/ rounded}',
-    '::video{src=sample-phone.mp4 poster=sample-phone.png alt="아이폰" caption=설명 frame=iphone controls}',
-    '::video{src=sample-c.mp4 poster=sample-c.png alt="맥"}',
+    '::figure{src=who-knows.svg alt="오늘 화면" caption="캡션 \\"인용\\"" href=/articles/markdown-guide/ rounded}',
+    '::video{src=backend-engineer.svg poster=who-knows.svg alt="아이폰" caption=설명 frame=iphone controls}',
+    '::video{src=backend-engineer.svg poster=backend-engineer.svg alt="맥"}',
     ':::cards{variant=centered columns=2}',
     '::card{title="제목" description="설명" href=/articles/bounded-queue/ icon=document}',
     '::card{title="둘째" href=https://example.com/}',
@@ -117,7 +119,7 @@ test('figure_video_and_cards_use_explicit_attributes', () => {
   assert.equal(videos.length, 2);
   assert.ok(videos[0].closest('.app-device'));
   assert.ok(videos.every(video => video.classList.contains('has-controls')));
-  assert.equal(videos[0].querySelector('video').getAttribute('poster'), '/assets/sample-phone.png');
+  assert.equal(videos[0].querySelector('video').getAttribute('poster'), '/assets/who-knows.svg');
   assert.equal(document.querySelectorAll('[data-remote]').length, 0);
   assert.ok(videos.every(video => video.querySelector('video[data-native-controls]') && video.querySelector('[data-player-play]')));
   const cards = [...document.querySelectorAll('.app-support-grid.is-pair > a.app-help-card.is-centered')];
@@ -172,21 +174,21 @@ test('directive_errors_name_the_page_line_and_block', () => {
     ['형식', ':::  note\n본문\n:::\n', /본문 1줄: 블록 줄 형식/],
     ['알 수 없는 이름', ':::danger\n본문\n:::\n', /본문 1줄 :danger: 알 수 없는 블록/],
     ['프로토타입 이름', ':::constructor\n본문\n:::\n', /알 수 없는 블록/],
-    ['__proto__ 속성', '::figure{__proto__=x src=sample-a.png alt=a}\n', /속성 이름이 잘못/],
-    ['허용 안 하는 속성', '::figure{src=sample-a.png alt=a onclick=x}\n', /허용하지 않는 속성입니다: onclick/],
-    ['겹치는 속성', '::figure{src=sample-a.png src=sample-a.png alt=a}\n', /속성이 겹칩니다: src/],
-    ['따옴표', '::figure{src=sample-a.png alt="열림}\n', /따옴표가 닫히지/],
-    ['필수 속성', '::figure{src=sample-a.png}\n', /필수 속성이 없습니다: alt/],
-    ['위험한 주소', '::figure{src=sample-a.png alt=a href="javascript:alert(1)"}\n', /href: https/],
-    ['프로토콜 상대 주소', '::figure{src=sample-a.png alt=a href=//evil.example/}\n', /href: https/],
+    ['__proto__ 속성', '::figure{__proto__=x src=who-knows.svg alt=a}\n', /속성 이름이 잘못/],
+    ['허용 안 하는 속성', '::figure{src=who-knows.svg alt=a onclick=x}\n', /허용하지 않는 속성입니다: onclick/],
+    ['겹치는 속성', '::figure{src=who-knows.svg src=who-knows.svg alt=a}\n', /속성이 겹칩니다: src/],
+    ['따옴표', '::figure{src=who-knows.svg alt="열림}\n', /따옴표가 닫히지/],
+    ['필수 속성', '::figure{src=who-knows.svg}\n', /필수 속성이 없습니다: alt/],
+    ['위험한 주소', '::figure{src=who-knows.svg alt=a href="javascript:alert(1)"}\n', /href: https/],
+    ['프로토콜 상대 주소', '::figure{src=who-knows.svg alt=a href=//evil.example/}\n', /href: https/],
     ['경로 이탈 자산', '::figure{src=../secret.png alt=a}\n', /src: 파일 이름만/],
     ['없는 자산', '::figure{src=missing.png alt=a}\n', /src: 없는 자산입니다: missing.png/],
     ['없는 아이콘', ':::cards\n::card{title=a href=/x/ icon=nope}\n:::\n', /icon: 없는 아이콘/],
     ['열거형', ':::cards{variant=huge}\n::card{title=a href=/x/}\n:::\n', /variant는 centered, grouped, inline, related, summary 중/],
-    ['불리언', '::video{src=sample-c.mp4 poster=sample-c.png alt=a controls=maybe}\n', /controls는 true 또는 false/],
+    ['불리언', '::video{src=backend-engineer.svg poster=backend-engineer.svg alt=a controls=maybe}\n', /controls는 true 또는 false/],
     ['라벨 필요', '::::tabs\n:::tab\n본문\n:::\n::::\n', /라벨이 필요합니다/],
     ['라벨 불가', ':::steps[제목]\n1. a\n:::\n', /라벨을 받지 않는 블록/],
-    ['리프를 컨테이너로', ':::figure{src=sample-a.png alt=a}\n본문\n:::\n', /본문이 없는 블록입니다/],
+    ['리프를 컨테이너로', ':::figure{src=who-knows.svg alt=a}\n본문\n:::\n', /본문이 없는 블록입니다/],
     ['컨테이너를 리프로', '::note{x=1}\n', /본문이 있는 블록입니다/],
     ['탭이 밖에', ':::tab[A]\n본문\n:::\n', /문서 바로 아래에서는 쓸 수 없습니다/],
     ['탭 안의 문단', '::::tabs\n문단\n\n:::tab[A]\n본문\n:::\n::::\n', /:::tab만 둘 수 있습니다. 문단는 쓸 수 없습니다/],
@@ -315,7 +317,7 @@ test('article_pages_have_no_automatic_related_section_or_edit_suggestion_but_kee
 });
 
 test('gallery_block_and_ui_gallery_delegate_to_the_one_tabs_markup_with_numbered_buttons', () => {
-  const slides = ['sample-a.png', 'sample-c.png', 'sample-d.png'];
+  const slides = ['who-knows.svg', 'backend-engineer.svg', 'who-knows.svg'];
   const source = `:::gallery{title="둘러보기"}\n${slides.map((src, index) => `::slide{src=${src} alt="화면 ${index + 1}"${index ? '' : ' caption=첫째'}}`).join('\n')}\n:::\n`;
   const document = dom(render(source));
   const gallery = document.querySelector('section.app-tabs[data-tabs]');
@@ -337,17 +339,17 @@ test('gallery_block_and_ui_gallery_delegate_to_the_one_tabs_markup_with_numbered
   const normalize = html => html.replace(/component-p-\d+/g, 'c');
   assert.equal(normalize(legacy.querySelector('.app-tabs').outerHTML), normalize(gallery.outerHTML));
   // 이름이 모두 있으면 분할 선택 줄이다.
-  const labeled = dom(render('```ui:gallery\nslides:\n  - { src: sample-a.png, alt: a, label: 전 }\n  - { src: sample-c.png, alt: b, label: 후 }\n```\n'));
+  const labeled = dom(render('```ui:gallery\nslides:\n  - { src: who-knows.svg, alt: a, label: 전 }\n  - { src: backend-engineer.svg, alt: b, label: 후 }\n```\n'));
   assert.deepEqual([...labeled.querySelector('.app-tabs').classList], ['app-tabs', 'is-selector-segmented']);
   assert.deepEqual([...labeled.querySelectorAll('[role=tab]')].map(button => button.textContent), ['전', '후']);
 });
 
 test('gallery_errors_cover_missing_slides_places_and_assets', () => {
   assert.match(failure(':::gallery\n:::\n').message, /본문이 비었습니다/);
-  assert.match(failure('::slide{src=sample-a.png alt=a}\n').message, /문서 바로 아래에서는 쓸 수 없습니다/);
+  assert.match(failure('::slide{src=who-knows.svg alt=a}\n').message, /문서 바로 아래에서는 쓸 수 없습니다/);
   assert.match(failure(':::gallery\n문단\n:::\n').message, /:::slide만 둘 수 있습니다/);
   assert.match(failure(':::gallery\n::slide{src=nope.png alt=a}\n:::\n').message, /없는 자산입니다/);
-  assert.match(failure(':::gallery\n::slide{src=sample-a.png}\n:::\n').message, /필수 속성이 없습니다: alt/);
+  assert.match(failure(':::gallery\n::slide{src=who-knows.svg}\n:::\n').message, /필수 속성이 없습니다: alt/);
 });
 
 test('cancelled_tasks_use_the_same_marker_box_as_open_and_done_tasks', () => {
@@ -359,12 +361,12 @@ test('cancelled_tasks_use_the_same_marker_box_as_open_and_done_tasks', () => {
 
 test('width_prop_maps_from_every_grammar_without_changing_player_dimensions', () => {
   const html = render([
-    '::figure{src=sample-a.png alt=a width=narrow}', '::figure{src=sample-a.png alt=b width=wide}', '::figure w-narrow src=sample-a.png alt=c', '::figure{src=sample-a.png alt=d}',
-    '::video{src=sample-c.mp4 poster=sample-c.png alt=v width=wide}',
-    ':::gallery{width=wide}', '::slide{src=sample-a.png alt=s}', ':::', '',
+    '::figure{src=who-knows.svg alt=a width=narrow}', '::figure{src=who-knows.svg alt=b width=wide}', '::figure w-narrow src=who-knows.svg alt=c', '::figure{src=who-knows.svg alt=d}',
+    '::video{src=backend-engineer.svg poster=backend-engineer.svg alt=v width=wide}',
+    ':::gallery{width=wide}', '::slide{src=who-knows.svg alt=s}', ':::', '',
     '```js width=narrow', 'const a = 1;', '```', '', '```js', 'const b = 2;', '```', '',
-    '```ui:figure', 'src: sample-a.png', 'alt: ui', 'width: wide', '```', '',
-    '```ui:video', 'src: sample-c.mp4', 'poster: sample-c.png', 'width: 720', 'height: 400', 'wide: true', '```', '',
+    '```ui:figure', 'src: who-knows.svg', 'alt: ui', 'width: wide', '```', '',
+    '```ui:video', 'src: backend-engineer.svg', 'poster: backend-engineer.svg', 'width: 720', 'height: 400', 'wide: true', '```', '',
   ].join('\n'));
   const document = dom(html);
   const classes = selector => [...document.querySelectorAll(selector)].map(node => node.className);
@@ -378,14 +380,14 @@ test('width_prop_maps_from_every_grammar_without_changing_player_dimensions', ()
 });
 
 test('width_errors_name_the_block_and_line', () => {
-  assert.match(failure('::figure{src=sample-a.png alt=a width=huge}\n').message, /width는 content, narrow, wide 중 하나/);
+  assert.match(failure('::figure{src=who-knows.svg alt=a width=huge}\n').message, /width는 content, narrow, wide 중 하나/);
   for (const [source, name, attribute] of [
-    ['::figure{src=sample-a.png alt=a wide=false}', 'figure', 'wide'],
-    ['::figure{src=sample-a.png alt=a size=compact}', 'figure', 'size'],
-    ['::video{src=sample-c.mp4 poster=sample-c.png alt=a wide}', 'video', 'wide'],
-    [':::gallery{wide}\n::slide{src=sample-a.png alt=a}\n:::', 'gallery', 'wide'],
+    ['::figure{src=who-knows.svg alt=a wide=false}', 'figure', 'wide'],
+    ['::figure{src=who-knows.svg alt=a size=compact}', 'figure', 'size'],
+    ['::video{src=backend-engineer.svg poster=backend-engineer.svg alt=a wide}', 'video', 'wide'],
+    [':::gallery{wide}\n::slide{src=who-knows.svg alt=a}\n:::', 'gallery', 'wide'],
   ]) assert.ok(failure(`문단\n\n${source}\n`).message.includes(`본문 3줄 :${name}: 허용하지 않는 속성입니다: ${attribute}`));
-  assert.match(failure('::video{src=sample-c.mp4 poster=sample-c.png alt=a height=10}\n').message, /허용하지 않는 속성입니다: height/);
+  assert.match(failure('::video{src=backend-engineer.svg poster=backend-engineer.svg alt=a height=10}\n').message, /허용하지 않는 속성입니다: height/);
   assert.match(failure('문단\n\n```js width=huge\nx\n```\n').message, /본문 3줄 :code: width는 content, narrow, wide 중 하나/);
 });
 
@@ -399,8 +401,8 @@ test('long_unbroken_code_keeps_the_exact_raw_text_for_copying', () => {
 
 const REQUESTED = [
   ':::tabs selector-segmented',
-  '@tab 변경 전', '', '![변경 전 화면](/assets/sample-before.png)', '', '기존 화면입니다.', '',
-  '@tab 변경 후', '', '![변경 후 화면](/assets/sample-after.png)', '', '개선한 화면입니다.', '',
+  '@tab 변경 전', '', '![변경 전 화면](/assets/who-knows.svg)', '', '기존 화면입니다.', '',
+  '@tab 변경 후', '', '![변경 후 화면](/assets/backend-engineer.svg)', '', '개선한 화면입니다.', '',
   ':::end', '',
 ].join('\n');
 
@@ -418,8 +420,7 @@ test('tabs_with_utility_header_and_at_tab_lines_render_the_one_shared_tabs_marku
   assert.equal(panels[0].hidden, false);
   assert.equal(panels[1].hidden, true);
   assert.equal(panels[0].querySelector('p > img').getAttribute('alt'), '변경 전 화면');
-  assert.equal(panels[0].querySelector('img').getAttribute('src'), '/assets/sample-before.png');
-  assert.equal(panels[0].querySelector('img').getAttribute('width'), '1360');
+  assert.equal(panels[0].querySelector('img').getAttribute('src'), '/assets/who-knows.svg');
   assert.equal(panels[0].querySelectorAll('p')[1].textContent, '기존 화면입니다.');
   assert.equal(document.querySelectorAll('figure').length, 0);
 });
@@ -544,7 +545,7 @@ test('bottom_selector_tabs_use_the_same_runtime_for_click_arrows_home_and_end', 
 });
 
 test('gallery_tabs_show_only_the_selected_panel_pause_hidden_videos_and_use_the_one_runtime', () => {
-  const source = ':::tabs selector-numbers\n@tab 영상\n\n::video{src=sample-c.mp4 poster=sample-c.png alt=영상 controls}\n\n@tab 그림\n\n::figure{src=sample-a.png alt=그림 caption=캡션}\n\n@tab 셋째\n\n짧은 글\n\n:::end\n';
+  const source = ':::tabs selector-numbers\n@tab 영상\n\n::video{src=backend-engineer.svg poster=backend-engineer.svg alt=영상 controls}\n\n@tab 그림\n\n::figure{src=who-knows.svg alt=그림 caption=캡션}\n\n@tab 셋째\n\n짧은 글\n\n:::end\n';
   const window = new JSDOM(`<body>${render(source)}</body>`, { runScripts: 'outside-only', url: 'https://example.com/' }).window;
   const paused = [];
   window.HTMLMediaElement.prototype.pause = function pause() { paused.push(this); };
@@ -603,10 +604,10 @@ test('short_utility_aliases_resolve_through_the_same_option_registry_as_long_and
 // #107: 표시 옵션은 같은 해석기를 쓰며 기존 Markdown 출력과 내용 값을 보존한다.
 test('utility_options_across_components_preserve_legacy_output_and_content', () => {
   const pairs = [
-    ['::figure w-narrow rounded src=sample-a.png alt="오늘 화면" caption="w-wide는 캡션의 글자"', '::figure{width=narrow rounded src=sample-a.png alt="오늘 화면" caption="w-wide는 캡션의 글자"}'],
-    ['::video w-wide frame-iphone controls src=sample-phone.mp4 poster=sample-phone.png alt="아이폰 화면"', '::video{width=wide frame=iphone controls src=sample-phone.mp4 poster=sample-phone.png alt="아이폰 화면"}'],
+    ['::figure w-narrow rounded src=who-knows.svg alt="오늘 화면" caption="w-wide는 캡션의 글자"', '::figure{width=narrow rounded src=who-knows.svg alt="오늘 화면" caption="w-wide는 캡션의 글자"}'],
+    ['::video w-wide frame-iphone controls src=backend-engineer.svg poster=who-knows.svg alt="아이폰 화면"', '::video{width=wide frame=iphone controls src=backend-engineer.svg poster=who-knows.svg alt="아이폰 화면"}'],
     [':::cards centered cols-2\n::card title="제목 & <b>" href=/articles/markdown-guide/ icon=document\n:::end', ':::cards{variant=centered columns=2}\n::card{title="제목 & <b>" href=/articles/markdown-guide/ icon=document}\n:::'],
-    [':::gallery w-narrow title="오늘 화면"\n::slide src=sample-a.png alt=오늘 caption="작은 그림"\n:::end', ':::gallery{width=narrow title="오늘 화면"}\n::slide{src=sample-a.png alt=오늘 caption="작은 그림"}\n:::'],
+    [':::gallery w-narrow title="오늘 화면"\n::slide src=who-knows.svg alt=오늘 caption="작은 그림"\n:::end', ':::gallery{width=narrow title="오늘 화면"}\n::slide{src=who-knows.svg alt=오늘 caption="작은 그림"}\n:::'],
     ['```js w-wide filename="w-narrow file.js"\nconst value = "raw text";\n```', '```js width=wide filename="w-narrow file.js"\nconst value = "raw text";\n```'],
     [':::tabs w-narrow\n@tab 첫째\n본문\n:::end', ':::tabs width=narrow\n@tab 첫째\n본문\n:::end'],
     [':::platform[기기]\n@tab Mac\n:::note[제목]\n**본문**\n:::end\n@tab Watch\n다른 본문\n:::end', '::::platform[기기]\n:::tab[Mac]\n:::note[제목]\n**본문**\n:::\n:::\n:::tab[Watch]\n다른 본문\n:::\n::::'],
@@ -620,13 +621,13 @@ test('utility_options_across_components_preserve_legacy_output_and_content', () 
 
 test('shared_utility_validation_rejects_conflicts_unknowns_and_unsafe_values_with_location', () => {
   const cases = [
-    ['::figure w-wide w-narrow src=sample-a.png alt=가', /옵션이 충돌합니다/],
-    ['::figure w-wide width=wide src=sample-a.png alt=가', /옵션이 겹칩니다/],
-    ['::figure numbers src=sample-a.png alt=가', /허용하지 않는 속성입니다: selector/],
-    ['::figure w-full src=sample-a.png alt=가', /허용하지 않는 속성입니다: w-full/],
-    ['::figure w-wide src=sample-a.png alt=가 href="javascript:alert(1)"', /href: https/],
-    ['::video frame-iphone frame=none src=sample-phone.mp4 poster=sample-phone.png alt=가', /옵션이 충돌합니다/],
-    ['::video controls=false src=sample-phone.mp4 poster=sample-phone.png alt=가', /재생 조작은 숨길 수 없습니다/],
+    ['::figure w-wide w-narrow src=who-knows.svg alt=가', /옵션이 충돌합니다/],
+    ['::figure w-wide width=wide src=who-knows.svg alt=가', /옵션이 겹칩니다/],
+    ['::figure numbers src=who-knows.svg alt=가', /허용하지 않는 속성입니다: selector/],
+    ['::figure w-full src=who-knows.svg alt=가', /허용하지 않는 속성입니다: w-full/],
+    ['::figure w-wide src=who-knows.svg alt=가 href="javascript:alert(1)"', /href: https/],
+    ['::video frame-iphone frame=none src=backend-engineer.svg poster=who-knows.svg alt=가', /옵션이 충돌합니다/],
+    ['::video controls=false src=backend-engineer.svg poster=who-knows.svg alt=가', /재생 조작은 숨길 수 없습니다/],
     [':::cards cols-1 cols-2\n::card title=글 href=/x/\n:::end', /옵션이 충돌합니다/],
     ['```js w-wide w-narrow\nx\n```', /옵션이 충돌합니다/],
     ['```js w-wide width=wide\nx\n```', /옵션이 겹칩니다/],
