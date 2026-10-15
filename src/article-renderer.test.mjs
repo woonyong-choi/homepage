@@ -1,14 +1,12 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createMarkdown } from './markdown.mjs';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { blogFeed } from './blog-layout.mjs';
 
 test('duplicate_introduction_moves_once_with_links_formatting_and_footnote_backlinks', async () => {
-  const md = createMarkdown();
   const page = { id: 'a', description: 'Python 이름과 값.', body: '[Python](/wiki/python/) **이름**과 `값`.[^note]\n\n## 본문\n설명\n\n## 본문\n다음\n\n[^note]: 출처' };
-  const original = md.render(page.body, { pageId: page.id, docId: page.id });
+  const original = (await renderArticle({ ...page, description: '' })).html;
   const rendered = (await renderArticle(page));
   assert.match(rendered.leadHtml, /href="\/wiki\/python\/"/);
   assert.match(rendered.leadHtml, /<strong>이름<\/strong>과 <code>값<\/code>/);
@@ -22,10 +20,9 @@ test('duplicate_introduction_moves_once_with_links_formatting_and_footnote_backl
 });
 
 test('only_the_complete_first_paragraph_can_be_promoted', async () => {
-  const md = createMarkdown();
   for (const body of ['설명. 추가 설명.', '> 설명.', '- 설명.', '## 제목\n\n설명.', '![설명.](image.png)', ':kbd[설명.]']) {
     const page = { id: 'a', description: '설명.', body };
-    assert.equal((await renderArticle(page)).html, md.render(body, { pageId: 'a', docId: 'a' }));
+    assert.equal((await renderArticle(page)).html, (await renderArticle({ ...page, description: '' })).html);
   }
   assert.equal((await renderArticle({ id: 'a', description: '설명 내용', body: '설명\n내용\n\n다음 문단' })).html, '<p>다음 문단</p>\n');
 });

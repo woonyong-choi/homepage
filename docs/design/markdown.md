@@ -288,9 +288,9 @@ const message = "넓은 코드블록";
 
 `:::` 블록은 같은 `app-*` 클래스와 마크업을 낸다. 스타일은 `:::steps`의 `.app-steps`와 `:icon`의 `.app-inline-icon`만 테마에 더했다. 동작은 기존 `document.js`(탭 화살표·Home·End, 팝오버 설명)와 `video.js`를 그대로 쓴다. `ui:` 블록은 변경이 없고 `:::` 블록 안에서도, 반대로도 쓸 수 있다.
 
-탭, 강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`@woonyong-choi/design-tokens/ui/index.mjs`, 정의는 design-tokens `docs/styles.md`의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 본문의 문법 해석과 구성 요소 조립은 공통 문서 엔진이 맡고, `article-renderer.mjs`는 프로젝트 문서 정리와 소개 문단 분리를 연결한다. 페이지 조립은 `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `document-navigation.mjs`가 맡는다. 기존 `markdown.mjs`와 지시어 해석기는 현재 비교 검사에 남아 있으며 발행 경로에서는 불러오지 않는다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
+탭, 강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`@woonyong-choi/design-tokens/ui/index.mjs`, 정의는 design-tokens `docs/styles.md`의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 본문의 문법 해석과 구성 요소 조립은 공통 문서 엔진이 맡고, `article-renderer.mjs`는 프로젝트 문서 정리와 소개 문단 분리를 연결한다. 페이지 조립은 `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `document-navigation.mjs`가 맡는다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
 
-구현은 `src/directives.mjs`(markdown-it 블록·인라인 규칙), `directive-syntax.mjs`(줄 분류, 속성 읽기, 검사), `directive-blocks.mjs`(블록 정의표)다. 새 블록은 정의표에 허용 속성, 놓을 자리, 본문 규칙, 출력을 한 항목으로 추가한다.
+블록·인라인 규칙, 속성 검사, 블록 정의표는 document-engine이 소유한다. 홈페이지에는 별도 Markdown 해석기를 두지 않는다. 새 블록은 document-engine의 정의표에 허용 속성, 놓을 자리, 본문 규칙, 출력을 한 항목으로 추가한 뒤 고정 commit을 올려 가져온다.
 
 ## 코드 블록
 
@@ -300,7 +300,7 @@ const message = "넓은 코드블록";
 
 ### 구문 역할과 색
 
-[IntelliJ Language Defaults](https://plugins.jetbrains.com/docs/intellij/color-scheme-management.html)의 공통 역할을 참고한다. IntelliJ 테마의 색·글꼴을 가져오지 않는다. `code-highlight.mjs`는 문법 분석 결과의 scope를 역할에 연결하고, 테마의 `SyntaxToken`이 `app-syntax-*` 클래스를 출력한다. 색·굵기는 공통 테마의 `color.syntax-*`와 기존 글꼴 토큰이 정한다. 분석기의 인라인 색과 외부 테마 CSS는 출력하지 않는다. 브라우저는 분석기를 내려받지 않는다.
+[IntelliJ Language Defaults](https://plugins.jetbrains.com/docs/intellij/color-scheme-management.html)의 공통 역할을 참고한다. IntelliJ 테마의 색·글꼴을 가져오지 않는다. 문서 엔진의 코드 강조는 문법 분석 결과의 scope를 역할에 연결하고, 테마의 `SyntaxToken`이 `app-syntax-*` 클래스를 출력한다. 색·굵기는 공통 테마의 `color.syntax-*`와 기존 글꼴 토큰이 정한다. 분석기의 인라인 색과 외부 테마 CSS는 출력하지 않는다. 브라우저는 분석기를 내려받지 않는다.
 
 | 역할 | 연결 대상 | 테마 토큰 |
 |---|---|---|
@@ -328,7 +328,7 @@ IntelliJ의 PSI·심볼 해석을 실행하는 것은 아니다. 외부 타입, 
 
 ## 검증
 
-`npm run check:product`는 CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 모든 등록 언어와 별칭, 복사 원문과 동적 본문의 초기화, 제목·각주 ID 충돌, 피드와 상세 구조, 예시 글의 코드 블록 원문 왕복, 테마 토큰이 만드는 본문 치수, 수식 이스케이프·오류 복구·신뢰 차단, 도표 원문 보존과 ID, 수식·도표 자산의 페이지별 선택, 도표 렌더러의 보안 설정과 로더 상태 전환, 구성 블록의 중첩 구조·속성 검사·오류 위치·인라인 이스케이프·ID 중복(`directives.test.mjs`), 구성 요소 간 표시 옵션 호환과 충돌 오류를 확인한다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
+문법 해석과 HTML 출력(CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 등록 언어와 별칭, 구성 블록의 중첩·속성 검사·오류 위치, 각주·제목 ID)은 document-engine의 `npm test`가 확인한다. 홈페이지의 `npm run check:product`는 그 출력을 쓰는 쪽을 확인한다. 소개 문단 분리와 목차, 복사 원문과 동적 본문의 초기화, 탭·갤러리 동작, 피드와 상세 구조, 예시 글의 코드 블록 원문 왕복과 ID 중복(`article-rendering.test.mjs`, `article-renderer.test.mjs`), 테마 토큰이 만드는 본문 치수, 수식 오류 복구와 자산의 페이지별 선택, 도표 원문 보존과 ID, 도표 렌더러의 보안 설정과 로더 상태 전환이 대상이다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
 
 코드와 도표는 공통 `ToolHeader`·`Toolbar`·`ToolButton`의 크기·아이콘·호버·초점·상태 알림을 사용한다. 복사 성공·실패·재시도는 공통 디자인의 `bindToolbar`와 그 시험이 소유한다. 도표의 대체 전체화면은 공통 `bindDiagramHost`가 송신자와 출처를 확인해 처리하고 전체화면 중 높이 알림은 무시한다. 소비자에서 별도 보정 CSS를 추가하지 않는다.
 
