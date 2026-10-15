@@ -18,7 +18,7 @@ test('metadata_uses_one_home_name_and_keeps_preview_without_an_invented_origin',
   assert.match(home, /<title>이름<\/title>/);
   assert.match(home, /name="robots" content="noindex,nofollow"/);
   assert.doesNotMatch(home, /canonical|og:url|example\.invalid/);
-  assert.match(home, /rel="icon" type="image\/svg\+xml" href="data:image\/svg\+xml,/);
+  assert.match(home, /rel="icon" type="image\/svg\+xml" href="\/assets\/site-icon\.svg"/);
   assert.equal(new JSDOM(home).window.document.querySelectorAll('link[rel="icon"]').length, 1);
   const config = { ...context.config, name: '이름 & 글', github: 'https://github.com/example' };
   const page = documentShell({ title: config.name, route: '/' }, '', { ...context, config });
