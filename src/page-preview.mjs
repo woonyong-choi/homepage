@@ -17,13 +17,13 @@ import { siteOrigin } from './publication-metadata.mjs';
 import { publicationLinks } from './publication-routes.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { compileDiagrams } from './diagrams.mjs';
-import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
+import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { THEME_ROOT, THEME_MANIFEST } from './design-package.mjs';
 
 export { publicationLinks, documentRoute } from './publication-routes.mjs';
 export { normalizePublicationAssets } from './publication-assets.mjs';
 
 const SOURCE_ROOT = fileURLToPath(new URL('.', import.meta.url));
-const THEME_ROOT = join(SOURCE_ROOT, 'vendor/theme');
 
 /**
  * 저장 전 전체 Markdown을 기존 홈페이지 페이지로 조립한다.
@@ -57,14 +57,13 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   };
   const selectedSource = loadSource(selected);
   const readContent = path => parseContentSource(path === selected ? selectedSource : loadSource(path), relative(root, path));
-  const manifest = JSON.parse(readFileSync(join(THEME_ROOT, 'manifest.json'), 'utf8'));
   const math = mathAssets();
   const scripts = browserScripts(SOURCE_ROOT);
   const context = {
     config: json('site.json'), tags: json('tags.json'), layout: loadLayoutConfig(pathToFileURL(configRoot + sep)),
     topics: readContent(within(root, topicsFile)).metadata.topics, colorScheme,
     navigation: loadHomeNavigation(root, readContent), preview: true, origin, math,
-    themeHash: manifest.contentHash,
+    themeHash: THEME_MANIFEST.contentHash,
     scriptHash: createHash('sha256').update([...scripts.values()].join('\n')).digest('hex'),
   };
   const readAsset = path => {

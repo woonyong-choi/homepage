@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
-import { initDocumentNavigation } from './vendor/theme/ui/runtime/document-navigation.js';
-import * as ui from './vendor/theme/ui/index.mjs';
+import { initDocumentNavigation } from '@woonyong-choi/design-tokens/ui/runtime/document-navigation.js';
+import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 test('group_titles_toggle_children_and_leaf_titles_keep_their_document_link', () => {
   const dom = new JSDOM(String(ui.DocumentNavigation({ label: 'OS', nodes: [

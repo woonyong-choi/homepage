@@ -15,7 +15,7 @@
 - `content/home.md`, `content/interviews/index.md`, `content/pages/tech.md`: Vault에서 승인받아 가져오는 홈 원고
 - `config/`: 사이트·댓글·태그, Search·CS·Tech·Blog 표시 설정과 승인 목록
 - `src/`: 콘텐츠 해석, 검색·댓글, 경로와 페이지 조립
-- `src/vendor/theme/`: 해시 검증된 디자인 완성본. 직접 수정 금지
+- `package.json`: 디자인(`@woonyong-choi/design-tokens`)·ThinkFlow·문서 엔진의 고정 commit Git 의존성. 사본을 두지 않는다
 - `content/docs/`, `content/blog/`: 승인된 원문의 사본. 직접 수정 금지
 - `content/assets/`, `content/media/`: 사용 중인 콘텐츠 자산과 고지
 - `docs/`: 현재 구현의 설계와 사용 안내
@@ -27,7 +27,7 @@
 - GitHub 이슈에 완료 조건을 정하고 이슈당 브랜치와 PR 하나를 사용한다. 사용자의 병합 권한 안에서 작업한다.
 - 커밋은 `type(scope): 한글 설명` 형식과 사용자 Git 작성자를 사용한다. 작성 도구 표시나 트레일러를 남기지 않는다.
 - 색·글꼴·간격·시간·공통 CSS·아이콘·UI 구성 요소·공통 동작은 design-tokens에서 정의한다. 같은 요소를 홈페이지에서 다시 구현하지 않는다.
-- 컴포넌트는 `src/vendor/theme/ui/index.mjs`에서 가져온다. 공통 마크업이 필요하면 정본에 구성 요소를 추가한다.
+- 컴포넌트는 `@woonyong-choi/design-tokens/ui/index.mjs`에서 가져온다. 공통 마크업이 필요하면 정본에 구성 요소를 추가한다.
 - 디자인 이름은 Tailwind의 `color`, `text`, `spacing`, `radius`, `font`, `duration` 계열을 따른다. 프로젝트 이름을 토큰 이름으로 쓰지 않는다.
 - 비공개 원문 수정 → 명시적 승인 → `content:sync` 순서로 가져온다. 승인 목록에 없는 파일은 공개하지 않는다.
 - 문서 체계는 `category`, `parent`, 고정 ID로 정한다. 폴더는 작성 편의용이며 URL과 계층의 기준이 아니다.

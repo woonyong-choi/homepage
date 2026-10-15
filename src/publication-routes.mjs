@@ -1,7 +1,7 @@
 // 이전 정적 주소도 쿼리와 앵커를 보존해 새 정본 주소로 연결한다.
 import { JSDOM } from 'jsdom';
 import { isDocumentId, FIELDS, TOPIC_GROUPS } from './content-model.mjs';
-import { escape } from './vendor/theme/ui/index.mjs';
+import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 export function legacyRoutes(documents, fields) {
   return new Map([

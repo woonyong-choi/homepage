@@ -11,7 +11,7 @@ import { contentIcon } from './content-icons.mjs';
 import { installDirectives } from './directives.mjs';
 import { DirectiveError, parseOptions, WIDTH_OPTION } from './directive-syntax.mjs';
 import { codeLanguage, highlightCode } from './code-highlight.mjs';
-import * as ui from './vendor/theme/ui/index.mjs';
+import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 // HTML 모양과 변형은 가져온 테마의 구성 요소가 정의한다. 아래 함수는 입력을 정리해 그 구성 요소에 넘기는 어댑터다.
 const { escape, safeUrl, trusted } = ui;

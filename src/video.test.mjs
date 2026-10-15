@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
-import { ControlIcon, RemoteButton, RemoteLink } from './vendor/theme/ui/index.mjs';
+import { ControlIcon, RemoteButton, RemoteLink } from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 globalThis.window = { addEventListener() {}, innerHeight: 800 };
 globalThis.document = { querySelectorAll: () => [], addEventListener() {} };
-const { updateRemote } = await import('./vendor/theme/ui/runtime/video.js');
+const { updateRemote } = await import('@woonyong-choi/design-tokens/ui/runtime/video.js');
 
 function remote(label) {
   const props = { id: 'video', icon: ControlIcon('play') };

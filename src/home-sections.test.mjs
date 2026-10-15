@@ -5,7 +5,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { loadHomeContent, parseHomeSections } from './home-content.mjs';
 import { personalHome } from './publication-layout.mjs';
 import { clientEntrypoints, publicationAssets } from './publication-assets.mjs';
-import { getIconCatalog } from './vendor/theme/ui/build/icons.mjs';
+import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { THEME_ROOT } from './design-package.mjs';
 
 const TECHNOLOGIES = new Set(['python', 'git']);
 const render = (yaml, preview = true) => personalHome({ config: { name: '이름' }, home: parseHomeSections(parseYaml(yaml), { technologies: TECHNOLOGIES }), preview });
@@ -104,7 +105,7 @@ test('interviews_split_in_order_into_ceil_half_rows_after_filtering', () => {
   assert.match(two, /aria-label="인터뷰 카드 1행"[\s\S]*aria-label="인터뷰 카드 2행"/);
   assert.equal((two.match(/data-flow-direction="right"/g) ?? []).length, 1);
   assert.match(two, /<div class="app-interviews" data-flow-rail data-flow-label="인터뷰">[\s\S]*<div class="app-interviews" data-flow-rail data-flow-direction="right" data-flow-label="인터뷰">/);
-  assert.doesNotMatch(readFileSync(new URL('./vendor/theme/styles.css', import.meta.url), 'utf8'), /app-interview-rows[^{]*\{[^}]*align-items: flex-start/);
+  assert.doesNotMatch(readFileSync(`${THEME_ROOT}/styles.css`, 'utf8'), /app-interview-rows[^{]*\{[^}]*align-items: flex-start/);
   const filtered = render(items(3).replace('i1,', 'i1, example: true,'), false);
   assert.deepEqual(rows(filtered), [[0], [2]]);
 });

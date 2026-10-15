@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { browserScripts } from './browser-scripts.mjs';
 import { JSDOM } from 'jsdom';
 import { createMarkdown } from './markdown.mjs';
-import { values } from './vendor/theme/tokens.js';
+import { values } from '@woonyong-choi/design-tokens/tokens.js';
 
 test('appended_code_and_tabs_initialize_without_duplicate_handlers_on_existing_elements', async () => {
   const md = createMarkdown();

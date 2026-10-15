@@ -1,4 +1,4 @@
-import * as ui from './vendor/theme/ui/index.mjs';
+import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 export function collectionNavigation(result, route, { label = '목록 페이지', before = '이전', after = '다음', summary } = {}) {
   if (result.totalPages <= 1) return '';

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
-import { readIcon } from './vendor/theme/ui/build/icons.mjs';
+import { readIcon } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 import { publicationMetadata, siteOrigin } from './publication-metadata.mjs';
 import { documentShell } from './publication-layout.mjs';
 import { siteIdentity } from './site-identity.mjs';

@@ -1,6 +1,6 @@
 // 디렉티브 블록과 인라인 표기의 정의. 각 항목이 허용 속성, 놓을 수 있는 자리, 본문 규칙, 출력을 정한다.
 // 출력 HTML은 기존 `ui:` 구성 요소가 쓰는 클래스를 그대로 쓴다.
-import { CARD_VARIANTS } from './vendor/theme/ui/index.mjs';
+import { CARD_VARIANTS } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { TAB_ATTRIBUTES, WIDTH_OPTION } from './directive-syntax.mjs';
 
 const PLACES = ['root', 'tab'];

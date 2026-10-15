@@ -2,15 +2,15 @@
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
-import { SOCIAL_ICONS } from './vendor/theme/ui/index.mjs';
-import { iconFile } from './vendor/theme/ui/build/icons.mjs';
+import { SOCIAL_ICONS } from '@woonyong-choi/design-tokens/ui/index.mjs';
+import { iconFile } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { THEME_ROOT as THEME } from './design-package.mjs';
 import { summaryParts } from './interviews.mjs';
 import { readContentFile } from './content-files.mjs';
 
 export const HOME_CONTENT = 'home.md';
 export const LOCAL_INTERVIEWS = 'interviews.local.md';
 const ROOT = fileURLToPath(new URL('../content/', import.meta.url));
-const THEME = fileURLToPath(new URL('./vendor/theme/', import.meta.url));
 const RESERVED_IDS = ['main'];
 const IMAGE_TYPES = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.avif'];
 const VIDEO_TYPES = ['.mp4', '.webm'];
