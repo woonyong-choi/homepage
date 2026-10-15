@@ -9,13 +9,13 @@ import { readDocument, publicDocuments, searchEntry, FIELDS, TOPIC_GROUPS, blogD
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
-import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchPage, tagPage, iconUrl, FIELD_NAMES, categoryEntries } from './publication-layout.mjs';
+import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchPage, tagPage, notFoundPage, iconUrl, FIELD_NAMES, categoryEntries } from './publication-layout.mjs';
 import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
 import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { brandNames } from './brand-icons.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
-import { replacePublication } from './publication-output.mjs';
+import { replacePublication, NOT_FOUND_FILE } from './publication-output.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
 import { browserScripts } from './browser-scripts.mjs';
@@ -102,7 +102,8 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
     if (output.has(old) || !output.has(target)) throw new Error(`invalid publication redirect: ${old}`);
     output.set(old, redirectPage(target, origin));
   }
-  await writeSite(output, documents, context, scripts);
+  const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), context);
+  await writeSite(output, documents, context, scripts, notFound);
   return { pages: output.size, documents: documents.length, themeHash: MANIFEST.contentHash };
 }
 
@@ -131,17 +132,20 @@ async function renderDocuments(documents, options) {
 
 
 
-async function writeSite(output, documents, context, scripts) {
+async function writeSite(output, documents, context, scripts, notFound) {
+  // 404 문서는 경로가 아닌 파일로 싣지만 스타일 선별과 자산 수집에는 다른 페이지처럼 포함한다.
+  const rendered = new Map([...output, [NOT_FOUND_FILE, notFound]]);
   const sourceStyles = readFileSync(join(THEME, 'styles.css'), 'utf8');
-  const styles = await publicationStyles(sourceStyles, output, scripts, readFileSync(join(THEME, 'tokens.css'), 'utf8'));
+  const styles = await publicationStyles(sourceStyles, rendered, scripts, readFileSync(join(THEME, 'tokens.css'), 'utf8'));
   const stylePath = '/theme/publication.css';
   const styleHash = digest(styles.css);
-  for (const [route, html] of output) {
-    output.set(route, html.replace(`/theme/styles.css?v=${context.themeHash}`, `${stylePath}?v=${styleHash}`));
+  for (const [route, html] of rendered) {
+    rendered.set(route, html.replace(`/theme/styles.css?v=${context.themeHash}`, `${stylePath}?v=${styleHash}`));
   }
+  for (const route of output.keys()) output.set(route, rendered.get(route));
   const files = new Map([...scripts].map(([file, source]) => [`/${file}`, source]));
   const index = { entries: documents.map(page => ({ ...searchEntry(page, TAGS), iconUrl: iconUrl(page.contentIcon), example: !!page.example })), tags: TAGS };
-  const assets = new Map([...context.identity.assets, ...publicationAssets(output, index.entries, path => context.identity.assets.get(path) ?? context.projectAssets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
+  const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.projectAssets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
   for (const [path, content] of context.diagrams) assets.set(path, content);
   for (const name of ['LICENSE', 'NOTICE']) {
     const path = '/assets/projects/thinkflow/' + name;
@@ -156,6 +160,7 @@ async function writeSite(output, documents, context, scripts) {
   files.set('/blog/feed.xml', `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escape(siteTitle(CONFIG))}</title><link>${escape(context.origin + '/blog/')}</link><description>${escape(CONFIG.description)}</description>${posts.map(page => `<item><title>${escape(page.title)}</title><link>${escape(context.origin + page.route)}</link><guid isPermaLink="false">${page.id}</guid><pubDate>${new Date(page.publishedAt).toUTCString()}</pubDate><description>${escape(page.description)}</description></item>`).join('')}</channel></rss>`);
   files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].filter(route => route !== '/search/' && !context.redirects.has(route)).map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
   files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: documents.length, examples: documents.filter(page => page.example).length, preview: context.preview, commentsStatus: context.commentsStatus, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
+  files.set(NOT_FOUND_FILE, rendered.get(NOT_FOUND_FILE));
   files.set('/robots.txt', context.preview ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\nSitemap: ${context.origin}/sitemap.xml\n`);
   replacePublication(OUTPUT, output, files);
 }
