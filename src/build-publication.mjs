@@ -13,7 +13,7 @@ import { documentShell, personalHome, wikiLanding, articlePage, projectSection, 
 import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
 import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
-import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { brandNames } from './brand-icons.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
 import { replacePublication } from './publication-output.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
@@ -40,7 +40,6 @@ const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
 const CONFIG = JSON.parse(readFileSync(join(SETTINGS, 'site.json')));
 const TOPICS = readContentFile(join(CONTENT, publicationTopicsFile())).metadata.topics;
 const TAGS = JSON.parse(readFileSync(join(SETTINGS, 'tags.json')));
-const BRAND_NAMES = Object.keys(getIconCatalog().brands);
 const digest = value => createHash('sha256').update(value).digest('hex');
 
 export async function buildPublication({ origin = '', preview = true } = {}) {
@@ -71,7 +70,7 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   const context = { config: CONFIG, layout: LAYOUT, navigation: loadHomeNavigation(CONTENT), topics: TOPICS, tags: TAGS, topicTrees, origin, preview, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
   context.projectAssets = projects.assets;
-  context.home = loadHomeContent(new Set(BRAND_NAMES), CONTENT, { preview });
+  context.home = loadHomeContent(brandNames(), CONTENT, { preview });
   const output = new Map();
   const add = (route, title, body, metadata = {}) => {
     if (output.has(route)) throw new Error(`duplicate publication route: ${route}`);
