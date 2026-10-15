@@ -1,6 +1,6 @@
 // 로컬 정적 미리보기. 영상 탐색을 위한 바이트 범위 요청을 지원한다.
 import { createServer } from 'node:http';
-import { createReadStream, statSync } from 'node:fs';
+import { createReadStream, readFileSync, statSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -10,7 +10,7 @@ const port = Number(option('--port', '8796'));
 const host = option('--host', '127.0.0.1');
 const root = resolve(option('--root', fileURLToPath(new URL('../dist/site/', import.meta.url))));
 const mime = { '.html':'text/html; charset=utf-8', '.css':'text/css', '.js':'text/javascript', '.mjs':'text/javascript', '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg', '.jpeg':'image/jpeg', '.gif':'image/gif', '.webp':'image/webp', '.avif':'image/avif', '.webm':'video/webm', '.mp4':'video/mp4', '.woff2':'font/woff2', '.md':'text/plain; charset=utf-8', '.xml':'application/xml' };
-createServer((request, response) => {
+const server = createServer((request, response) => {
   try {
     if (!['GET','HEAD'].includes(request.method)) { response.writeHead(405); response.end(); return; }
     const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
@@ -35,5 +35,16 @@ createServer((request, response) => {
     if (request.method === 'HEAD' || stat.size === 0) { response.end(); return; }
     const stream = createReadStream(path, { start,end });
     stream.on('error', () => response.destroy()); stream.pipe(response);
-  } catch { response.writeHead(404, {'content-type':'text/plain; charset=utf-8'}); response.end('페이지를 찾을 수 없습니다.'); }
-}).listen(port, host, () => console.log(`Preview: http://${host}:${port}/`));
+  } catch { notFound(request, response); }
+});
+// 없는 경로는 빌드한 404 문서를 404 상태로 돌려준다. 발행 결과가 없으면 글자 응답으로 대신한다.
+function notFound(request, response) {
+  let body;
+  try { body = readFileSync(resolve(root, '404.html')); }
+  catch {
+    response.writeHead(404, {'content-type':'text/plain; charset=utf-8'}); response.end('페이지를 찾을 수 없습니다.'); return;
+  }
+  response.writeHead(404, { 'content-type': mime['.html'], 'content-length': body.length, 'cache-control':'no-cache', 'x-content-type-options':'nosniff' });
+  response.end(request.method === 'HEAD' ? undefined : body);
+}
+server.listen(port, host, () => console.log(`Preview: http://${host}:${server.address().port}/`));
