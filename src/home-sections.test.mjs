@@ -5,7 +5,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { loadHomeContent, parseHomeSections } from './home-content.mjs';
 import { personalHome } from './publication-layout.mjs';
 import { clientEntrypoints, publicationAssets } from './publication-assets.mjs';
-import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { brandNames } from './brand-icons.mjs';
 import { THEME_ROOT } from './design-package.mjs';
 
 const TECHNOLOGIES = new Set(['python', 'git']);
@@ -167,7 +167,7 @@ test('newsletter_without_endpoint_keeps_controls_disabled_and_never_posts', () =
   assert.match(live, /<a href="https:\/\/example.com\/privacy">개인정보<\/a>/);
   assert.throws(() => render(`${base}\n    endpoint: http://subscribe.example.com`), /sections\[0\]\.endpoint.*HTTPS/);
   assert.match(render('sections:\n  - { id: contact, type: contact, email: hello@example.com }'), /href="mailto:hello@example.com"/);
-  const home = loadHomeContent(new Set(Object.keys(getIconCatalog().brands)));
+  const home = loadHomeContent(brandNames());
   const shipped = personalHome({ config: { name: '이름' }, home });
   assert.match(shipped, /<h1 class="app-sr">백엔드 엔지니어<\/h1>/);
   assert.match(shipped, /<svg[^>]*class="app-hero-wordmark"[^>]*aria-hidden="true"/);
@@ -178,8 +178,7 @@ test('newsletter_without_endpoint_keeps_controls_disabled_and_never_posts', () =
 });
 
 test('the_shipped_interviews_section_shows_its_title_description_and_two_social_links', () => {
-  const brands = Object.keys(getIconCatalog().brands);
-  const interviews = loadHomeContent(new Set(brands)).find(section => section.type === 'interviews');
+  const interviews = loadHomeContent(brandNames()).find(section => section.type === 'interviews');
   assert.equal(interviews.description, '함께 일한 동료들이 들려주는 저에 대한 이야기입니다.');
   assert.equal(interviews.title, '사람들이 하는 말');
   assert.deepEqual(interviews.links.map(item => [item.icon, Boolean(item.href)]), [['github', true], ['linkedin', true]]);
@@ -187,16 +186,14 @@ test('the_shipped_interviews_section_shows_its_title_description_and_two_social_
 });
 
 test('the_shipped_home_content_omits_projects_from_the_visible_sections', () => {
-  const brands = Object.keys(getIconCatalog().brands);
-  const home = loadHomeContent(new Set(brands));
+  const home = loadHomeContent(brandNames());
   assert.deepEqual(home.map(section => section.type), ['hero', 'technologies', 'interviews', 'contact']);
   assert.equal(home[1].title, '기술과 생각');
   assert.equal(home[1].description, '개발 과정에서 마주한 질문과 지식을 정리하고 기록합니다.');
 });
 
 test('the_shipped_hero_plays_the_selected_local_video_from_the_beginning', () => {
-  const brands = Object.keys(getIconCatalog().brands);
-  const hero = loadHomeContent(new Set(brands)).find(section => section.type === 'hero');
+  const hero = loadHomeContent(brandNames()).find(section => section.type === 'hero');
   assert.equal(hero.video.src, '/media/woonyong-interview.mp4');
   assert.equal(hero.action.href, undefined);
   for (const name of ['woonyong-interview.mp4', 'woonyong-interview-poster.jpg']) assert.ok(existsSync(new URL(`../content/media/${name}`, import.meta.url)));
