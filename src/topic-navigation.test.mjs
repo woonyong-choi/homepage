@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { documentPager } from './document-navigation.mjs';
-import { createMarkdown } from './markdown.mjs';
+import { renderArticle } from './article-renderer.mjs';
 import { JSDOM } from 'jsdom';
 
 function page(slug, parent, changes = {}) {
@@ -99,8 +99,8 @@ test('document_pager_uses_sidebar_order_without_crossing_topics_or_including_blo
 });
 
 // 문서 순서 탐색은 관련 문서 뒤, 댓글 앞에서 공통 카드와 방향 이름을 유지한다.
-test('wiki_pager_keeps_related_cards_and_document_cards_before_comments', () => {
-  const body = createMarkdown().render(':::cards related\n::card title="관련 문서" href=/docs/related/\n:::end');
+test('wiki_pager_keeps_related_cards_and_document_cards_before_comments', async () => {
+  const body = (await renderArticle({ id: 'root', description: '', body: ':::cards related\n::card title="관련 문서" href=/docs/related/\n:::end' })).html;
   const root = page('root', null, { sourceUrl: 'https://example.com/source', html: body });
   const pages = [root, page('child', 'root')];
   const html = articlePage(root, { topicTrees: createTopicTrees(pages),

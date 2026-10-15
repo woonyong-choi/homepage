@@ -4,7 +4,7 @@ import { test } from 'node:test';
 
 // 공통 디자인(설치한 @woonyong-choi/design-tokens)의 출처는 design-tokens가 검사한다. 여기서는 홈페이지가 직접 싣는 파일만 본다.
 const root = new URL('../', import.meta.url).pathname;
-const SKIP = new Set(['node_modules', '.git', 'dist', 'src/vendor', '.content-sync.lock']);
+const SKIP = new Set(['node_modules', '.git', 'dist', '.content-sync.lock']);
 const ORIGINS = new Set(['project-original', 'third-party', 'user-provided']);
 const THIRD_PARTY_NAMES = [/-io\d{2}\.[a-z0-9]+$/i, /^fancysection-/i, /^arrivals-/i, /^bezel-/i];
 const BLOCKED_LINK = /(?:url\(|src=|poster=|!\[[^\]]*\]\()["']?https?:\/\/([^/"')\s]*\.)?culturedcode\.com\//i;

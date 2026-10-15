@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { readProjectDocuments, projectRoute, projectReference } from './project-documents.mjs';
-import { createMarkdown } from './markdown.mjs';
 import { renderArticle } from './article-renderer.mjs';
 
 const { documents, assets } = readProjectDocuments();

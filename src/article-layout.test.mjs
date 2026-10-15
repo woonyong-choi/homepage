@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
-import { createMarkdown } from './markdown.mjs';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { blogFeed } from './blog-layout.mjs';
