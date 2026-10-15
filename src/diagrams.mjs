@@ -2,8 +2,10 @@
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { compileDiagram } from 'document-engine';
+import { assertInstalledEngine } from './document-engine-pin.mjs';
 
 export async function compileDiagrams(sources) {
+  assertInstalledEngine();
   const shared = JSON.parse(readFileSync(new URL('./vendor/theme/manifest.json', import.meta.url)));
   const renderer = JSON.parse(readFileSync(createRequire(import.meta.url).resolve('thinkflow/design-manifest.json')));
   if (shared.contentHash !== renderer.contentHash) throw new Error('ThinkFlow와 홈페이지의 공통 디자인 버전이 다릅니다.');

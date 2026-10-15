@@ -224,6 +224,8 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 패키지 입력은 Git에서 제외된 `dist/document-engine-0.0.0.tgz`이며 `package-lock.json`의 integrity로 고정한다. `config/document-engine.json`은 엔진·디자인 커밋과 패키지 SHA-256을 소유한다. 검증과 배포 워크플로는 같은 composite action으로 고정된 원본을 읽기 전용 키로 가져와 패키지를 만들고 해시를 확인한 뒤 설치한다. 저장소 주소와 키는 Actions secrets로 전달한다. 비공개 소스와 패키지는 공개 저장소·배포 산출물에 포함하지 않으며, 배포에는 `dist/site`만 업로드한다. 로컬에서는 같은 패키지를 준비한 뒤 설치한다.
 
+엔진은 자기 위치에서 찾은 `thinkflow`로 도표를 만들고 자기 `design-input.json`의 디자인을 싣는다. 따라서 `designCommit`은 엔진의 디자인 입력 commit과 같고, 홈페이지의 `thinkflow` 고정값은 엔진 의존과 같은 설치여야 한다. 값이 다르면 npm이 엔진 아래에 별도 렌더러를 두므로 `document-engine-pin.mjs`가 시험과 도표 컴파일에서 거절한다. 공통 디자인이나 렌더러를 바꾸는 갱신은 먼저 엔진 저장소에서 디자인 입력과 `thinkflow` 의존을 같은 값으로 올린 commit을 만들고, 그 commit과 디자인 commit으로 패키지를 다시 만들어 `sourceCommit`·`designCommit`·`sha256`과 `package-lock.json`의 integrity를 함께 갱신한다. 자동 디자인 갱신 브랜치는 이 세 값의 변경을 허용하며 병합 전 검증이 고정 commit에서 패키지를 다시 만들어 해시와 설치 일치를 확인한다.
+
 
 ### 저장 전 페이지 미리보기
 

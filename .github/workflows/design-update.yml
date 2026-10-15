@@ -27,7 +27,7 @@ jobs:
           git fetch origin main
           git diff --name-only origin/main...HEAD > changed-files.txt
           test -s changed-files.txt
-          if grep -Ev '^(src/vendor/theme/|package\.json$|package-lock\.json$|content/projects/thinkflow/|config/project-documents\.json$)' changed-files.txt; then
+          if grep -Ev '^(src/vendor/theme/|package\.json$|package-lock\.json$|content/projects/thinkflow/|config/project-documents\.json$|config/document-engine\.json$)' changed-files.txt; then
             echo '::error::The update includes application changes.'
             exit 1
           fi
