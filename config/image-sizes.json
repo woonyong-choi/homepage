@@ -1,36 +1,4 @@
 {
-  "10-reminders-mac.png": [
-    1000,
-    1500
-  ],
-  "2-today-mac.png": [
-    1000,
-    1500
-  ],
-  "3-upcoming-iphone.png": [
-    500,
-    888
-  ],
-  "3-upcoming-mac-2.png": [
-    1000,
-    1300
-  ],
-  "4-headings-mac.png": [
-    1000,
-    1312
-  ],
-  "5-checklists-mac-2.png": [
-    1000,
-    1362
-  ],
-  "7-quickfind-mac.png": [
-    1000,
-    742
-  ],
-  "bezel-iphone6-overlay.svg": [
-    495,
-    905
-  ],
   "https://picsum.photos/seed/bounded-queue/960/540": [
     960,
     540
@@ -54,13 +22,5 @@
   "https://picsum.photos/seed/transaction-boundary/800/1000": [
     800,
     1000
-  ],
-  "repeating-comparison-1-io80.png": [
-    1360,
-    680
-  ],
-  "repeating-comparison-2-io80.png": [
-    1360,
-    680
   ]
 }

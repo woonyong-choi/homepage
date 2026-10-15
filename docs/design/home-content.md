@@ -139,7 +139,7 @@ items:
 
 ## 자산 출처
 
-프로젝트 구간은 실제 내용을 채우기 전까지 꺼 둔다. 프로젝트 기본 그림은 공통 테마의 `assets/illustrations/`에서 가져온다. 사용 중인 외부 자산의 출처는 `config/assets.json`에 있다. 구간의 구조와 배치는 공통 `Section`, `SectionIntro` 구성 요소가 소유한다.
+프로젝트 구간은 실제 내용을 채우기 전까지 꺼 둔다. 프로젝트 기본 그림은 공통 테마의 `assets/illustrations/`에서 가져온다. `content/assets/`와 `content/media/`의 모든 파일은 `config/assets.json`에 출처(`origin`)와 라이선스(`license`) 기록을 가진다. 제3자 파일은 원본 `https` 주소와 고지 파일을 함께 적는다. 출처나 라이선스 기록이 없는 그림과 Things 웹사이트(culturedcode.com)의 파일·파일 이름 형식(`-io80`, `bezel-` 등)은 싣지 않는다. `src/asset-provenance.test.mjs`가 `npm run check:product`에서 이를 검사한다. 구간의 구조와 배치는 공통 `Section`, `SectionIntro` 구성 요소가 소유한다.
 
 `content/assets/who-knows.svg`는 상단 브랜드이며 공통 `assets/fonts/inter-display-black.woff2`의 Inter Display Black을 사용한다. `content/assets/backend-engineer.svg`는 소개 제목이며 공통 `assets/fonts/pretendard-variable.woff2`의 Black(900)을 사용한다. 두 SVG는 글꼴의 기본 kerning과 글자 윤곽을 도형으로 변환한 콘텐츠 자산이다. 화면에는 윤곽만 삽입하므로 추가 웹폰트를 요청하지 않는다. 글꼴 원본과 SIL Open Font License는 공통 `assets/fonts/`에서 관리한다.
 

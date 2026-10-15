@@ -511,14 +511,18 @@ Things 블로그 글에 있는 작은 글씨 문단과 두 열 이미지 묶음�
 }
 ```
 
+두 열 이미지 묶음의 원문은 다음과 같습니다. `src`에는 `assets` 폴더의 그림 파일 이름을 적습니다.
+
+````markdown
 ```ui:figure-grid
 {
   "items": [
-    { "src": "2-today-mac.png", "alt": "오늘 목록 화면", "caption": "둥근 모서리와 링크가 있는 이미지", "rounded": true, "href": "https://example.com/" },
-    { "src": "10-reminders-mac.png", "alt": "알림 화면", "caption": "모서리가 없는 이미지", "href": "/articles/markdown-guide/" }
+    { "src": "screen-1.png", "alt": "첫 화면", "caption": "둥근 모서리와 링크가 있는 이미지", "rounded": true, "href": "https://example.com/" },
+    { "src": "screen-2.png", "alt": "둘째 화면", "caption": "모서리가 없는 이미지", "href": "/articles/markdown-guide/" }
   ]
 }
 ```
+````
 
 열 수는 `columns`(1~6)로, 최소 열 너비는 `size`(`small`, `large`)로 정합니다. 정하지 않으면 원본처럼 폭에 맞춰 열이 늘고 줄어듭니다.
 
