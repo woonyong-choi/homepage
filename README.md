@@ -30,7 +30,7 @@ npm run build:site
 npm run dev
 ```
 
-미리보기는 `http://localhost:8796/`이다. `/docs/`에서 문서와 블로그를 함께 검색하고 `/blog/all/`에서 블로그 카드를 본다. `dist/site/`가 정적 산출물이다. 운영 발행은 확정된 HTTPS 주소를 `SITE_ORIGIN`으로 지정하고 `npm run build:site -- --production`을 실행한다. 운영 빌드는 예시 글과 비공개 입력을 제외한다.
+미리보기는 `http://localhost:8796/`이다. `/docs/`에서 문서와 블로그를 함께 검색하고 `/blog/all/`에서 블로그 카드를 본다. `dist/site/`가 정적 산출물이다. 없는 주소는 같은 사이트 틀의 `404.html`을 404 상태로 보여 준다. 운영 발행은 확정된 HTTPS 주소를 `SITE_ORIGIN`으로 지정하고 `npm run build:site -- --production`을 실행한다. 운영 빌드는 예시 글과 비공개 입력을 제외한다.
 
 브라우저 탭은 문서 모양 파비콘 없이 제목을 표시한다. 홈 소개는 공통 제목 영역에서 줄바꿈하며 좁은 화면에서는 여러 줄을 허용한다.
 
