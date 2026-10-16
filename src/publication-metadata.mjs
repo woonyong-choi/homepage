@@ -2,6 +2,8 @@
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { iconFile } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 
+// 브라우저 탭 아이콘. 지금은 투명한 자리표시이며 표식이 정해지면 이 파일만 바꾼다.
+export const FAVICON = '/assets/site-icon.svg';
 export const SITE_ICON = `/theme/assets/icons/${iconFile('document')}`;
 
 export function siteTitle(config) {
@@ -29,7 +31,7 @@ export function publicationMetadata(page, context) {
   const meta = (key, value, attribute = 'property') => `<meta ${attribute}="${key}" content="${escape(value)}">`;
   let html = `<title>${escape(title)}</title>${meta('description', description, 'name')}${preview || page.noindex ? meta('robots', 'noindex,nofollow', 'name') : ''}`;
   if (identity) html += `<link rel="apple-touch-icon" sizes="180x180" href="${identity.touch}">`;
-  html += '<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22/%3E">';
+  html += `<link rel="icon" type="image/svg+xml" href="${FAVICON}">`;
   if (!origin || page.noindex) return html;
   const canonical = origin + page.route;
   html += `<link rel="canonical" href="${escape(canonical)}">`;
