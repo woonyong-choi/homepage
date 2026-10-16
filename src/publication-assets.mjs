@@ -6,9 +6,10 @@ const ORIGIN = 'https://publication.invalid';
 const ICON_CATALOG = getIconCatalog();
 const ICON_NOTICES = [...new Set([...ICON_CATALOG.libraries, ...Object.values(ICON_CATALOG.brands)].map(item => item.notice).filter(Boolean))].map(file => `/theme/assets/icons/${file}`);
 const ASSET_ROOTS = ['/theme/', '/assets/', '/media/', '/katex/'];
+// Pretendard는 unicode-range 부분 집합 여러 개로 나뉘며 모두 같은 OFL 고지를 따른다.
+const PRETENDARD_SUBSETS = '/theme/assets/fonts/pretendard-variable/';
 const ASSET_NOTICES = new Map([
   ['/media/manta-code-blocks-poster.png', '/media/manta-code-blocks-LICENSE.txt'],
-  ['/theme/assets/fonts/pretendard-variable.woff2', '/theme/assets/fonts/pretendard-license.txt'],
   ['/theme/assets/fonts/jetbrains-mono-regular.woff2', '/theme/assets/fonts/jetbrains-mono-license.txt'],
   ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
   ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],
@@ -52,7 +53,7 @@ export function publicationAssets(pages, searchEntries, readAsset) {
     const content = readAsset(path);
     files.set(path, content);
     // 화면에서 요청하지 않는 고지도 해당 자산의 배포 의존성이다.
-    const notice = path.startsWith('/katex/fonts/') ? '/katex/LICENSE' : ASSET_NOTICES.get(path);
+    const notice = path.startsWith('/katex/fonts/') ? '/katex/LICENSE' : path.startsWith(PRETENDARD_SUBSETS) ? '/theme/assets/fonts/pretendard-license.txt' : ASSET_NOTICES.get(path);
     if (notice) include(notice);
     const references = path.endsWith('.css') ? styleReferences(content.toString()) : path.endsWith('.svg') ? markupReferences(content.toString()) : [];
     for (const dependency of references) include(dependency, path);
