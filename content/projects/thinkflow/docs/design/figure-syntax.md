@@ -359,7 +359,7 @@ scene "소비자 하나가 느려진다" for=6s status="slow=warn"
 - 자기 자신으로 가는 선과, 그룹과 그 안 모든 하위 카드와 그룹 사이의 선은 오류다. 예외는 상태와 클래스의 자기 연결, 한 격자의 서로 다른 두 칸을 잇는 선(`g.a -> g.b`, 라벨 없음), 테이블이나 API 카드의 서로 다른 두 열을 잇는 선(`products.parent_id -> products.id`, 자기 참조 외래 키 `fk=`도 같다, 라벨 가능)이다. 같은 열끼리, 카드 전체를 잇는 선, 한쪽만 열인 선은 오류다.
 - 모든 선은 두 끝을 함께 담은 그래프 보기가 하나 이상 있어야 한다. 없으면 `edge a -> b is not drawn: no graph view holds both "a" and "b"` 오류다(외래 키 선은 열 줄에서 알린다).
 - `head`는 화살촉 자리다. `end`(기본값)는 도착 끝, `both`는 양 끝, `none`은 없는 무방향 선이다. 이동 점은 `head`와 상관없이 적은 방향(`a -> b`)으로 가고 거꾸로 이동도 선을 따라간다.
-- `dashed` 선은 비동기 흐름이나 선택적 흐름이다. 점선 테두리 카드(`external`)와 뜻이 다르다. `quiet` 선은 그 선을 처음 지나는 박자부터 그 장면 끝까지만 보인다. 한 번도 지나지 않는 `quiet` 선은 [그림 검사](figure-check.md) 11번 경고가 난다.
+- `dashed` 선은 비동기 흐름이나 선택적 흐름이다. 점선 테두리 카드(`external`)와 뜻이 다르다. `quiet` 선은 그 선을 처음 지나는 박자부터 그 장면 끝까지만 보인다. 정지 장면(`mode=static`)과 멈춘 출력(멈춘 SVG, 움직임 줄이기 층)에서는 드러낼 움직임이 없으므로 평소 모습으로 보인다. 한 번도 지나지 않는 `quiet` 선은 [그림 검사](figure-check.md) 11번 경고가 난다.
 - `badge`, `icon`, `count`, `border`는 어느 카드나 그룹에서든 같은 규칙이다. `person`의 `icon`을 생략하면 `user`다.
 
 #### 번호, 배지, 아이콘, 복제 개수
@@ -695,7 +695,7 @@ scene "같은 시각에 요청한다" for=8s
 - 값 목록에 없는 색 이름(`brand`, `amber`, `teal`, `navy`, `pink`, `sky` 포함)은 일반 값 목록 오류다.
 - 옮기는 명령과 폐기 안내 옵션은 없다. 모르는 명령과 옵션은 일반 사용법 오류(종료 2)다.
 - 마크다운 이미지 줄과 SVG에 이 도구가 남기는 소유 표시는 `<!-- thinkflow -->`와 `<!-- thinkflow md v2 ... -->`뿐이다. 다른 표시가 붙은 파일과 줄, ` ```muto ` 같은 다른 울타리는 사용자의 것이라 읽거나 가져가거나 덮어쓰지 않는다.
-- 명령 `render`와 `md`의 `--scene n|이름`은 SVG로 만들 장면을 고른다(생략하면 첫 장면, 번호는 1부터). 숫자만으로 된 장면 이름은 문법이 받지 않아 숫자는 늘 번호다. 장면 수를 넘는 번호, 없는 이름, 장면이 없는 원본에 준 `--scene`은 오류다.
+- 명령 `render`와 `md`의 `--scene n|이름`은 SVG로 만들 장면을 고른다(`render`는 생략하면 첫 장면, `md`는 장면이 둘 이상인 블록을 생략하면 모든 장면이다. 번호는 1부터). 숫자만으로 된 장면 이름은 문법이 받지 않아 숫자는 늘 번호다. 장면 수를 넘는 번호, 없는 이름, 장면이 없는 원본에 준 `--scene`은 오류다.
 
 ### 문법 표
 
@@ -707,8 +707,8 @@ scene "같은 시각에 요청한다" for=8s
 | 선언 | 테이블 블록 안 | `pk (열, ...)`, `unique (열, ...)`, `fk (열, ...) -> 테이블 (열, ...)` |
 | 시작 선언 | 문서 줄 | `thinkflow` |
 | 머리 | 문서 줄 | `title`, `subtitle`, `pace`, `aspect`, `width` |
-| 선언 | 문서 줄 | `person`, `box`, `external`, `store`, `decision`, `queue`, `state`, `group`, `grid`, `icons`, `value`, `on node id+N`, `start`, `final`, `table`, `api id "METHOD /url" {`, `class`, `interface`, `chart id "title" type ["subtitle"] {`, `trace id "title" [unit=ms] {`, `view graph|sequence|plot|time ["label"] [{]`, `a -> b` |
-| 선언 | 격자 블록 안 | `item`, `gap` |
+| 선언 | 문서 줄 | `person`, `box`, `external`, `store`, `decision`, `queue`, `state`, `group`, `grid`, `icons`, `value`, `on node id+N`, `start`, `final`, `table`, `api id "METHOD /url" {`, `class`, `interface`, `chart id "title" type ["subtitle"] {`, `trace id "title" [unit=ms] {`, `view graph|sequence|plot|time|timing ["label"] [{]`, `a -> b` |
+| 선언 | 격자 블록 안 | `item id "글" ["보조 글"]`, `gap`, `region "글" [row=N] [rows=N]` |
 | 선언 | 카드 본문 안 | `text`, `graph` |
 | 선언 | 클래스 블록 안 | `field`, `method` |
 | 선언 | 추적 블록 안 | `span` |
@@ -721,7 +721,7 @@ scene "같은 시각에 요청한다" for=8s
 | `fragment.times` | 양의 정수 |
 | `fragment.run` | `on`, `off` |
 | `group.direction` | `right`, `down` |
-| `group.border` | `solid`, `dashed` |
+| `group.dashed` | 값 없음(낱말만) |
 | `group.badge` | 글, 최대 8자 |
 | `group.icon` | 이름 또는 세트:이름 |
 | `group.tone` | `blue`, `yellow`, `red`, `green`, `orange`, `purple`, `cyan`, `gray` |
@@ -785,17 +785,21 @@ scene "같은 시각에 요청한다" for=8s
 | `series.key` | 글 |
 | `point.series` | 계열 이름 |
 | `trace.unit` | `ms`, `us`, `s` |
-| `span.lane` | 도형 이름 |
+| `span.lane` | 카드 이름 또는 "레인 이름" |
 | `span.at` | 0 이상 숫자 |
 | `span.dur` | 0보다 큰 숫자 |
 | `grid.rows` | 양의 정수 |
 | `grid.cols` | 양의 정수 |
+| `grid.unit` | 단위 이름(bit, byte 등) |
 | `item.key` | 글 |
+| `item.open` | 값 없음(낱말만) |
 | `item.row` | 0 이상 정수 |
 | `item.col` | 0 이상 정수 |
 | `item.rows` | 양의 정수 |
 | `item.cols` | 양의 정수 |
 | `gap.count` | 양의 정수 |
+| `region.row` | 0 이상 정수 |
+| `region.rows` | 양의 정수 |
 | `light.x` | 숫자 |
 | `column.pk` | 값 없음(낱말만) |
 | `column.unique` | 값 없음(낱말만) |
@@ -817,7 +821,7 @@ scene "같은 시각에 요청한다" for=8s
 | `histogramMeasure` | `bins.measure` | `count`, `probability`, `density` | `count` |
 | `fragmentRun` | `fragment.run` | `on`, `off` | 없음 |
 | `direction` | `group.direction` | `right`, `down` | `right` |
-| `viewStrategy` |  | `graph`, `sequence`, `plot`, `time` | 없음 |
+| `viewStrategy` |  | `graph`, `sequence`, `plot`, `time`, `timing` | 없음 |
 | `sceneMode` | `scene.mode` | `static`, `once`, `loop` | 줄이 있는 장면은 `once`, 줄이 없는 장면은 `static` |
 | `traceUnit` | `trace.unit` | `ms`, `us`, `s` | `ms` |
 | `scale` | `scale 값` | `linear`, `log` | `linear` |
@@ -829,7 +833,6 @@ scene "같은 시각에 요청한다" for=8s
 | `head` | `edge.head` | `end`, `both`, `none` | `end` |
 | `shape` | `box.shape` | `rect`, `circle`, `tile` | `rect` |
 | `width` | `width 값` | `standard`, `wide` | `standard` |
-| `border` | `group.border` | `solid`, `dashed` | `solid` |
 | `status` | `scene.status` | `ok`, `warn`, `fail`, `wait` | 없음 |
 | `deleteAction` | `foreignKey.ondelete` | `restrict`, `cascade`, `set-null`, `no-action` | 없음 |
 | `relation` | `relation.relation` | `association`, `dependency`, `inheritance`, `realization`, `aggregation`, `composition` | `association` |
