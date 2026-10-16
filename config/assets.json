@@ -12,6 +12,12 @@
     "note": "Inter Display Black 글자 윤곽을 도형으로 변환한 브랜드. 글꼴(OFL-1.1)은 design-tokens assets/fonts에서 관리한다."
   },
   {
+    "file": "assets/site-icon.svg",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "브라우저 탭 아이콘 자리표시. 내용 없는 투명 32×32 SVG이며 사이트 표식이 정해지면 같은 경로의 파일을 바꾼다."
+  },
+  {
     "file": "assets/company-j2ysoft.png",
     "origin": "user-provided",
     "license": "trademark of the respective company; identification only",
