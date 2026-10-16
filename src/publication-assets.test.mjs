@@ -60,7 +60,7 @@ test('video_media_are_collected_without_separate_control_images', () => {
 
 test('used_licensed_assets_include_notices_and_unused_assets_do_not', () => {
   const dependencies = [
-    ['/theme/assets/fonts/pretendard-variable.woff2', '/theme/assets/fonts/pretendard-license.txt'],
+    ['/theme/assets/fonts/pretendard-variable/PretendardVariable.subset.0.woff2', '/theme/assets/fonts/pretendard-license.txt'],
     ['/theme/assets/fonts/jetbrains-mono-regular.woff2', '/theme/assets/fonts/jetbrains-mono-license.txt'],
     ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
     ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],

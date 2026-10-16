@@ -85,6 +85,8 @@ test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
   assert.match(html.match(/<details class="app-document-nav"[^>]*>/)[0], /\sopen/);
   assert.doesNotMatch(html, />문서 목록<|>이 글의 목차</);
+  // 목차도 좁은 화면에서 접히는 패널이며 넓은 화면에서는 요약 줄을 숨긴 채 펼친다.
+  assert.match(html, /<aside class="app-document-outline"><details class="app-document-nav" data-document-panel open><summary aria-label="본문 목차"><span>목차<\/span><\/summary><nav aria-label="본문 목차">/);
   assert.match(html, /<h2 id="sample-큰-제목" class="app-heading-1">/);
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
 });
