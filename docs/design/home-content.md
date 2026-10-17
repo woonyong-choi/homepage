@@ -1,6 +1,28 @@
 # 홈 원고 가이드
 
-홈은 `content/home.md`의 `sections` 순서로 조립한다. 홈 소개·영상·연락은 이 파일에서 고치고, 기술 링크와 분야 카드는 `content/tech.md`, 동료평가 소개와 카드는 `content/interviews.md`에서 고친다. 제목과 소개는 Markdown 본문을 읽으며, 같은 내용을 JSON이나 YAML 필드에 중복해서 적지 않는다. 각 항목의 `enabled: false`는 그 섹션을 끄고 HTML·자산·스크립트에서 제외한다.
+| 항목 | 값 |
+|---|---|
+| 상태 | 구현 |
+
+## 요약
+
+홈 구간의 순서와 소개·영상·기술·동료평가·연락 입력을 정한다. 원고 본문과 YAML 메타데이터를 같은 페이지로 조립한다.
+
+## 해결하는 문제
+
+홈의 문구와 순서를 바꿀 때 화면 코드를 수정하면 공통 디자인과 콘텐츠가 섞인다. 승인 원고에서 내용을 관리하고 홈페이지는 입력을 검증해 공통 구성 요소에 전달한다.
+
+## 사용 예
+
+### 사용 장면
+
+홈에서 영상 보기 링크를 누르면 영상 영역이 펼쳐지고 처음부터 재생한다. 기술 원고와 인터뷰 원고는 홈의 `sections[].source`로 연결한다.
+
+## 작동 방식
+
+### 입력과 구성
+
+홈은 `content/home.md`의 `sections` 순서로 조립한다. 홈 소개·영상·연락은 이 파일에서 읽고, 기술 링크와 분야 카드는 `content/pages/tech.md`, 동료평가 소개와 카드는 `content/interviews/index.md`에서 읽는다. 세 파일은 Vault의 승인 사본이므로 원문을 수정하고 [발행 목록을 동기화](publication.md#vault-발행-입력)한다. 제목과 소개는 Markdown 본문을 읽으며, 같은 내용을 JSON이나 YAML 필드에 중복해서 적지 않는다. 각 항목의 `enabled: false`는 그 섹션을 끄고 HTML·자산·스크립트에서 제외한다.
 
 기본 설정의 projects는 꺼져 있다. 두 예시 항목과 섹션 렌더러는 재사용을 위해 남긴다. 실제 프로젝트의 제목·설명·링크·이미지로 바꾼 뒤 해당 섹션의 `enabled`를 `true`로 설정하면 표시한다.
 
@@ -11,9 +33,9 @@ npm run check:product     # 계약 테스트
 
 잘못된 설정은 `home.md sections[1].items[0].link.href: ...`처럼 틀린 경로를 포함한 오류로 빌드를 멈춘다.
 
-공개 홈은 승인된 동료평가 11개를 `content/interviews.md`에서 읽는다.
+공개 홈은 `content/interviews/index.md`의 승인된 동료평가를 읽는다.
 
-공개 전 인터뷰 검토에는 Git에서 제외되는 `content/interviews.local.md`를 연결한다. 파일은 `---`로 감싼 YAML의 `items` 카드 목록만 가지고 본문은 비워 둔다. 미리보기 빌드에서만 활성 인터뷰 섹션 하나의 `items`를 대체하고 같은 검증을 적용한다. 공개 빌드(`npm run build:site -- --production`)는 이 파일을 읽지 않는다. 원본 답변·연락처·비공개 출처는 사이트 입력으로 복사하지 않는다. 공개 범위가 확인된 카드만 `content/interviews.md`의 `items`에 옮긴다.
+공개 전 인터뷰 검토에는 Git에서 제외되는 `content/interviews.local.md`를 연결한다. 파일은 `---`로 감싼 YAML의 `items` 카드 목록만 가지고 본문은 비워 둔다. 미리보기 빌드에서만 활성 인터뷰 섹션 하나의 `items`를 대체하고 같은 검증을 적용한다. 공개 빌드(`npm run build:site -- --production`)는 이 파일을 읽지 않는다. 원본 답변·연락처·비공개 출처는 사이트 입력으로 복사하지 않는다. 공개 범위가 확인된 카드는 Vault 원문에 반영하고 승인·동기화한다.
 
 비공개 자료 저장소의 검토용 Markdown을 `content/interviews.local.md` 심볼릭 링크로 연결할 수 있다. 새 worktree에는 Git에서 제외한 이 연결이 생기지 않으므로, 이전 화면을 검수할 때 같은 검토 입력을 연결한다. 원문은 복사하거나 커밋하지 않는다. 미리보기에서 참조하는 회사 로고는 실제 사용 자산이며, 발행 HTML에서 사용한 로고와 출처 고지만 함께 수집한다. 미사용 자산을 정리할 때 공개 설정뿐 아니라 로컬 미리보기 입력의 참조도 대조한다.
 
@@ -25,7 +47,7 @@ npm run check:product     # 계약 테스트
 
 완결된 소개 문장과 인터뷰 요약은 마침표로 끝낸다. 섹션 제목, 버튼 문구, 회사명과 직무 같은 짧은 표기에는 마침표를 넣지 않는다.
 
-## 상단 메뉴
+### 상단 메뉴
 
 모든 페이지의 오른쪽 위 메뉴는 `content/home.md`의 `navigation` 목록으로 정한다. 목록 순서가 표시 순서이며 각 항목의 `label`은 문구, `href`는 이동 주소다. `match`는 메뉴를 선택 상태로 표시할 URL 접두사 목록이고 생략하면 `href`를 사용한다. 여러 항목에 맞으면 가장 긴 접두사가 우선하며 `/`는 홈에서만 선택된다. 중복 `href`와 안전하지 않은 주소는 빌드 오류다. 빈 목록은 오른쪽 메뉴를 숨긴다.
 
@@ -41,7 +63,7 @@ navigation:
 
 Search·CS·Tech와 블로그 목록의 문구·배치는 [영역 설정](layout-settings.md)에서 관리한다.
 
-## 공통 필드
+### 공통 필드
 
 | 필드 | 설명 |
 |---|---|
@@ -51,9 +73,9 @@ Search·CS·Tech와 블로그 목록의 문구·배치는 [영역 설정](layout
 
 같은 종류를 여러 번 둘 수 있다. hero는 `<id>-video`, `<id>-player`, contact는 `<id>-title` 등 파생 id도 중복 검사에 포함한다.
 
-## 홈 원고 예
+### 홈 원고 예
 
-`content/home.md`의 첫 제목과 그 아래 문단이 hero의 제목·소개다. `source`는 같은 `content/` 폴더의 Markdown 파일 이름만 허용하며 해당 항목에 다른 속성을 함께 쓰지 않는다. 연결한 파일은 첫 제목과 소개 문단이 필요하다.
+`content/home.md`의 첫 제목과 그 아래 문단이 hero의 제목·소개다. `source`는 `content/` 안의 상대 Markdown 경로를 허용하며 해당 항목에 다른 속성을 함께 쓰지 않는다. 절대 경로·상위 이동·역슬래시는 거부한다. 연결한 파일은 첫 제목과 소개 문단이 필요하다.
 
 ```markdown
 ---
@@ -73,8 +95,8 @@ sections:
         link: { label: 자세히 보기, href: https://example.com }
         icon: project
         image: { src: /media/project.png, alt: 화면 모음 }
-  - source: tech.md
-  - source: interviews.md
+  - source: pages/tech.md
+  - source: interviews/index.md
   - id: contact
     type: contact
     email: me@example.com
@@ -85,13 +107,13 @@ sections:
 소개 문장입니다.
 ```
 
-`content/tech.md`의 YAML에는 `id`, `type: technologies`, `icon`, 기술 이름 목록인 `items`, 분야 목록인 `topics`를 둔다. `topics`의 키는 문서 `category`와 연결되고 표시 이름·카드 설명·아이콘·영역(`group`)을 관리한다. 홈의 기술 흐름은 `items` 순서를 사용한다. 첫 제목과 문단은 기술 구간의 소개다.
+`content/pages/tech.md`의 YAML에는 `id`, `type: technologies`, `icon`, 기술 이름 목록인 `items`, 분야 목록인 `topics`를 둔다. `topics`의 키는 문서 `category`와 연결되고 표시 이름·카드 설명·아이콘·영역(`group`)을 관리한다. 홈의 기술 흐름은 `items` 순서를 사용한다. 첫 제목과 문단은 기술 구간의 소개다.
 
-`content/interviews.md`도 YAML의 `id`, `type: interviews`, `icon`, `links`, `items`와 첫 제목·소개 문단으로 구성한다. `example: true`인 카드는 미리보기에서만 보인다. 빈 `items`에는 자동으로 예시를 추가하지 않는다.
+`content/interviews/index.md`도 YAML의 `id`, `type: interviews`, `icon`, `links`, `items`와 첫 제목·소개 문단으로 구성한다. `example: true`인 카드는 미리보기에서만 보인다. 빈 `items`에는 자동으로 예시를 추가하지 않는다.
 
-## 섹션
+### 섹션
 
-머리 `icon`은 공통 카탈로그 이름(`cpu`, `project`) 또는 `{src, alt}` 이미지다. 공통 이름은 정본 `iconFile()`로 경로를 해석한다. 구독과 동료 평가 머리는 공통 자산의 `newsletter.png`, `testimonials.png`를 쓴다. 홈 히어로는 `icon`과 `wordmark`가 없으면 원고의 제목을 표시한다.
+머리 `icon`은 공통 카탈로그 이름(`cpu`, `project`) 또는 `{src, alt}` 이미지다. 공통 이름은 정본 `iconFile()`로 경로를 해석한다. 구독과 동료 평가 머리도 공통 아이콘 카탈로그에서 가져온다. 홈 히어로는 `icon`과 `wordmark`가 없으면 원고의 제목을 표시한다.
 
 `config/site.json`의 `title`은 탭·공유 정보·RSS의 사이트 이름이고 `name`은 작성자 이름이다. 상단 글자이미지는 같은 설정의 `logo`에 `{src, alt}`로 지정한다. `alt`는 홈페이지 이동 링크의 접근성 이름에 쓰고 저자와 메타데이터의 `name`은 별도로 유지한다. 히어로 글자이미지는 `wordmark: {src, alt}`로 지정하며 홈 본문 제목을 스크린리더용 제목으로 남긴다. `icon`과 `wordmark`는 함께 지정할 수 없다. 콘텐츠 SVG는 공통 정적 SVG 렌더러로 인라인 조립해 공통 글자색을 상속한다. 글자이미지는 공통 `app-hero-wordmark`의 높이와 원본 비례를 사용하고 아이콘의 고정 폭을 따르지 않는다.
 
@@ -112,7 +134,7 @@ sections:
 - contact `email`: `email`의 주소를 `mailto:` 링크로 연결한다. 기본 제목은 `함께 만들어 볼까요?`, 설명은 `프로젝트와 협업에 관한 이야기를 기다립니다.`, 링크 문구는 `메일 보내기`이며 원고에서 바꿀 수 있다.
 - contact `newsletter`: 홈에서 사용하는 구독 모드다. 기본 제목은 `소식 받아보기`, 설명은 `새 글과 프로젝트 소식을 이메일로 보내 드립니다.`, 버튼은 `구독`이다. `endpoint`, `field`(입력 이름, 기본 `email`), `note`, `privacy`(`{label, href}`)를 지정할 수 있고 `email`은 직접 문의 대안으로 쓴다. `endpoint`(HTTPS)가 없으면 입력과 버튼이 비활성이고 `구독 서비스를 준비 중입니다`를 보이며 어떤 주소도 저장하거나 전송하지 않는다. `endpoint`가 있으면 이메일을 그 주소로 form POST할 뿐이며 사이트는 성공 화면을 만들지 않는다. 실제 수신과 발송은 구독 서비스가 맡는다. `privacy`와 `note`는 적은 경우에만 보인다. 현재 홈은 endpoint를 설정하지 않은 상태다.
 
-## 인터뷰 항목 예
+### 인터뷰 항목 예
 
 회사형과 플랫폼형은 같은 세 자리를 다르게 채울 뿐이다. 주소는 모두 자리 표시 값이다.
 
@@ -131,15 +153,15 @@ items:
   - { id: summary-only, summary: 직접 들은 이야기의 요약 }
 ```
 
-## 값 규칙
+### 값 규칙
 
 - 링크 `href`: HTTPS 주소, `/`로 시작하는 사이트 경로, `#`으로 시작하는 페이지 안 연결만 허용한다. `javascript:`, `data:`, `//host`, 공백은 거부한다.
 - 이미지와 영상: `/assets/`, `/media/` 아래 파일(빌드 전에 존재 확인) 또는 HTTPS 주소. 파일은 `content/assets/`, `content/media/`에 둔다. 확장자는 이미지 png·jpg·webp·gif·svg·avif, 영상 mp4·webm.
 - 문자열 값이 숫자나 날짜로 읽히는 경우 따옴표로 감싼다.
 
-## 자산 출처
+### 자산 출처
 
-프로젝트 구간은 실제 내용을 채우기 전까지 꺼 둔다. 프로젝트 기본 그림은 공통 테마의 `assets/illustrations/`에서 가져온다. `content/assets/`와 `content/media/`의 모든 파일은 `config/assets.json`에 출처(`origin`)와 라이선스(`license`) 기록을 가진다. 제3자 파일은 원본 `https` 주소와 고지 파일을 함께 적는다. 출처나 라이선스 기록이 없는 그림과 Things 웹사이트(culturedcode.com)의 파일·파일 이름 형식(`-io80`, `bezel-` 등)은 싣지 않는다. `src/asset-provenance.test.mjs`가 `npm run check:product`에서 이를 검사한다. 구간의 구조와 배치는 공통 `Section`, `SectionIntro` 구성 요소가 소유한다.
+프로젝트 구간은 실제 내용을 채우기 전까지 꺼 둔다. 프로젝트 기본 그림은 공통 테마의 `assets/illustrations/`에서 가져온다. 발행할 `content/assets/`와 `content/media/` 자산은 `config/assets.json`에 출처(`origin`)와 라이선스(`license`) 기록을 가진다. 제3자 파일은 원본 `https` 주소와 고지 파일을 함께 적는다. 출처나 라이선스 기록이 없는 그림과 Things 웹사이트(culturedcode.com)의 파일·파일 이름 형식(`-io80`, `bezel-` 등)은 싣지 않는다. `src/asset-provenance.test.mjs`가 `npm run check:product`에서 이를 검사한다. 구간의 구조와 배치는 공통 `Section`, `SectionIntro` 구성 요소가 소유한다.
 
 `content/assets/who-knows.svg`는 상단 브랜드이며 공통 `assets/fonts/inter-display-black.woff2`의 Inter Display Black을 사용한다. `content/assets/backend-engineer.svg`는 소개 제목이며 공통 `assets/fonts/pretendard-variable.woff2`의 Black(900)을 사용한다. 두 SVG는 글꼴의 기본 kerning과 글자 윤곽을 도형으로 변환한 콘텐츠 자산이다. 화면에는 윤곽만 삽입하므로 추가 웹폰트를 요청하지 않는다. 글꼴 원본과 SIL Open Font License는 공통 `assets/fonts/`에서 관리한다.
 
@@ -147,8 +169,15 @@ items:
 
 영상의 초기 접힘은 공통 디자인 CSS가 담당한다. 스크립트 초기화를 기다리지 않으며, 재생 요청 뒤 기존 플레이어 상태로 펼친다. 스크립트 미사용 환경에서는 명시적 영상 링크로 기본 재생 컨트롤에 접근한다.
 
-### 기술 로고
+#### 기술 로고
 
 기술 이름을 가리키는 로고는 홈페이지만 쓰므로 홈페이지가 소유한다. 파일은 `content/assets/brands/<이름>.svg`이고 `/assets/brands/`로 발행한다. 각 파일은 `config/assets.json`에 제3자 상표(`origin: third-party`, 식별 목적 사용), 원배포 주소, 선택한 변형·원본 해시·처리 방식, 파일 SHA-256, 표시 이름(`brand.label`)과 고지 `assets/brands/technology-logos-NOTICE.txt`를 기록한다. SVG는 공통 테마가 발행하던 바이트를 그대로 옮긴 것이며 도형과 색을 고치지 않는다.
 
 `src/brand-icons.mjs`가 이름을 홈페이지 로고 → 공통 카탈로그의 `brands` 순서로 찾는다. 기술 줄, 문서·카드·검색 결과의 아이콘(`contentIcon`), 검색 색인의 `iconUrl`이 이 조회 하나를 쓰고 로고는 파일 그림(`ContentIconImage`, `LogoItem`)으로 싣는다. ThinkFlow 그림에도 쓰는 Git·PostgreSQL·Redis·NGINX와 공통 바닥글·소셜 링크가 쓰는 GitHub·LinkedIn은 공통 카탈로그에 남는다. 로고를 추가할 때는 같은 폴더의 SVG, `config/assets.json`의 기록, 고지 파일의 출처를 함께 추가한다. 발행본은 로고를 쓴 빌드에만 고지를 포함하고, 미리보기는 원고 폴더와 관계없이 홈페이지의 로고 파일을 읽는다. `src/brand-icons.test.mjs`가 기록·바이트·고지·조회 순서를 검사한다.
+
+### 요구사항
+
+| 요구사항 | 검증 계획 |
+|---|---|
+| 참조 원고는 콘텐츠 루트 안의 상대 경로만 허용한다. | [`home-content.test.mjs`](../../src/home-content.test.mjs)의 `loadHomeContent_reads_nested_section_sources_and_rejects_parent_paths` |
+| 비공개 인터뷰 미리보기를 공개 빌드에 포함하지 않는다. | [`home-content.test.mjs`](../../src/home-content.test.mjs)의 `private_interviews_replace_only_preview_content_and_never_public_content` |
