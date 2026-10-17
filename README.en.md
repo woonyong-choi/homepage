@@ -11,15 +11,6 @@ This repository contains the source for [woonyong.com](https://woonyong.com). It
 > [!NOTE]
 > In development. There are no releases; build from source.
 
-## Contents
-
-- [Quick start](#quick-start)
-- [Why](#why)
-- [How it works](#how-it-works)
-- [Status](#status)
-- [Documentation](#documentation)
-- [Development](#development)
-
 ## Quick start
 
 Use Node.js 22.x, version 22.13 or later, npm, and Git. Run these commands from the repository.
@@ -71,8 +62,10 @@ Each issue records the scope of automated checks, visual checks, and production 
 
 The design documents are written in Korean.
 
-- [개인 랜딩 페이지](docs/design/personal-landing.md): 홈 구성과 공통 구성 요소
-- [전체 문서](docs/README.md)
+- Design
+  - [개인 랜딩 페이지](docs/design/personal-landing.md)
+
+[All documents](docs/README.md)
 
 ## Development
 
