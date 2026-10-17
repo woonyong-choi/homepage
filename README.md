@@ -18,7 +18,7 @@ Markdown 기반 개인 블로그와 사이트
 
 ## 빠른 시작
 
-Node.js 22.13 이상인 22.x 버전과 npm, Git이 필요합니다. CI는 Node.js 20과 22에서 검사합니다.
+Node.js 22.13 이상인 22.x 버전과 npm, Git이 필요합니다. CI는 Node.js 22에서 검사합니다.
 
 ```sh
 npm ci
