@@ -1,8 +1,8 @@
 # homepage
 
-> Markdown 기반 개인 블로그와 사이트
+> A Markdown-based personal blog and website
 
-개인 소개, 기술 문서, 블로그를 정적 HTML로 발행합니다. 공개 승인된 원고와 설정을 읽고 공통 디자인 구성 요소, ThinkFlow 도표, 문서 엔진을 조립합니다. 운영 사이트 주소는 [woonyong.com](https://woonyong.com)입니다.
+This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction, technical documents, and blog posts from Markdown as static HTML. It imports approved content and uses shared packages for design, diagrams, and Markdown parsing.
 
 ## Docs
 
