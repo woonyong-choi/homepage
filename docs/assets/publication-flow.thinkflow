@@ -1,0 +1,12 @@
+thinkflow
+width wide
+title "Publication flow"
+
+box sources "Sources" "Approved files"
+box render "Render" "Markdown" tone=blue appearance=filled
+box check "Check" "Links and assets"
+box site "Site" "dist/site"
+
+sources -> render no=1
+render -> check no=2
+check -> site no=3
