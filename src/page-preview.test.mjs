@@ -39,6 +39,36 @@ test('renderPagePreview_renders_article_tabs_math_and_runtime_with_shared_page_s
   for (const [, path] of result.html.matchAll(/<script[^>]+src="([^"?]+)/g)) assert.ok(result.assets.has(path), path);
 });
 
+test('renderPagePreview_supplies_site_icon_without_requiring_host_content_assets', async () => {
+  const externalRoot = siteRoot + 'content/docs';
+  assert.equal(existsSync(externalRoot + '/assets/site-icon.svg'), false);
+  const requests = [];
+  const result = await renderPagePreview({ ...input, contentRoot: externalRoot, file: 'draft.md',
+    source: saved('blog/bounded-queue.md').split('## 큐가')[0] + '저장 전 원고\n',
+    readContent: (name, edited) => edited ?? saved(name),
+    assets: { read: path => {
+      requests.push(path);
+      if (path === '/assets/site-icon.svg') throw new Error(`host denied asset: ${path}`);
+      return readFileSync(contentRoot + path);
+    } } });
+  assert.deepEqual(result.diagnostics, []);
+  assert.ok(result.html);
+  assert.deepEqual(result.assets.get('/assets/site-icon.svg'), readFileSync(siteRoot + 'content/assets/site-icon.svg'));
+  assert.equal(requests.includes('/assets/site-icon.svg'), false);
+});
+
+test('renderPagePreview_preserves_host_denial_for_document_assets', async () => {
+  const result = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md',
+    source: saved('blog/bounded-queue.md').split('## 큐가')[0] + '![제한된 이미지](/assets/denied.png)\n',
+    assets: { exists: () => true, read: path => {
+      if (path === '/assets/denied.png') throw new Error(`host denied asset: ${path}`);
+      return readFileSync(contentRoot + path);
+    } } });
+  assert.equal(result.html, '');
+  assert.equal(result.assets.size, 0);
+  assert.match(result.diagnostics[0].message, /host denied asset: \/assets\/denied\.png/);
+});
+
 test('renderPagePreview_reports_file_and_id_and_rejects_paths_outside_explicit_root', async () => {
   for (const file of ['../private.md', '/private.md']) {
     const result = await renderPagePreview({ ...input, file, source: '', id: 'draft' });

@@ -238,7 +238,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 `siteRoot/config`에서 사이트·태그·표시 설정과 이미지 크기를 읽는다. `contentRoot`에서는 명시된 `home.md`, `tech.md`와 홈이 참조한 섹션 원고만 읽으며 문서 폴더를 순회하지 않는다. 선택한 파일에는 디스크 대신 `source`를 사용한다. 같은 홈 입력 로더, `parseArticle`·`renderArticle`, `personalHome`·`articlePage`·`documentShell`을 재사용한다. 인접 문서 목록을 읽지 않으므로 전체 문서 트리와 검색 색인은 만들지 않는다.
 
-`assets`의 `exists`·`url`·`size`는 공통 엔진 계약을 따른다. 선택적인 `read(path)`는 신뢰할 수 있는 호출자가 제공하며 공개 자산 URL을 받아 바이트를 반환한다. 생략하면 자산을 입력 루트 안에서만 읽고 심볼릭 링크를 통한 외부 접근도 차단한다. 테마와 runtime은 홈페이지가 소비하는 동일 배포물이다.
+`assets`의 `exists`·`url`·`size`는 공통 엔진 계약을 따른다. 선택적인 `read(path)`는 신뢰할 수 있는 호출자가 제공하며 공개 자산 URL을 받아 바이트를 반환한다. 생략하면 자산을 입력 루트 안에서만 읽고 심볼릭 링크를 통한 외부 접근도 차단한다. 예약 경로 `/assets/site-icon.svg`는 홈페이지 정본의 아이콘 바이트를 반환하며 호스트의 `read`나 콘텐츠 루트를 사용하지 않는다. 테마와 runtime은 홈페이지가 소비하는 동일 배포물이다.
 
 성공 결과는 `{ html, assets: Map, links, origin, diagnostics, route, id }`이다. `assets`에는 스타일·글꼴·runtime·도표 HTML 등 참조 자산을 담는다. 실패하면 빈 HTML·자산과 파일·ID가 포함된 오류 진단을 반환한다. 파일·발행 결과를 쓰지 않으며 배포를 실행하지 않는다. 호스트는 반환된 자산만 격리된 미리보기 주소로 제공하고 내부 문서 이동·요청 순서·자원 해제를 관리한다. 미리보기 성공은 발행 승인이나 배포 완료를 뜻하지 않는다.
 
