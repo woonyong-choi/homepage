@@ -13,7 +13,7 @@ import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { loadLayoutConfig } from './layout-config.mjs';
 import { articlePage, documentShell, personalHome, searchPage } from './publication-layout.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
-import { siteOrigin } from './publication-metadata.mjs';
+import { FAVICON, siteOrigin } from './publication-metadata.mjs';
 import { publicationLinks } from './publication-routes.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { compileDiagrams } from './diagrams.mjs';
@@ -67,6 +67,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     scriptHash: createHash('sha256').update([...scripts.values()].join('\n')).digest('hex'),
   };
   const readAsset = path => {
+    if (path === FAVICON) return readFileSync(new URL(`../content${FAVICON}`, import.meta.url));
     if (math.assets.has(path)) return math.assets.get(path);
     if (path.startsWith('/theme/')) return readFileSync(containedFile(THEME_ROOT, path.slice('/theme/'.length)));
     const brand = readBrandAsset(path);
