@@ -1,15 +1,15 @@
 # homepage
 
-> 개인 소개, 기술 문서, 블로그를 Markdown과 공통 디자인 구성 요소로 만드는 정적 사이트다.
+> Markdown 기반 개인 블로그와 사이트
 
-승인 원문의 Run 코드 예제는 언어별 구문 색과 `실행 미지원` 안내로 표시한다. 코드의 표시·복사를 지원하며 실행 환경은 제공하지 않는다([코드 블록](docs/design/markdown.md#코드-블록)).
+개인 소개, 기술 문서, 블로그를 정적 HTML로 발행합니다. 공개 승인된 원고와 설정을 읽고 공통 디자인 구성 요소, ThinkFlow 도표, 문서 엔진을 조립합니다. 운영 사이트 주소는 [woonyong.com](https://woonyong.com)입니다.
 
 ## Docs
 
-- [개인 랜딩 페이지](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/personal-landing.md): 영상 데모, 프로젝트 근거, 동료 추천과 지식 탐색 구성
-- [기록 탐색과 화면 구성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/knowledge-navigation.md): CS·Tech, 카드 배치, 전체 목록과 문서 계층
-- [Markdown 글 작성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/markdown.md): 글 파일, 지원 문법, 코드 블록 언어와 복사, 미지원 항목
-- [스타일 수정 지도](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/styles.md): 토큰·공통 조각·화면·콘텐츠 문법 중 어디를 고치는지, 홈 type별 클래스
-- [개인 사이트 발행](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/publication.md): 공통 문서 엔진 연결, 승인·검색·댓글·운영 빌드 계약
+- [개인 랜딩 페이지](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/personal-landing.md): 홈 구성과 공통 구성 요소
+- [기록 탐색과 화면 구성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/knowledge-navigation.md): 문서 계층과 검색·태그 탐색
 - [홈 원고 가이드](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/home-content.md): 홈 구간·영상·인터뷰 입력
-- [영역 설정](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/layout-settings.md): 홈 메뉴, Search 순서, CS·Tech·Blog의 문구·배치·표시 항목
+- [영역 설정](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/layout-settings.md): Search·CS·Tech·Blog 표시 설정
+- [Markdown 글 작성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/markdown.md): 글 메타데이터와 지원 문법
+- [개인 사이트 발행](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/publication.md): 승인·빌드·미리보기·배포 조건
+- [스타일 수정 지도](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/styles.md): 디자인 소유권과 의존성 갱신
