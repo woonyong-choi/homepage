@@ -1,97 +1,76 @@
 # homepage
 
-개인 소개, 기술 문서, 블로그를 Markdown과 공통 디자인 구성 요소로 만드는 정적 사이트다.
+Markdown 기반 개인 블로그와 사이트
 
-승인 원문의 Run 코드 예제는 언어별 구문 색과 `실행 미지원` 안내로 표시한다. 코드의 표시·복사를 지원하며 실행 환경은 제공하지 않는다([코드 블록](docs/design/markdown.md#코드-블록)).
+개인 소개, 기술 문서, 블로그를 정적 HTML로 발행합니다. 공개 승인된 원고와 설정을 읽고 공통 디자인 구성 요소, ThinkFlow 도표, 문서 엔진을 조립합니다. 운영 사이트 주소는 [woonyong.com](https://woonyong.com)입니다.
 
-Search에서 ThinkFlow 설치·표현·애니메이션·Markdown 발행·문제 해결 안내를 `/projects/thinkflow/`의 공통 문서 뷰어로 읽는다. 안내 원문은 ThinkFlow 저장소에서 관리한다. 렌더러 의존성을 갱신한 뒤 `node scripts/sync-project-documents.mjs <ThinkFlow 저장소>`로 같은 커밋의 공개 문서와 자산을 가져온다([발행 계약](docs/design/publication.md)).
+> [!NOTE]
+> 개발 중입니다. 배포판은 없고 소스에서 빌드해 실행합니다.
 
-같은 카드와 선의 단계는 ThinkFlow `scene`, 서로 다른 그림·글·코드는 문서 `@tab`으로 쓴다. 장면이 둘 이상인 도표를 품은 `:::tabs`(`platform` 제외)는 생략한 위치와 선택 줄만 `top`·`segmented`로 보완해 두 선택 줄을 구분한다([도표](docs/design/markdown.md#도표)).
+## 목차
 
-프로젝트 문서의 도표는 ThinkFlow 코드 블록 하나를 인터랙티브 도표로 보여 준다. 같은 도표를 `thinkflow md`가 정적 SVG와 `<details>` 장면 목록으로 만든 부분은 원문(GitHub·ThinkFlow 저장소)에서만 보이고 홈페이지는 걷어 중복 표시하지 않는다. 걷는 조건은 [발행 계약](docs/design/publication.md)에 있다. 이름 없는 도표의 `n=순번`은 홈페이지가 다시 세지 않고 생성 표식의 값을 읽으며, 확신할 수 없는 구간은 그대로 둔다.
+- [빠른 시작](#빠른-시작)
+- [해결하는 문제](#해결하는-문제)
+- [작동 방식](#작동-방식)
+- [상태](#상태)
+- [문서](#문서)
+- [개발](#개발)
 
-본문은 고정된 공통 문서 엔진으로 한 번 해석하고 도표를 컴파일한 뒤 출력한다. 프로젝트 전처리와 발행 오류 차단은 홈페이지가 유지한다. 검증·배포 워크플로는 고정한 원본에서 비공개 패키지를 만들고 해시를 검증한 뒤 설치한다([발행 계약](docs/design/publication.md#공통-문서-엔진-연결)).
+## 빠른 시작
 
-저장 전 원고의 전체 페이지 미리보기는 `renderPagePreview`로 HTML과 자산을 메모리에 반환한다. 공통 테마의 라이트·다크와 하위 폴더의 홈 원고를 지원하며 원고나 발행 결과를 수정하지 않는다. 최종 HTML 링크도 반환해 호스트가 비공개 문서 이동을 검사할 수 있다. 기존 자산 경로 변환은 빌드·미리보기·호스트 검증에서 `normalizePublicationAssets`를 공유한다([미리보기 계약](docs/design/publication.md#저장-전-페이지-미리보기)).
-
-검색은 Worker를 우선 사용하며, 격리된 미리보기처럼 Worker를 실행할 수 없는 환경에서는 같은 검색 모델로 처리한다. 검색 결과의 아이콘은 선택 사항이며, 색인 연결 실패는 다시 시도할 수 있다. `renderPagePreview`의 `kind: search`는 기존 전체 검색 페이지와 자산을 반환한다.
-
-실제 사이트의 절대 링크를 내부 문서로 검사하려면 미리보기의 `origin` 또는 `SITE_ORIGIN`을 지정한다. 검증된 origin은 미리보기 결과에도 포함된다.
-
-## 실행
-
-문서 하단의 이전·다음 탐색은 공통 문서 카드로 표시하며 문서 아이콘·제목과 키보드 초점을 유지한다.
+Node.js 22.13 이상인 22.x 버전과 npm, Git이 필요합니다. CI는 Node.js 20과 22에서 검사합니다.
 
 ```sh
 npm ci
-npm run check:tokens
-npm run check:product
-npm run build:site
 npm run dev
 ```
 
-미리보기는 `http://localhost:8796/`이다. `/docs/`에서 문서와 블로그를 함께 검색하고 `/blog/all/`에서 블로그 카드를 본다. `dist/site/`가 정적 산출물이다. 없는 주소는 같은 사이트 틀의 `404.html`을 404 상태로 보여 준다. 운영 발행은 확정된 HTTPS 주소를 `SITE_ORIGIN`으로 지정하고 `npm run build:site -- --production`을 실행한다. 운영 빌드는 예시 글과 비공개 입력을 제외한다.
+[로컬 미리보기](http://localhost:8796/)에서 홈을 엽니다. `/docs/`는 문서와 블로그의 검색 입구이고 `/blog/all/`은 블로그 카드 목록입니다. `npm run dev`는 사이트를 한 번 빌드한 뒤 서버를 시작합니다. 파일을 바꾸면 명령을 다시 실행하세요. 생성 파일은 `dist/site/`에 있습니다.
 
-브라우저 탭은 문서 모양 파비콘 없이 제목을 표시한다. 홈 소개는 공통 제목 영역에서 줄바꿈하며 좁은 화면에서는 여러 줄을 허용한다.
+저장소의 승인 사본과 공개 Git 의존성만으로 빌드할 수 있습니다. 원고와 작성 설정을 갱신할 때는 비공개 Vault의 승인된 발행 목록이 필요합니다. GitHub 댓글 수를 가져오려면 GitHub CLI 인증이 필요하며, 인증이 없으면 숫자 대신 댓글 링크를 표시합니다.
 
-## 수정할 위치
+## 해결하는 문제
 
-| 수정할 내용 | 파일·폴더 |
-|---|---|
-| 홈 소개·영상·구간 순서·상단 메뉴 | [`content/home.md`](content/home.md) |
-| 동료평가 소개·공개 카드 | [`content/interviews/index.md`](content/interviews/index.md) |
-| 기술 링크·분야 이름·카드 설명 | [`content/pages/tech.md`](content/pages/tech.md) |
-| 분야별 문서 | `content/docs/<분야>/`의 승인 사본 |
-| 블로그 원고 | `content/blog/`의 승인 사본 |
-| 이미지·영상·출처 고지 | `content/assets/`, `content/media/` |
-| 영역 문구·순서·행·열·카드 표시 | [`config/search.json`](config/search.json), [`cs.json`](config/cs.json), [`tech.json`](config/tech.json), [`blog.json`](config/blog.json) |
-| 사이트·댓글·태그·승인 목록 | `config/` |
-| 해석·검색·댓글·페이지 조립 | `src/` |
-| 공통 디자인·도표·문서 엔진 | 고정 commit의 Git 의존성(`@woonyong-choi/design-tokens`, `thinkflow`, `document-engine`) |
-| 설계·작성 안내와 검사 | `docs/`, `scripts/` |
-| 생성된 사이트 | `dist/site/` — 빌드가 다시 생성 |
+소개와 글을 한 사이트에서 보여 주면서 비공개 원고의 공개 범위를 지켜야 합니다. 발행 목록에 있는 파일과 해시를 검사하고, 승인되지 않은 변경이 있으면 빌드를 중단합니다. 문서의 고정 ID와 URL은 파일 위치와 분리합니다.
 
-홈의 세 Markdown 파일은 직접 편집한다. 제목과 소개는 본문에, 카드·링크·영상 속성은 맨 위 YAML에 작성한다. 같은 내용을 JSON에 다시 적지 않는다. 분야별 문서와 블로그는 비공개 원본을 수정하고 승인한 뒤 아래 명령으로 가져온다. 비공개 인터뷰 미리보기 연결은 [홈 원고 가이드](docs/design/home-content.md)를 따른다.
+## 작동 방식
 
-색·간격·글꼴·아이콘·공통 마크업·동작은 디자인 저장소에서 관리한다. 홈페이지는 설치한 `@woonyong-choi/design-tokens/ui/index.mjs`의 구성 요소에 콘텐츠와 경로를 넘긴다. `node_modules`의 설치본을 직접 수정하지 않는다. 현재 발행 화면은 라이트 테마로 고정하며 시스템 테마 자동 전환과 테마 선택 UI는 제공하지 않는다([발행 테마](docs/design/styles.md#발행-테마)).
+1. Vault에서 승인한 원고·작성 설정·자산을 발행 목록으로 가져옵니다.
+2. 공통 문서 엔진이 Markdown을 해석하고 ThinkFlow가 도표를 컴파일합니다.
+3. 홈페이지가 탐색·검색·댓글과 페이지를 조립하고 링크·자산을 검사합니다.
+4. 검사를 통과한 파일을 `dist/site/`에 씁니다.
 
-## 콘텐츠 승인
-
-원본과 인터뷰 자료는 비공개 자료 저장소에서 관리한다. 명시적으로 승인한 경로와 SHA-256만 공개 사본으로 가져온다. 승인 이후 변경된 원문은 다시 승인하기 전까지 반영하지 않는다.
+`content/home.md`, `content/pages/tech.md`, `content/interviews/index.md`, `content/docs/`, `content/blog/`는 승인 사본입니다. `config/approved-content.json`에 기록된 작성 설정과 자산도 직접 수정하지 않습니다. 원문과 공개 승인을 갱신한 뒤 동기화합니다.
 
 ```sh
-npm run content:check
-npm run content:sync -- <assets-root>
-# Vault가 생성한 명시적 발행 목록으로 전환할 때
 npm run content:sync-vault -- <vault-root>
+npm run content:check
 ```
 
-`<assets-root>`는 승인 목록이 있는 비공개 원문 저장소의 루트다. 승인·회수 명령, 폴더와 프런트매터의 관계는 [개인 사이트 발행](docs/design/publication.md)에 있다.
+`<vault-root>`는 승인된 `tooling/dist/publication.json`이 있는 Vault 루트입니다. 동기화·복구·이관 조건은 [개인 사이트 발행](docs/design/publication.md#vault-발행-입력)에 있습니다. `content/projects/`의 외부 문서는 원본 저장소에서 관리합니다.
 
-## 디자인·도표·엔진 갱신
+## 상태
 
-세 부품은 공개 저장소의 고정 commit을 의존성으로 설치한다. 버전은 홈페이지가 정하고 ThinkFlow와 문서 엔진은 홈페이지가 설치한 디자인을 peer 의존성으로 함께 읽는다. 사본이나 다른 저장소의 자동 전달은 없다.
+| 구분 | 범위 |
+|---|---|
+| 구현 | 홈, 문서 계층, 검색·태그, 블로그 목록·피드, 댓글 연결, Markdown·도표 발행 |
+| 제한 | 발행 화면은 라이트 테마 고정, 코드 실행 환경 없음, 구독 전송 주소 미설정 |
+| 검증 범위 | 자동 검사는 입력·출력·동작 계약을 확인하며 실제 화면 검수와 운영 배포는 별도 |
 
-```sh
-npm install --save-dev github:woonyong-choi/design-tokens#<commit>
-npm install --save-dev github:woonyong-choi/thinkflow#<commit>
-node scripts/sync-project-documents.mjs <ThinkFlow 저장소>   # ThinkFlow를 올렸을 때
-npm install --save-dev github:woonyong-choi/document-engine#<commit>
-npm run check:tokens && npm run check:product && npm run build:site
-```
-
-검사를 통과한 변경을 일반 PR로 올린다. 갱신 경계는 [스타일 수정 지도](docs/design/styles.md#갱신)에 정리한다.
-
-토큰 파일은 그대로 보관하고 발행 CSS는 실제 HTML과 동작이 참조하는 선택자·변수만 남긴다.
+개인 사이트용 구현이며 콘텐츠 형식과 명령의 하위 호환을 보장하지 않습니다. 현재 작업은 [GitHub 이슈](https://github.com/woonyong-choi/homepage/issues)에서 확인합니다.
 
 ## 문서
 
-문서는 한국어로 작성한다. [전체 문서](docs/README.md)에서 홈 원고, Markdown 문법, 발행 경계와 스타일 수정 위치를 찾는다.
+[전체 문서](docs/README.md)에서 홈 구성, 글 작성, 발행 조건과 디자인 갱신 방법을 찾을 수 있습니다.
 
-Vault 입력은 `tooling/dist/publication.json`에 나열된 원고·작성 설정·자산만 가져온다. 발행 원고의 입력은 `publish/`이며 `content/blog/`와 공개 URL은 유지한다. 최초 전환은 기존 파일의 해시를 기록한 이관 receipt를 확인하고, 이후에는 생성 사본의 변경을 감지한다. 실제 원고 이관과 배포는 별도 실행이다([발행 입력 계약](docs/design/publication.md#vault-발행-입력)).
+## 개발
 
-## 운영 배포
+```sh
+npm run build:site
+npm run check:product
+npm run check:tokens
+```
 
-GitHub Actions의 `Deploy woonyong.com`을 main에서 수동 실행한다. 공개용 빌드만 GitHub Pages에 배포하며 운영 주소는 `https://woonyong.com`이다.
+`src/`는 콘텐츠 해석 연결·검색·댓글·페이지 조립을, `scripts/`는 디자인 검사와 프로젝트 문서 동기화를 담당합니다. 공통 디자인·ThinkFlow·문서 엔진은 `package.json`의 고정 커밋을 설치합니다. 설치본을 직접 고치지 않고 각 원본 저장소를 수정한 뒤 의존성을 갱신합니다. [스타일 수정 지도](docs/design/styles.md#갱신)에 갱신 명령이 있습니다.
 
-홈의 프로젝트 영상은 첫 화면부터 접혀 있으며, 영상 보기 링크로 엽니다. 스크립트가 실행되지 않아도 같은 링크에서 기본 영상 컨트롤에 접근할 수 있습니다.
+운영용 파일은 `SITE_ORIGIN=https://woonyong.com npm run build:site -- --production`으로 만듭니다. GitHub Actions의 `Deploy woonyong.com`을 `main`에서 수동 실행하면 검사를 거쳐 GitHub Pages에 배포합니다. 로컬 빌드만으로 운영 사이트가 바뀌지는 않습니다.

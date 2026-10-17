@@ -1,6 +1,28 @@
 # 영역 설정
 
-설정을 바꾼 뒤 `npm run build:site`로 다시 만든다. 숫자·표시 여부·목록을 잘못 적거나 알 수 없는 키를 추가하면 파일과 필드 경로를 포함한 오류로 중단한다. 색·글꼴·간격·모바일 분기점은 공통 디자인 정본이 소유한다.
+| 항목 | 값 |
+|---|---|
+| 상태 | 구현 |
+
+## 요약
+
+Search·CS·Tech·Blog의 문구, 순서, 목록 배치와 카드 표시 항목을 작성 설정으로 관리한다.
+
+## 해결하는 문제
+
+표시할 항목과 개수를 바꾸려고 페이지 코드를 수정하면 콘텐츠 설정과 디자인 규칙이 섞인다. 설정은 정보의 순서와 노출을 정하고 공통 디자인은 색·간격·반응형을 정한다.
+
+## 사용 예
+
+### 사용 장면
+
+CS의 미리보기를 제목만 있는 여섯 행으로 만들려면 `preview.columns`를 `1`, `preview.rows`를 `6`으로 지정하고 카드 설명과 미디어를 끈다.
+
+## 작동 방식
+
+### 입력과 구성
+
+표시 설정은 Vault에서 수정·승인한 뒤 [발행 목록을 동기화](publication.md#vault-발행-입력)한다. 아래 경로는 홈페이지가 읽는 사본이며 직접 수정하지 않는다. 동기화 후 `npm run build:site`로 다시 만든다. 숫자·표시 여부·목록을 잘못 적거나 알 수 없는 키를 추가하면 파일과 필드 경로를 포함한 오류로 중단한다. 색·글꼴·간격·모바일 분기점은 공통 디자인 정본이 소유한다.
 
 | 바꿀 내용 | 파일 |
 |---|---|
@@ -9,9 +31,9 @@
 | CS 제목·설명·주제 순서·카드·목록 배치 | `config/cs.json` |
 | Tech 제목·설명·주제 순서·카드·목록 배치 | `config/tech.json` |
 | Blog 제목·설명·카드·미리보기·전체 목록·본문 피드 개수 | `config/blog.json` |
-| 개별 주제의 이름·설명·아이콘·대표 글 | `content/tech.md`의 `topics` |
+| 개별 주제의 이름·설명·아이콘·대표 글 | `content/pages/tech.md`의 `topics` |
 
-## 홈과 Search
+### 홈과 Search
 
 홈의 `navigation`은 모든 화면의 상단 메뉴를 정한다. 기본 연결은 Search `/docs/`, Blog `/blog/`이며 설정 예는 [홈 원고 가이드](home-content.md#상단-메뉴)에 있다.
 
@@ -19,7 +41,7 @@ Search의 `sections`는 `blog`, `projects`, `cs`, `tech`, `guides`를 원하는 
 
 `box.labels`는 검색창의 영역 이름(`region`), 입력 이름(`input`), 빈 입력 문구(`placeholder`), 지우기 이름(`clear`), 추천 목록 제목(`suggestions`)이다. `box.suggestions`에 추천 검색어를 배열로 적는다. 검색 대상·검색 결과 정렬과 태그 AND 조건은 표시 설정으로 바뀌지 않는다.
 
-## 목록과 카드
+### 목록과 카드
 
 CS·Tech·Blog는 다음 공통 필드를 사용한다.
 
@@ -47,8 +69,15 @@ CS·Tech·Blog는 다음 공통 필드를 사용한다.
 
 CS·Tech의 `order`에는 먼저 보여 줄 `topics` 키를 배열로 적는다. 비어 있으면 원래 주제 순서다. 지정하지 않은 주제는 뒤에 원래 순서대로 남는다. 다른 영역의 키·없는 키·중복 키는 오류이며 미발행 주제는 화면에 생기지 않는다. 이름·설명·아이콘·대표 문서 연결은 기존 `topics` 한 곳에서 관리한다.
 
-## Blog의 글 포함 기준
+### Blog의 글 포함 기준
 
 Blog는 공개 승인된 입력 중 `type: blog`인 발행 글 전체를 같은 모음으로 사용한다. Search의 Blog 미리보기, 전체 카드 목록, 본문 이어 읽기는 이 모음을 나눠 보여 준다. 미리보기 개수나 표시 설정 때문에 모음에서 글이 빠지지 않는다. 비공개 자료의 특정 외부 페이지를 직접 읽거나 새 원문을 자동 승인하는 기능은 없다. 원문의 승인·동기화 계약은 [발행](publication.md)에 있다.
 
 `card.tags`, `card.date`, `card.comments`로 Blog 카드의 태그·날짜·댓글 안내를 각각 끈다. `feedSize`는 `/blog/` 본문 피드의 페이지당 글 수이며 1~1000이다. `archiveTitle`, `feedLabel`, `archiveLabel`은 전체 목록 제목, 본문 이어 읽기 링크, 전체 글 보기 링크의 문구다. 본문 피드는 글의 본문·태그·날짜와 댓글을 유지하며 카드 표시 설정을 적용하지 않는다.
+
+### 요구사항
+
+| 요구사항 | 검증 계획 |
+|---|---|
+| 영역 순서와 페이지 배치를 바꿔도 글과 주제를 잃지 않는다. | [`layout-config.test.mjs`](../../src/layout-config.test.mjs)의 `layout_changes_reorder_sections_and_paginate_every_topic_without_losing_entries` |
+| 알 수 없는 키는 설정 경로와 함께 오류로 알린다. | [`layout-config.test.mjs`](../../src/layout-config.test.mjs)의 `layout_validation_reports_setting_paths_instead_of_ignoring_typographical_errors` |
