@@ -60,8 +60,13 @@ npm run content:check
 
 ## 문서
 
-- 설계
-  - [개인 랜딩 페이지](docs/design/personal-landing.md)
+- [개인 랜딩 페이지](docs/design/personal-landing.md)
+  - [기록 탐색과 화면 구성](docs/design/knowledge-navigation.md)
+  - [홈 원고 가이드](docs/design/home-content.md)
+  - [영역 설정](docs/design/layout-settings.md)
+- [Markdown 글 작성](docs/design/markdown.md)
+- [개인 사이트 발행](docs/design/publication.md)
+  - [스타일 수정 지도](docs/design/styles.md)
 
 [전체 문서](docs/README.md)
 
