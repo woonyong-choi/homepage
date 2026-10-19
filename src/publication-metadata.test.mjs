@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
+import { Resvg } from '@resvg/resvg-js';
 import { readIcon } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 import { publicationMetadata, siteOrigin } from './publication-metadata.mjs';
 import { documentShell, notFoundPage } from './publication-layout.mjs';
@@ -13,12 +16,33 @@ const context = {
   tags: { javascript: { label: 'JavaScript' } },
 };
 
+test('favicon_reuses_only_the_original_w_and_paints_a_static_mark', () => {
+  const original = readFileSync(new URL('../content/assets/who-knows.svg', import.meta.url), 'utf8');
+  const svg = readFileSync(new URL('../content/assets/site-icon.svg', import.meta.url), 'utf8');
+  const document = new JSDOM(svg, { contentType: 'image/svg+xml' }).window.document;
+  const paths = document.querySelectorAll('path');
+
+  assert.equal(paths.length, 1);
+  assert.equal(paths[0].getAttribute('d'), original.match(/ d="([^Z]+Z)/)[1]);
+  assert.notEqual(svg, original);
+  assert.equal(document.documentElement.getAttribute('viewBox'), '0 -317 2124 2124');
+  assert.equal(paths[0].getAttribute('fill'), 'CanvasText');
+  assert.equal(document.querySelector('script, foreignObject, image, use, animate'), null);
+  for (const size of [16, 32]) {
+    const pixels = new Resvg(svg, { fitTo: { mode: 'width', value: size } }).render().pixels;
+    assert.ok(pixels.some((value, index) => index % 4 === 3 && value > 0));
+    assert.ok(pixels.some((value, index) => index % 4 === 3 && value === 0));
+  }
+});
+
 test('metadata_uses_one_home_name_and_keeps_preview_without_an_invented_origin', () => {
   const home = publicationMetadata({ title: '이름', route: '/' }, { ...context, origin: '', preview: true });
   assert.match(home, /<title>이름<\/title>/);
   assert.match(home, /name="robots" content="noindex,nofollow"/);
   assert.doesNotMatch(home, /canonical|og:url|example\.invalid/);
-  assert.match(home, /rel="icon" type="image\/svg\+xml" href="\/assets\/site-icon\.svg"/);
+  const favicon = readFileSync(new URL('../content/assets/site-icon.svg', import.meta.url));
+  const hash = createHash('sha256').update(favicon).digest('hex');
+  assert.equal(new JSDOM(home).window.document.querySelector('link[rel="icon"]').getAttribute('href'), `/assets/site-icon.svg?v=${hash}`);
   assert.equal(new JSDOM(home).window.document.querySelectorAll('link[rel="icon"]').length, 1);
   const config = { ...context.config, name: '이름 & 글', github: 'https://github.com/example' };
   const page = documentShell({ title: config.name, route: '/' }, '', { ...context, config });
