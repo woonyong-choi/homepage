@@ -16,9 +16,9 @@
   },
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",
-    "@woonyong-choi/design-tokens": "github:woonyong-choi/design-tokens#dc655dc5f4572082e606723e297923758d7567da",
-    "diagramplay": "github:woonyong-choi/diagramplay#4850c23dae6cad989b29b6af691d5233bc9afd66",
-    "document-engine": "github:woonyong-choi/document-engine#d06598746dc502235ae51cbde38330bbbc1c5954",
+    "@woonyong-choi/design-tokens": "github:woonyong-choi/design-tokens#69901058bf5ca8a761ef6e41373dae58aab10501",
+    "diagramplay": "github:woonyong-choi/diagramplay#a80a6ca23ef3ba26948943d2d2327769363586e7",
+    "document-engine": "github:woonyong-choi/document-engine#78e42ecf0cdfa1eda4dc65115b6f49a46f03556a",
     "esbuild": "0.28.2",
     "jsdom": "29.1.1",
     "katex": "^0.19.0",
