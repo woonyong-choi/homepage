@@ -26,6 +26,8 @@
 
 ## 명령
 
+Validate는 `ubuntu-24.04`의 Node 20·22에서 같은 필수 검사를 실행한다. `site (22)` 검사 이름과 Deploy의 제품 Node 22는 유지한다. Action 자체는 Node 24 기반 공식 release의 SHA로 고정한다(2026-10-19 확인). 배포 실행 조건과 권한은 바꾸지 않는다.
+
 ```sh
 npm run build:site
 npm run check:product
