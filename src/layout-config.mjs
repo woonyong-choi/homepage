@@ -99,6 +99,6 @@ export function loadBlogLayout(root = ROOT) {
   const search = JSON.parse(readFileSync(new URL('search.json', root), 'utf8'));
   const box = search.box;
   const labels = Object.fromEntries(['region', 'input', 'placeholder', 'clear', 'suggestions'].map(key => [key, text(box?.labels?.[key], `config/search.json.box.labels.${key}`)]));
-  return { blog: { title: text(blog.title, 'config/blog.json.title'), feedSize: integer(blog.feedSize, 'config/blog.json.feedSize', 1000), autoLoad: flag(blog.autoLoad, 'config/blog.json.autoLoad'), archiveLabel: text(blog.archiveLabel, 'config/blog.json.archiveLabel'), collection: grid(blog.collection, 'config/blog.json.collection', true), card: card(blog.card, 'config/blog.json.card', true) }, search: { title: text(search.title, 'config/search.json.title'), box: { labels, suggestions: strings(box.suggestions, 'config/search.json.box.suggestions') } } };
+  return { blog: { title: text(blog.title, 'config/blog.json.title'), feedSize: integer(blog.feedSize, 'config/blog.json.feedSize', 1000), autoLoad: flag(blog.autoLoad, 'config/blog.json.autoLoad'), archiveLabel: text(blog.archiveLabel, 'config/blog.json.archiveLabel'), collection: grid(blog.collection, 'config/blog.json.collection', true), card: card(blog.card, 'config/blog.json.card', true) }, search: { title: text(search.title, 'config/search.json.title'), box: { labels, suggestions: [] } } };
 }
 export const gridSize = grid => grid.rows === null ? Infinity : grid.columns * grid.rows;

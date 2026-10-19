@@ -186,3 +186,5 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 | 링크·앵커·ID 오류가 나면 기존 발행 결과를 유지한다. | [`publication-output.test.mjs`](../../src/publication-output.test.mjs)의 `broken_links_anchors_and_duplicate_ids_preserve_the_previous_publication` |
 
 합성 예제의 댓글 기능이 꺼져 있으면 카드에 링크 없는 0개를 표시한다. 실제 글의 댓글 수는 성공한 토론 조회 결과만 사용한다. 조회 실패는 숫자를 추측하지 않고 댓글 보기 링크를 유지한다. 카드의 댓글 표시 설정이 꺼져 있으면 숫자도 숨긴다.
+
+추천 검색어는 빌드마다 발행 대상 글의 태그와 선택 `keywords`를 집계해 세 개를 고른다. 등록한 표시 이름과 별칭을 같은 키워드로 묶는다. 대소문자와 한글 정규화 차이를 무시하고, 같은 글에서는 한 번만 센다. 글 수 내림차순, 동률이면 최근 발행일, 다시 동률이면 표시 이름순이다. 운영 빌드의 초안·미래 글·합성 예제는 집계하지 않는다. 후보가 세 개보다 적으면 있는 것만 표시하며 고정 검색어로 채우지 않는다. `build-report.json`의 `recommendations`는 선택한 키워드와 글 수를 기록한다.

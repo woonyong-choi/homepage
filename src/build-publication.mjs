@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 
-import { collectPosts, postTags, searchEntry, relatedPosts } from './blog-model.mjs';
+import { collectPosts, postTags, searchEntry, relatedPosts, keywordRanking } from './blog-model.mjs';
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
@@ -48,6 +48,8 @@ export async function buildPublication({ origin = '', mode = 'approved-preview' 
   const documents = posts;
   const tags = postTags(posts, knownTags);
   const layout = loadBlogLayout();
+  const recommendations = keywordRanking(posts, knownTags).slice(0, 3);
+  layout.search.box.suggestions = recommendations.map(item => item.keyword);
   const comments = readCommentCounts(posts, config);
   for (const post of posts) {
     post.commentCount = post.example && !post.comments ? 0 : comments.counts.get(post.id);
@@ -64,7 +66,7 @@ export async function buildPublication({ origin = '', mode = 'approved-preview' 
   await renderDocuments(documents, { diagrams: diagrams.diagrams, parsed });
   const scripts = browserScripts(ROOT);
   const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))));
-  const context = { config, layout, tags, origin, preview, mode, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
+  const context = { config, layout, tags, knownTags, recommendations, origin, preview, mode, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
   context.home = loadHomeContent(brandNames(), CONTENT, { preview });
   const output = new Map();
@@ -120,7 +122,7 @@ async function writeSite(output, documents, context, scripts, notFound) {
   }
   for (const route of output.keys()) output.set(route, rendered.get(route));
   const files = new Map([...scripts].map(([file, source]) => [`/${file}`, source]));
-  const index = { entries: documents.map(page => searchEntry(page, context.tags)), tags: context.tags };
+  const index = { entries: documents.map(page => searchEntry(page, context.knownTags)), tags: context.tags };
   const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
   for (const [path, content] of context.diagrams) assets.set(path, content);
   for (const [path, content] of assets) files.set(path, content);
@@ -131,7 +133,7 @@ async function writeSite(output, documents, context, scripts, notFound) {
   const posts = documents.filter(page => !page.example);
   files.set('/blog/feed.xml', `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escape(siteTitle(context.config))}</title><link>${escape(context.origin + '/blog/')}</link><description>${escape(context.config.description)}</description>${posts.map(page => `<item><title>${escape(page.title)}</title><link>${escape(context.origin + page.route)}</link><guid isPermaLink="false">${page.id}</guid><pubDate>${new Date(page.publishedAt).toUTCString()}</pubDate><description>${escape(page.description)}</description></item>`).join('')}</channel></rss>`);
   files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
-  files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: documents.length, examples: documents.filter(page => page.example).length, preview: context.preview, mode: context.mode, commentsStatus: context.commentsStatus, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
+  files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: documents.length, examples: documents.filter(page => page.example).length, preview: context.preview, mode: context.mode, commentsStatus: context.commentsStatus, recommendations: context.recommendations, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
   files.set(NOT_FOUND_FILE, rendered.get(NOT_FOUND_FILE));
   files.set('/robots.txt', context.preview ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\nSitemap: ${context.origin}/sitemap.xml\n`);
   replacePublication(OUTPUT, output, files);

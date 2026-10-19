@@ -17,10 +17,12 @@ export function readPost(source, { now = new Date(), includeUnpublished = false 
   if (!Array.isArray(tags) || tags.some(tag => typeof tag !== 'string' || !tag.trim())) throw new Error(`invalid tags: ${metadata.id}`);
   const normalized = tags.map(tag => tag.trim().normalize('NFC'));
   if (new Set(normalized).size !== normalized.length) throw new Error(`duplicate tag: ${metadata.id}`);
+  const keywords = metadata.keywords ?? [];
+  if (!Array.isArray(keywords) || keywords.some(word => typeof word !== 'string' || !word.trim())) throw new Error(`invalid keywords: ${metadata.id}`);
   for (const key of ['comments', 'example']) if (metadata[key] !== undefined && typeof metadata[key] !== 'boolean') throw new Error(`invalid ${key}: ${metadata.id}`);
   validateThumbnail(metadata.thumbnail);
   if (!includeUnpublished && (metadata.visibility === 'draft' || metadata.publish === false || metadata.status === 'draft' || metadata.publishedAt > now.toISOString().slice(0, 10))) return null;
-  return { id: metadata.id, slug: metadata.slug, title: metadata.title.trim(), description: metadata.description.trim(), tags: normalized, publishedAt: metadata.publishedAt, ...(metadata.updatedAt ? { updatedAt: metadata.updatedAt } : {}), ...(metadata.thumbnail ? { thumbnail: metadata.thumbnail } : {}), comments: metadata.comments ?? false, example: metadata.example ?? false, body, route: `/blog/${metadata.slug}/` };
+  return { id: metadata.id, slug: metadata.slug, title: metadata.title.trim(), description: metadata.description.trim(), tags: normalized, ...(metadata.keywords ? { keywords: [...new Set(keywords.map(word => word.trim().normalize('NFC')))] } : {}), publishedAt: metadata.publishedAt, ...(metadata.updatedAt ? { updatedAt: metadata.updatedAt } : {}), ...(metadata.thumbnail ? { thumbnail: metadata.thumbnail } : {}), comments: metadata.comments ?? false, example: metadata.example ?? false, body, route: `/blog/${metadata.slug}/` };
 }
 
 export function postTags(posts, knownLabels = {}) {
@@ -42,5 +44,39 @@ export function relatedPosts(post, posts, limit = 4) {
 }
 
 export function searchEntry(post, tags) {
-  return { id: post.id, route: post.route, title: post.title, description: post.description, tags: post.tags, date: post.publishedAt, thumbnail: post.thumbnail, comments: post.comments, commentCount: post.commentCount, example: post.example, keywords: post.tags.flatMap(tag => [tag, tags[tag]?.label ?? tag, ...(tags[tag]?.aliases ?? [])]), text: post.body.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]*>/g, ' ').replace(/[#*_`>|]/g, ' ') };
+  const aliases = keywordAliases(tags);
+  const keywords = [...new Set([...post.tags, ...(post.keywords ?? [])].flatMap(word => [word, ...(aliases.get(keywordKey(word))?.terms ?? [])]))];
+  return { id: post.id, route: post.route, title: post.title, description: post.description, tags: post.tags, date: post.publishedAt, thumbnail: post.thumbnail, comments: post.comments, commentCount: post.commentCount, example: post.example, keywords, text: post.body.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]*>/g, ' ').replace(/[#*_`>|]/g, ' ') };
+}
+
+const keywordKey = word => word.trim().normalize('NFC').toLocaleLowerCase('ko').replace(/\s+/g, ' ');
+
+function keywordAliases(knownTags) {
+  const aliases = new Map();
+  for (const [id, tag] of Object.entries(knownTags).sort(([a], [b]) => a.localeCompare(b, 'ko'))) {
+    for (const word of [id, tag.label, ...(tag.aliases ?? [])]) {
+      const key = keywordKey(word);
+      if (!aliases.has(key)) aliases.set(key, { key: keywordKey(id), keyword: tag.label, terms: [id, tag.label, ...(tag.aliases ?? [])] });
+    }
+  }
+  return aliases;
+}
+
+export function keywordRanking(posts, knownTags = {}) {
+  const aliases = keywordAliases(knownTags);
+  const ranks = new Map();
+  for (const post of posts) {
+    const words = new Map([...post.tags, ...(post.keywords ?? [])].map(word => {
+      const key = keywordKey(word);
+      const item = aliases.get(key) ?? { key, keyword: word.trim().normalize('NFC') };
+      return [item.key, item.keyword];
+    }));
+    for (const [key, keyword] of words) {
+      const rank = ranks.get(key) ?? { keyword, postCount: 0, latest: post.publishedAt };
+      rank.postCount += 1;
+      if (post.publishedAt > rank.latest) rank.latest = post.publishedAt;
+      ranks.set(key, rank);
+    }
+  }
+  return [...ranks.values()].sort((a, b) => b.postCount - a.postCount || b.latest.localeCompare(a.latest) || a.keyword.localeCompare(b.keyword, 'ko'));
 }

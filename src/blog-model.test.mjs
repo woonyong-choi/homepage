@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { collectPosts, postTags, readPost, relatedPosts, searchEntry } from './blog-model.mjs';
+import { collectPosts, postTags, readPost, relatedPosts, searchEntry, keywordRanking } from './blog-model.mjs';
 import { readDocument } from './content-model.mjs';
 import { searchUrl, prepareIndex, readSearchState, searchDocuments } from './search-model.mjs';
 
@@ -56,4 +56,45 @@ test('blog_query_preserves_arbitrary_tags_and_sorts_matched_posts_by_publication
   const unusual = ['C++', 'a&b', '밑줄_태그', '__proto__', 'constructor', 'toString'];
   assert.deepEqual(readSearchState(new URL(searchUrl({ tags: unusual }), 'https://example.com').search).tags, unusual);
   assert.deepEqual(relatedPosts({ id: 'current', tags: [] }, posts), []);
+});
+
+test('keyword_ranking_counts_posts_once_merges_aliases_and_breaks_ties_by_recency', () => {
+  const posts = [
+    { tags: ['python', '설계'], keywords: ['Python', '파이썬', '백엔드'], publishedAt: '2026-10-01' },
+    { tags: ['python', '독서'], keywords: ['백엔드'], publishedAt: '2026-10-03' },
+    { tags: ['설계'], keywords: ['설계', '설계'], publishedAt: '2026-10-02' },
+  ];
+  const ranks = keywordRanking(posts, { python: { label: 'Python', aliases: ['파이썬'] } });
+  assert.deepEqual(ranks.map(item => [item.keyword, item.postCount]), [['백엔드', 2], ['Python', 2], ['설계', 2], ['독서', 1]]);
+  assert.equal(ranks[0].latest, '2026-10-03');
+  assert.deepEqual(keywordRanking([]), []);
+});
+
+test('explicit_keywords_are_searchable_and_only_published_posts_enter_the_ranking', () => {
+  const post = readPost(source({ keywords: ['  백엔드 ', '백엔드', 'Café'], tags: ['산책'] }), { now: NOW });
+  assert.deepEqual(post.keywords, ['백엔드', 'Café']);
+  const index = prepareIndex([searchEntry(post, {})]);
+  assert.equal(searchDocuments(index, { query: '백엔드', tags: [], page: 1 }).total, 1);
+  for (const keywords of ['문자열', [1], [' ']]) assert.throws(() => readPost(source({ keywords }), { now: NOW }), /invalid keywords/);
+  const entries = collectPosts([
+    source({ id: 'public', slug: 'public', tags: ['공개'] }),
+    source({ id: 'draft', slug: 'draft', visibility: 'draft', tags: ['초안'] }),
+    source({ id: 'future', slug: 'future', publishedAt: '2026-12-01', tags: ['미래'] }),
+    source({ id: 'demo', slug: 'demo', example: true, tags: ['예제'] }),
+  ], { now: NOW });
+  assert.deepEqual(keywordRanking(entries).map(item => item.keyword), ['공개']);
+});
+
+
+test('recommended_aliases_find_every_post_counted_under_the_canonical_keyword', () => {
+  const tags = { python: { label: 'Python', aliases: ['파이썬'] } };
+  const posts = [
+    readPost(source({ id: 'keyword-only', slug: 'keyword-only', tags: [], keywords: ['파이썬'] }), { now: NOW }),
+    readPost(source({ id: 'tag-only', slug: 'tag-only', tags: ['파이썬'] }), { now: NOW }),
+  ];
+  const [recommendation] = keywordRanking(posts, tags);
+  const index = prepareIndex(posts.map(post => searchEntry(post, tags)));
+  assert.equal(recommendation.keyword, 'Python');
+  assert.equal(recommendation.postCount, 2);
+  assert.equal(searchDocuments(index, { query: recommendation.keyword, tags: [], page: 1 }).total, 2);
 });

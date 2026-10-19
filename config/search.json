@@ -1,15 +1,36 @@
 {
   "title": "Search",
   "sections": [
-    { "id": "blog", "enabled": true },
-    { "id": "projects", "enabled": false },
-    { "id": "cs", "enabled": true },
-    { "id": "tech", "enabled": true },
-    { "id": "guides", "enabled": true }
+    {
+      "id": "blog",
+      "enabled": true
+    },
+    {
+      "id": "projects",
+      "enabled": false
+    },
+    {
+      "id": "cs",
+      "enabled": true
+    },
+    {
+      "id": "tech",
+      "enabled": true
+    },
+    {
+      "id": "guides",
+      "enabled": true
+    }
   ],
   "box": {
-    "labels": { "region": "통합 검색", "input": "글 검색", "placeholder": "어떤 내용을 찾으세요?", "clear": "검색어 지우기", "suggestions": "추천 검색어:" },
-    "suggestions": ["Python", "Kubernetes", "운영체제", "LLM"]
+    "labels": {
+      "region": "통합 검색",
+      "input": "글 검색",
+      "placeholder": "어떤 내용을 찾으세요?",
+      "clear": "검색어 지우기",
+      "suggestions": "추천 검색어:"
+    },
+    "suggestions": []
   },
   "allLabel": "전체 보기",
   "backLabel": "돌아가기",

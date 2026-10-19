@@ -38,6 +38,7 @@
 | `publishedAt` | 예 | 최초 발행일. `YYYY-MM-DD` |
 | `visibility` | 예 | `public` 또는 `draft` |
 | `updatedAt` | 아니오 | 수정일. `YYYY-MM-DD` |
+| `keywords` | 아니오 | 태그 외 검색 키워드의 문자열 배열 |
 | `thumbnail` | 아니오 | `src`, `alt`, 선택 `position` |
 | `comments` | 아니오 | 댓글 표시 여부. 기본 `false` |
 | `example` | 아니오 | 기본 `false`. `true`면 운영 발행에서 제외 |
