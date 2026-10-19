@@ -205,11 +205,15 @@ test('technology_logos_only_link_to_actual_published_tag_ids', () => {
   const home = parseHomeSections(parseYaml('sections:\n  - { id: tech, type: technologies, items: [python, git] }'), { technologies: TECHNOLOGIES });
   const draw = tags => personalHome({ config: { name: '이름' }, home, tags, knownTags: { python: { label: 'Python', aliases: ['파이썬'] } } });
   const inactive = draw({});
-  assert.doesNotMatch(inactive, /id="tech"|id="tech-title"|data-flow-rail|app-technology/);
+  assert.match(inactive, /id="tech"/);
+  assert.match(inactive, /id="tech-title"/);
+  assert.equal((inactive.match(/aria-disabled="true"/g) ?? []).length, 2);
+  assert.doesNotMatch(inactive, /href="\/search\//);
   const enabled = draw({ Python: { label: 'Python' } });
   assert.match(enabled, /href="\/search\/\?tag=Python"/);
-  assert.doesNotMatch(enabled, /tag=python|tag=git|Git ·|aria-disabled/);
-  assert.equal((enabled.match(/class="app-technology"/g) ?? []).length, 1);
+  assert.doesNotMatch(enabled, /tag=python|tag=git/);
+  assert.match(enabled, /aria-disabled="true" aria-label="Git · 발행된 글 없음"/);
+  assert.equal((enabled.match(/class="app-technology"/g) ?? []).length, 2);
   assert.match(draw({ PYTHON: {} }), /href="\/search\/\?tag=PYTHON"/);
   assert.match(draw({ 파이썬: {} }), /href="\/search\/\?tag=%ED%8C%8C%EC%9D%B4%EC%8D%AC"/);
   const preferred = draw({ Python: {}, python: {}, 파이썬: {} });
@@ -218,7 +222,7 @@ test('technology_logos_only_link_to_actual_published_tag_ids', () => {
   assert.doesNotMatch(draw({ 'python tips': {} }), /href="\/search\//);
 });
 
-test('heading_pngs_use_the_shared_section_image_slot_and_empty_technology_stays_hidden', () => {
+test('heading_pngs_and_technology_intro_remain_without_published_posts', () => {
   const png = name => `/theme/assets/icons/communication/${name}.png`;
   const home = parseHomeSections({ sections: [
     { id: 'tech', type: 'technologies', icon: { src: png('technology-thought') }, items: ['python'] },
@@ -233,7 +237,8 @@ test('heading_pngs_use_the_shared_section_image_slot_and_empty_technology_stays_
     assert.doesNotMatch(html, /app-content-icon/);
   }
   const empty = personalHome({ config: { name: '이름' }, home, tags: {} });
-  assert.doesNotMatch(empty, /technology-thought\.png|id="tech"/);
+  assert.match(empty, /technology-thought\.png/);
+  assert.match(empty, /id="tech"/);
   const shipped = loadHomeContent(brandNames());
   for (const [type, name] of [['technologies', 'technology-thought'], ['interviews', 'testimonials'], ['contact', 'newsletter']]) {
     assert.equal(shipped.find(section => section.type === type).icon.src, png(name));
@@ -246,10 +251,20 @@ test('new_service_tags_join_after_configured_logos_without_reviving_an_empty_rai
   const html = personalHome({ config: { name: '이름' }, home, tags: { Python: {}, Redis: {} } });
   assert.match(html, /href="\/search\/\?tag=Redis"/);
   assert.ok(html.indexOf('Python · Python 태그 글 보기') < html.indexOf('Redis · Redis 태그 글 보기'));
-  assert.doesNotMatch(html, /Git ·|aria-disabled/);
+  assert.match(html, /aria-disabled="true" aria-label="Git · 발행된 글 없음"/);
   const empty = personalHome({ config: { name: '이름' }, home: [{ ...home[0], items: [] }], tags: { Redis: {} } });
   assert.doesNotMatch(empty, /app-technology|tag=Redis/);
+  assert.match(empty, /id="tech-title"/);
   const disabledHome = parseHomeSections(parseYaml('sections:\n  - { id: tech, type: technologies, enabled: false, items: [python, git] }'), { technologies: TECHNOLOGIES });
   const disabled = personalHome({ config: { name: '이름' }, home: disabledHome, tags: { Redis: {} } });
   assert.doesNotMatch(disabled, /id="tech"|app-technology|tag=Redis/);
+});
+
+test('shipped_technology_title_and_description_remain_with_zero_posts', () => {
+  const home = loadHomeContent(brandNames()).filter(section => section.type === 'technologies');
+  const html = personalHome({ config: { name: '이름' }, home, tags: {} });
+  assert.match(html, /<h2 id="technologies-title">.*기술과 생각<\/h2>/);
+  assert.match(html, /개발 과정에서 마주한 질문과 지식을 정리하고 기록합니다\./);
+  assert.equal((html.match(/aria-disabled="true"/g) ?? []).length, home[0].items.length);
+  assert.doesNotMatch(html, /href="\/search\//);
 });

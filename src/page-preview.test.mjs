@@ -25,7 +25,8 @@ test('renderPagePreview_uses_unsaved_home_without_writing_source_or_publication'
   assert.match(result.html, /저장 전 미리보기 문장/);
   assert.match(result.html, /app-landing/);
   const technologies = new JSDOM(result.html).window.document.querySelector('#technologies');
-  assert.equal(technologies, null);
+  assert.equal(technologies.querySelector('h2').textContent.trim(), '기술과 생각');
+  assert.ok(technologies.querySelector('[aria-disabled="true"]'));
   assert.match(result.html, /noindex,nofollow/);
   assert.ok(result.assets.has('/theme/tokens.css'));
   assert.ok(result.assets.has('/theme/styles.css'));
@@ -162,7 +163,8 @@ test('renderPagePreview_host_asset_sizes_do_not_require_generated_config', async
   assert.deepEqual(result.diagnostics, []);
   assert.match(result.html, /app-landing/);
   const technologies = new JSDOM(result.html).window.document.querySelector('#technologies');
-  assert.equal(technologies, null);
+  assert.equal(technologies.querySelector('h2').textContent.trim(), '기술과 생각');
+  assert.ok(technologies.querySelector('[aria-disabled="true"]'));
   assert.equal(existsSync(root + '/config/image-sizes.json'), false);
 });
 
