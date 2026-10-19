@@ -106,3 +106,25 @@ test('loadHomeContent_reads_nested_section_sources_and_rejects_parent_paths', ()
     }), /상대 Markdown 경로/);
   }
 });
+
+
+test('disabled_icon_references_do_not_require_retired_catalog_entries_but_active_inputs_stay_checked', () => {
+  const projects = enabled => `sections:
+  - { id: projects, type: projects, enabled: ${enabled}, items: [{ title: x, description: y, icon: retired-project }] }`;
+  assert.deepEqual(parse(projects(false)), []);
+  rejects(projects(true), /unknown icon: retired-project/);
+  const hiddenItem = `sections:
+  - { id: projects, type: projects, items: [{ enabled: false, title: x, description: y, icon: retired-project }] }`;
+  assert.deepEqual(parse(hiddenItem)[0].items, []);
+  rejects(projects(false).replace('icon: retired-project', 'icon: 42'), /items\[0\]\.icon: 키와 값을 가진 항목/);
+  rejects(`sections:
+  - { id: a, type: technologies, items: [retired-brand] }`, /알 수 없는 기술/);
+});
+
+
+test('hidden_technology_heading_icons_skip_catalog_resolution_but_keep_shape_validation', () => {
+  const yaml = icon => `sections:\n  - { id: tech, type: technologies, icon: ${icon}, items: [python] }`;
+  assert.equal(parse(yaml('retired-code'))[0].icon, undefined);
+  assert.equal(parse(yaml('retired-code'), { exists: () => { throw new Error('unexpected asset lookup'); } })[0].icon, undefined);
+  rejects(yaml('42'), /icon: 키와 값을 가진 항목/);
+});

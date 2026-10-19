@@ -80,6 +80,10 @@ function picture(value, path, context) {
 }
 
 function sectionIcon(value, path, context) {
+  if (typeof value === 'string' && !context.check) {
+    text(value, path);
+    return undefined;
+  }
   const image = typeof value === 'string' ? { src: `/theme/assets/icons/${iconFile(text(value, path))}` } : value;
   return picture(image, path, context);
 }
@@ -161,7 +165,7 @@ const SECTIONS = {
       seen.add(id);
       return id;
     });
-    return { ...intro(item, path, context, '함께 쓰는 기술', '기술별 기록을 모았습니다.'), items };
+    return { ...intro(item, path, { ...context, check: false }, '함께 쓰는 기술', '기술별 기록을 모았습니다.'), items };
   },
   interviews(section, path, context) {
     const item = record(section, path, ['id', 'type', 'enabled', 'icon', 'title', 'description', 'links', 'items']);
