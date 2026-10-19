@@ -50,7 +50,7 @@ export async function buildPublication({ origin = '', mode = 'approved-preview' 
   const layout = loadBlogLayout();
   const comments = readCommentCounts(posts, config);
   for (const post of posts) {
-    post.commentCount = comments.counts.get(post.id);
+    post.commentCount = post.example && !post.comments ? 0 : comments.counts.get(post.id);
     post.related = relatedPosts(post, posts);
   }
   const diagramSources = new Map();

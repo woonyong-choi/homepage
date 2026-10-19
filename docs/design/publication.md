@@ -184,3 +184,5 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 |---|---|
 | 발행 목록에 있는 바이트만 가져오고 회수 항목도 반영한다. | [`vault-publication.test.mjs`](../../src/vault-publication.test.mjs)의 `syncVaultPublication_copies_only_listed_bytes_and_tracks_home_config_and_revocation` |
 | 링크·앵커·ID 오류가 나면 기존 발행 결과를 유지한다. | [`publication-output.test.mjs`](../../src/publication-output.test.mjs)의 `broken_links_anchors_and_duplicate_ids_preserve_the_previous_publication` |
+
+합성 예제의 댓글 기능이 꺼져 있으면 카드에 링크 없는 0개를 표시한다. 실제 글의 댓글 수는 성공한 토론 조회 결과만 사용한다. 조회 실패는 숫자를 추측하지 않고 댓글 보기 링크를 유지한다. 카드의 댓글 표시 설정이 꺼져 있으면 숫자도 숨긴다.

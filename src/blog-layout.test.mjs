@@ -49,6 +49,8 @@ test('blog_listing_keeps_all_static_cards_and_offers_only_used_tags_without_subj
   assert.equal(document.querySelectorAll('.app-title-cover').length, 14);
   assert.equal(document.querySelectorAll('.app-blog-card-tags, .app-content-icon').length, 0);
   assert.equal(document.querySelectorAll('[data-blog-tags] .app-tag.is-medium').length, 0);
+  assert.ok(document.querySelector('h1.app-page-heading .app-article-icon'));
+  assert.equal(document.querySelector('h1').textContent, 'Search');
   assert.equal(document.querySelector('form').getAttribute('action'), '/search/');
   assert.equal(document.querySelector('[data-blog-tags] a').getAttribute('href'), '/search/?tag=%EC%82%B0%EC%B1%85');
   assert.match(document.querySelector('main').textContent, /합성 예시/);
@@ -60,7 +62,7 @@ test('static_blog_cards_apply_display_settings_and_all_rows_boundary', () => {
   const layout = loadBlogLayout();
   layout.blog.collection.rows = null;
   layout.blog.card = { title: false, description: false, media: 'none', tags: false, date: false, comments: false };
-  const post = { ...posts(1)[0], comments: true, thumbnail: { src: '/media/cover.png', alt: '책' } };
+  const post = { ...posts(1)[0], comments: true, commentCount: 3, thumbnail: { src: '/media/cover.png', alt: '책' } };
   const dom = new JSDOM(searchListing([post], TAGS, { layout }));
   const { document } = dom.window;
   const card = document.querySelector('.app-blog-card');
@@ -85,4 +87,14 @@ test('search_and_recent_blog_share_posts_but_keep_distinct_views', () => {
   assert.ok(feed.querySelector('a[href="/search/"]'));
   assert.match(feed.querySelector('.app-blog-post').textContent, /본문/);
   assert.equal(new JSDOM(blogFeed(entries, TAGS, 3)).window.document.querySelectorAll('.app-blog-post').length, 2);
+});
+
+test('known_zero_comments_without_a_thread_are_visible_and_disabled_policy_hides_them', () => {
+  const page = { ...posts(1)[0], example: true, comments: false, commentCount: 0 };
+  const document = new JSDOM(blogCard(page)).window.document;
+  assert.equal(document.querySelector('.app-blog-card-comments').textContent, '댓글 0개');
+  assert.equal(document.querySelector('.app-blog-card-comments').tagName, 'SPAN');
+  const layout = loadBlogLayout();
+  layout.blog.card.comments = false;
+  assert.doesNotMatch(blogCard(page, {}, 2, layout.blog.card), /app-blog-card-comments/);
 });

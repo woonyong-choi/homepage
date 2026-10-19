@@ -224,7 +224,7 @@ test('search_cards_preserve_every_display_setting_on_rerender', () => {
   globalThis.document = dom.window.document;
   try {
     const root = document.querySelector('[data-search-page]');
-    const entry = { route: '/blog/book/', title: '책', description: '독서 설명', tags: ['독서'], date: '2026-10-01', comments: true, thumbnail: { src: '/media/cover.png', alt: '책 표지' } };
+    const entry = { route: '/blog/book/', title: '책', description: '독서 설명', tags: ['독서'], date: '2026-10-01', comments: true, commentCount: 3, thumbnail: { src: '/media/cover.png', alt: '책 표지' } };
     for (const enabled of [false, true]) {
       root.dataset.card = JSON.stringify({ title: enabled, description: enabled, media: enabled ? 'image' : 'none', tags: enabled, date: enabled, comments: enabled });
       renderResults(root, { entries: [entry], totalPages: 1, page: 1 }, { query: '', tags: [], page: 1 }, { 독서: { label: '독서' } });
