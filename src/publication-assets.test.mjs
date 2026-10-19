@@ -17,7 +17,7 @@ test('publication_includes_nested_css_and_search_assets_without_shipping_authori
     '/media/unused.svg': '<svg/>',
   }));
   const pages = new Map([['/wiki/', '<link href="/theme/tokens.css?v=hash"><a href="/articles/example/">문서</a><img src="https://cdn.example/image.png">']]);
-  const assets = publicationAssets(pages, [{ iconUrl: '/theme/assets/icons/documents/document.svg' }], path => {
+  const assets = publicationAssets(pages, [{ thumbnail: { src: '/theme/assets/icons/documents/document.svg' } }], path => {
     if (path.startsWith('/theme/assets/icons/licenses/')) return '';
     assert.ok(source.has(path), path); return source.get(path);
   });
@@ -96,7 +96,7 @@ test('used_licensed_assets_include_notices_and_unused_assets_do_not', () => {
   }
 });
 
-test('blog_archive_loads_its_client_only_when_the_list_exists', () => {
-  assert.deepEqual(clientEntrypoints('<div data-blog-list></div>'), ['blog-list.js']);
+test('blog_feed_loads_its_client_only_when_the_list_exists', () => {
+  assert.deepEqual(clientEntrypoints('<div data-blog-list="feed"></div>'), ['blog-list.js']);
   assert.deepEqual(clientEntrypoints('<article class="app-blog-card"></article>'), []);
 });

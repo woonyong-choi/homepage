@@ -179,6 +179,7 @@ test('renderPagePreview_search_reuses_results_page_and_returns_assets', async ()
   const result = await renderPagePreview({ ...input, file: 'home.md', source: saved('home.md'), kind: 'search', colorScheme: 'dark' });
   assert.deepEqual(result.diagnostics, []);
   assert.equal(result.route, '/search/');
+  assert.match(result.html, /action="\/search\/"/);
   assert.match(result.html, /data-search-page/);
   assert.match(result.html, /data-full-results/);
   assert.match(result.html, /data-theme="dark"/);

@@ -1,26 +1,22 @@
-// 공개 문서의 식별자와 분류를 화면·검색·댓글에서 함께 사용한다.
-import { parse } from 'yaml';
+import { isDocumentId, parseContent, validateThumbnail } from './content-metadata.mjs';
+import { readPost } from './blog-model.mjs';
+export { isDocumentId, parseContent, validateThumbnail } from './content-metadata.mjs';
 
-const DOCUMENT_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const TOPIC_GROUPS = Object.freeze(['cs', 'tech']);
 export const FIELDS = Object.freeze(['languages', 'cs', 'frameworks', 'infrastructure']);
 
 export const dateLabel = value => value ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(value)) : undefined;
 
-export function isDocumentId(value) { return typeof value === 'string' && DOCUMENT_ID.test(value); }
-
-export function parseContent(source, missingMessage = 'missing document metadata') {
-  const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  if (!match) throw new Error(missingMessage);
-  return { metadata: parse(match[1], { maxAliasCount: 0 }), body: match[2] };
-}
-
 export function readDocument(source, tags, now = new Date(), categories = tags) {
   const { metadata: page, body } = parseContent(source);
+  if (page.type === 'blog') {
+    const post = readPost(source, { now, includeUnpublished: true });
+    return { ...post, type: 'blog', visibility: page.visibility, published: Boolean(readPost(source, { now })) };
+  }
   for (const name of ['id', 'slug']) {
     if (!isDocumentId(page[name])) throw new Error(`invalid document ${name}`);
   }
-  if (!['wiki', 'blog'].includes(page.type)) throw new Error(`invalid document type: ${page.id}`);
+  if (page.type !== 'wiki') throw new Error(`invalid document type: ${page.id}`);
   for (const name of ['title', 'description']) {
     if (typeof page[name] !== 'string' || !page[name].trim()) throw new Error(`missing ${name}: ${page.id}`);
   }
@@ -32,39 +28,14 @@ export function readDocument(source, tags, now = new Date(), categories = tags) 
   if (!isDocumentId(page.category) || !categories[page.category]) throw new Error(`invalid category: ${page.id}`);
   if (page.parent != null && !isDocumentId(page.parent)) throw new Error(`invalid parent: ${page.id}`);
   if (typeof page.contentIcon?.name !== 'string') throw new Error(`missing content icon: ${page.id}`);
-  if (page.type === 'blog' && page.comments !== true) throw new Error(`blog comments are required: ${page.id}`);
   for (const name of ['publishedAt', 'updatedAt']) {
     if (page[name] !== undefined && !validDate(page[name])) throw new Error(`invalid ${name}: ${page.id}`);
   }
-  if (page.type === 'blog' && !page.publishedAt) throw new Error(`missing publication date: ${page.id}`);
   if (page.updatedAt && page.publishedAt && page.updatedAt < page.publishedAt) throw new Error(`update predates publication: ${page.id}`);
   validateThumbnail(page.thumbnail);
-  if ((page.type === 'blog' ? ['all', 'page', 'feed'] : ['topics']).includes(page.slug)) throw new Error(`reserved document slug: ${page.slug}`);
-  return { ...page, body, route: `/${page.type === 'blog' ? 'blog' : 'docs'}/${page.slug}/`,
+  if (page.slug === 'topics') throw new Error(`reserved document slug: ${page.slug}`);
+  return { ...page, body, route: `/docs/${page.slug}/`,
     published: page.visibility === 'public' && (!page.publishedAt || page.publishedAt <= now.toISOString().slice(0, 10)) };
-}
-
-export function publicDocuments(documents, { includeExamples = false } = {}) {
-  for (const key of ['id', 'slug']) {
-    const values = documents.map(page => page[key]);
-    if (new Set(values).size !== values.length) throw new Error(`duplicate document ${key}`);
-  }
-  return documents.filter(page => page.published && (includeExamples || !page.example));
-}
-
-export function blogDocuments(documents) {
-  return documents.filter(page => page.type === 'blog').sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id));
-}
-
-// 블로그 상세 하단의 관련 글. 같은 분류이거나 태그를 하나 이상 공유하는 다른 블로그 글만 후보이며,
-// 최근 발행한 글이 앞에 오고 같은 날짜는 문서 ID 순서로 고정한다. 후보가 모자라도 관련 없는 글로 채우지 않는다.
-export const RELATED_POST_LIMIT = 4;
-export function relatedPosts(page, posts, limit = RELATED_POST_LIMIT) {
-  const tags = new Set(page.tags ?? []);
-  return posts
-    .filter(post => post.type === 'blog' && post.id !== page.id && (post.category === page.category || (post.tags ?? []).some(tag => tags.has(tag))))
-    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.id.localeCompare(b.id))
-    .slice(0, limit);
 }
 
 export function paginate(items, page, size) {
@@ -73,37 +44,8 @@ export function paginate(items, page, size) {
   return { items: size === Infinity ? items.slice() : items.slice((current - 1) * size, current * size), page: current, total: items.length, totalPages };
 }
 
-export function searchEntry(page, tags) {
-  return { id: page.id, route: page.route, title: page.title, description: page.description,
-    type: page.type, tags: page.tags, contentIcon: page.contentIcon,
-    date: page.type === 'blog' ? page.publishedAt : page.updatedAt ?? '',
-    keywords: [...(page.keywords ?? []), ...page.tags.flatMap(tag => [tags[tag].label, ...(tags[tag].aliases ?? [])])],
-    text: page.body.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]*>/g, ' ').replace(/[#*_`>|]/g, ' ') };
-}
-
 function validDate(value) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const date = new Date(value);
   return Number.isFinite(date.valueOf()) && date.toISOString().slice(0, 10) === value;
-}
-
-function validateThumbnail(thumbnail) {
-  if (thumbnail === undefined) return;
-  const src = thumbnail?.src;
-  const local = typeof src === 'string' && /^\/media\/[a-z0-9][a-z0-9./-]*\.(?:png|jpg|webp|svg)$/.test(src) && !src.includes('..');
-  let external = false;
-  if (typeof src === 'string' && src.startsWith('https://')) {
-    try {
-      const url = new URL(src);
-      external = Boolean(url.hostname) && !url.username && !url.password;
-    } catch { /* 경로 오류는 아래의 공통 검증 결과로 보고한다. */ }
-  }
-  if (!local && !external) throw new Error('invalid thumbnail path');
-  if (typeof thumbnail.alt !== 'string') throw new Error('missing thumbnail alternative');
-  if (thumbnail.position !== undefined) {
-    for (const axis of ['x', 'y']) {
-      const value = thumbnail.position?.[axis];
-      if (!Number.isFinite(value) || value < 0 || value > 100) throw new Error('invalid thumbnail position');
-    }
-  }
 }

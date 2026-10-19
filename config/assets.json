@@ -1,11 +1,5 @@
 [
   {
-    "file": "assets/backend-engineer.svg",
-    "origin": "project-original",
-    "license": "MIT",
-    "note": "Pretendard Black(900) 글자 윤곽을 도형으로 변환한 제목. 글꼴(OFL-1.1)은 design-tokens assets/fonts에서 관리한다."
-  },
-  {
     "file": "assets/who-knows.svg",
     "origin": "project-original",
     "license": "MIT",

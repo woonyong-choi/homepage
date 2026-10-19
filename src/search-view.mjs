@@ -34,10 +34,15 @@ export function showResultsLoading(root, message = '검색 결과를 불러오�
 export function renderResults(root, result, state, tags) {
   const summary = root.querySelector('[data-filter-summary]');
   summary.replaceChildren(...state.tags.map(tag => nodeFrom(ui.Tag({ href: searchUrl({ ...state, tags: state.tags.filter(value => value !== tag), page: 1 }), label: `${tags[tag]?.label ?? tag} ×` }))));
-  if (state.query || state.tags.length) summary.append(link('조건 초기화', '/docs/'));
+  if (state.query || state.tags.length) summary.append(link('조건 초기화', searchUrl({ baseRoute: state.baseRoute, homeRoute: state.homeRoute })));
   const output = root.querySelector('[data-full-results]');
-  output.classList.add('app-search-panel');
-  output.replaceChildren(...result.entries.map(entry => resultRow(entry, tags, state)));
+  output.classList.remove('app-search-panel');
+  const cards = result.entries.map(entry => resultCard(entry, tags, state, root.dataset.card ? JSON.parse(root.dataset.card) : undefined));
+  output.replaceChildren(nodeFrom(ui.CardGroup({ columns: Number(root.dataset.columns) || 3, cards })));
+  const choices = root.querySelector('[data-blog-tags]');
+  if (choices) choices.replaceChildren(nodeFrom(ui.TagList({ tags: Object.entries(tags).map(([tag, value]) => ({ href: searchUrl({ ...state, tags: state.tags.includes(tag) ? state.tags.filter(item => item !== tag) : [...state.tags, tag], page: 1 }), label: `${value.label}${state.tags.includes(tag) ? ' (선택됨)' : ''}` })) })));
+  if (state.query) summary.prepend(nodeFrom(ui.Tag({ href: searchUrl({ ...state, query: '', page: 1 }), label: `${state.query} ×` })));
+
   if (!result.entries.length) {
     output.append(element('p', '조건에 맞는 글이 없습니다. 검색어나 태그를 줄여 보세요.', 'app-search-message'));
   }
@@ -59,22 +64,15 @@ export function renderResults(root, result, state, tags) {
 function resultLink(entry, query) {
   return nodeFrom(ui.SearchResultLink({
     href: entry.route,
-    icon: entry.iconUrl ? ui.ContentIconImage({ src: entry.iconUrl }) : undefined,
     title: ui.Highlight({ text: entry.title, query }),
     example: entry.example,
     description: ui.Highlight({ text: entry.excerpt ?? entry.description, query }),
   }));
 }
 
-function resultRow(entry, tags, state) {
-  return nodeFrom(ui.SearchResult({
-    href: entry.route,
-    icon: entry.iconUrl ? ui.ContentIconImage({ src: entry.iconUrl }) : undefined,
-    title: ui.Highlight({ text: entry.title, query: state.query }),
-    example: entry.example,
-    description: ui.Highlight({ text: entry.excerpt ?? entry.description, query: state.query }),
-    tags: entry.tags.map(tag => ({ href: searchUrl({ ...state, tags: [...new Set([...state.tags, tag])], page: 1 }), label: tags[tag].label })),
-  }));
+function resultCard(entry, tags, state, card = { title: true, description: true, media: 'image', tags: true, date: true, comments: true }) {
+  const cover = card.media === 'image' && entry.thumbnail ? ui.trusted(`<img src="${ui.safeUrl(entry.thumbnail.src)}" alt="${ui.escape(entry.thumbnail.alt)}" loading="lazy" decoding="async"${entry.thumbnail.position ? ` style="object-position:${entry.thumbnail.position.x}% ${entry.thumbnail.position.y}%"` : ''}>`) : undefined;
+  return ui.BlogCard({ href: entry.route, title: entry.title, showTitle: card.title, level: 2, cover, description: card.description ? entry.excerpt ?? entry.description : '', tagItems: (card.tags ? entry.tags : []).map(tag => ({ href: searchUrl({ ...state, tags: [...new Set([...state.tags, tag])], page: 1 }), label: tags[tag]?.label ?? tag })), publishedAt: card.date ? entry.date : undefined, dateLabel: entry.date ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(entry.date)) : undefined, commentsHref: card.comments && entry.comments ? `${entry.route}#comments` : undefined, commentCount: entry.commentCount });
 }
 
 export function renderSuggestions(output, result, state) {

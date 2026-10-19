@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
-import { articlePage } from './publication-layout.mjs';
+import { privateWikiArticle as articlePage } from './private-wiki-layout.mjs';
 import { documentPager } from './document-navigation.mjs';
 import { renderArticle } from './article-renderer.mjs';
 import { JSDOM } from 'jsdom';

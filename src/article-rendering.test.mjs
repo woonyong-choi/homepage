@@ -116,7 +116,7 @@ test('bottom_selector_tabs_use_the_same_runtime_for_click_arrows_home_and_end', 
 });
 
 test('gallery_tabs_show_only_the_selected_panel_pause_hidden_videos_and_use_the_one_runtime', async () => {
-  const source = ':::tabs selector-numbers\n@tab 영상\n\n::video{src=backend-engineer.svg poster=backend-engineer.svg alt=영상 controls}\n\n@tab 그림\n\n::figure{src=who-knows.svg alt=그림 caption=캡션}\n\n@tab 셋째\n\n짧은 글\n\n:::end\n';
+  const source = ':::tabs selector-numbers\n@tab 영상\n\n::video{src=who-knows.svg poster=who-knows.svg alt=영상 controls}\n\n@tab 그림\n\n::figure{src=who-knows.svg alt=그림 caption=캡션}\n\n@tab 셋째\n\n짧은 글\n\n:::end\n';
   const window = new JSDOM(`<body>${await render(source)}</body>`, { runScripts: 'outside-only', url: 'https://example.com/' }).window;
   const paused = [];
   window.HTMLMediaElement.prototype.pause = function pause() { paused.push(this); };

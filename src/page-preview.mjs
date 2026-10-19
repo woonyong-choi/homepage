@@ -6,12 +6,14 @@ import { createHash } from 'node:crypto';
 
 import { mathAssets } from 'document-engine';
 
+import { privateWikiArticle, privateWikiSearch } from './private-wiki-layout.mjs';
+import { readPost } from './blog-model.mjs';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
-import { readDocument } from './content-model.mjs';
+import { readDocument, parseContent } from './content-model.mjs';
 import { parseContentSource } from './content-files.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
 import { loadLayoutConfig } from './layout-config.mjs';
-import { articlePage, documentShell, personalHome, searchPage } from './publication-layout.mjs';
+import { articlePage, documentShell, personalHome } from './publication-layout.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
 import { FAVICON, siteOrigin } from './publication-metadata.mjs';
 import { publicationLinks } from './publication-routes.mjs';
@@ -98,16 +100,16 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     body = personalHome(context);
   } else if (kind === 'search') {
     page = { route: '/search/', title: '검색' };
-    body = searchPage();
+    body = privateWikiSearch(context.layout);
   } else {
-    page = readDocument(selectedSource, context.tags, new Date(), context.topics);
+    page = parseContent(selectedSource).metadata.type === 'wiki' ? readDocument(selectedSource, context.tags, new Date(), context.topics) : readPost(selectedSource, { includeUnpublished: true });
     if (id !== undefined && id !== page.id) throw new Error('preview document id does not match source');
     const document = await parseArticle(page, { assets: documentAssets });
     diagrams = await compileDiagrams(new Map(document.metadata.diagrams.map(item => [item.source, page.id])));
     const rendered = await renderArticle(page, { document, diagrams: diagrams.diagrams, assets: documentAssets });
     Object.assign(page, rendered);
     diagnostics = rendered.diagnostics;
-    body = articlePage(page, context);
+    body = page.type === 'wiki' ? privateWikiArticle(page, context) : articlePage(page, context);
   }
   const html = normalizePublicationAssets(documentShell(page, body, context));
   const files = publicationAssets(new Map([[page.route, html]]), [], readAsset);

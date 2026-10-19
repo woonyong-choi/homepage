@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
-import { blogFeed } from './blog-layout.mjs';
+import { privateWikiArticle } from './private-wiki-layout.mjs';
 
 test('duplicate_introduction_moves_once_with_links_formatting_and_footnote_backlinks', async () => {
   const page = { id: 'a', description: 'Python 이름과 값.', body: '[Python](/wiki/python/) **이름**과 `값`.[^note]\n\n## 본문\n설명\n\n## 본문\n다음\n\n[^note]: 출처' };
@@ -31,15 +31,12 @@ test('detail_and_feed_share_the_lead_without_prose_rules_on_the_title_or_empty_r
   const page = { id: 'a', slug: 'a', route: '/articles/a/', title: '제목', description: '설명', body: '**설명**\n\n## 본문\n내용', type: 'wiki', tags: ['python'], contentIcon: { name: 'python' }, comments: true, publishedAt: '2026-01-01' };
   Object.assign(page, (await renderArticle(page)));
   const topics = { python: { label: 'Python' } };
-  const detail = articlePage(page, { topics });
+  const detail = privateWikiArticle(page, { topics });
   assert.doesNotMatch(detail, /class="app-document app-prose"|함께 읽기/);
   assert.match(detail, /app-document-lead"><strong>설명<\/strong>/);
   const post = { ...page, type: 'blog' };
   const blog = articlePage(post, { topics });
   assert.match(blog, /app-article-lead"><strong>설명<\/strong>/);
-  const feed = blogFeed([post], topics, 1, { commentConfig: { repo: 'owner/blog', repoId: 'repo-id', category: 'Comments', categoryId: 'category-id' }, commentTheme: 'light' });
-  assert.match(feed, /app-article-lead"><strong>설명<\/strong>/);
-  assert.equal((feed.match(/<strong>설명<\/strong>/g) ?? []).length, 1);
   assert.doesNotMatch(detail, /app-related|app-search-entry/);
 });
 

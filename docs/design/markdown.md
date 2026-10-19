@@ -10,7 +10,7 @@
 
 ## 해결하는 문제
 
-글마다 HTML과 CSS를 넣으면 문서·피드·미리보기의 출력이 달라진다. 작성자는 문서 구조와 내용만 적고 공통 엔진과 디자인 구성 요소가 출력을 담당한다.
+글마다 HTML과 CSS를 넣으면 글 상세와 미리보기의 출력이 달라진다. 작성자는 문서 구조와 내용만 적고 공통 엔진과 디자인 구성 요소가 출력을 담당한다.
 
 ## 사용 예
 
@@ -26,33 +26,35 @@
 
 ### 파일과 메타데이터
 
-비공개 자료 저장소의 원문을 수정하고 승인한 뒤 `content:sync-vault`로 발행 목록의 사본을 가져온다. 사본은 `content/docs/`(분야별 문서)이나 `content/blog/`(블로그)의 하위 폴더에 있으며 직접 수정하지 않는다. 주소는 `slug`, 문서 계층은 `parent`, 내부 분류는 `category`로 결정하며 폴더 경로와 무관하다. `tags`는 공통 태그 목록을 사용하고 빈 배열을 허용한다. 맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
+비공개 Vault의 원문을 수정·승인한 뒤 `content:sync-vault`로 `content/blog/`에 가져온다. 승인 사본은 직접 수정하지 않는다. 폴더는 작성 편의용이며 공개 주소는 `/blog/<slug>/`다. 공개 글에 `type`, `field`, `category`, `parent`, `contentIcon`을 요구하지 않는다. 개인 위키 미리보기의 기존 메타데이터는 [별도 API 계약](publication.md#저장-전-페이지-미리보기)으로 유지한다.
+
+맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
 
 | 필드 | 필수 | 내용 |
 |---|---|---|
-| `id`, `slug` | 예 | 소문자 영문·숫자·하이픈. 댓글 연결과 주소에 쓰며 중복이면 빌드 오류 |
-| `type` | 예 | `wiki` 또는 `blog` |
-| `title`, `description` | 예 | 제목, 목록·검색·도입문에 쓰는 한두 문장 |
-| `tags` | 아니오 | `config/tags.json`에 있는 태그 0~5개. 생략하면 빈 배열 |
-| `field` | 예 | `languages`, `cs`, `frameworks`, `infrastructure` 중 하나 |
-| `category` | 예 | `content/pages/tech.md`의 `topics`에 있는 내부 분류 |
-| `contentIcon.name` | 예 | 테마의 콘텐츠 아이콘 이름 |
+| `id`, `slug` | 예 | 소문자 영문·숫자를 하이픈으로 연결한 고정 ID와 주소. 중복이면 빌드 오류 |
+| `title`, `description` | 예 | 제목과 목록·검색·도입문에 쓰는 설명 |
+| `tags` | 아니오 | 임의 문자열 배열. 생략하면 빈 배열. `python`, `산책`, `독서`, `회고` 같은 태그 사용 |
+| `publishedAt` | 예 | 최초 발행일. `YYYY-MM-DD` |
 | `visibility` | 예 | `public` 또는 `draft` |
-| `comments` | blog는 `true` | giscus 댓글 |
-| `publishedAt`, `updatedAt` | blog는 발행일 | `YYYY-MM-DD` |
-| `parent` | 아니오 | 위키 부모 문서의 slug |
+| `updatedAt` | 아니오 | 수정일. `YYYY-MM-DD` |
 | `thumbnail` | 아니오 | `src`, `alt`, 선택 `position` |
-| `example` | 아니오 | `true`면 미리보기 전용 |
+| `comments` | 아니오 | 댓글 표시 여부. 기본 `false` |
+| `example` | 아니오 | 기본 `false`. `true`면 운영 발행에서 제외 |
+
+slug `all`, `page`, `feed`는 예약어다. 태그는 양끝 공백 제거와 Unicode NFC 정규화 후 비어 있거나 중복이면 오류다. `updatedAt`은 `publishedAt`보다 앞설 수 없다. 썸네일은 `/media/` 아래 png·jpg·webp·svg 또는 자격 정보 없는 HTTPS URL을 사용하며 `alt`가 필요하다. 선택 `position.x`, `position.y`는 0~100의 백분율이다.
+
+`config/tags.json`은 표시 이름과 별칭을 보완하며 태그 허용 목록이 아니다. 초안·미래 발행 글은 공개 출력에서 제외한다. `example` 글은 운영 빌드에서 제외하며 합성 데모 입력은 명시적인 데모 모드에서만 사용한다. 빌드 모드는 [개인 사이트 발행](publication.md#실행과-댓글)에 있다.
 
 본문의 첫 문단이 `description`과 같으면 그 문단이 도입문이 된다. 다르면 `description`이 도입문이고 본문은 그대로 이어진다.
 
 ### 화면 구조
 
-블로그 상세는 검색과 제목 아이콘 없이 가운데 날짜, 제목, 도입문, 태그, 본문 순서로 표시하고 댓글은 본문 뒤에 둔다. 위키 상세는 검색, 아이콘 제목, 도입문, 날짜·태그, 본문을 표시한다. 두 유형의 태그는 도입문 다음, 본문 앞에 같은 구성 요소로 표시한다. 위키의 읽기 열은 최대 680px이며 문서 계층과 본문 목차는 본문 밖의 탐색 열을 사용한다. 작은 화면에서는 문서 계층과 본문 목차를 본문 위로 옮겨 접는다. 스크립트가 없으면 두 탐색 영역을 펼친 채 표시한다. 작성자가 넣는 관련 글 카드는 `cards related`를 사용한다. 위키에는 자동 추천이 없고 블로그 상세에는 [관련 글 선정 기준](publication.md#문서와-블로그-탐색)에 따른 목록을 붙인다.
+글 상세는 날짜, 제목, 도입문, 태그, 선택 대표 이미지, 본문 순서로 조립하고 댓글은 본문 뒤에 둔다. 글의 장식 아이콘이나 필수 썸네일은 없다. 이미지가 없으면 빈 영역도 만들지 않는다. 태그와 글 링크는 독립적으로 동작한다. 카드·본문·조작의 표현과 반응형 배치는 [공통 디자인](styles.md)이 소유한다.
 
-본문의 `#`은 글 제목이 `h1`이므로 `h2`로, 피드에서는 한 단계씩 더 내려 출력한다. 쓴 단계는 `app-heading-N` 클래스로 남아 어느 위치에서도 같은 크기와 여백을 쓴다. 위키 목차는 상세 화면에서 `h2`·`h3`로 표시되는 `#`·`##`·`###` 제목으로 만든다.
+본문의 제목은 페이지 제목과 충돌하지 않도록 조정한다. 쓴 단계는 `app-heading-N` 클래스로 남아 공통 크기와 여백을 사용한다. 개인 위키 미리보기의 계층·본문 목차는 공개 Blog와 분리한다. 작성자가 넣는 관련 글 카드는 `cards related`를 사용한다. Blog 상세의 자동 관련 글은 [선정 기준](publication.md#문서와-블로그-탐색)을 따른다.
 
-목차는 제목의 읽을 글자만 표시한다. 인라인 코드·강조·링크의 문법 표식과 링크 주소는 제외하고, 이미지 대체 글자·키와 메뉴의 이름·수식 원문은 남긴다. 이스케이프한 문자와 코드 안의 기호는 그대로 표시하며 HTML로 실행하지 않는다. 대체 글자가 없는 이미지만 쓴 제목은 빈 목차 링크가 되지 않게 원문을 유지한다. 제목 ID는 기존 원문 기준을 유지하므로 목차 표시가 달라져도 기존 앵커 주소는 바뀌지 않는다.
+목차를 사용하는 개인 미리보기에서 목차는 제목의 읽을 글자만 표시한다. 인라인 코드·강조·링크의 문법 표식과 링크 주소는 제외하고 이미지 대체 글자·키와 메뉴의 이름·수식 원문은 남긴다. 이스케이프한 문자와 코드 안의 기호는 그대로 표시하며 HTML로 실행하지 않는다. 대체 글자가 없는 이미지만 쓴 제목은 빈 링크가 되지 않게 원문을 유지한다. 제목 ID는 원문 기준을 유지하므로 기존 앵커 주소는 바뀌지 않는다.
 
 ### 지원 문법
 
@@ -89,8 +91,8 @@ HTML은 글자로 출력하고 실행하지 않는다. `<details>`와 `<summary>
 Things 블로그 글의 작은 글씨 문단과 이미지 묶음은 선택 구성 요소로 쓴다. 임의 HTML은 받지 않는다.
 
 - `ui:fineprint`: `body` 한 문단(인라인 Markdown 허용). 원본 `p.fineprint` 값을 쓴다.
-- `ui:figure-grid`: `items`의 `src`, `alt`, `caption`, `href`, `rounded`. `columns`(1~6)와 `size`(`small`, `large`)는 원본 `newgrid`의 `has-N-columns`, `is-small`, `is-large`와 같다. 지정하지 않으면 원본 기본처럼 열 최소 너비 210px로 늘고 준다.
-- 링크 `href`는 `https://`, `mailto:`, `#`, 또는 `/articles/foo/`처럼 `/`로 시작하는 사이트 경로만 받는다. `//`로 시작하는 주소, 역슬래시, 공백·제어 문자, `javascript:`는 빌드 오류다.
+- `ui:figure-grid`: `items`의 `src`, `alt`, `caption`, `href`, `rounded`. `columns`(1~6)와 `size`(`small`, `large`)는 원본 `newgrid`의 `has-N-columns`, `is-small`, `is-large`와 같다. 지정하지 않으면 공통 이미지 묶음의 반응형 배치를 사용한다.
+- 링크 `href`는 `https://`, `mailto:`, `#`, 또는 `/blog/foo/`처럼 `/`로 시작하는 사이트 경로만 받는다. `//`로 시작하는 주소, 역슬래시, 공백·제어 문자, `javascript:`는 빌드 오류다.
 
 ````markdown
 ```ui:fineprint
@@ -100,12 +102,12 @@ body: 이 글은 평소보다 기술적입니다. [요약](#summary)만 읽어�
 ```ui:figure-grid
 columns: 2
 items:
-  - { src: sample-a.png, alt: 오늘 화면, caption: 첫 캡션, href: /articles/foo/, rounded: true }
+  - { src: sample-a.png, alt: 오늘 화면, caption: 첫 캡션, href: /blog/foo/, rounded: true }
   - { src: sample-b.png, alt: 알림 화면, caption: 둘째 캡션 }
 ```
 ````
 
-- `ui:figure`도 `href`와 `rounded`를 받는다. `rounded` 이미지는 원본 글의 인라인 1em 곡률이다.
+- `ui:figure`도 `href`와 `rounded`를 받는다. `rounded` 이미지는 공통 그림의 곡률을 사용한다.
 
 #### 수식
 
@@ -205,7 +207,7 @@ items:
 - `src`와 `poster`는 `content/assets/`에 있는 파일 이름만 쓴다. 경로, `..`, 없는 파일은 오류다.
 - `href`는 위 "원본 글 요소"와 같은 규칙이다(`https://`, `mailto:`, `#`, `/`로 시작하는 사이트 경로).
 - `cards`의 글 끝 "이어서 읽을 글"에는 `related`를 쓴다. 작은 아이콘, 제목 한 줄, 갈매기표로 된 한 줄 카드이고 `description`은 그려지지 않는다. 긴 제목은 말줄임으로 줄이고(전체 글은 읽기 도구가 읽는다) 좁은 화면에서는 한 열이다. 글 하단에 자동으로 붙는 "함께 읽기"와 "이 문서의 수정 제안" 링크는 없다. 나머지 변형은 다른 용도의 기존 표현이다.
-- `icon`은 테마의 콘텐츠 아이콘 이름이다. 글 앞의 `contentIcon.name`과 같은 목록이다.
+- 선택 카드의 `icon`은 공통 카탈로그 이름이다. 본문 카드 문법의 선택 기능이며 공개 글 메타데이터에 장식 아이콘을 요구하지 않는다.
 
 #### 탭: `@tab` 형식
 
@@ -255,7 +257,7 @@ items:
 |---|---|
 | 생략 | 본문 폭 |
 | `w-narrow` | 좁은 미디어 폭(`width-narrow`) 이하로 가운데 배치 |
-| `w-wide` | 넓은 미디어 폭(`width-wide`: 최대 900px)으로 본문 밖까지 확장. 좁은 화면은 양쪽 여백 유지 |
+| `w-wide` | 공통 넓은 미디어 폭(`width-wide`)으로 본문 밖까지 확장. 좁은 화면은 공통 여백 유지 |
 
 ````markdown
 ::figure w-narrow rounded src=sample-a.png alt="오늘 화면"
@@ -350,7 +352,7 @@ IntelliJ의 PSI·심볼 해석을 실행하는 것은 아니다. 외부 타입, 
 
 ### 검증
 
-문법 해석과 HTML 출력(CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 등록 언어와 별칭, 구성 블록의 중첩·속성 검사·오류 위치, 각주·제목 ID)은 document-engine의 `npm test`가 확인한다. 홈페이지의 `npm run check:product`는 그 출력을 쓰는 쪽을 확인한다. 소개 문단 분리와 목차, 복사 원문과 동적 본문의 초기화, 탭·갤러리 동작, 피드와 상세 구조, 예시 글의 코드 블록 원문 왕복과 ID 중복(`article-rendering.test.mjs`, `article-renderer.test.mjs`), 테마 토큰이 만드는 본문 치수, 수식 오류 복구와 자산의 페이지별 선택, 도표 원문 보존과 ID, 도표 렌더러의 보안 설정과 로더 상태 전환이 대상이다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
+문법 해석과 HTML 출력(CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 등록 언어와 별칭, 구성 블록의 중첩·속성 검사·오류 위치, 각주·제목 ID)은 document-engine의 `npm test`가 확인한다. 홈페이지의 `npm run check:product`는 그 출력을 쓰는 쪽을 확인한다. 소개 문단 분리와 목차, 복사 원문과 동적 본문의 초기화, 탭·갤러리 동작, 글 상세 구조, 예시 글의 코드 블록 원문 왕복과 ID 중복(`article-rendering.test.mjs`, `article-renderer.test.mjs`), 테마 토큰이 만드는 본문 치수, 수식 오류 복구와 자산의 페이지별 선택, 도표 원문 보존과 ID, 도표 렌더러의 보안 설정과 로더 상태 전환이 대상이다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
 
 코드와 도표는 공통 `ToolHeader`·`Toolbar`·`ToolButton`의 크기·아이콘·호버·초점·상태 알림을 사용한다. 복사 성공·실패·재시도는 공통 디자인의 `bindToolbar`와 그 시험이 소유한다. 도표의 대체 전체화면은 공통 `bindDiagramHost`가 송신자와 출처를 확인해 처리하고 전체화면 중 높이 알림은 무시한다. 소비자에서 별도 보정 CSS를 추가하지 않는다.
 

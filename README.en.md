@@ -6,7 +6,7 @@
   <a href="README.md">한국어</a> | English
 </p>
 
-This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction, technical documents, and blog posts from Markdown as static HTML. It imports approved content and uses shared packages for design, diagrams, and Markdown parsing.
+This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content and uses shared packages for design, diagrams, and Markdown parsing.
 
 > [!NOTE]
 > In development. There are no releases; build from source.
@@ -20,26 +20,26 @@ npm ci
 npm run dev
 ```
 
-Open the home page in the [local preview](http://localhost:8796/). Browse documents at `/docs/` and blog posts at `/blog/all/`. Restart the command after you change a file. The build output is in `dist/site/`. The default build is a preview that includes example posts and blocks search engine indexing.
+Open the home page in the [local preview](http://localhost:8796/). Browse all posts and filter by query and tags at `/search/`. Read recent posts in full at `/blog/`. Restart the command after you change a file. The build output is in `dist/site/`. The default build reads approved copies and blocks search engine indexing. Run `npm run dev:demo` to preview synthetic posts. These posts never enter production builds.
 
 The approved copies in this repository and the public Git dependencies are enough to run the site. Importing new content requires a publication manifest from the private Vault. If GitHub CLI is unavailable, unauthenticated, or a lookup fails, the site shows comment links instead of comment counts.
 
 ## Why
 
-The site publishes selected files from private notes after approval. The build stops when files do not match the hashes in the publication manifest. Document IDs and URLs are separate from file locations, so moving a source file preserves its public URL.
+The site publishes selected files from private notes after approval. The build stops when files do not match the hashes in the publication manifest. Post IDs and URLs are separate from file locations, so moving a source file preserves its public URL. Technical posts, walks, reading notes, and retrospectives share one Blog with free-form tags.
 
 For a blog with public content only, a static site tool without a separate approval manifest can be sufficient.
 
 ## How it works
 
-1. Read approved Markdown, author settings, and assets, then check them against the publication manifest.
+1. Read approved Blog Markdown, author settings, and assets, then check them against the publication manifest.
 2. Parse the content with the document engine and compile diagrams with ThinkFlow.
 3. Assemble pages and check internal links, anchors, and assets.
 4. Replace the publication output in `dist/site/` after the checks pass.
 
 ![Only approved input that passes link and asset checks becomes the static site](docs/assets/publication-flow.svg)
 
-[개인 사이트 발행](docs/design/publication.md) describes synchronization, recovery, preview, and deployment. Do not edit approved copies of content and settings directly. Update the source and its approval, then import it with these commands.
+[개인 사이트 발행](docs/design/publication.md) describes synchronization, recovery, preview, and deployment. Public posts come only from `content/blog/`. Approved `content/docs/` input stops the public build. Private Vault wiki preview and synchronization contracts remain separate. Do not edit approved copies of content and settings directly. Update the source and its approval, then import it with these commands.
 
 ```sh
 npm run content:sync-vault -- <vault-root>
@@ -52,7 +52,7 @@ npm run content:check
 
 | Area | Scope |
 |---|---|
-| Implemented | Personal introduction, document hierarchy, search and tags, blog archive and feed, comments, Markdown and diagram publication |
+| Implemented | Personal introduction, Search list, search and tags, recent Blog feed, RSS, comments, Markdown and diagram publication |
 | Limitations | Published pages use the light theme, code execution is unavailable, and the subscription endpoint is not configured |
 | Next | [Full audit](https://github.com/woonyong-choi/homepage/issues/215), [integration checks](https://github.com/woonyong-choi/homepage/issues/28), [site mark](https://github.com/woonyong-choi/homepage/issues/303) |
 

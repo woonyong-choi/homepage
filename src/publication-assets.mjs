@@ -61,7 +61,7 @@ export function publicationAssets(pages, searchEntries, readAsset) {
   for (const [route, html] of pages) {
     for (const reference of markupReferences(html)) include(reference, route);
   }
-  for (const entry of searchEntries) include(entry.iconUrl);
+  for (const entry of searchEntries) include(entry.thumbnail?.src);
   // 인라인 아이콘과 같은 원본에서 만든 사이트 아이콘은 파일 링크 없이도 정본 고지를 배포한다.
   for (const notice of ICON_NOTICES) include(notice);
   // iframe에서 직접 읽는 테마는 부모 HTML에 stylesheet 링크가 없다.

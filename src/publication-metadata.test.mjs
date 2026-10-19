@@ -35,7 +35,7 @@ test('metadata_uses_one_home_name_and_keeps_preview_without_an_invented_origin',
   assert.equal(brandedLogo.querySelector('img'), null);
   assert.equal(brandedLogo.querySelector('[data-control-icon]'), null);
   assert.equal(brandedLogo.textContent, '');
-  assert.match(brandedPage, /<title>Who Knows<\/title>/);
+  assert.match(brandedPage, /<title>이름 &amp; 글 · Who Knows<\/title>/);
   assert.match(brandedPage, /property="og:site_name" content="Who Knows"/);
   assert.match(brandedPage, /content="이름 &amp; 글의 기록을 나타내는 문서 아이콘"/);
   assert.match(publicationMetadata({ title: '글 제목', route: '/articles/example/' }, { ...context, config: branded }), /<title>글 제목 · Who Knows<\/title>/);

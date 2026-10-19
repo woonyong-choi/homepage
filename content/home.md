@@ -10,8 +10,6 @@ sections:
   - id: hero
     type: hero
     enabled: true
-    wordmark:
-      src: /assets/backend-engineer.svg
     video:
       src: /media/woonyong-interview.mp4
       poster: /media/woonyong-interview-poster.jpg
@@ -55,6 +53,6 @@ sections:
     email: woonyong.contact@gmail.com
 ---
 
-# 백엔드 엔지니어
+# 백엔드 개발자 최우녕입니다
 
 기능 개발과 프로젝트 운영을 맡아 왔으며, 지금은 백엔드 개발에 집중하고 있습니다.

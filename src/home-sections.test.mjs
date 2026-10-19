@@ -142,7 +142,7 @@ test('hero_title_names_the_page_and_icon_and_missing_files_of_disabled_items_are
   const noIcon = render('sections:\n  - { id: hero, type: hero, title: 내 이름, description: 소개 }');
   assert.match(noIcon, /<p class="app-hero-title" aria-hidden="true">내 이름<\/p>/);
   assert.doesNotMatch(render('sections:\n  - { id: hero, type: hero, description: 소개 }'), /app-hero-title/);
-  const wordmark = render('sections:\n  - { id: hero, type: hero, title: 백엔드 엔지니어, description: 소개, wordmark: { src: /assets/backend-engineer.svg } }');
+  const wordmark = render('sections:\n  - { id: hero, type: hero, title: 백엔드 엔지니어, description: 소개, wordmark: { src: /assets/who-knows.svg } }');
   assert.match(wordmark, /<h1 class="app-sr">백엔드 엔지니어<\/h1>/);
   assert.match(wordmark, /<svg[^>]*class="app-hero-wordmark"/);
   assert.doesNotMatch(wordmark, /app-hero-logo|app-hero-title/);
@@ -169,8 +169,9 @@ test('newsletter_without_endpoint_keeps_controls_disabled_and_never_posts', () =
   assert.match(render('sections:\n  - { id: contact, type: contact, email: hello@example.com }'), /href="mailto:hello@example.com"/);
   const home = loadHomeContent(brandNames());
   const shipped = personalHome({ config: { name: '이름' }, home });
-  assert.match(shipped, /<h1 class="app-sr">백엔드 엔지니어<\/h1>/);
-  assert.match(shipped, /<svg[^>]*class="app-hero-wordmark"[^>]*aria-hidden="true"/);
+  assert.match(shipped, /<h1 class="app-sr">백엔드 개발자 최우녕입니다<\/h1>/);
+  assert.match(shipped, /<p class="app-hero-title" aria-hidden="true">백엔드 개발자 최우녕입니다<\/p>/);
+  assert.doesNotMatch(shipped, /app-hero-wordmark/);
   assert.match(shipped, /소식 받아보기<\/h2><p>새 글과 프로젝트 소식을 이메일로 보내 드립니다\.<\/p>/);
   assert.match(shipped, /<input[^>]*type="email"[^>]* disabled/);
   assert.match(shipped, /<button type="submit" disabled>구독<\/button>/);

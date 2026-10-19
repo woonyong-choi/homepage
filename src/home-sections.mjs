@@ -2,6 +2,7 @@
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { href } from './home-content.mjs';
+import { searchUrl } from './search-model.mjs';
 import { renderContentSvg } from './content-icons.mjs';
 import { interviewCards, publicInterviews } from './interviews.mjs';
 import { SocialIcon as socialIcon } from '@woonyong-choi/design-tokens/ui/index.mjs';
@@ -62,10 +63,10 @@ export function technologySection(section, brandIcon) {
   const list = section.items.map(name => {
     const brand = brandIcon(name);
     if (!brand) throw new Error(`unknown technology: ${name}`);
-    return String(ui.LogoItem({ href: `/tags/${encodeURIComponent(name)}/`, label: `${brand.label} 태그 글 보기`, src: brand.src }));
+    return String(ui.LogoItem({ href: searchUrl({ tags: [name] }), label: `${brand.label} 태그 글 보기`, src: brand.src }));
   }).join('');
   const id = escape(section.id);
-  return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));
+  return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, icon: undefined, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));
 }
 
 export function interviewsSection(section, { preview = false } = {}) {
