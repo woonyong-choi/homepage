@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { test } from 'node:test';
-import { readFileSync, existsSync, statSync, mkdirSync, copyFileSync, rmSync } from 'node:fs';
+import { readFileSync, existsSync, statSync, mkdirSync, mkdtempSync, copyFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderPagePreview, normalizePublicationAssets } from './page-preview.mjs';
 
@@ -40,8 +42,9 @@ test('renderPagePreview_renders_article_tabs_math_and_runtime_with_shared_page_s
   for (const [, path] of result.html.matchAll(/<script[^>]+src="([^"?]+)/g)) assert.ok(result.assets.has(path), path);
 });
 
-test('renderPagePreview_supplies_site_icon_without_requiring_host_content_assets', async () => {
-  const externalRoot = siteRoot + 'content/docs';
+test('renderPagePreview_supplies_site_icon_without_requiring_host_content_assets', async t => {
+  const externalRoot = mkdtempSync(join(tmpdir(), 'homepage-preview-'));
+  t.after(() => rmSync(externalRoot, { recursive: true, force: true }));
   assert.equal(existsSync(externalRoot + '/assets/site-icon.svg'), false);
   const requests = [];
   const result = await renderPagePreview({ ...input, contentRoot: externalRoot, file: 'draft.md',
