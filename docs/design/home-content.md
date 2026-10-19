@@ -163,9 +163,11 @@ items:
 
 #### 기술 로고
 
-기술 이름을 가리키는 로고는 홈페이지만 쓰므로 홈페이지가 소유한다. 파일은 `content/assets/brands/<이름>.svg`이고 `/assets/brands/`로 발행한다. 각 파일은 `config/assets.json`에 제3자 상표(`origin: third-party`, 식별 목적 사용), 원배포 주소, 선택한 변형·원본 해시·처리 방식, 파일 SHA-256, 표시 이름(`brand.label`)과 고지 `assets/brands/technology-logos-NOTICE.txt`를 기록한다. SVG는 공통 테마가 발행하던 바이트를 그대로 옮긴 것이며 도형과 색을 고치지 않는다.
+기술 이름을 가리키는 로고는 design-tokens의 `brands` 카탈로그가 소유한다. 홈페이지는 `/theme/assets/icons/`로 발행하는 정본 파일과 출처·라이선스 고지를 소비한다. `content/assets/brands/`나 `config/assets.json`에 로고 사본과 중복 출처 기록을 추가하지 않는다.
 
-`src/brand-icons.mjs`가 이름을 홈페이지 로고 → 공통 카탈로그의 `brands` 순서로 찾는다. 홈의 기술 줄은 이 조회를 사용하고 로고를 공통 `LogoItem`으로 싣는다. 공개 글·카드·검색 결과에는 장식 글 아이콘을 넣지 않는다. 개인 위키 미리보기의 기존 `contentIcon` 조회는 유지한다. DiagramPlay 그림에도 쓰는 Git·PostgreSQL·Redis·NGINX와 공통 바닥글·소셜 링크가 쓰는 GitHub·LinkedIn은 공통 카탈로그에 남는다. 로고를 추가할 때는 같은 폴더의 SVG, `config/assets.json`의 기록, 고지 파일의 출처를 함께 추가한다. 발행본은 로고를 쓴 빌드에만 고지를 포함하고, 미리보기는 원고 폴더와 관계없이 홈페이지의 로고 파일을 읽는다. `src/brand-icons.test.mjs`가 기록·바이트·고지·조회 순서를 검사한다.
+`src/brand-icons.mjs`는 공통 카탈로그의 `brands`에서만 이름과 표시 이름을 찾는다. 홈의 기술 줄은 이 조회를 사용하고 로고를 공통 `LogoItem`으로 싣는다. 새 로고와 출처·고지는 design-tokens 정본에 추가한 뒤 고정 의존성을 갱신해 가져온다. 발행과 개인 미리보기는 같은 카탈로그와 정본 고지를 사용한다. `src/brand-icons.test.mjs`가 카탈로그 조회·발행 경로·고지·미등록 이름 처리를 검사한다. 공개 글·카드·검색 결과에는 장식 글 아이콘을 넣지 않는다. 개인 위키 미리보기의 기존 `contentIcon` 조회는 유지한다.
+
+기술 구간 제목의 PNG는 로고 카탈로그와 별개인 콘텐츠 자산이다. 원고의 `intro.icon.src`와 `alt`를 공통 `SectionIntro`의 이미지 슬롯에 전달한다. 표시 크기는 공통 토큰의 기존 64px 슬롯을 따르며 홈페이지 전용 크기나 스타일을 추가하지 않는다.
 
 ### 요구사항
 

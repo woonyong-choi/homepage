@@ -44,7 +44,7 @@ function card(value, path, blog) {
   if (!['icon', 'image', 'none'].includes(entry.media)) fail(`${path}.media`, 'icon, image 또는 none이어야 합니다');
   const result = { media: entry.media };
   for (const field of fields.filter(field => field !== 'media')) result[field] = flag(entry[field], `${path}.${field}`);
-  if (!result.title && !result.description && result.media === 'none') fail(path, '제목·설명·이미지 중 하나는 표시해야 합니다');
+  if (!result.title && !result.description && result.media !== 'image') fail(path, '제목·설명·이미지 중 하나는 표시해야 합니다');
   return result;
 }
 

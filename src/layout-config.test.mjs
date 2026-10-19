@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { syncBuiltinESMExports } from 'node:module';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
 import { loadLayoutConfig, loadBlogLayout, parseLayoutConfig } from './layout-config.mjs';
@@ -21,6 +23,8 @@ test('layout_validation_reports_setting_paths_instead_of_ignoring_typographical_
     [value => { value.blog.card.title = 'false'; }, /config\/blog.json.card.title/],
     [value => { value.cs.card.media = 'video'; }, /config\/cs.json.card.media/],
     [value => { value.cs.card = { title: false, description: false, media: 'none' }; }, /config\/cs.json.card/],
+    [value => { value.cs.card = { title: false, description: false, media: 'icon' }; }, /config\/cs.json.card/],
+    [value => { value.tech.card = { title: false, description: false, media: 'icon' }; }, /config\/tech.json.card/],
     [value => { value.search.sections.push(value.search.sections[0]); }, /config\/search.json.sections/],
     [value => { value.search.box.lables = {}; }, /config\/search.json.box.lables/],
   ]) {
@@ -41,6 +45,31 @@ test('home_navigation_owns_labels_order_targets_and_active_page_matching', () =>
   assert.equal(page.querySelector('[aria-current=page]').textContent, '찾기');
   assert.throws(() => parseHomeNavigation([{ label: '실행', href: 'javascript:alert(1)' }]), /navigation\[0\].href/);
   assert.throws(() => parseHomeNavigation([{ label: '홈', href: '/' }, { label: '홈 2', href: '/' }]), /중복 메뉴/);
+});
+
+test('layout_loaders_reject_icon_cards_without_title_or_description', t => {
+  const input = structuredClone(LAYOUT);
+  const readFile = t.mock.method(fs, 'readFileSync', url => JSON.stringify(input[url.pathname.split('/').at(-1).replace('.json', '')]));
+  syncBuiltinESMExports();
+  try {
+    for (const media of ['icon', 'none']) {
+      input.blog.card = { media, title: false, description: false, tags: false, date: false, comments: false };
+      for (const load of [loadLayoutConfig, loadBlogLayout]) {
+        assert.throws(() => load(), /config\/blog.json.card/);
+      }
+      for (const field of ['title', 'description']) {
+        input.blog.card[field] = true;
+        for (const load of [loadLayoutConfig, loadBlogLayout]) assert.deepEqual(load().blog.card, input.blog.card);
+        input.blog.card[field] = false;
+      }
+    }
+    input.blog.card.media = 'image';
+    assert.deepEqual(loadBlogLayout().blog.card, input.blog.card);
+  } finally {
+    readFile.mock.restore();
+    syncBuiltinESMExports();
+  }
+  assert.deepEqual(loadBlogLayout().blog.card, LAYOUT.blog.card);
 });
 
 test('public_blog_layout_needs_only_blog_settings_and_search_box', async () => {
