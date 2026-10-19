@@ -40,7 +40,7 @@ test('article_lead_and_toc_are_unchanged_when_directives_follow_the_lead', async
 });
 
 test('document_composition_example_renders_every_block_with_unique_ids', async () => {
-  const text = readFileSync(new URL('../content/docs/software-design/document-composition.md', import.meta.url), 'utf8');
+  const text = readFileSync(new URL('./fixtures/document-composition.md', import.meta.url), 'utf8');
   const meta = parse(/^---\n([\s\S]*?)\n---\n/.exec(text)[1]);
   const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
   assert.equal(meta.slug, 'document-composition');
@@ -181,7 +181,7 @@ test('detail_and_feed_move_heading_tags_without_losing_the_written_level', async
 });
 
 test('the_markdown_guide_example_renders_every_supported_construct_and_round_trips_code', async () => {
-  const source = readFileSync(new URL('../content/blog/markdown-guide.md', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('./fixtures/markdown-guide.md', import.meta.url), 'utf8');
   assert.match(source, /example: true/);
   const body = source.split('\n---\n').slice(1).join('\n---\n');
   const meta = parse(source.slice(4, source.indexOf('\n---\n')));

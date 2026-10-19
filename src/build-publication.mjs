@@ -29,7 +29,6 @@ import { legacyRoutes, redirectPage } from './publication-routes.mjs';
 import { markdownFiles, readContentFile } from './content-files.mjs';
 import { LAYOUT, gridSize } from './layout-config.mjs';
 import { verifyApprovedContent, publicationTopicsFile } from './approved-content.mjs';
-import { readProjectDocuments } from './project-documents.mjs';
 
 verifyApprovedContent();
 
@@ -46,8 +45,6 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   origin = siteOrigin(origin, preview);
   const entries = ['docs', 'blog'].flatMap(folder => markdownFiles(join(CONTENT, folder)))
     .sort().map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS));
-  const projects = readProjectDocuments();
-  entries.push(...projects.documents);
   entries.sort((left, right) => Number(Boolean(left.example)) - Number(Boolean(right.example)));
   const documents = navigationDocuments(publicDocuments(entries, { includeExamples: preview }), TOPICS);
   const posts = blogDocuments(documents);
@@ -70,7 +67,6 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))));
   const context = { config: CONFIG, layout: LAYOUT, navigation: loadHomeNavigation(CONTENT), topics: TOPICS, tags: TAGS, topicTrees, origin, preview, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
-  context.projectAssets = projects.assets;
   context.home = loadHomeContent(brandNames(), CONTENT, { preview });
   const output = new Map();
   const add = (route, title, body, metadata = {}) => {
@@ -146,12 +142,8 @@ async function writeSite(output, documents, context, scripts, notFound) {
   for (const route of output.keys()) output.set(route, rendered.get(route));
   const files = new Map([...scripts].map(([file, source]) => [`/${file}`, source]));
   const index = { entries: documents.map(page => ({ ...searchEntry(page, TAGS), iconUrl: iconUrl(page.contentIcon), example: !!page.example })), tags: TAGS };
-  const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.projectAssets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
+  const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
   for (const [path, content] of context.diagrams) assets.set(path, content);
-  for (const name of ['LICENSE', 'NOTICE']) {
-    const path = '/assets/projects/thinkflow/' + name;
-    assets.set(path, context.projectAssets.get(path));
-  }
   for (const [path, content] of assets) files.set(path, content);
   const indexJson = JSON.stringify(index);
   files.set('/search-version.json', JSON.stringify({ revision: digest(indexJson) }));
