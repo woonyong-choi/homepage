@@ -61,16 +61,15 @@ const flowRail = (options, items) => String(ui.FlowRail({ ...options, items: tru
 
 export function technologySection(section, brandIcon, { tags = {}, knownTags = {}, services = serviceTagCatalog(knownTags) } = {}) {
   const items = serviceRailItems(section.items, services, tags);
-  if (!items.length) return '';
   const list = items.map(name => {
     const brand = brandIcon(name);
     if (!brand) throw new Error(`unknown technology: ${name}`);
     const service = services.find(service => service.id === name);
     const tag = publishedServiceTag(service, tags);
-    return String(ui.LogoItem({ href: searchUrl({ tags: [tag] }), label: `${brand.label} · ${tag} 태그 글 보기`, src: brand.src }));
+    return String(ui.LogoItem({ href: tag === undefined ? undefined : searchUrl({ tags: [tag] }), label: tag === undefined ? `${brand.label} · 발행된 글 없음` : `${brand.label} · ${tag} 태그 글 보기`, src: brand.src }));
   }).join('');
   const id = escape(section.id);
-  return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));
+  return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(list ? flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list) : '') }));
 }
 
 export function interviewsSection(section, { preview = false } = {}) {
