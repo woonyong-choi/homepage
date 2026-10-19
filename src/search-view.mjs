@@ -33,11 +33,31 @@ export function showResultsLoading(root, message = '검색 결과를 불러오�
 
 export function renderResults(root, result, state, tags) {
   const summary = root.querySelector('[data-filter-summary]');
-  summary.replaceChildren(...state.tags.map(tag => nodeFrom(ui.Tag({ href: searchUrl({ ...state, tags: state.tags.filter(value => value !== tag), page: 1 }), label: `${tags[tag]?.label ?? tag} ×` }))));
-  if (state.query || state.tags.length) summary.append(link('조건 초기화', '/docs/'));
+  if (summary) summary.replaceChildren(...state.tags.map(tag => nodeFrom(ui.Tag({ href: searchUrl({ ...state, tags: state.tags.filter(value => value !== tag), page: 1 }), label: `${tags[tag]?.label ?? tag} ×` }))));
+  if (summary && (state.query || state.tags.length)) summary.append(link('조건 초기화', searchUrl({ baseRoute: state.baseRoute, homeRoute: state.homeRoute })));
   const output = root.querySelector('[data-full-results]');
-  output.classList.add('app-search-panel');
-  output.replaceChildren(...result.entries.map(entry => resultRow(entry, tags, state)));
+  output.classList.remove('app-search-panel');
+  const cards = result.entries.map(entry => resultCard(entry, tags, state, root.dataset.card ? JSON.parse(root.dataset.card) : undefined));
+  output.replaceChildren(nodeFrom(ui.CardGroup({ columns: Number(root.dataset.columns) || 3, cards })));
+  const choices = root.querySelector('[data-tag-filter]');
+  if (choices) {
+    const buttons = [...choices.querySelectorAll('[data-tag-toggle]')];
+    const focusedIndex = buttons.indexOf(document.activeElement);
+    const focusedTag = focusedIndex < 0 ? undefined : buttons[focusedIndex].dataset.tagToggle;
+    const resetFocused = choices.contains(document.activeElement) && document.activeElement.hasAttribute('data-tag-reset');
+    const available = new Set([...(result.tagIds ?? []), ...state.tags]);
+    const ids = [...new Set([...Object.keys(tags), ...state.tags])].filter(tag => available.has(tag));
+    const next = nodeFrom(ui.TagFilter({ tags: ids.map(id => ({ id, label: tags[id]?.label ?? id, selected: state.tags.includes(id) })), reset: state.tags.length ? { href: searchUrl({ baseRoute: state.baseRoute, homeRoute: state.homeRoute }), label: '초기화' } : undefined }));
+    choices.replaceWith(next);
+    if (resetFocused) root.querySelector('[data-public-search] input')?.focus({ preventScroll: true });
+    if (focusedTag !== undefined) {
+      const buttons = [...next.querySelectorAll('[data-tag-toggle]')];
+      const target = buttons.find(button => button.dataset.tagToggle === focusedTag) ?? buttons[Math.min(focusedIndex, buttons.length - 1)] ?? root.querySelector('[data-public-search] input');
+      target?.focus({ preventScroll: true });
+    }
+  }
+  if (summary && state.query) summary.prepend(nodeFrom(ui.Tag({ href: searchUrl({ ...state, query: '', page: 1 }), label: `${state.query} ×` })));
+
   if (!result.entries.length) {
     output.append(element('p', '조건에 맞는 글이 없습니다. 검색어나 태그를 줄여 보세요.', 'app-search-message'));
   }
@@ -59,22 +79,15 @@ export function renderResults(root, result, state, tags) {
 function resultLink(entry, query) {
   return nodeFrom(ui.SearchResultLink({
     href: entry.route,
-    icon: entry.iconUrl ? ui.ContentIconImage({ src: entry.iconUrl }) : undefined,
     title: ui.Highlight({ text: entry.title, query }),
     example: entry.example,
     description: ui.Highlight({ text: entry.excerpt ?? entry.description, query }),
   }));
 }
 
-function resultRow(entry, tags, state) {
-  return nodeFrom(ui.SearchResult({
-    href: entry.route,
-    icon: entry.iconUrl ? ui.ContentIconImage({ src: entry.iconUrl }) : undefined,
-    title: ui.Highlight({ text: entry.title, query: state.query }),
-    example: entry.example,
-    description: ui.Highlight({ text: entry.excerpt ?? entry.description, query: state.query }),
-    tags: entry.tags.map(tag => ({ href: searchUrl({ ...state, tags: [...new Set([...state.tags, tag])], page: 1 }), label: tags[tag].label })),
-  }));
+function resultCard(entry, tags, state, card = { title: true, description: true, media: 'image', tags: false, date: true, comments: true }) {
+  const cover = card.media === 'image' && entry.thumbnail ? ui.trusted(`<img src="${ui.safeUrl(entry.thumbnail.src)}" alt="${ui.escape(entry.thumbnail.alt)}" loading="lazy" decoding="async"${entry.thumbnail.position ? ` style="object-position:${entry.thumbnail.position.x}% ${entry.thumbnail.position.y}%"` : ''}>`) : undefined;
+  return ui.BlogCard({ href: entry.route, title: entry.title, showTitle: card.title, level: 2, cover, automaticCover: card.media === 'image', description: card.description ? entry.excerpt ?? entry.description : '', tagItems: (card.tags ? entry.tags : []).map(tag => ({ href: searchUrl({ ...state, tags: [...new Set([...state.tags, tag])], page: 1 }), label: tags[tag]?.label ?? tag })), publishedAt: card.date ? entry.date : undefined, dateLabel: entry.date ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(entry.date)) : undefined, commentsHref: card.comments && entry.comments ? `${entry.route}#comments` : undefined, commentCount: card.comments ? entry.commentCount : undefined });
 }
 
 export function renderSuggestions(output, result, state) {

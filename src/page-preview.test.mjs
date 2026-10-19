@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { test } from 'node:test';
+import { JSDOM } from 'jsdom';
 import { readFileSync, existsSync, statSync, mkdirSync, mkdtempSync, copyFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -23,6 +24,8 @@ test('renderPagePreview_uses_unsaved_home_without_writing_source_or_publication'
   assert.deepEqual(result.diagnostics, []);
   assert.match(result.html, /저장 전 미리보기 문장/);
   assert.match(result.html, /app-landing/);
+  const technologies = new JSDOM(result.html).window.document.querySelector('#technologies');
+  assert.equal(technologies, null);
   assert.match(result.html, /noindex,nofollow/);
   assert.ok(result.assets.has('/theme/tokens.css'));
   assert.ok(result.assets.has('/theme/styles.css'));
@@ -40,6 +43,17 @@ test('renderPagePreview_renders_article_tabs_math_and_runtime_with_shared_page_s
   assert.ok(result.assets.has('/katex/katex.css'));
   assert.ok(result.assets.has('/document.js'));
   for (const [, path] of result.html.matchAll(/<script[^>]+src="([^"?]+)/g)) assert.ok(result.assets.has(path), path);
+});
+
+test('renderPagePreview_reads_migrated_brand_bytes_and_notices_from_the_shared_theme', async () => {
+  const source = articleSource.replace(/\nicon:.*\n/, '\nicon: python\n') + '\n\n![Python](/theme/assets/icons/brands/python.svg)\n';
+  const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source });
+  assert.deepEqual(result.diagnostics, []);
+  const theme = new URL('../node_modules/@woonyong-choi/design-tokens/dist/', import.meta.url);
+  for (const file of ['brands/python.svg', 'licenses/technology-logos-NOTICE.txt']) {
+    assert.deepEqual(result.assets.get(`/theme/assets/icons/${file}`), readFileSync(new URL(`assets/icons/${file}`, theme)));
+  }
+  assert.equal([...result.assets.keys()].some(path => path.startsWith('/assets/brands/')), false);
 });
 
 test('renderPagePreview_supplies_site_icon_without_requiring_host_content_assets', async t => {
@@ -147,6 +161,8 @@ test('renderPagePreview_host_asset_sizes_do_not_require_generated_config', async
     source: saved('home.md'), kind: 'home', assets: { size: () => undefined } });
   assert.deepEqual(result.diagnostics, []);
   assert.match(result.html, /app-landing/);
+  const technologies = new JSDOM(result.html).window.document.querySelector('#technologies');
+  assert.equal(technologies, null);
   assert.equal(existsSync(root + '/config/image-sizes.json'), false);
 });
 
@@ -179,6 +195,7 @@ test('renderPagePreview_search_reuses_results_page_and_returns_assets', async ()
   const result = await renderPagePreview({ ...input, file: 'home.md', source: saved('home.md'), kind: 'search', colorScheme: 'dark' });
   assert.deepEqual(result.diagnostics, []);
   assert.equal(result.route, '/search/');
+  assert.match(result.html, /action="\/search\/"/);
   assert.match(result.html, /data-search-page/);
   assert.match(result.html, /data-full-results/);
   assert.match(result.html, /data-theme="dark"/);

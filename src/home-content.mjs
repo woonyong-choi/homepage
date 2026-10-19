@@ -80,6 +80,10 @@ function picture(value, path, context) {
 }
 
 function sectionIcon(value, path, context) {
+  if (typeof value === 'string' && !context.check) {
+    text(value, path);
+    return undefined;
+  }
   const image = typeof value === 'string' ? { src: `/theme/assets/icons/${iconFile(text(value, path))}` } : value;
   return picture(image, path, context);
 }

@@ -1,6 +1,7 @@
+import { collectPosts, comparePosts } from './blog-model.mjs';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { readDocument, publicDocuments, blogDocuments, paginate } from './content-model.mjs';
+import { readDocument, paginate } from './content-model.mjs';
 
 const TAGS = { javascript: { label: 'JavaScript', aliases: ['JS'] } };
 function source(changes = {}) {
@@ -10,12 +11,12 @@ function source(changes = {}) {
 
 test('publication_contract_excludes_drafts_and_future_posts', () => {
   const now = new Date('2026-10-08');
-  const documents = [{}, { id: 'b', slug: 'b', visibility: 'draft' }, { id: 'c', slug: 'c', publishedAt: '2027-01-01' }].map(change => readDocument(source(change), TAGS, now));
-  assert.deepEqual(publicDocuments(documents).map(page => page.id), ['a']);
-  assert.throws(() => publicDocuments([documents[0], documents[0]]), /duplicate/);
-  const example = readDocument(source({ example: true }), TAGS, now);
-  assert.deepEqual(publicDocuments([example]), []);
-  assert.deepEqual(publicDocuments([example], { includeExamples: true }).map(page => page.id), ['a']);
+  const documents = [{}, { id: 'b', slug: 'b', visibility: 'draft' }, { id: 'c', slug: 'c', publishedAt: '2027-01-01' }].map(source);
+  assert.deepEqual(collectPosts(documents).map(page => page.id), ['a']);
+  assert.throws(() => collectPosts([documents[0], documents[0]]), /duplicate/);
+  const example = source({ example: true });
+  assert.deepEqual(collectPosts([example]), []);
+  assert.deepEqual(collectPosts([example], { includeExamples: true }).map(page => page.id), ['a']);
 });
 
 test('document_type_controls_the_public_route_without_changing_the_comment_identity', () => {
@@ -23,12 +24,12 @@ test('document_type_controls_the_public_route_without_changing_the_comment_ident
   const wiki = readDocument(source({ type: 'wiki' }), TAGS);
   assert.deepEqual([blog.route, wiki.route], ['/blog/a/', '/docs/a/']);
   assert.equal(blog.id, wiki.id);
-  for (const slug of ['all', 'page', 'feed']) assert.throws(() => readDocument(source({ slug }), TAGS), /reserved document slug/);
-  assert.throws(() => readDocument(source({ type: 'wiki', slug: 'topics' }), TAGS), /reserved document slug/);
+  for (const slug of ['all', 'page', 'feed']) assert.throws(() => readDocument(source({ slug }), TAGS), /reserved (?:document|post) slug/);
+  assert.throws(() => readDocument(source({ type: 'wiki', slug: 'topics' }), TAGS), /reserved (?:document|post) slug/);
 });
 
 test('publication_contract_rejects_missing_comments_invalid_dates_and_tags', () => {
-  for (const invalid of [{ comments: false }, { publishedAt: '2026-02-30' }, { tags: ['unknown'] }, { updatedAt: '2025-01-01' }, { thumbnail: { src: '/media/../secret.svg', alt: '' } }]) {
+  for (const invalid of [{ comments: 'false' }, { publishedAt: '2026-02-30' }, { tags: [''] }, { updatedAt: '2025-01-01' }, { thumbnail: { src: '/media/../secret.svg', alt: '' } }]) {
     assert.throws(() => readDocument(source(invalid), TAGS));
   }
 });
@@ -36,16 +37,16 @@ test('publication_contract_rejects_missing_comments_invalid_dates_and_tags', () 
 // #164: 식별자는 승인 동기화와 문서 해석 모두 문자열로 제한한다.
 test('publication_contract_rejects_numeric_document_identity', () => {
   for (const key of ['id', 'slug']) {
-    assert.throws(() => readDocument(source({ [key]: 123 }), TAGS), new RegExp(`invalid document ${key}`));
+    assert.throws(() => readDocument(source({ [key]: 123 }), TAGS), new RegExp(`invalid post ${key}`));
   }
 });
 
 test('publication_contract_accepts_only_optional_slug_parents', () => {
   for (const parent of [undefined, null, 'public-parent']) {
-    assert.equal(readDocument(source({ parent }), TAGS).parent, parent);
+    assert.equal(readDocument(source({ type: 'wiki', parent }), TAGS).parent, parent);
   }
   for (const parent of ['', 12, {}, [], '../private', 'invalid parent']) {
-    assert.throws(() => readDocument(source({ parent }), TAGS), /invalid parent: a/);
+    assert.throws(() => readDocument(source({ type: 'wiki', parent }), TAGS), /invalid parent: a/);
   }
 });
 
@@ -72,7 +73,7 @@ test('blog_pagination_keeps_all_posts_at_approved_boundaries', () => {
 
 test('blog_order_uses_publication_date_instead_of_update_date', () => {
   const documents = [{ id: 'b', publishedAt: '2026-01-01', updatedAt: '2026-10-01' }, { id: 'a', publishedAt: '2026-01-01' }, { id: 'c', publishedAt: '2026-02-01' }].map(page => ({ type: 'blog', ...page }));
-  assert.deepEqual(blogDocuments(documents).map(page => page.id), ['c', 'a', 'b']);
+  assert.deepEqual(documents.sort(comparePosts).map(page => page.id), ['c', 'a', 'b']);
 });
 
 // 더미 이미지처럼 확장자가 없는 HTTPS 이미지도 쓸 수 있다.
@@ -94,5 +95,5 @@ test('category_is_independent_from_optional_shared_tags', () => {
   assert.equal(wiki.category, 'os');
   const tagged = readDocument(source({ category: 'os' }), TAGS, now, categories);
   assert.deepEqual(tagged.tags, ['javascript']);
-  assert.throws(() => readDocument(source({ category: 'missing' }), TAGS, now, categories), /invalid category/);
+  assert.throws(() => readDocument(source({ type: 'wiki', category: 'missing' }), TAGS, now, categories), /invalid category/);
 });

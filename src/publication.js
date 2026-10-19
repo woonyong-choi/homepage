@@ -10,15 +10,11 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
   const output = box.querySelector('[role="listbox"]');
   const status = box.querySelector('[data-search-status]');
   const page = document.querySelector('[data-search-page]');
-  const state = () => {
-    const selected = readSearchState(location.search, page?.dataset.tag);
-    const url = new URL(location.href);
-    if (url.searchParams.has('type')) {
-      url.searchParams.delete('type'); url.searchParams.delete('page');
-      history.replaceState({ ...history.state, searchPosition: null }, '', url);
-    }
-    return page && location.pathname === '/docs/' ? { ...selected, baseRoute: '/docs/' } : selected;
-  };
+  const action = new URL(form.getAttribute('action') || '/search/', location.origin).pathname;
+  const state = () => ({ ...readSearchState(location.search, page?.dataset.tag),
+    ...(['/search/', '/docs/'].includes(action) ? { baseRoute: location.pathname === '/docs/' ? '/docs/' : action } : {}),
+    homeRoute: page?.dataset.searchHome,
+    pageSize: page?.dataset.pageSize === 'all' ? 'all' : Number(page?.dataset.pageSize) || undefined });
   let revision = 0; let resultRevision = 0; let composing = false; let active = -1; let resultStatus = '';
   const failureStatus = '검색 자료를 불러오지 못했습니다. 다시 시도해 주세요.';
   function close() { output.hidden = true; if (!page) input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; status.textContent = resultStatus; }
@@ -63,7 +59,7 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
       const { result, tags } = await queryIndex('results', selected);
       if (request !== resultRevision || composing) return;
       renderResults(page, result, selected, tags);
-      resultStatus = `검색 결과 ${result.counts[selected.type]}개`;
+      resultStatus = `검색 결과 ${result.total}개`;
       status.textContent = resultStatus;
       restorePosition();
     } catch {
@@ -103,7 +99,7 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     if (composing) return;
     if (page) { propose(); return; }
     const href = searchUrl({ ...state(), query: input.value, page: 1 });
-    if (href !== '/docs/') location.assign(href);
+    location.assign(href);
   });
   box.addEventListener('click', event => {
     const suggestion = event.target.closest('[data-query]');
@@ -122,5 +118,29 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
       else restorePosition();
     }
   });
+  page?.addEventListener('click', event => {
+    const toggle = event.target.closest('[data-tag-toggle], [data-tag-reset]');
+    if (toggle) {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      const selected = state();
+      const tag = toggle.dataset.tagToggle;
+      const reset = toggle.hasAttribute('data-tag-reset');
+      const tags = reset ? [] : selected.tags.includes(tag) ? selected.tags.filter(value => value !== tag) : [...selected.tags, tag];
+      history.replaceState({ ...history.state, searchPosition: { x: window.scrollX, y: window.scrollY } }, '');
+      history.pushState({ searchPosition: null }, '', new URL(searchUrl({ ...selected, query: reset ? '' : selected.query, tags, page: 1 }), location.origin));
+      revision++; close(); results();
+      return;
+    }
+    const anchor = event.target.closest('a[href]');
+    if (!anchor || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const target = new URL(anchor.href);
+    if (target.origin !== location.origin || ![action, ...(page?.dataset.searchHome === '/docs/' ? ['/docs/'] : [])].includes(target.pathname)) return;
+    event.preventDefault();
+    history.replaceState({ ...history.state, searchPosition: { x: window.scrollX, y: window.scrollY } }, '');
+    history.pushState({ searchPosition: null }, '', target);
+    revision++; close(); results();
+  });
+  window.addEventListener('popstate', () => { revision++; close(); results(); });
   results();
 }

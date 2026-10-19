@@ -4,20 +4,21 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
+import { parseArgs } from 'node:util';
 
-import { readDocument, publicDocuments, searchEntry, FIELDS, TOPIC_GROUPS, blogDocuments, relatedPosts } from './content-model.mjs';
+import { collectPosts, postTags, searchEntry, relatedPosts, keywordRanking } from './blog-model.mjs';
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
-import { documentShell, personalHome, wikiLanding, articlePage, projectSection, searchPage, tagPage, notFoundPage, iconUrl, FIELD_NAMES, categoryEntries } from './publication-layout.mjs';
-import { recentBlog, blogArchive, blogFeed } from './blog-layout.mjs';
+import { documentShell, personalHome, articlePage, notFoundPage } from './publication-layout.mjs';
+import { searchListing, blogFeed } from './blog-layout.mjs';
 import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { brandNames } from './brand-icons.mjs';
+import { serviceTagCatalog, serviceTagInventory } from './service-tags.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
 import { replacePublication, NOT_FOUND_FILE } from './publication-output.mjs';
-import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
-import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
+import { loadHomeContent } from './home-content.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { mathAssets } from 'document-engine';
 import { compileDiagrams } from './diagrams.mjs';
@@ -25,35 +26,35 @@ import { compileStyles as publicationStyles } from '@woonyong-choi/design-tokens
 import { THEME_ROOT as THEME, THEME_MANIFEST as MANIFEST } from './design-package.mjs';
 import { siteOrigin, siteTitle, SITE_ICON } from './publication-metadata.mjs';
 import { siteIdentity } from './site-identity.mjs';
-import { legacyRoutes, redirectPage } from './publication-routes.mjs';
-import { markdownFiles, readContentFile } from './content-files.mjs';
-import { LAYOUT, gridSize } from './layout-config.mjs';
-import { verifyApprovedContent, publicationTopicsFile } from './approved-content.mjs';
-
-verifyApprovedContent();
+import { markdownFiles } from './content-files.mjs';
+import { loadBlogLayout } from './layout-config.mjs';
+import { verifyApprovedContent } from './approved-content.mjs';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 const CONTENT = fileURLToPath(new URL('../content/', import.meta.url));
 const SETTINGS = fileURLToPath(new URL('../config/', import.meta.url));
 const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
-const CONFIG = JSON.parse(readFileSync(join(SETTINGS, 'site.json')));
-const TOPICS = readContentFile(join(CONTENT, publicationTopicsFile())).metadata.topics;
-const TAGS = JSON.parse(readFileSync(join(SETTINGS, 'tags.json')));
 const digest = value => createHash('sha256').update(value).digest('hex');
 
-export async function buildPublication({ origin = '', preview = true } = {}) {
+export async function buildPublication({ origin = '', mode = 'approved-preview' } = {}) {
+  if (!['approved-preview', 'production'].includes(mode)) throw new Error('invalid publication mode');
+  const approved = verifyApprovedContent();
+  const config = JSON.parse(readFileSync(join(SETTINGS, 'site.json')));
+  const knownTags = JSON.parse(readFileSync(join(SETTINGS, 'tags.json')));
+  if (Object.keys(approved).some(path => path.startsWith('content/docs/'))) throw new Error('legacy wiki content requires explicit blog migration approval');
+  const preview = mode !== 'production';
   origin = siteOrigin(origin, preview);
-  const entries = ['docs', 'blog'].flatMap(folder => markdownFiles(join(CONTENT, folder)))
-    .sort().map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS));
-  entries.sort((left, right) => Number(Boolean(left.example)) - Number(Boolean(right.example)));
-  const documents = navigationDocuments(publicDocuments(entries, { includeExamples: preview }), TOPICS);
-  const posts = blogDocuments(documents);
-  const comments = readCommentCounts(posts, CONFIG);
+  const posts = collectPosts(markdownFiles(join(CONTENT, 'blog')).map(file => readFileSync(file, 'utf8')));
+  const documents = posts;
+  const tags = postTags(posts, knownTags);
+  const layout = loadBlogLayout();
+  const recommendations = keywordRanking(posts, knownTags).slice(0, 3);
+  layout.search.box.suggestions = recommendations.map(item => item.keyword);
+  const comments = readCommentCounts(posts, config);
   for (const post of posts) {
     post.commentCount = comments.counts.get(post.id);
     post.related = relatedPosts(post, posts);
   }
-  const topicTrees = createTopicTrees(documents);
   const diagramSources = new Map();
   const parsed = new Map();
   for (const page of documents) {
@@ -65,40 +66,23 @@ export async function buildPublication({ origin = '', preview = true } = {}) {
   await renderDocuments(documents, { diagrams: diagrams.diagrams, parsed });
   const scripts = browserScripts(ROOT);
   const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))));
-  const context = { config: CONFIG, layout: LAYOUT, navigation: loadHomeNavigation(CONTENT), topics: TOPICS, tags: TAGS, topicTrees, origin, preview, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
+  const context = { config, layout, tags, knownTags, recommendations, origin, preview, mode, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
   context.home = loadHomeContent(brandNames(), CONTENT, { preview });
+  context.services = serviceTagCatalog(knownTags);
   const output = new Map();
   const add = (route, title, body, metadata = {}) => {
     if (output.has(route)) throw new Error(`duplicate publication route: ${route}`);
     output.set(route, documentShell({ route, title, ...metadata }, body, context));
   };
-  add('/', siteTitle(CONFIG), personalHome(context));
-  add('/docs/', LAYOUT.search.title, wikiLanding(documents, context, undefined, recentBlog(posts, TAGS, LAYOUT)));
-  const fields = [...new Set([...TOPIC_GROUPS, ...FIELDS])];
-  for (const field of fields) {
-    const area = LAYOUT[field] ?? LAYOUT.cs;
-    const count = categoryEntries(documents, TOPICS, field, TOPIC_GROUPS.includes(field) ? area.order : []).length;
-    const pages = Math.max(1, Math.ceil(count / gridSize(area.collection)));
-    for (let page = 1; page <= pages; page++) add(`/docs/topics/${field}/${page === 1 ? '' : `page/${page}/`}`, LAYOUT[field]?.title ?? FIELD_NAMES[field], wikiLanding(documents, context, field, '', page));
+  add('/', context.home.find(section => section.type === 'hero')?.title ?? siteTitle(config), personalHome(context));
+  add('/search/', layout.search.title, searchListing(posts, tags, { layout }));
+  const commentTheme = commentThemeUrl(config, { origin, themeHash: MANIFEST.contentHash });
+  const commentConfig = { ...config.comments, repo: config.repository };
+  for (let page = 1; page <= Math.max(1, Math.ceil(posts.length / layout.blog.feedSize)); page++) {
+    add(page === 1 ? '/blog/' : `/blog/page/${page}/`, layout.blog.title, blogFeed(posts, tags, page, { commentConfig, commentTheme, layout }));
   }
-  add('/projects/', 'Projects', `<main class="app-shell" id="main"><h1 class="app-page-heading">Projects</h1>${projectSection(CONFIG.projects)}</main>`);
-  const commentTheme = commentThemeUrl(CONFIG, { origin, themeHash: MANIFEST.contentHash });
-  const commentConfig = { ...CONFIG.comments, repo: CONFIG.repository };
-  for (const page of documents) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
-  for (const [tagId, tag] of Object.entries(TAGS)) {
-    const entries = documents.filter(page => page.tags.includes(tagId));
-    add(`/tags/${tagId}/`, tag.label, tagPage(tagId, entries, TAGS));
-  }
-  add('/search/', '검색', searchPage());
-  for (const [base, size, render] of [['/blog/', LAYOUT.blog.feedSize, blogFeed], ['/blog/all/', gridSize(LAYOUT.blog.collection), blogArchive]]) {
-    for (let page = 1; page <= Math.max(1, Math.ceil(posts.length / size)); page++) add(page === 1 ? base : `${base}page/${page}/`, LAYOUT.blog.title, render(posts, TAGS, page, { commentConfig, commentTheme, layout: LAYOUT }), { type: 'blog' });
-  }
-  context.redirects = legacyRoutes(documents, fields);
-  for (const [old, target] of context.redirects) {
-    if (output.has(old) || !output.has(target)) throw new Error(`invalid publication redirect: ${old}`);
-    output.set(old, redirectPage(target, origin));
-  }
+  for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
   const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), context);
   await writeSite(output, documents, context, scripts, notFound);
   return { pages: output.size, documents: documents.length, themeHash: MANIFEST.contentHash };
@@ -117,7 +101,7 @@ async function renderDocuments(documents, options) {
       if ((target.leadHtml + target.html).includes(`id="${decodeURIComponent(fragment)}"`)) return `href="${target.route}#${fragment}"`;
       const id = `${target.id}-${decodeURIComponent(fragment)}`;
       return (target.leadHtml + target.html).includes(`id="${id}"`) ? `href="${target.route}#${id}"` : `href="https://docs.woonyong.com/wiki/${slug}/#${fragment}"`;
-    }).replace(/href="\/wiki\/(?=["?#])/g, 'href="/docs/').replace(/href="#([^" ]+)"/g, (original, fragment) => {
+    }).replace(/href="#([^" ]+)"/g, (original, fragment) => {
       if ((page.leadHtml + page.html).includes(`id="${fragment}"`)) return original;
       const prefixed = `${page.id}-${decodeURIComponent(fragment)}`;
       return (page.leadHtml + page.html).includes(`id="${prefixed}"`) ? `href="#${prefixed}"` : original;
@@ -126,8 +110,6 @@ async function renderDocuments(documents, options) {
     page.html = normalizePublicationAssets(rewrite(page.html));
   }
 }
-
-
 
 async function writeSite(output, documents, context, scripts, notFound) {
   // 404 문서는 경로가 아닌 파일로 싣지만 스타일 선별과 자산 수집에는 다른 페이지처럼 포함한다.
@@ -141,21 +123,26 @@ async function writeSite(output, documents, context, scripts, notFound) {
   }
   for (const route of output.keys()) output.set(route, rendered.get(route));
   const files = new Map([...scripts].map(([file, source]) => [`/${file}`, source]));
-  const index = { entries: documents.map(page => ({ ...searchEntry(page, TAGS), iconUrl: iconUrl(page.contentIcon), example: !!page.example })), tags: TAGS };
+  const index = { entries: documents.map(page => searchEntry(page, context.knownTags)), tags: context.tags };
   const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
   for (const [path, content] of context.diagrams) assets.set(path, content);
   for (const [path, content] of assets) files.set(path, content);
   const indexJson = JSON.stringify(index);
+  files.set('/service-tags.json', JSON.stringify({ version: 1, services: serviceTagInventory(context.services, context.tags, context.home) }, null, 2));
   files.set('/search-version.json', JSON.stringify({ revision: digest(indexJson) }));
   files.set('/search-index.json', indexJson);
   files.set('/search-index.json.gz', gzipSync(indexJson, { level: 9 }));
-  const posts = blogDocuments(documents).filter(page => !page.example);
-  files.set('/blog/feed.xml', `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escape(siteTitle(CONFIG))}</title><link>${escape(context.origin + '/blog/')}</link><description>${escape(CONFIG.description)}</description>${posts.map(page => `<item><title>${escape(page.title)}</title><link>${escape(context.origin + page.route)}</link><guid isPermaLink="false">${page.id}</guid><pubDate>${new Date(page.publishedAt).toUTCString()}</pubDate><description>${escape(page.description)}</description></item>`).join('')}</channel></rss>`);
-  files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].filter(route => route !== '/search/' && !context.redirects.has(route)).map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
-  files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: documents.length, examples: documents.filter(page => page.example).length, preview: context.preview, commentsStatus: context.commentsStatus, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
+  const posts = documents.filter(page => !page.example);
+  files.set('/blog/feed.xml', `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escape(siteTitle(context.config))}</title><link>${escape(context.origin + '/blog/')}</link><description>${escape(context.config.description)}</description>${posts.map(page => `<item><title>${escape(page.title)}</title><link>${escape(context.origin + page.route)}</link><guid isPermaLink="false">${page.id}</guid><pubDate>${new Date(page.publishedAt).toUTCString()}</pubDate><description>${escape(page.description)}</description></item>`).join('')}</channel></rss>`);
+  files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
+  files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: documents.length, examples: documents.filter(page => page.example).length, preview: context.preview, mode: context.mode, commentsStatus: context.commentsStatus, recommendations: context.recommendations, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
   files.set(NOT_FOUND_FILE, rendered.get(NOT_FOUND_FILE));
   files.set('/robots.txt', context.preview ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\nSitemap: ${context.origin}/sitemap.xml\n`);
   replacePublication(OUTPUT, output, files);
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) console.log(await buildPublication({ origin: process.env.SITE_ORIGIN ?? '', preview: !process.argv.includes('--production') }));
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const { values } = parseArgs({ options: { production: { type: 'boolean', default: false } } });
+  const mode = values.production ? 'production' : 'approved-preview';
+  console.log(await buildPublication({ origin: process.env.SITE_ORIGIN ?? '', mode }));
+}

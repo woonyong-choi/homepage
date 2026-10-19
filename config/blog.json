@@ -13,7 +13,7 @@
     "title": true,
     "description": true,
     "media": "image",
-    "tags": true,
+    "tags": false,
     "date": true,
     "comments": true
   },

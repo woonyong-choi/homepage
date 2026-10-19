@@ -1,116 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { knowledgeFields, wikiLanding, tagPage, articlePage, projectSection } from './publication-layout.mjs';
-import { readContentFile } from './content-files.mjs';
 import { JSDOM } from 'jsdom';
-import { LAYOUT } from './layout-config.mjs';
-
-test('a_published_topic_stays_reachable_when_its_overview_is_unpublished', () => {
-  const topics = { javascript: { label: 'JavaScript', field: 'languages', group: 'tech', icon: 'javascript', article: 'javascript' } };
-  const documents = [{ id: 'b', slug: 'promises', route: '/articles/promises/', category: 'javascript', type: 'wiki', title: 'Promise', description: '비동기 작업', contentIcon: { name: 'runtime' } }];
-  const html = knowledgeFields(documents, topics);
-  assert.match(html, /href="\/articles\/promises\/"/);
-  assert.match(html, /role="heading" aria-level="3">JavaScript<\/strong>/);
-  assert.doesNotMatch(html, /href="\/articles\/javascript\/"/);
-});
-
-// #67: 전체 태그 목록은 아직 조건을 계산하지 않은 검색 결과와 분리한다.
-test('tag_page_keeps_static_reading_separate_from_filtered_results', () => {
-  const tags = { javascript: { label: 'JavaScript' } };
-  const entry = { route: '/articles/promises/', title: 'Promise', description: '비동기 작업', type: 'wiki', tags: ['javascript'], contentIcon: { name: 'runtime' } };
-  const html = tagPage('javascript', [entry], tags);
-  assert.match(html, /<div data-full-results><\/div>/);
-  assert.match(html, /<div data-search-fallback><details class="app-details"><summary>이 태그의 모든 글 보기<\/summary>/);
-  const fallback = html.slice(html.indexOf('<div data-search-fallback>'));
-  assert.match(fallback, /href="\/articles\/promises\/"/);
-  assert.doesNotMatch(html.slice(0, html.indexOf('<div data-search-fallback>')), /href="\/articles\/promises\/"/);
-  assert.match(tagPage('javascript', [], tags), /이 태그로 발행한 글이 없습니다/);
-});
-
-test('topic_preview_keeps_two_rows_and_the_same_entry_width_for_cs_and_tech', () => {
-  for (const [group, limit] of [['cs', 6], ['tech', 8]]) for (const count of [0, 1, limit, limit + 1]) {
-    const documents = Array.from({ length: count }, (_, i) => ({ id: `p${i}`, slug: `p${i}`, route: `/articles/p${i}/`, category: `t${i}`, type: 'wiki', title: `주제 ${i}`, description: '내용', contentIcon: { name: 'processor' } }));
-    const topics = Object.fromEntries(documents.map((p, i) => [`t${i}`, { field: 'cs', group, icon: 'processor', label: p.title, article: p.slug }]));
-    const preview = wikiLanding(documents, { topics });
-    assert.equal((preview.match(/class="app-help-card is-summary"/g) ?? []).length, Math.min(count, limit));
-    assert.equal(preview.includes(`href="/docs/topics/${group}/"`), count > limit);
-    assert.match(preview, /<main id="main" class="app-shell app-body">/);
-    assert.doesNotMatch(preview, /wiki-heading|>Wiki<|is-pair/);
-    const all = wikiLanding(documents, { topics }, group);
-    assert.equal((all.match(/class="app-help-card is-summary"/g) ?? []).length, count);
-    assert.doesNotMatch(all, /<h2>CS<\/h2>/);
-    assert.ok(all.indexOf('app-page-heading') < all.indexOf('app-navigation-link is-back'));
-    assert.ok(all.indexOf('app-page-heading') < all.indexOf('app-support-grid') || count === 0);
-    assert.match(all, /class="app-shell"/);
-    if (count) {
-      if (group === 'tech') {
-        assert.match(preview, /class="app-support-grid is-four"/);
-        assert.match(all, /class="app-support-grid is-five"/);
-      } else {
-        assert.match(preview, /class="app-support-grid"/);
-        assert.match(all, /class="app-support-grid is-four"/);
-      }
-    }
-  }
-});
-
-// #110: 기술은 로고와 이름, 개념은 설명까지 표시하며 프로젝트는 입구에서 제외한다.
-test('tech_and_cs_group_topics_by_navigation_without_changing_source_fields', () => {
-  const topics = {
-    python: { label: 'Python', field: 'languages', group: 'tech', icon: 'python' },
-    redis: { label: 'Redis', field: 'infrastructure', group: 'tech', icon: 'redis' },
-    data: { label: 'Data', field: 'infrastructure', group: 'cs', icon: 'database' },
-    os: { label: 'OS', field: 'cs', group: 'cs', icon: 'operating-system' },
-    projects: { label: 'Projects', field: 'cs', icon: 'project' },
-  };
-  const documents = Object.keys(topics).map(id => ({ id, slug: id, route: `/articles/${id}/`, category: id, type: 'wiki', title: id, description: '범위 설명' }));
-  const html = knowledgeFields(documents, topics);
-  assert.match(html, /<h2>Tech<\/h2>/);
-  assert.match(html, /<h2>CS<\/h2>/);
-  assert.doesNotMatch(html.split('<h2>Tech</h2>')[1], /범위 설명|<p/);
-  assert.equal((html.match(/class="app-card-summary"/g) ?? []).length, 2);
-  assert.doesNotMatch(html, /Projects|Languages|Infrastructure/);
-  assert.ok(html.indexOf('<h2>CS</h2>') < html.indexOf('<h2>Tech</h2>'));
-  const config = { projects: [{ title: '프로젝트 사례', href: '/projects/demo/', icon: 'project', description: '구현 사례', links: [] }] };
-  assert.doesNotMatch(wikiLanding(documents, { topics, config }), /개발 프로젝트/);
-  const layout = structuredClone(LAYOUT);
-  layout.search.sections.find(section => section.id === 'projects').enabled = true;
-  const active = wikiLanding(documents, { topics, config, layout }, undefined, '<h2>Blog</h2>');
-  assert.ok(active.indexOf('>Blog</h2>') < active.indexOf('개발 프로젝트'));
-  assert.ok(active.indexOf('개발 프로젝트') < active.indexOf('<h2>CS</h2>'));
-  const old = knowledgeFields(documents, topics, 'infrastructure');
-  assert.match(old, /Redis/);
-  assert.match(old, /Data/);
-
-  // #200: 확정한 11개 분류 이름과 순서는 원문의 짧은 제목과 독립적이다.
-  const configuredTopics = readContentFile(new URL('../content/pages/tech.md', import.meta.url)).metadata.topics;
-  const configuredDocuments = Object.entries(configuredTopics).filter(([, topic]) => topic.group === 'cs')
-    .map(([category, topic]) => ({ id: category, slug: topic.article, category, type: 'wiki', route: `/docs/${topic.article}/`, title: category }));
-  const collection = JSDOM.fragment(wikiLanding(configuredDocuments, { topics: configuredTopics }, 'cs'));
-  assert.deepEqual([...collection.querySelectorAll('.app-help-card strong')].map(title => title.textContent), [
-    '수학·컴퓨터 과학 기초', '프로그래밍 언어·런타임', '컴퓨터 시스템', '네트워크', '소프트웨어 공학',
-    '백엔드·분산 시스템', '데이터베이스·데이터 처리', '인공지능', '프론트엔드·사용자 인터페이스',
-    '인프라·운영', '보안·개인정보 보호',
-  ]);
-});
-
-test('official_guides_link_to_one_source_and_stay_out_of_topic_collections', () => {
-  const guides = [{ title: 'ThinkFlow', icon: 'hierarchy', items: [
-    { title: '시작', href: 'https://example.com/usage', description: '사용 안내' },
-    { title: '문제 해결', href: 'https://example.com/help' },
-  ] }];
-  const context = { topics: {}, config: { guides } };
-  const page = JSDOM.fragment(wikiLanding([], context));
-  const cards = [...page.querySelectorAll('.app-support-split .app-help-card')];
-  assert.deepEqual(cards.map(card => card.getAttribute('href')), guides[0].items.map(item => item.href));
-  assert.equal(cards[0].querySelector('p').textContent, '사용 안내');
-  assert.equal(cards[1].querySelector('p'), null);
-  assert.doesNotMatch(wikiLanding([], context, 'cs'), /ThinkFlow|app-support-split/);
-});
-
+import { privateWikiArticle as articlePage } from './private-wiki-layout.mjs';
 
 test('source_links_preserve_safe_urls_and_reject_executable_schemes', () => {
-  const page = { id: 'source', slug: 'source', route: '/docs/source/', title: '원문', description: '설명', type: 'wiki', tags: [], headings: [], html: '', contentIcon: { name: 'project' } };
+  const page = { id: 'source', slug: 'source', route: '/docs/source/', title: '원문', description: '설명', type: 'wiki', tags: [], headings: [], html: '', contentIcon: { name: 'document' } };
   for (const sourceUrl of ['https://example.com/wiki/?a=1&b=2#part', 'http://example.com/wiki/', '/docs/original/#part']) {
     const html = articlePage({ ...page, sourceUrl }, { topics: {} });
     assert.equal(JSDOM.fragment(html).querySelector('.app-source-link a').getAttribute('href'), sourceUrl);
@@ -120,12 +14,4 @@ test('source_links_preserve_safe_urls_and_reject_executable_schemes', () => {
   for (const sourceUrl of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', 'data:text/html,<script>alert(1)</script>', 'vbscript:msgbox(1)', 'file:///etc/passwd', '//example.com/', '/\\example.com/', 'https://example.com/\npath', 'https://example.com/a b']) {
     assert.throws(() => articlePage({ ...page, sourceUrl }, { topics: {} }), /Unsupported URL/);
   }
-});
-
-test('project_links_use_the_same_url_boundary_as_shared_components', () => {
-  const project = { title: '프로젝트', description: '설명', icon: 'project', href: 'https://example.com/?a=1&b=2', links: [{ title: '문서', href: '/docs/project/' }] };
-  const links = [...JSDOM.fragment(projectSection([project])).querySelectorAll('a')];
-  assert.deepEqual(links.map(link => link.getAttribute('href')), [project.href, project.links[0].href]);
-  assert.throws(() => projectSection([{ ...project, href: 'javascript:alert(1)' }]), /Unsupported URL/);
-  assert.throws(() => projectSection([{ ...project, links: [{ title: '문서', href: 'data:text/html,bad' }] }]), /Unsupported URL/);
 });

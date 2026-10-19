@@ -25,7 +25,8 @@ test('queryIndex_worker_unavailable_keeps_results_suggestions_and_retry', async 
     await assert.rejects(async () => client.queryIndex('results', state));
     client.fail(false);
     const result = await client.queryIndex('results', state);
-    assert.equal(result.result.counts.all, 1);
+    assert.equal(result.result.total, 1);
+    assert.deepEqual([...result.result.tagIds], ['js']);
     assert.match(result.result.entries[0].excerpt, /Promise/);
     assert.equal(result.result.entries[0].text, undefined);
     const suggest = await client.queryIndex('suggest', { ...state, query: 'JS' });
@@ -51,9 +52,9 @@ test('queryIndex_worker_error_replays_concurrent_requests_and_ignores_late_messa
     worker.listeners.message({ data: { id: worker.messages[0].id, result: 'stale' } });
     const results = await Promise.all([first, second]);
     assert.equal(worker.terminated, true);
-    assert.equal(results[0].result.counts.all, 1);
+    assert.equal(results[0].result.total, 1);
     assert.equal(results[1].result.tags[0][0], 'js');
-    assert.equal((await client.queryIndex('results', state)).result.counts.all, 1);
+    assert.equal((await client.queryIndex('results', state)).result.total, 1);
     assert.equal(worker.messages.length, 2);
   }
 });

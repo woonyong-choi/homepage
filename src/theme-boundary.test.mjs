@@ -19,9 +19,11 @@ const PAINT = /\s(?:color|fill|stroke|stop-color|flood-color)=["']([^"']*)["']/g
 
 test('design_is_an_installed_package_pinned_to_a_commit_without_a_copy', () => {
   const pkg = JSON.parse(readFileSync(join(product, '../package.json'), 'utf8'));
-  for (const name of ['@woonyong-choi/design-tokens', 'thinkflow', 'document-engine']) {
+  for (const name of ['@woonyong-choi/design-tokens', 'diagramplay', 'document-engine']) {
     assert.match(pkg.devDependencies[name], /^github:woonyong-choi\/[\w.-]+#[a-f0-9]{40}$/, name);
   }
+  assert.equal(pkg.devDependencies.thinkflow, undefined);
+  assert.equal(pkg.devDependencies.torso, undefined);
   assert.equal(existsSync(join(product, 'vendor/theme')), false, '디자인 사본을 두지 않고 설치한 패키지를 읽는다');
   assert.ok(existsSync(join(THEME_ROOT, 'ui/index.mjs')));
 });
@@ -122,13 +124,13 @@ test('browser_search_view_renders_through_theme_components_and_only_converts_the
     const { renderResults } = await import('./search-view.mjs');
     const entry = { route: '/articles/a/', iconUrl: '/theme/assets/icons/documents/document.svg', title: '<img src=x onerror=alert(1)> 검색어', description: '설명 & "따옴표"', tags: ['t'], example: true };
     renderResults(window.document.body, { entries: [entry], totalPages: 3, page: 2 }, { query: '검색어', tags: [] }, { t: { label: '태그<' } });
-    const result = window.document.querySelector('.app-search-entry');
-    assert.equal(result.querySelector('strong img'), null);
-    assert.equal(result.querySelector('strong').textContent, '<img src=x onerror=alert(1)> 검색어');
-    assert.equal(result.querySelector('strong mark').textContent, '검색어');
-    assert.equal(result.querySelector('.app-search-result-link').getAttribute('href'), '/articles/a/');
-    assert.equal(result.querySelector('.app-search-result-tags a').textContent, '태그<');
-    assert.ok(result.querySelector('.app-search-result-note'));
+    const result = window.document.querySelector('.app-blog-card');
+    assert.equal(result.querySelector('h2 img'), null);
+    assert.equal(result.querySelector('h2').textContent, '<img src=x onerror=alert(1)> 검색어');
+    assert.equal(result.querySelector('.app-blog-card-link').getAttribute('href'), '/articles/a/');
+    assert.equal(result.querySelector('.app-blog-card-tags'), null);
+    assert.equal(result.querySelector('.app-title-cover-title').textContent, entry.title);
+    assert.equal(result.querySelector('.app-title-cover img'), null);
     const pages = window.document.querySelector('nav.app-page-links[data-result-pages]');
     assert.equal(pages.querySelector('[aria-current=page]').textContent, '2');
     assert.deepEqual([...pages.children].map(node => node.textContent), ['이전', '1', '2', '3', '다음']);

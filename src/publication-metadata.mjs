@@ -25,7 +25,7 @@ export function siteOrigin(value, preview) {
 export function publicationMetadata(page, context) {
   const { config, origin = '', preview, identity, tags = {} } = context;
   const site = siteTitle(config);
-  const pageTitle = page.route === '/' ? site : page.title;
+  const pageTitle = page.title ?? site;
   const title = pageTitle === site ? site : `${pageTitle} · ${site}`;
   const description = page.description ?? config.description;
   const meta = (key, value, attribute = 'property') => `<meta ${attribute}="${key}" content="${escape(value)}">`;

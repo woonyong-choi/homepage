@@ -10,36 +10,12 @@ sections:
   - id: hero
     type: hero
     enabled: true
-    wordmark:
-      src: /assets/backend-engineer.svg
     video:
       src: /media/woonyong-interview.mp4
       poster: /media/woonyong-interview-poster.jpg
       title: 최우녕 인터뷰
     action:
       label: 프로젝트 영상 보기
-  - id: projects
-    type: projects
-    enabled: false
-    items:
-      - title: 더미 제목
-        description: 프로젝트 내용을 설명하세요.
-        link:
-          label: 자세히 보기
-          href: /docs/
-        icon: project
-        image:
-          src: /theme/assets/illustrations/project-placeholder.svg
-          alt: 더미 프로젝트 이미지
-      - title: 더미 제목
-        description: 프로젝트 내용을 설명하세요.
-        link:
-          label: 자세히 보기
-          href: /blog/
-        icon: project
-        image:
-          src: /theme/assets/illustrations/project-placeholder.svg
-          alt: 더미 프로젝트 이미지
   - source: pages/tech.md
   - source: interviews/index.md
   - id: contact
@@ -55,6 +31,6 @@ sections:
     email: woonyong.contact@gmail.com
 ---
 
-# 백엔드 엔지니어
+# 백엔드 개발자 최우녕입니다
 
 기능 개발과 프로젝트 운영을 맡아 왔으며, 지금은 백엔드 개발에 집중하고 있습니다.

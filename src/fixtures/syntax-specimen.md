@@ -277,13 +277,13 @@ npm run build:site
     {
       "title": "문서 목록",
       "href": "/docs/",
-      "icon": "siri",
+      "icon": "question",
       "description": "말풍선과 슬라이드 예시"
     },
     {
       "title": "블로그 목록",
       "href": "/blog/",
-      "icon": "cloud",
+      "icon": "question",
       "description": "링크 카드와 정의 목록 예시"
     }
   ]
@@ -378,190 +378,12 @@ items:
 media: "![화면](/assets/sample-b.png)"
 ```
 
-## Icon catalog
+## Default article icon
 
-문서 목록과 카드에서 사용하는 아이콘 전체입니다. 아이콘 이름으로 같은 자산을 재사용합니다.
+기본 문서 아이콘은 `question`입니다. 카드의 아이콘은 생략할 수 있습니다.
 
 ```ui:cards
-{
-  "items": [
-    {
-      "title": "add",
-      "icon": "add",
-      "href": "/docs/"
-    },
-    {
-      "title": "applewatch",
-      "icon": "applewatch",
-      "href": "/docs/"
-    },
-    {
-      "title": "appstore",
-      "icon": "appstore",
-      "href": "/docs/"
-    },
-    {
-      "title": "calendar",
-      "icon": "calendar",
-      "href": "/docs/"
-    },
-    {
-      "title": "cloud",
-      "icon": "cloud",
-      "href": "/docs/"
-    },
-    {
-      "title": "download",
-      "icon": "download",
-      "href": "/docs/"
-    },
-    {
-      "title": "firstaid",
-      "icon": "firstaid",
-      "href": "/docs/"
-    },
-    {
-      "title": "gestures",
-      "icon": "gestures",
-      "href": "/docs/"
-    },
-    {
-      "title": "idea",
-      "icon": "idea",
-      "href": "/docs/"
-    },
-    {
-      "title": "keyboard",
-      "icon": "keyboard",
-      "href": "/docs/"
-    },
-    {
-      "title": "mailtothings",
-      "icon": "mailtothings",
-      "href": "/docs/"
-    },
-    {
-      "title": "markdown",
-      "icon": "markdown",
-      "href": "/docs/"
-    },
-    {
-      "title": "notes",
-      "icon": "notes",
-      "href": "/docs/"
-    },
-    {
-      "title": "notifications",
-      "icon": "notifications",
-      "href": "/docs/"
-    },
-    {
-      "title": "question",
-      "icon": "question",
-      "href": "/docs/"
-    },
-    {
-      "title": "reminders",
-      "icon": "reminders",
-      "href": "/docs/"
-    },
-    {
-      "title": "repeating",
-      "icon": "repeating",
-      "href": "/docs/"
-    },
-    {
-      "title": "search",
-      "icon": "search",
-      "href": "/docs/"
-    },
-    {
-      "title": "shortcuts",
-      "icon": "shortcuts",
-      "href": "/docs/"
-    },
-    {
-      "title": "siri",
-      "icon": "siri",
-      "href": "/docs/"
-    },
-    {
-      "title": "tags",
-      "icon": "tags",
-      "href": "/docs/"
-    },
-    {
-      "title": "urlscheme",
-      "icon": "urlscheme",
-      "href": "/docs/"
-    },
-    {
-      "title": "when",
-      "icon": "when",
-      "href": "/docs/"
-    },
-    {
-      "title": "widgets",
-      "icon": "widgets",
-      "href": "/docs/"
-    },
-    {
-      "title": "warning",
-      "icon": "warning",
-      "href": "/docs/"
-    },
-    {
-      "title": "faq",
-      "icon": "faq",
-      "href": "/docs/"
-    },
-    {
-      "title": "mac",
-      "icon": "mac",
-      "href": "/docs/"
-    },
-    {
-      "title": "iphone",
-      "icon": "iphone",
-      "href": "/docs/"
-    },
-    {
-      "title": "ipad",
-      "icon": "ipad",
-      "href": "/docs/"
-    },
-    {
-      "title": "vision",
-      "icon": "vision",
-      "href": "/docs/"
-    },
-    {
-      "title": "iphone-and-watch",
-      "icon": "iphone-and-watch",
-      "href": "/docs/"
-    }
-  ]
-}
-```
-
-## Independent tabs
-
-다른 탭의 선택과 연결되지 않는 일반 탭입니다.
-
-```ui:tabs
-{
-  "title": "일반 탭 예제",
-  "items": [
-    {
-      "label": "Overview",
-      "body": "### 개요\n\n**일반 탭**의 첫 번째 내용입니다. [문서 목록](/docs/)로 이어집니다."
-    },
-    {
-      "label": "Details",
-      "body": "### 상세\n\n1. 내용을 선택합니다.\n2. 필요한 정보를 확인합니다."
-    }
-  ]
-}
+{"items":[{"title":"도움말","icon":"question","href":"/docs/"}]}
 ```
 
 ## Card variants
@@ -575,13 +397,13 @@ media: "![화면](/assets/sample-b.png)"
   "items": [
     {
       "title": "일정",
-      "icon": "calendar",
+      "icon": "question",
       "description": "아이콘과 설명을 가로로 배치합니다.",
       "href": "/docs/"
     },
     {
       "title": "기록",
-      "icon": "notes",
+      "icon": "question",
       "description": "같은 크기와 간격을 유지합니다.",
       "href": "/docs/"
     }
@@ -613,19 +435,19 @@ media: "![화면](/assets/sample-b.png)"
 ## Centered cards
 
 ```ui:cards
-{"variant":"centered","columns":2,"items":[{"title":"기기에서 시작하기","icon":"mac","description":"아이콘과 설명을 가운데에 배치합니다.","href":"/docs/"},{"title":"함께 살펴보기","icon":"faq","description":"관련 안내를 같은 형태로 연결합니다.","href":"/docs/"}]}
+{"variant":"centered","columns":2,"items":[{"title":"기기에서 시작하기","icon":"question","description":"아이콘과 설명을 가운데에 배치합니다.","href":"/docs/"},{"title":"함께 살펴보기","icon":"question","description":"관련 안내를 같은 형태로 연결합니다.","href":"/docs/"}]}
 ```
 
 ## Grouped links
 
 ```ui:cards
-{"variant":"grouped","columns":2,"items":[{"title":"일정 안내","icon":"calendar","href":"/docs/"},{"title":"아이콘 없는 안내","icon":false,"href":"/docs/"}]}
+{"variant":"grouped","columns":2,"items":[{"title":"일정 안내","icon":"question","href":"/docs/"},{"title":"아이콘 없는 안내","icon":false,"href":"/docs/"}]}
 ```
 
 ## Inline links
 
 ```ui:cards
-{"variant":"inline","items":[{"title":"Mac","icon":"mac","href":"/docs/"},{"title":"iPhone","icon":"iphone","href":"/docs/"},{"title":"문서 목록","icon":false,"href":"/docs/"}]}
+{"variant":"inline","items":[{"title":"Mac","icon":"question","href":"/docs/"},{"title":"iPhone","icon":"question","href":"/docs/"},{"title":"문서 목록","icon":false,"href":"/docs/"}]}
 ```
 
 

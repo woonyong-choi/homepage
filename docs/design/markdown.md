@@ -10,13 +10,13 @@
 
 ## 해결하는 문제
 
-글마다 HTML과 CSS를 넣으면 문서·피드·미리보기의 출력이 달라진다. 작성자는 문서 구조와 내용만 적고 공통 엔진과 디자인 구성 요소가 출력을 담당한다.
+글마다 HTML과 CSS를 넣으면 글 상세와 미리보기의 출력이 달라진다. 작성자는 문서 구조와 내용만 적고 공통 엔진과 디자인 구성 요소가 출력을 담당한다.
 
 ## 사용 예
 
 ### 사용 장면
 
-일반 글은 Markdown으로 작성한다. 같은 도표의 단계를 비교할 때는 ThinkFlow `scene`을 쓰고, 서로 다른 글·그림·코드를 나란히 둘 때는 `:::tabs`와 `@tab`을 쓴다.
+일반 글은 Markdown으로 작성한다. 같은 도표의 단계를 비교할 때는 DiagramPlay `scene`을 쓰고, 서로 다른 글·그림·코드를 나란히 둘 때는 `:::tabs`와 `@tab`을 쓴다.
 
 ## 작동 방식
 
@@ -26,33 +26,36 @@
 
 ### 파일과 메타데이터
 
-비공개 자료 저장소의 원문을 수정하고 승인한 뒤 `content:sync-vault`로 발행 목록의 사본을 가져온다. 사본은 `content/docs/`(분야별 문서)이나 `content/blog/`(블로그)의 하위 폴더에 있으며 직접 수정하지 않는다. 주소는 `slug`, 문서 계층은 `parent`, 내부 분류는 `category`로 결정하며 폴더 경로와 무관하다. `tags`는 공통 태그 목록을 사용하고 빈 배열을 허용한다. 맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
+비공개 Vault의 원문을 수정·승인한 뒤 `content:sync-vault`로 `content/blog/`에 가져온다. 승인 사본은 직접 수정하지 않는다. 폴더는 작성 편의용이며 공개 주소는 `/blog/<slug>/`다. 공개 글에 `type`, `field`, `category`, `parent`, `contentIcon`을 요구하지 않는다. 개인 위키 미리보기의 기존 메타데이터는 [별도 API 계약](publication.md#저장-전-페이지-미리보기)으로 유지한다.
+
+맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
 
 | 필드 | 필수 | 내용 |
 |---|---|---|
-| `id`, `slug` | 예 | 소문자 영문·숫자·하이픈. 댓글 연결과 주소에 쓰며 중복이면 빌드 오류 |
-| `type` | 예 | `wiki` 또는 `blog` |
-| `title`, `description` | 예 | 제목, 목록·검색·도입문에 쓰는 한두 문장 |
-| `tags` | 아니오 | `config/tags.json`에 있는 태그 0~5개. 생략하면 빈 배열 |
-| `field` | 예 | `languages`, `cs`, `frameworks`, `infrastructure` 중 하나 |
-| `category` | 예 | `content/pages/tech.md`의 `topics`에 있는 내부 분류 |
-| `contentIcon.name` | 예 | 테마의 콘텐츠 아이콘 이름 |
+| `id`, `slug` | 예 | 소문자 영문·숫자를 하이픈으로 연결한 고정 ID와 주소. 중복이면 빌드 오류 |
+| `title`, `description` | 예 | 제목과 목록·검색·도입문에 쓰는 설명 |
+| `tags` | 아니오 | 임의 문자열 배열. 생략하면 빈 배열. `python`, `산책`, `독서`, `회고` 같은 태그 사용 |
+| `publishedAt` | 예 | 최초 발행일. `YYYY-MM-DD` |
 | `visibility` | 예 | `public` 또는 `draft` |
-| `comments` | blog는 `true` | giscus 댓글 |
-| `publishedAt`, `updatedAt` | blog는 발행일 | `YYYY-MM-DD` |
-| `parent` | 아니오 | 위키 부모 문서의 slug |
+| `updatedAt` | 아니오 | 수정일. `YYYY-MM-DD` |
+| `keywords` | 아니오 | 태그 외 검색 키워드의 문자열 배열 |
 | `thumbnail` | 아니오 | `src`, `alt`, 선택 `position` |
-| `example` | 아니오 | `true`면 미리보기 전용 |
+| `comments` | 아니오 | 댓글 표시 여부. 기본 `false` |
+| `example` | 아니오 | 기본 `false`. `true`면 운영 발행에서 제외 |
+
+slug `all`, `page`, `feed`는 예약어다. 태그는 양끝 공백 제거와 Unicode NFC 정규화 후 비어 있거나 중복이면 오류다. `updatedAt`은 `publishedAt`보다 앞설 수 없다. 썸네일은 `/media/` 아래 png·jpg·webp·svg 또는 자격 정보 없는 HTTPS URL을 사용하며 `alt`가 필요하다. 선택 `position.x`, `position.y`는 0~100의 백분율이다.
+
+`config/tags.json`은 표시 이름과 별칭을 보완하며 태그 허용 목록이 아니다. 초안·미래 발행 글은 공개 출력에서 제외한다. `example` 글은 운영 빌드에서 제외하며 합성 데모 입력은 명시적인 데모 모드에서만 사용한다. 빌드 모드는 [개인 사이트 발행](publication.md#실행과-댓글)에 있다.
 
 본문의 첫 문단이 `description`과 같으면 그 문단이 도입문이 된다. 다르면 `description`이 도입문이고 본문은 그대로 이어진다.
 
 ### 화면 구조
 
-블로그 상세는 검색과 제목 아이콘 없이 가운데 날짜, 제목, 도입문, 태그, 본문 순서로 표시하고 댓글은 본문 뒤에 둔다. 위키 상세는 검색, 아이콘 제목, 도입문, 날짜·태그, 본문을 표시한다. 두 유형의 태그는 도입문 다음, 본문 앞에 같은 구성 요소로 표시한다. 위키의 읽기 열은 최대 680px이며 문서 계층과 본문 목차는 본문 밖의 탐색 열을 사용한다. 작은 화면에서는 문서 계층과 본문 목차를 본문 위로 옮겨 접는다. 스크립트가 없으면 두 탐색 영역을 펼친 채 표시한다. 작성자가 넣는 관련 글 카드는 `cards related`를 사용한다. 위키에는 자동 추천이 없고 블로그 상세에는 [관련 글 선정 기준](publication.md#문서와-블로그-탐색)에 따른 목록을 붙인다.
+글 상세는 날짜, 제목, 도입문, 태그, 선택 대표 이미지, 본문 순서로 조립하고 댓글은 본문 뒤에 둔다. 글의 장식 아이콘이나 필수 썸네일은 없다. 이미지가 없으면 상세와 피드에 빈 영역을 만들지 않는다. Search 카드는 제목 표지를 자동으로 표시하며 별도 이미지를 준비하지 않아도 된다. 카드 태그는 숨기고 본문 태그와 검색 필터는 유지한다. 태그와 글 링크는 독립적으로 동작한다. 카드·본문·조작의 표현과 반응형 배치는 [공통 디자인](styles.md)이 소유한다.
 
-본문의 `#`은 글 제목이 `h1`이므로 `h2`로, 피드에서는 한 단계씩 더 내려 출력한다. 쓴 단계는 `app-heading-N` 클래스로 남아 어느 위치에서도 같은 크기와 여백을 쓴다. 위키 목차는 상세 화면에서 `h2`·`h3`로 표시되는 `#`·`##`·`###` 제목으로 만든다.
+본문의 제목은 페이지 제목과 충돌하지 않도록 조정한다. 쓴 단계는 `app-heading-N` 클래스로 남아 공통 크기와 여백을 사용한다. 개인 위키 미리보기의 계층·본문 목차는 공개 Blog와 분리한다. 작성자가 넣는 관련 글 카드는 `cards related`를 사용한다. Blog 상세의 자동 관련 글은 [선정 기준](publication.md#문서와-블로그-탐색)을 따른다.
 
-목차는 제목의 읽을 글자만 표시한다. 인라인 코드·강조·링크의 문법 표식과 링크 주소는 제외하고, 이미지 대체 글자·키와 메뉴의 이름·수식 원문은 남긴다. 이스케이프한 문자와 코드 안의 기호는 그대로 표시하며 HTML로 실행하지 않는다. 대체 글자가 없는 이미지만 쓴 제목은 빈 목차 링크가 되지 않게 원문을 유지한다. 제목 ID는 기존 원문 기준을 유지하므로 목차 표시가 달라져도 기존 앵커 주소는 바뀌지 않는다.
+목차를 사용하는 개인 미리보기에서 목차는 제목의 읽을 글자만 표시한다. 인라인 코드·강조·링크의 문법 표식과 링크 주소는 제외하고 이미지 대체 글자·키와 메뉴의 이름·수식 원문은 남긴다. 이스케이프한 문자와 코드 안의 기호는 그대로 표시하며 HTML로 실행하지 않는다. 대체 글자가 없는 이미지만 쓴 제목은 빈 링크가 되지 않게 원문을 유지한다. 제목 ID는 원문 기준을 유지하므로 기존 앵커 주소는 바뀌지 않는다.
 
 ### 지원 문법
 
@@ -76,7 +79,7 @@
 | 정의 목록 | 용어 줄 다음 `: 설명` | `markdown-it-deflist`의 의미를 따른다. 여러 문단과 블록 포함 가능 |
 | 접기 | `<details>`(`open` 선택), `<summary>글자</summary>` | `details`는 `open`만, `summary`는 속성 없이 사용한다. 요약의 인라인 서식과 본문은 Markdown이며 펜스 코드 안의 `</details>`는 짝이 아니다 |
 | 수식 | `$...$`, `$$...$$` | KaTeX. 아래 절 |
-| 도표 | ` ```thinkflow ` | ThinkFlow. 아래 절 |
+| 도표 | ` ```diagramplay ` | DiagramPlay. 아래 절 |
 | 키·메뉴 | `:kbd[⌘ K]` `:menu[파일]` | |
 | 아이콘·설명 | `:icon[search]` `:tip[글]{text="설명"}` | 아래 "구성 블록" 절 |
 | 구성 블록 | `:::tabs` `:::note` `:::steps` 등 | 아래 "구성 블록" 절 |
@@ -89,8 +92,8 @@ HTML은 글자로 출력하고 실행하지 않는다. `<details>`와 `<summary>
 Things 블로그 글의 작은 글씨 문단과 이미지 묶음은 선택 구성 요소로 쓴다. 임의 HTML은 받지 않는다.
 
 - `ui:fineprint`: `body` 한 문단(인라인 Markdown 허용). 원본 `p.fineprint` 값을 쓴다.
-- `ui:figure-grid`: `items`의 `src`, `alt`, `caption`, `href`, `rounded`. `columns`(1~6)와 `size`(`small`, `large`)는 원본 `newgrid`의 `has-N-columns`, `is-small`, `is-large`와 같다. 지정하지 않으면 원본 기본처럼 열 최소 너비 210px로 늘고 준다.
-- 링크 `href`는 `https://`, `mailto:`, `#`, 또는 `/articles/foo/`처럼 `/`로 시작하는 사이트 경로만 받는다. `//`로 시작하는 주소, 역슬래시, 공백·제어 문자, `javascript:`는 빌드 오류다.
+- `ui:figure-grid`: `items`의 `src`, `alt`, `caption`, `href`, `rounded`. `columns`(1~6)와 `size`(`small`, `large`)는 원본 `newgrid`의 `has-N-columns`, `is-small`, `is-large`와 같다. 지정하지 않으면 공통 이미지 묶음의 반응형 배치를 사용한다.
+- 링크 `href`는 `https://`, `mailto:`, `#`, 또는 `/blog/foo/`처럼 `/`로 시작하는 사이트 경로만 받는다. `//`로 시작하는 주소, 역슬래시, 공백·제어 문자, `javascript:`는 빌드 오류다.
 
 ````markdown
 ```ui:fineprint
@@ -100,12 +103,12 @@ body: 이 글은 평소보다 기술적입니다. [요약](#summary)만 읽어�
 ```ui:figure-grid
 columns: 2
 items:
-  - { src: sample-a.png, alt: 오늘 화면, caption: 첫 캡션, href: /articles/foo/, rounded: true }
+  - { src: sample-a.png, alt: 오늘 화면, caption: 첫 캡션, href: /blog/foo/, rounded: true }
   - { src: sample-b.png, alt: 알림 화면, caption: 둘째 캡션 }
 ```
 ````
 
-- `ui:figure`도 `href`와 `rounded`를 받는다. `rounded` 이미지는 원본 글의 인라인 1em 곡률이다.
+- `ui:figure`도 `href`와 `rounded`를 받는다. `rounded` 이미지는 공통 그림의 곡률을 사용한다.
 
 #### 수식
 
@@ -115,11 +118,11 @@ items:
 
 #### 도표
 
-`thinkflow` 펜스에는 첫 줄에 `thinkflow`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 ThinkFlow 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
+`diagramplay` 펜스에는 첫 줄에 `diagramplay`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 DiagramPlay 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
 
 카드·선은 한 번 선언하고 `scene "이름"`으로 장면을 나눈다. 빈 장면은 정지, 이동이 있는 장면은 한 번 재생이 기본이다. 반복은 `mode=loop`, 배속은 `speed=`, 연속 트래픽은 `track … every= …`로 표현한다. 장면 선택 줄은 문서 탭과 같은 공통 부품이다.
 
-작성 기준은 하나다. 같은 카드와 선이 단계별로 바뀌면 ThinkFlow `scene`으로, 서로 다른 그림·글·코드를 나란히 두면 문서 `@tab`으로 쓴다. 이름 집합의 유사도로 이를 강제하거나 경고하지 않는다.
+작성 기준은 하나다. 같은 카드와 선이 단계별로 바뀌면 DiagramPlay `scene`으로, 서로 다른 그림·글·코드를 나란히 두면 문서 `@tab`으로 쓴다. 이름 집합의 유사도로 이를 강제하거나 경고하지 않는다.
 
 장면이 둘 이상인 도표를 품은 `:::tabs` 묶음은 바깥 선택 줄과 안쪽 장면 선택 줄의 역할이 갈리도록 생략한 `position`을 `top`, 생략한 `selector`를 `segmented`로 보완한다. 장면 수는 도표 컴파일 결과의 `timeline.steps.length`이며(`compileDiagrams`가 `scenes`로 전달) 원문이나 HTML을 다시 읽어 세지 않는다. 탭 묶음은 이 값을 렌더 전에 한 번 정해 열기와 닫기가 같은 결과를 쓴다. 명시한 옵션은 그대로 두고 `box` 테두리는 더하지 않는다. 장면이 하나인 도표와 장면 없는 탭은 기본값이 바뀌지 않는다. `:::platform`(신규 `@tab`과 옛 형식 모두)은 테두리 있는 고정 모양이라 이 보완에서 제외하며 장면이 몇 개든 기존 동작 그대로다. 결정은 도표를 품은 탭 묶음 하나에만 걸리고 뒤따르는 다른 탭 묶음에는 전해지지 않는다. 문법 복사·HTML 다운로드·전체화면은 도표 프레임에서 제공한다.
 
@@ -172,7 +175,7 @@ items:
 
 | 표시 역할 | 권장 옵션 | 적용 대상 |
 |---|---|---|
-| 폭 | `w-narrow`, `w-wide` | 그림·영상·탭·기기 탭·기존 갤러리·코드블록·ThinkFlow |
+| 폭 | `w-narrow`, `w-wide` | 그림·영상·탭·기기 탭·기존 갤러리·코드블록·DiagramPlay |
 | 탭 상자와 위치 | `box`, `top` | 탭·기기 탭 |
 | 탭 선택 줄 | `segmented`, `numbers` | 탭·기기 탭 |
 | 카드 모양 | `related`, `centered`, `grouped`, `inline` | 카드 목록 |
@@ -205,7 +208,7 @@ items:
 - `src`와 `poster`는 `content/assets/`에 있는 파일 이름만 쓴다. 경로, `..`, 없는 파일은 오류다.
 - `href`는 위 "원본 글 요소"와 같은 규칙이다(`https://`, `mailto:`, `#`, `/`로 시작하는 사이트 경로).
 - `cards`의 글 끝 "이어서 읽을 글"에는 `related`를 쓴다. 작은 아이콘, 제목 한 줄, 갈매기표로 된 한 줄 카드이고 `description`은 그려지지 않는다. 긴 제목은 말줄임으로 줄이고(전체 글은 읽기 도구가 읽는다) 좁은 화면에서는 한 열이다. 글 하단에 자동으로 붙는 "함께 읽기"와 "이 문서의 수정 제안" 링크는 없다. 나머지 변형은 다른 용도의 기존 표현이다.
-- `icon`은 테마의 콘텐츠 아이콘 이름이다. 글 앞의 `contentIcon.name`과 같은 목록이다.
+- 선택 카드의 `icon`은 공통 카탈로그 이름이다. 본문 카드 문법의 선택 기능이며 공개 글 메타데이터에 장식 아이콘을 요구하지 않는다.
 
 #### 탭: `@tab` 형식
 
@@ -255,7 +258,7 @@ items:
 |---|---|
 | 생략 | 본문 폭 |
 | `w-narrow` | 좁은 미디어 폭(`width-narrow`) 이하로 가운데 배치 |
-| `w-wide` | 넓은 미디어 폭(`width-wide`: 최대 900px)으로 본문 밖까지 확장. 좁은 화면은 양쪽 여백 유지 |
+| `w-wide` | 공통 넓은 미디어 폭(`width-wide`)으로 본문 밖까지 확장. 좁은 화면은 공통 여백 유지 |
 
 ````markdown
 ::figure w-narrow rounded src=sample-a.png alt="오늘 화면"
@@ -269,7 +272,7 @@ const message = "넓은 코드블록";
 
 - 탭도 `:::tabs w-narrow`, `:::tabs w-wide`로 쓴다. 같은 규칙이 묶음 전체에 적용된다.
 - 블록 폭은 `width` 하나로 정한다. `w-narrow`와 `w-wide`는 각각 `width=narrow`와 `width=wide`로 해석하며, 기본값 `width=content`는 생략과 같다. 같은 폭을 중복 지정하거나 다른 폭을 함께 지정하면 오류다. 옛 블록 속성 `wide`와 `size=compact`는 받지 않는다. `ui:video`의 플레이어 치수·비율(`width`, `height`, `wide`), 그림 격자의 `size`, 카드의 `compact`는 블록 폭과 다른 속성으로 유지한다.
-- ThinkFlow도 `thinkflow`, `thinkflow w-wide`, `thinkflow w-narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
+- DiagramPlay도 `diagramplay`, `diagramplay w-wide`, `diagramplay w-narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
 - 폭은 공통 구성 요소가 클래스(`app-width-narrow`, `app-width-wide`)로 정하고 값은 테마 토큰이다. CSS나 픽셀 값을 글마다 직접 넣지 않는다.
 - 기기 탭 상자 안에서 `w-wide`를 쓰면 상자 밖으로 나오므로 안쪽 요소의 폭은 보통 생략한다.
 
@@ -350,7 +353,7 @@ IntelliJ의 PSI·심볼 해석을 실행하는 것은 아니다. 외부 타입, 
 
 ### 검증
 
-문법 해석과 HTML 출력(CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 등록 언어와 별칭, 구성 블록의 중첩·속성 검사·오류 위치, 각주·제목 ID)은 document-engine의 `npm test`가 확인한다. 홈페이지의 `npm run check:product`는 그 출력을 쓰는 쪽을 확인한다. 소개 문단 분리와 목차, 복사 원문과 동적 본문의 초기화, 탭·갤러리 동작, 피드와 상세 구조, 예시 글의 코드 블록 원문 왕복과 ID 중복(`article-rendering.test.mjs`, `article-renderer.test.mjs`), 테마 토큰이 만드는 본문 치수, 수식 오류 복구와 자산의 페이지별 선택, 도표 원문 보존과 ID, 도표 렌더러의 보안 설정과 로더 상태 전환이 대상이다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
+문법 해석과 HTML 출력(CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 등록 언어와 별칭, 구성 블록의 중첩·속성 검사·오류 위치, 각주·제목 ID)은 document-engine의 `npm test`가 확인한다. 홈페이지의 `npm run check:product`는 그 출력을 쓰는 쪽을 확인한다. 소개 문단 분리와 목차, 복사 원문과 동적 본문의 초기화, 탭·갤러리 동작, 글 상세 구조, 예시 글의 코드 블록 원문 왕복과 ID 중복(`article-rendering.test.mjs`, `article-renderer.test.mjs`), 테마 토큰이 만드는 본문 치수, 수식 오류 복구와 자산의 페이지별 선택, 도표 원문 보존과 ID, 도표 렌더러의 보안 설정과 로더 상태 전환이 대상이다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
 
 코드와 도표는 공통 `ToolHeader`·`Toolbar`·`ToolButton`의 크기·아이콘·호버·초점·상태 알림을 사용한다. 복사 성공·실패·재시도는 공통 디자인의 `bindToolbar`와 그 시험이 소유한다. 도표의 대체 전체화면은 공통 `bindDiagramHost`가 송신자와 출처를 확인해 처리하고 전체화면 중 높이 알림은 무시한다. 소비자에서 별도 보정 CSS를 추가하지 않는다.
 

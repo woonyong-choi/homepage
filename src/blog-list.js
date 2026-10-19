@@ -1,11 +1,9 @@
-// 정적 다음 페이지의 카드 또는 본문을 재사용한다. 스크립트가 없으면 원래 쪽 이동 링크가 동작한다.
 export function initBlogList(root, { fetchPage, Observer } = {}) {
   const doc = root.ownerDocument;
   const view = doc.defaultView;
-  const feed = root.dataset.blogList === 'feed';
-  const containerSelector = feed ? '.app-blog-feed-items' : '.app-support-grid';
-  const itemSelector = feed ? '.app-blog-slice' : '.app-blog-card';
-  const primarySelector = feed ? '.app-post-title a' : '.app-blog-card-link';
+  const containerSelector = '.app-blog-feed-items';
+  const itemSelector = '.app-blog-slice';
+  const primarySelector = '.app-post-title a';
   const grid = root.querySelector(containerSelector);
   const nav = root.querySelector('.app-page-links');
   const link = nav?.querySelector('[rel="next"]');
@@ -21,7 +19,7 @@ export function initBlogList(root, { fetchPage, Observer } = {}) {
 
   function pageUrl(value) {
     const url = new URL(value, view.location.href);
-    if (url.origin !== view.location.origin || !(feed ? /^\/blog\/(?:page\/[1-9]\d*\/)?$/ : /^\/blog\/all\/(?:page\/[1-9]\d*\/)?$/).test(url.pathname) || url.search || url.hash || visited.has(url.href)) throw new Error('invalid next page');
+    if (url.origin !== view.location.origin || !/^\/blog\/(?:page\/[1-9]\d*\/)?$/.test(url.pathname) || url.search || url.hash || visited.has(url.href)) throw new Error('invalid next page');
     return url.href;
   }
 
@@ -36,7 +34,7 @@ export function initBlogList(root, { fetchPage, Observer } = {}) {
       const response = await fetchNext(url, { redirect: 'error' });
       if (!response.ok) throw new Error('page request failed');
       const page = new view.DOMParser().parseFromString(await response.text(), 'text/html');
-      const list = page.querySelector(feed ? '[data-blog-list=feed]' : '[data-blog-list=""]');
+      const list = page.querySelector('[data-blog-list=feed]');
       const cards = [...(list?.querySelectorAll(`${containerSelector} > ${itemSelector}`) ?? [])];
       if (!cards.length) throw new Error('missing cards');
       const href = list.querySelector('.app-page-links [rel="next"]')?.getAttribute('href');
@@ -52,9 +50,9 @@ export function initBlogList(root, { fetchPage, Observer } = {}) {
         return true;
       });
       if (!added.length) throw new Error('no new articles');
-      if (feed) await prepareContent(page, doc, url);
+      await prepareContent(page, doc, url);
       grid.append(...added);
-      if (feed) doc.dispatchEvent(new view.CustomEvent('content-added', { detail: grid }));
+      doc.dispatchEvent(new view.CustomEvent('content-added', { detail: grid }));
       incoming.forEach(key => articles.add(key));
       visited.add(url);
       next = following;

@@ -106,3 +106,30 @@ test('loadHomeContent_reads_nested_section_sources_and_rejects_parent_paths', ()
     }), /상대 Markdown 경로/);
   }
 });
+
+
+test('disabled_icon_references_do_not_require_retired_catalog_entries_but_active_inputs_stay_checked', () => {
+  const projects = enabled => `sections:
+  - { id: projects, type: projects, enabled: ${enabled}, items: [{ title: x, description: y, icon: retired-project }] }`;
+  assert.deepEqual(parse(projects(false)), []);
+  rejects(projects(true), /unknown icon: retired-project/);
+  const hiddenItem = `sections:
+  - { id: projects, type: projects, items: [{ enabled: false, title: x, description: y, icon: retired-project }] }`;
+  assert.deepEqual(parse(hiddenItem)[0].items, []);
+  rejects(projects(false).replace('icon: retired-project', 'icon: 42'), /items\[0\]\.icon: 키와 값을 가진 항목/);
+  rejects(`sections:
+  - { id: a, type: technologies, items: [retired-brand] }`, /알 수 없는 기술/);
+});
+
+
+test('technology_heading_icons_check_catalog_safe_paths_and_existing_files', () => {
+  const yaml = icon => `sections:\n  - { id: tech, type: technologies, icon: ${icon}, items: [python] }`;
+  rejects(yaml('retired-code'), /unknown icon/);
+  assert.equal(parse(yaml('document'))[0].icon.src, '/theme/assets/icons/documents/document.svg');
+  const png = '/theme/assets/icons/communication/technology-thought.png';
+  assert.equal(parse(yaml(`{ src: ${png} }`), { exists: path => path === png })[0].icon.src, png);
+  assert.throws(() => parse(yaml(`{ src: ${png} }`), { exists: () => false }), /파일이 없습니다/);
+  for (const path of ['/theme/assets/../missing.png', '/theme/assets//missing.png', '/private/missing.png']) rejects(yaml(`{ src: ${path} }`), /안전한 경로/);
+  assert.deepEqual(parse(yaml('retired-code').replace('type: technologies,', 'type: technologies, enabled: false,')), []);
+  rejects(yaml('42'), /icon: 키와 값을 가진 항목/);
+});

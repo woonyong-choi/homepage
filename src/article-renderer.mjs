@@ -24,7 +24,7 @@ function visibleText(tokens) {
 function rejectErrors(output, page) {
   const errors = output.diagnostics.filter(item => item.severity === 'error');
   if (errors.length) throw new Error(errors.map(item => `${page.id} 본문 ${item.line ?? 1}줄 :${item.directive ?? 'document'} ${item.message}`).join('\n'));
-  if (output.diagrams?.some(item => item.status === 'failed')) throw new Error(`${page.id}: ThinkFlow 도표를 만들 수 없습니다.`);
+  if (output.diagrams?.some(item => item.status === 'failed')) throw new Error(`${page.id}: DiagramPlay 도표를 만들 수 없습니다.`);
 }
 
 export async function parseArticle(page, options = {}) {

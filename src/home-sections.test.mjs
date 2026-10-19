@@ -9,7 +9,7 @@ import { brandNames } from './brand-icons.mjs';
 import { THEME_ROOT } from './design-package.mjs';
 
 const TECHNOLOGIES = new Set(['python', 'git']);
-const render = (yaml, preview = true) => personalHome({ config: { name: '이름' }, home: parseHomeSections(parseYaml(yaml), { technologies: TECHNOLOGIES }), preview });
+const render = (yaml, preview = true) => personalHome({ config: { name: '이름' }, home: parseHomeSections(parseYaml(yaml), { technologies: TECHNOLOGIES }), tags: { Python: {} }, preview });
 const positions = (html, marks) => marks.map(mark => html.indexOf(mark));
 const ascending = values => values.every((value, index) => value >= 0 && (!index || value > values[index - 1]));
 
@@ -128,8 +128,8 @@ test('technologies_and_interviews_share_the_section_intro_with_projects', () => 
   assert.doesNotMatch(rich, /data-flow-controls|data-flow-(?:toggle|prev|next)|<button/);
   assert.match(rich, /class="app-landing-section app-landing-interviews"/);
   assert.deepEqual(clientEntrypoints(rich), ['flows.js']);
-  const named = render('sections:\n  - { id: contact, type: contact, email: hello@example.com, icon: mail }');
-  assert.match(intro(named), /<img src="\/theme\/assets\/icons\/communication\/mail.svg"/);
+  const named = render('sections:\n  - { id: contact, type: contact, email: hello@example.com, icon: document }');
+  assert.match(intro(named), /<img src="\/theme\/assets\/icons\/documents\/document.svg"/);
   assert.throws(() => render('sections:\n  - { id: contact, type: contact, email: hello@example.com, icon: missing-icon }'), /unknown icon/);
 });
 
@@ -142,7 +142,7 @@ test('hero_title_names_the_page_and_icon_and_missing_files_of_disabled_items_are
   const noIcon = render('sections:\n  - { id: hero, type: hero, title: 내 이름, description: 소개 }');
   assert.match(noIcon, /<p class="app-hero-title" aria-hidden="true">내 이름<\/p>/);
   assert.doesNotMatch(render('sections:\n  - { id: hero, type: hero, description: 소개 }'), /app-hero-title/);
-  const wordmark = render('sections:\n  - { id: hero, type: hero, title: 백엔드 엔지니어, description: 소개, wordmark: { src: /assets/backend-engineer.svg } }');
+  const wordmark = render('sections:\n  - { id: hero, type: hero, title: 백엔드 엔지니어, description: 소개, wordmark: { src: /assets/who-knows.svg } }');
   assert.match(wordmark, /<h1 class="app-sr">백엔드 엔지니어<\/h1>/);
   assert.match(wordmark, /<svg[^>]*class="app-hero-wordmark"/);
   assert.doesNotMatch(wordmark, /app-hero-logo|app-hero-title/);
@@ -169,8 +169,9 @@ test('newsletter_without_endpoint_keeps_controls_disabled_and_never_posts', () =
   assert.match(render('sections:\n  - { id: contact, type: contact, email: hello@example.com }'), /href="mailto:hello@example.com"/);
   const home = loadHomeContent(brandNames());
   const shipped = personalHome({ config: { name: '이름' }, home });
-  assert.match(shipped, /<h1 class="app-sr">백엔드 엔지니어<\/h1>/);
-  assert.match(shipped, /<svg[^>]*class="app-hero-wordmark"[^>]*aria-hidden="true"/);
+  assert.match(shipped, /<h1 class="app-sr">백엔드 개발자 최우녕입니다<\/h1>/);
+  assert.match(shipped, /<p class="app-hero-title" aria-hidden="true">백엔드 개발자 최우녕입니다<\/p>/);
+  assert.doesNotMatch(shipped, /app-hero-wordmark/);
   assert.match(shipped, /소식 받아보기<\/h2><p>새 글과 프로젝트 소식을 이메일로 보내 드립니다\.<\/p>/);
   assert.match(shipped, /<input[^>]*type="email"[^>]* disabled/);
   assert.match(shipped, /<button type="submit" disabled>구독<\/button>/);
@@ -197,4 +198,58 @@ test('the_shipped_hero_plays_the_selected_local_video_from_the_beginning', () =>
   assert.equal(hero.video.src, '/media/woonyong-interview.mp4');
   assert.equal(hero.action.href, undefined);
   for (const name of ['woonyong-interview.mp4', 'woonyong-interview-poster.jpg']) assert.ok(existsSync(new URL(`../content/media/${name}`, import.meta.url)));
+});
+
+
+test('technology_logos_only_link_to_actual_published_tag_ids', () => {
+  const home = parseHomeSections(parseYaml('sections:\n  - { id: tech, type: technologies, items: [python, git] }'), { technologies: TECHNOLOGIES });
+  const draw = tags => personalHome({ config: { name: '이름' }, home, tags, knownTags: { python: { label: 'Python', aliases: ['파이썬'] } } });
+  const inactive = draw({});
+  assert.doesNotMatch(inactive, /id="tech"|id="tech-title"|data-flow-rail|app-technology/);
+  const enabled = draw({ Python: { label: 'Python' } });
+  assert.match(enabled, /href="\/search\/\?tag=Python"/);
+  assert.doesNotMatch(enabled, /tag=python|tag=git|Git ·|aria-disabled/);
+  assert.equal((enabled.match(/class="app-technology"/g) ?? []).length, 1);
+  assert.match(draw({ PYTHON: {} }), /href="\/search\/\?tag=PYTHON"/);
+  assert.match(draw({ 파이썬: {} }), /href="\/search\/\?tag=%ED%8C%8C%EC%9D%B4%EC%8D%AC"/);
+  const preferred = draw({ Python: {}, python: {}, 파이썬: {} });
+  assert.match(preferred, /href="\/search\/\?tag=python"/);
+  assert.doesNotMatch(preferred, /&amp;tag=|&tag=/);
+  assert.doesNotMatch(draw({ 'python tips': {} }), /href="\/search\//);
+});
+
+test('heading_pngs_use_the_shared_section_image_slot_and_empty_technology_stays_hidden', () => {
+  const png = name => `/theme/assets/icons/communication/${name}.png`;
+  const home = parseHomeSections({ sections: [
+    { id: 'tech', type: 'technologies', icon: { src: png('technology-thought') }, items: ['python'] },
+    { id: 'talk', type: 'interviews', icon: { src: png('testimonials') }, items: [{ id: 'a', summary: '합성 데이터: 요약' }] },
+    { id: 'contact', type: 'contact', mode: 'newsletter', icon: { src: png('newsletter') } },
+  ] }, { technologies: TECHNOLOGIES });
+  for (const preview of [false, true]) {
+    const html = personalHome({ config: { name: '이름' }, home, tags: { Python: {} }, preview });
+    for (const name of ['technology-thought', 'testimonials', 'newsletter']) {
+      assert.match(html, new RegExp(`<span class="app-landing-icon"[^>]*><img src="${png(name)}"`));
+    }
+    assert.doesNotMatch(html, /app-content-icon/);
+  }
+  const empty = personalHome({ config: { name: '이름' }, home, tags: {} });
+  assert.doesNotMatch(empty, /technology-thought\.png|id="tech"/);
+  const shipped = loadHomeContent(brandNames());
+  for (const [type, name] of [['technologies', 'technology-thought'], ['interviews', 'testimonials'], ['contact', 'newsletter']]) {
+    assert.equal(shipped.find(section => section.type === type).icon.src, png(name));
+  }
+});
+
+
+test('new_service_tags_join_after_configured_logos_without_reviving_an_empty_rail', () => {
+  const home = parseHomeSections(parseYaml('sections:\n  - { id: tech, type: technologies, items: [python, git] }'), { technologies: TECHNOLOGIES });
+  const html = personalHome({ config: { name: '이름' }, home, tags: { Python: {}, Redis: {} } });
+  assert.match(html, /href="\/search\/\?tag=Redis"/);
+  assert.ok(html.indexOf('Python · Python 태그 글 보기') < html.indexOf('Redis · Redis 태그 글 보기'));
+  assert.doesNotMatch(html, /Git ·|aria-disabled/);
+  const empty = personalHome({ config: { name: '이름' }, home: [{ ...home[0], items: [] }], tags: { Redis: {} } });
+  assert.doesNotMatch(empty, /app-technology|tag=Redis/);
+  const disabledHome = parseHomeSections(parseYaml('sections:\n  - { id: tech, type: technologies, enabled: false, items: [python, git] }'), { technologies: TECHNOLOGIES });
+  const disabled = personalHome({ config: { name: '이름' }, home: disabledHome, tags: { Redis: {} } });
+  assert.doesNotMatch(disabled, /id="tech"|app-technology|tag=Redis/);
 });

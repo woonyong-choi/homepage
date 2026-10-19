@@ -8,16 +8,8 @@ const source = [
   { id: 'c', type: 'wiki', title: 'Python', description: '복사', text: '메모리', keywords: ['파이썬'], tags: ['python'], date: '2026-10-03' },
 ];
 const index = prepareIndex([...source, source[0]]);
-const state = { query: '', tags: [], type: 'all', page: 1 };
+const state = { query: '', tags: [], page: 1 };
 
-test('유형별 개수는 중복 ID를 제거하고 유형 필터보다 먼저 계산한다', () => {
-  const result = searchDocuments(index, { ...state, query: '검색', type: 'blog' });
-  assert.deepEqual(result.counts, { all: 2, wiki: 1, blog: 1 });
-  assert.deepEqual(result.entries.map(entry => entry.id), ['b']);
-  const wikiOnly = searchDocuments(index, { ...state, query: 'Python', type: 'blog' });
-  assert.equal(wikiOnly.entries.length, 0);
-  assert.equal(wikiOnly.counts.wiki, 1);
-});
 
 test('검색어와 태그는 AND로 결합하고 별칭과 한글 정규화를 적용한다', () => {
   assert.equal(searchDocuments(index, { ...state, query: 'JS 최신', tags: ['javascript', 'search'] }).entries[0].id, 'a');
@@ -34,8 +26,8 @@ test('검색 URL에서 검색어·태그·페이지를 복원한다', () => {
 });
 
 test('추천은 존재하는 제목·별칭·태그와 필터에 맞는 글만 제공한다', () => {
-  const result = suggestions(index, { javascript: { label: 'JavaScript', aliases: ['JS'] } }, { ...state, query: 'JS', type: 'blog' });
-  assert.equal(result.entries.length, 1);
+  const result = suggestions(index, { javascript: { label: 'JavaScript', aliases: ['JS'] } }, { ...state, query: 'JS' });
+  assert.equal(result.entries.length, 2);
   assert.equal(result.entries[0].type, 'blog');
   assert.equal(result.tags[0][0], 'javascript');
   assert.deepEqual(suggestions(index, {}, state).entries, []);
@@ -59,12 +51,27 @@ test('search_pages_keep_twelve_results_and_clamp_the_last_page_without_losing_en
 });
 
 // 이전 유형 URL도 검색과 태그에서 같은 글 집합을 보여야 한다.
-test('legacy_type_urls_search_both_document_types_from_the_first_page', () => {
-  for (const type of ['wiki', 'blog', 'unknown']) {
-    const selected = readSearchState(`?q=검색&type=${type}&tag=search&page=2`);
-    assert.equal(selected.type, 'all');
-    assert.equal(selected.page, 1);
-    assert.deepEqual(searchDocuments(index, selected).entries.map(entry => entry.id), ['b', 'a']);
-    assert.doesNotMatch(searchUrl({ ...selected, type }), /type=/);
-  }
+
+test('unlimited_rows_keeps_more_than_twelve_results_on_one_page', () => {
+  const entries = prepareIndex(Array.from({ length: 25 }, (_, id) => ({ ...source[0], id: `document-${id}` })));
+  const result = searchDocuments(entries, { ...state, page: 5, pageSize: 'all' });
+  assert.equal(result.entries.length, 25);
+  assert.equal(result.page, 1);
+  assert.equal(result.totalPages, 1);
+});
+
+
+test('tag_facets_come_from_all_matching_posts_before_pagination_and_follow_the_intersection', () => {
+  const posts = prepareIndex([
+    { ...source[0], id: 'one', tags: ['설계', 'python'], title: '구조', date: '2026-10-03' },
+    { ...source[0], id: 'two', tags: ['설계', '독서'], title: '책', date: '2026-10-02' },
+    { ...source[0], id: 'three', tags: ['회고'], title: '기록', date: '2026-10-01' },
+  ]);
+  const one = searchDocuments(posts, { ...state, tags: ['설계'], pageSize: 1 });
+  assert.equal(one.entries.length, 1);
+  assert.deepEqual(one.tagIds, ['설계', 'python', '독서']);
+  assert.deepEqual(searchDocuments(posts, { ...state, tags: ['설계', 'python'] }).tagIds, ['설계', 'python']);
+  assert.deepEqual(searchDocuments(posts, { ...state, query: '책', tags: ['설계'] }).tagIds, ['설계', '독서']);
+  assert.deepEqual(searchDocuments(posts, { ...state, tags: ['설계', '회고'] }).tagIds, []);
+  assert.deepEqual(new Set(searchDocuments(posts, state).tagIds), new Set(['설계', 'python', '독서', '회고']));
 });
