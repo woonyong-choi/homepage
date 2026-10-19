@@ -26,6 +26,8 @@
 
 ## 명령
 
+Validate와 Deploy는 `ubuntu-24.04`의 Node 22에서 실행한다. 소비하는 문서 엔진의 최소 Node 조건 `>=22.12.0`과 기존 `site (22)` 검사 이름을 유지한다. 별도로 측정한 Node 20 호환 실행을 설치 지원 선언으로 바꾸지 않는다. Action 자체는 Node 24 기반 공식 release의 SHA로 고정한다(2026-10-19 확인). 배포 실행 조건과 권한은 바꾸지 않는다.
+
 ```sh
 npm run build:site
 npm run check:product
