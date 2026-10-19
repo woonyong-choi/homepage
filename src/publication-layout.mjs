@@ -32,9 +32,9 @@ export function searchBox({ large = false, query = '', combobox = true, action =
   return String(ui.SearchBox({ large, query, combobox, action, labels: config.labels, suggestions: large ? config.suggestions : [], fallback: ui.trusted('<p class="app-caption">검색과 태그 필터는 JavaScript가 필요합니다. <a href="/search/">전체 글</a>은 바로 읽을 수 있습니다.</p>') }));
 }
 
-export function tagLinks(page, tags, limit = Infinity, url = searchUrl) {
+export function tagLinks(page, tags, limit = Infinity, url = searchUrl, size = 'medium') {
   if (!page.tags?.length) return '';
-  return String(ui.TagList({ tags: page.tags.map(id => ({ href: url({ tags: [id] }), label: tags[id]?.label ?? id })), limit }));
+  return String(ui.TagList({ tags: page.tags.map(id => ({ href: url({ tags: [id] }), label: tags[id]?.label ?? id })), limit, size }));
 }
 
 // 설정 목록의 순서가 곧 홈의 섹션 순서다.

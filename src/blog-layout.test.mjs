@@ -11,7 +11,9 @@ function posts(count) {
 
 test('blog_cards_keep_post_and_tag_links_independent', () => {
   const post = { ...posts(1)[0], comments: true, commentCount: 2, cardAuthor: { name: '작성자', href: '/author/' }, thumbnail: { src: '/media/cover.webp', alt: '상단의 "검색" 입력창', position: { x: 37.5, y: 0 } } };
-  for (const html of [blogCard(post, TAGS), searchListing([post], TAGS)]) {
+  const layout = loadBlogLayout();
+  layout.blog.card.tags = true;
+  for (const html of [blogCard(post, TAGS, 2, layout.blog.card), searchListing([post], TAGS, { layout })]) {
     assert.match(html, /object-position:37\.5% 0%/);
     assert.match(html, /alt="상단의 &quot;검색&quot; 입력창"/);
     assert.match(html, /<a class="app-blog-card-link"[^>]+><div class="app-blog-cover"><img[^>]+><\/div>/);
@@ -44,7 +46,9 @@ test('blog_listing_keeps_all_static_cards_and_offers_only_used_tags_without_subj
   const dom = new JSDOM(searchListing(entries, { 산책: { label: '산책' } }, { demo: true }));
   const document = dom.window.document;
   assert.equal(document.querySelectorAll('.app-blog-card').length, 14);
-  assert.equal(document.querySelectorAll('.app-blog-cover, .app-content-icon').length, 0);
+  assert.equal(document.querySelectorAll('.app-title-cover').length, 14);
+  assert.equal(document.querySelectorAll('.app-blog-card-tags, .app-content-icon').length, 0);
+  assert.equal(document.querySelectorAll('[data-blog-tags] .app-tag.is-medium').length, 0);
   assert.equal(document.querySelector('form').getAttribute('action'), '/search/');
   assert.equal(document.querySelector('[data-blog-tags] a').getAttribute('href'), '/search/?tag=%EC%82%B0%EC%B1%85');
   assert.match(document.querySelector('main').textContent, /합성 예시/);
@@ -63,7 +67,7 @@ test('static_blog_cards_apply_display_settings_and_all_rows_boundary', () => {
   assert.equal(document.querySelector('[data-search-page]').dataset.pageSize, 'all');
   assert.deepEqual(JSON.parse(document.querySelector('[data-search-page]').dataset.card), layout.blog.card);
   assert.equal(card.querySelector('.app-blog-card-title').classList.contains('app-sr'), true);
-  for (const selector of ['img', '.app-card-summary', '.app-blog-card-tags', 'time', '.app-blog-card-comments']) assert.equal(card.querySelector(selector), null);
+  for (const selector of ['img', '.app-title-cover', '.app-card-summary', '.app-blog-card-tags', 'time', '.app-blog-card-comments']) assert.equal(card.querySelector(selector), null);
   dom.window.close();
 });
 
@@ -74,7 +78,8 @@ test('search_and_recent_blog_share_posts_but_keep_distinct_views', () => {
   assert.equal(search.querySelectorAll('.app-blog-card').length, 10);
   assert.equal(search.querySelector('form').getAttribute('action'), '/search/');
   assert.equal(feed.querySelectorAll('.app-blog-post').length, 4);
-  assert.equal(feed.querySelectorAll('.app-blog-card, form').length, 0);
+  assert.equal(feed.querySelectorAll('.app-blog-card, .app-title-cover, form').length, 0);
+  assert.equal(feed.querySelectorAll('.app-blog-post .app-tag.is-medium').length, 4);
   assert.equal(feed.querySelector('[rel=next]').getAttribute('href'), '/blog/page/2/');
   assert.equal(feed.querySelector('.app-list-link'), null);
   assert.ok(feed.querySelector('a[href="/search/"]'));

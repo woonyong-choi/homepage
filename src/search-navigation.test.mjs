@@ -33,6 +33,7 @@ test('search_filter_links_keep_remaining_conditions_or_return_to_entry', () => {
 
 test('result_tags_add_to_the_current_search_without_duplicates', () => {
   const dom = new JSDOM('<div data-filter-summary></div><div data-full-results></div>');
+  dom.window.document.body.dataset.card = JSON.stringify({ title: true, description: true, media: 'image', tags: true, date: true, comments: true });
   globalThis.document = dom.window.document;
   try {
     const selected = { query: '주문', tags: ['concurrency'], page: 3 };

@@ -126,7 +126,9 @@ test('browser_search_view_renders_through_theme_components_and_only_converts_the
     assert.equal(result.querySelector('h2 img'), null);
     assert.equal(result.querySelector('h2').textContent, '<img src=x onerror=alert(1)> 검색어');
     assert.equal(result.querySelector('.app-blog-card-link').getAttribute('href'), '/articles/a/');
-    assert.equal(result.querySelector('.app-blog-card-tags a').textContent, '태그<');
+    assert.equal(result.querySelector('.app-blog-card-tags'), null);
+    assert.equal(result.querySelector('.app-title-cover-title').textContent, entry.title);
+    assert.equal(result.querySelector('.app-title-cover img'), null);
     const pages = window.document.querySelector('nav.app-page-links[data-result-pages]');
     assert.equal(pages.querySelector('[aria-current=page]').textContent, '2');
     assert.deepEqual([...pages.children].map(node => node.textContent), ['이전', '1', '2', '3', '다음']);

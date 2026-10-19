@@ -25,7 +25,8 @@ test('blog_detail_follows_the_single_post_structure_without_search_or_title_icon
   assert.match(html, /<h1 class="app-post-title" id="post-sample">샘플 글<\/h1>/);
   assert.match(html, /<time class="app-post-date" datetime="2026-01-02">2026년 1월 2일<\/time>/);
   const positions = order(html, ['app-post-header', 'app-post-date', 'app-post-title', 'app-article-lead', 'class="app-tags"', '<h2 id="sample-절-하나"', 'app-post-footer', 'app-document-dates', 'class="app-comments"']);
-  assert.doesNotMatch(html, /app-post-author/);
+  assert.doesNotMatch(html, /app-post-author|app-title-cover/);
+  assert.match(html, /class="app-tag is-medium" href="\/search\/\?tag=python"/);
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
   assert.match(html, /<h2 id="sample-큰-제목" class="app-heading-1">큰 제목<\/h2>/);
@@ -67,6 +68,7 @@ test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column
   const tree = { page, children: [{ page: { ...page, id: 'child', title: '하위 문서', route: '/articles/child/' }, children: [] }] };
   const html = privateWikiArticle(page, { topics, topicTrees: new Map([['python', [tree]]]) });
   assert.match(html, /^<main id="main" class="app-shell app-document-shell"><section class="app-search/);
+  assert.doesNotMatch(html, /class="app-tag is-medium"/);
   assert.match(html, /class="app-document-layout" data-document-layout/);
   assert.match(html, /<h1 class="app-article-title"><span class="app-content-icon is-medium">/);
   const positions = order(html, ['data-public-search', 'app-document-sidebar', 'app-document-outline', 'app-document-content', 'app-article-title', 'app-document-lead', 'app-document-metadata', 'app-document-body']);

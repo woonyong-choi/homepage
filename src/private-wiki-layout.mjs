@@ -10,7 +10,7 @@ import { shiftHeadings, detailLevels } from './post-article.mjs';
 export function privateWikiArticle(page, context, comments = '') {
   const source = page.sourceUrl ? `<p class="app-source-link"><a href="${ui.safeUrl(page.sourceUrl)}">공개 원문</a></p>` : '';
   const pager = documentPager(page, context, candidate => ui.trusted(contentIcon(candidate.contentIcon, 'small', 'detail')));
-  const content = ui.DocumentArticle({ title: page.title, icon: ui.trusted(contentIcon(page.contentIcon, 'medium', 'detail')), lead: ui.trusted(page.leadHtml ?? escape(page.description)), metadata: ui.trusted(dateLine(page) + tagLinks(page, context.tags ?? context.topics, Infinity, state => searchUrl({ ...state, baseRoute: '/search/' }))), body: ui.trusted(shiftHeadings(page.html, detailLevels)), after: ui.trusted(source + pager + comments) });
+  const content = ui.DocumentArticle({ title: page.title, icon: ui.trusted(contentIcon(page.contentIcon, 'medium', 'detail')), lead: ui.trusted(page.leadHtml ?? escape(page.description)), metadata: ui.trusted(dateLine(page) + tagLinks(page, context.tags ?? context.topics, Infinity, state => searchUrl({ ...state, baseRoute: '/search/' }), 'small')), body: ui.trusted(shiftHeadings(page.html, detailLevels)), after: ui.trusted(source + pager + comments) });
   return `<main id="main" class="app-shell app-document-shell">${searchBox({ action: '/search/', config: (context.layout ?? loadLayoutConfig()).search.box })}${ui.DocumentLayout({ navigation: documentNavigation(page, context), outline: documentOutline(page.headings), content })}</main>`;
 }
 

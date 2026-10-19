@@ -9,7 +9,7 @@ import { collectionNavigation } from './collection-navigation.mjs';
 
 export function blogCard(post, tags = {}, level = 2, card = loadBlogLayout().blog.card) {
   const cover = card.media === 'image' && post.thumbnail ? ui.trusted(thumbnailImage(post)) : undefined;
-  return String(ui.BlogCard({ href: post.route, title: post.title, showTitle: card.title, level, cover, description: card.description ? post.description : '', tagItems: (card.tags ? post.tags : []).map(tag => ({ href: searchUrl({ tags: [tag] }), label: tags[tag]?.label ?? tag })), publishedAt: card.date ? post.publishedAt : undefined, dateLabel: dateLabel(post.publishedAt), commentsHref: card.comments && post.comments ? `${post.route}#comments` : undefined, commentCount: post.commentCount }));
+  return String(ui.BlogCard({ href: post.route, title: post.title, showTitle: card.title, level, cover, automaticCover: card.media === 'image', description: card.description ? post.description : '', tagItems: (card.tags ? post.tags : []).map(tag => ({ href: searchUrl({ tags: [tag] }), label: tags[tag]?.label ?? tag })), publishedAt: card.date ? post.publishedAt : undefined, dateLabel: dateLabel(post.publishedAt), commentsHref: card.comments && post.comments ? `${post.route}#comments` : undefined, commentCount: post.commentCount }));
 }
 
 export function searchListing(posts, tags, { layout = loadBlogLayout(), demo = false } = {}) {
