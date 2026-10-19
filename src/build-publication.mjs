@@ -14,6 +14,7 @@ import { searchListing, blogFeed } from './blog-layout.mjs';
 import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { brandNames } from './brand-icons.mjs';
+import { serviceTagCatalog, serviceTagInventory } from './service-tags.mjs';
 import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
 import { replacePublication, NOT_FOUND_FILE } from './publication-output.mjs';
 import { loadHomeContent } from './home-content.mjs';
@@ -69,13 +70,14 @@ export async function buildPublication({ origin = '', mode = 'approved-preview' 
   const context = { config, layout, tags, knownTags, recommendations, origin, preview, mode, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
   context.home = loadHomeContent(brandNames(), CONTENT, { preview });
+  context.services = serviceTagCatalog(knownTags);
   const output = new Map();
   const add = (route, title, body, metadata = {}) => {
     if (output.has(route)) throw new Error(`duplicate publication route: ${route}`);
     output.set(route, documentShell({ route, title, ...metadata }, body, context));
   };
   add('/', context.home.find(section => section.type === 'hero')?.title ?? siteTitle(config), personalHome(context));
-  add('/search/', layout.search.title, searchListing(posts, tags, { layout, demo: mode === 'demo' }));
+  add('/search/', layout.search.title, searchListing(posts, tags, { layout }));
   const commentTheme = commentThemeUrl(config, { origin, themeHash: MANIFEST.contentHash });
   const commentConfig = { ...config.comments, repo: config.repository };
   for (let page = 1; page <= Math.max(1, Math.ceil(posts.length / layout.blog.feedSize)); page++) {
@@ -127,6 +129,7 @@ async function writeSite(output, documents, context, scripts, notFound) {
   for (const [path, content] of context.diagrams) assets.set(path, content);
   for (const [path, content] of assets) files.set(path, content);
   const indexJson = JSON.stringify(index);
+  files.set('/service-tags.json', JSON.stringify({ version: 1, services: serviceTagInventory(context.services, context.tags, context.home) }, null, 2));
   files.set('/search-version.json', JSON.stringify({ revision: digest(indexJson) }));
   files.set('/search-index.json', indexJson);
   files.set('/search-index.json.gz', gzipSync(indexJson, { level: 9 }));

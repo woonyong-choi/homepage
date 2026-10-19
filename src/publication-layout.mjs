@@ -28,8 +28,8 @@ export function documentShell(page, body, context) {
   return `<!doctype html><html lang="ko" data-theme="${colorScheme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="${colorScheme}">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
 }
 
-export function searchBox({ large = false, query = '', combobox = true, action = '/search/', config = loadBlogLayout().search.box } = {}) {
-  return String(ui.SearchBox({ large, query, combobox, action, labels: config.labels, suggestions: large ? config.suggestions : [], fallback: ui.trusted('<p class="app-caption">검색과 태그 필터는 JavaScript가 필요합니다. <a href="/search/">전체 글</a>은 바로 읽을 수 있습니다.</p>') }));
+export function searchBox({ large = false, query = '', combobox = true, action = '/search/', filters, config = loadBlogLayout().search.box } = {}) {
+  return String(ui.SearchBox({ large, query, combobox, action, filters, labels: config.labels, suggestions: large ? config.suggestions : [], fallback: ui.trusted('<p class="app-caption">검색과 태그 필터는 JavaScript가 필요합니다. <a href="/search/">전체 글</a>은 바로 읽을 수 있습니다.</p>') }));
 }
 
 export function tagLinks(page, tags, limit = Infinity, url = searchUrl, size = 'medium') {
@@ -41,7 +41,7 @@ export function tagLinks(page, tags, limit = Infinity, url = searchUrl, size = '
 const HOME_SECTIONS = {
   hero: heroSection,
   projects: projectsSection,
-  technologies: section => technologySection(section, brandIcon),
+  technologies: (section, context) => technologySection(section, brandIcon, context),
   interviews: (section, context) => interviewsSection(section, { preview: context.preview }),
   contact: contactSection,
 };

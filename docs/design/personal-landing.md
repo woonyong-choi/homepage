@@ -40,7 +40,7 @@ Hero, SectionIntro, Section, ProjectShowcase, FlowRail, LogoItem, QuoteCard, Sit
 
 홈을 넓은 화면과 작은 화면에서 확인한다. 영상의 포스터·재생·접힘, 흐름의 정지와 재개, 링크의 초점, 메일 링크의 주소를 대조한다. 작업용 Chrome 탭은 확인 후 닫는다.
 
-공통 디자인 수정은 ThinkFlow와 홈페이지가 같은 배포본을 소비한 뒤 확인한다. 렌더러 의존성은 `github:woonyong-choi/thinkflow#<전체 커밋>`으로 고정한다. 작업본의 검수용 인터뷰 입력과 실행 중인 미리보기의 원본 경로를 확인하고, 최종 확인은 주 작업본의 미리보기에서 한다.
+공통 디자인 수정은 DiagramPlay와 홈페이지가 같은 배포본을 소비한 뒤 확인한다. 렌더러 의존성은 `github:woonyong-choi/diagramplay#<전체 커밋>`으로 고정한다. 작업본의 검수용 인터뷰 입력과 실행 중인 미리보기의 원본 경로를 확인하고, 최종 확인은 주 작업본의 미리보기에서 한다.
 
 ### 요구사항
 

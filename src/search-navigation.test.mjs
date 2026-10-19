@@ -120,7 +120,7 @@ function searchBrowser(route, page = true, tag = '', options = {}) {
     assign: href => visits.push({ method: 'assign', href }),
     replace: href => visits.push({ method: 'replace', href }),
   };
-  const history = { state: null, replaceState(state, _title, value) {
+  const history = { state: null, pushState(state, _title, value) { this.replaceState(state, _title, value); }, replaceState(state, _title, value) {
     this.state = state;
     if (!value) return;
     const next = new URL(value, location.href);
@@ -134,7 +134,7 @@ function searchBrowser(route, page = true, tag = '', options = {}) {
     queryIndex(action, state) { requests.push({ action, state }); return options.queryIndex ? options.queryIndex(action, state) : new Promise(() => {}); },
     showResultsLoading() {}, renderResults() {}, renderSuggestions() {}, showSearchError() {},
   });
-  return { dom, visits, requests, input: dom.window.document.querySelector('input'), clear: dom.window.document.querySelector('button') };
+  return { dom, visits, requests, history, input: dom.window.document.querySelector('input'), clear: dom.window.document.querySelector('button') };
 }
 
 // #275: 아이콘이 없는 문서도 결과·제안에 표시하고 오류의 재시도 조작을 유지한다.
@@ -234,4 +234,67 @@ test('search_cards_preserve_every_display_setting_on_rerender', () => {
       assert.equal(card.querySelector('a').getAttribute('aria-label'), '책');
     }
   } finally { delete globalThis.document; dom.window.close(); }
+});
+
+
+test('public_tag_filters_keep_only_matching_candidates_and_selected_tags_without_summary', () => {
+  const dom = new JSDOM('<main><section data-public-search><input></section><div data-tag-filter></div><div data-full-results></div></main>');
+  globalThis.document = dom.window.document;
+  const root = document.querySelector('main');
+  const tags = { 設計: { label: '설계' }, python: { label: 'Python' }, reading: { label: '독서' }, walking: { label: '산책' } };
+  const state = { query: '', tags: ['設計'], page: 1 };
+  const draw = (tagIds, selected = state.tags) => renderResults(root, { entries: [], tagIds, totalPages: 1, page: 1 }, { ...state, tags: selected }, tags);
+  try {
+    draw(['設計', 'python', 'reading']);
+    assert.deepEqual([...root.querySelectorAll('[data-tag-toggle]')].map(e => e.dataset.tagToggle), ['設計', 'python', 'reading']);
+    assert.equal(root.querySelector('[data-tag-filter]').lastElementChild.textContent, '초기화');
+    assert.equal(root.querySelector('[data-tag-reset]').tagName, 'A');
+    assert.equal(root.querySelector('[data-tag-reset]').getAttribute('href'), '/search/');
+    const selected = root.querySelector('[aria-pressed="true"]');
+    assert.equal(selected.textContent, '설계');
+    selected.focus();
+    draw([], ['設計', 'missing']);
+    assert.deepEqual([...root.querySelectorAll('[data-tag-toggle]')].map(e => e.dataset.tagToggle), ['設計', 'missing']);
+    assert.equal(document.activeElement.dataset.tagToggle, '設計');
+    root.querySelector('input').focus();
+    draw(['python'], []);
+    assert.equal(root.querySelector('[data-tag-reset]'), null);
+    assert.equal(document.activeElement.tagName, 'INPUT');
+    root.querySelector('[data-tag-toggle]').focus();
+    draw([], []);
+    assert.equal(document.activeElement.tagName, 'INPUT');
+    assert.equal(root.querySelector('[data-filter-summary]'), null);
+  } finally { delete globalThis.document; dom.window.close(); }
+});
+
+test('tag_toggle_preserves_query_resets_page_and_popstate_restores_previous_selection', () => {
+  const browser = searchBrowser('/search/?q=주문&tag=설계&page=2', true, '', { html: '<main data-search-page><section data-public-search><form><input><button type="button" data-clear-query></button></form><div role="listbox" hidden></div><p data-search-status></p></section><button type="button" data-tag-toggle="python" aria-pressed="false">Python</button><button type="button" data-tag-toggle="설계" aria-pressed="true">설계</button></main>' });
+  try {
+    browser.dom.window.document.querySelector('[data-tag-toggle="python"]').click();
+    const next = browser.requests.at(-1).state;
+    assert.equal(next.query, '주문');
+    assert.deepEqual([...next.tags], ['설계', 'python']);
+    assert.equal(next.page, 1);
+    browser.dom.window.document.querySelector('[data-tag-toggle="설계"]').click();
+    assert.deepEqual([...browser.requests.at(-1).state.tags], ['python']);
+    browser.history.replaceState(null, '', '/search/?q=주문&tag=설계&page=2');
+    browser.dom.window.dispatchEvent(new browser.dom.window.PopStateEvent('popstate'));
+    assert.deepEqual([...browser.requests.at(-1).state.tags], ['설계']);
+    assert.equal(browser.requests.at(-1).state.page, 2);
+    assert.equal(browser.requests.at(-1).state.query, '주문');
+  } finally { browser.dom.window.close(); }
+});
+
+
+test('tag_reset_clears_query_selection_and_page_together', () => {
+  const browser = searchBrowser('/search/?q=주문&tag=설계&tag=python&page=2', true, '', { html: '<main data-search-page><section data-public-search><form><input><button type="button" data-clear-query></button></form><div role="listbox" hidden></div><p data-search-status></p></section><a href="/search/" data-tag-reset>초기화</a></main>' });
+  try {
+    browser.dom.window.document.querySelector('[data-tag-reset]').click();
+    const next = browser.requests.at(-1).state;
+    assert.equal(next.query, '');
+    assert.deepEqual([...next.tags], []);
+    assert.equal(next.page, 1);
+    assert.equal(browser.input.value, '');
+    assert.equal(searchUrl(next), '/search/');
+  } finally { browser.dom.window.close(); }
 });

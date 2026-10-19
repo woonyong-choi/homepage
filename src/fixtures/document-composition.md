@@ -244,6 +244,6 @@ ThisIsAnUnbrokenIdentifierThatKeepsGoingAndGoingWithoutAnySpacesToProveThatLongT
 
 :::cards related
 ::card title="Markdown 문법 전체 보기" href=/articles/markdown-guide/ icon=document
-::card title="큐에 경계 두기" href=/articles/bounded-queue/ icon=queue
-::card title="증거로 원인 좁히기" href=/articles/diagnosis-evidence/ icon=search
+::card title="큐에 경계 두기" href=/articles/bounded-queue/
+::card title="증거로 원인 좁히기" href=/articles/diagnosis-evidence/
 :::end

@@ -30,9 +30,9 @@ test('every_homepage_logo_is_a_recorded_third_party_mark_with_its_notice_and_byt
 test('homepage_logos_resolve_before_the_shared_catalog_and_shared_marks_still_resolve', () => {
   for (const { brand, file } of owned) assert.deepEqual({ ...brandIcon(brand.name) }, { label: brand.label, src: `/${file}`, notice: '/assets/brands/technology-logos-NOTICE.txt' });
   for (const name of ['github', 'linkedin', 'git', 'postgresql', 'redis', 'nginx']) assert.match(brandIcon(name).src, new RegExp(`^/theme/assets/icons/brands/${name}\\.svg$`));
-  assert.equal(brandIcon('database'), undefined);
+  assert.equal(brandIcon('document'), undefined);
   assert.match(contentIcon('python'), /<img src="\/assets\/brands\/python\.svg"/);
-  assert.match(contentIcon('database'), /<svg/);
+  assert.match(contentIcon('document'), /<svg/);
 });
 
 test('every_logo_named_by_the_shipped_tech_page_resolves', () => {

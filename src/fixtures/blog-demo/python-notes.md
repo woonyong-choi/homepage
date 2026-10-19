@@ -63,12 +63,12 @@ curl --fail http://127.0.0.1:8799/search/
 }
 ```
 
-## Torso 요청 흐름
+## DiagramPlay 요청 흐름
 
 요청이 애플리케이션을 거쳐 저장소로 이동하는 합성 예제입니다. 기본 면, 파란 강조 면과 번호가 붙은 선을 비교합니다.
 
-```thinkflow
-thinkflow
+```diagramplay
+diagramplay
 title "요청이 애플리케이션을 거쳐 저장소로 이동한다"
 box client "브라우저" badge="EXT"
 box api "애플리케이션" badge="APP" tone=blue appearance=filled
@@ -80,12 +80,12 @@ scene "요청" mode=loop for=3s
   track client -> api -> database every=1s time=500ms
 ```
 
-## Torso 요청과 응답
+## DiagramPlay 요청과 응답
 
 같은 세 참여자가 요청과 응답을 주고받는 예제입니다. 실선과 점선, 메시지 글자의 배경 대비를 비교합니다.
 
-```thinkflow
-thinkflow
+```diagramplay
+diagramplay
 title "사용자와 앱과 서버가 요청과 응답을 주고받는다"
 person user "사용자"
 box app "앱"
@@ -100,12 +100,12 @@ scene "요청과 응답"
   app -> user "목록 표시"
 ```
 
-## Torso 작업 상태
+## DiagramPlay 작업 상태
 
 작업의 정상 완료와 재시도를 비교하는 예제입니다. 장면 탭과 선택 상태도 함께 확인합니다.
 
-```thinkflow
-thinkflow
+```diagramplay
+diagramplay
 title "작업이 완료되거나 실패 후 다시 대기한다"
 state queued "대기"
 state running "실행 중"

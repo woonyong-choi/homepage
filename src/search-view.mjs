@@ -33,15 +33,30 @@ export function showResultsLoading(root, message = '검색 결과를 불러오�
 
 export function renderResults(root, result, state, tags) {
   const summary = root.querySelector('[data-filter-summary]');
-  summary.replaceChildren(...state.tags.map(tag => nodeFrom(ui.Tag({ href: searchUrl({ ...state, tags: state.tags.filter(value => value !== tag), page: 1 }), label: `${tags[tag]?.label ?? tag} ×` }))));
-  if (state.query || state.tags.length) summary.append(link('조건 초기화', searchUrl({ baseRoute: state.baseRoute, homeRoute: state.homeRoute })));
+  if (summary) summary.replaceChildren(...state.tags.map(tag => nodeFrom(ui.Tag({ href: searchUrl({ ...state, tags: state.tags.filter(value => value !== tag), page: 1 }), label: `${tags[tag]?.label ?? tag} ×` }))));
+  if (summary && (state.query || state.tags.length)) summary.append(link('조건 초기화', searchUrl({ baseRoute: state.baseRoute, homeRoute: state.homeRoute })));
   const output = root.querySelector('[data-full-results]');
   output.classList.remove('app-search-panel');
   const cards = result.entries.map(entry => resultCard(entry, tags, state, root.dataset.card ? JSON.parse(root.dataset.card) : undefined));
   output.replaceChildren(nodeFrom(ui.CardGroup({ columns: Number(root.dataset.columns) || 3, cards })));
-  const choices = root.querySelector('[data-blog-tags]');
-  if (choices) choices.replaceChildren(nodeFrom(ui.TagList({ tags: Object.entries(tags).map(([tag, value]) => ({ href: searchUrl({ ...state, tags: state.tags.includes(tag) ? state.tags.filter(item => item !== tag) : [...state.tags, tag], page: 1 }), label: `${value.label}${state.tags.includes(tag) ? ' (선택됨)' : ''}` })) })));
-  if (state.query) summary.prepend(nodeFrom(ui.Tag({ href: searchUrl({ ...state, query: '', page: 1 }), label: `${state.query} ×` })));
+  const choices = root.querySelector('[data-tag-filter]');
+  if (choices) {
+    const buttons = [...choices.querySelectorAll('[data-tag-toggle]')];
+    const focusedIndex = buttons.indexOf(document.activeElement);
+    const focusedTag = focusedIndex < 0 ? undefined : buttons[focusedIndex].dataset.tagToggle;
+    const resetFocused = choices.contains(document.activeElement) && document.activeElement.hasAttribute('data-tag-reset');
+    const available = new Set([...(result.tagIds ?? []), ...state.tags]);
+    const ids = [...new Set([...Object.keys(tags), ...state.tags])].filter(tag => available.has(tag));
+    const next = nodeFrom(ui.TagFilter({ tags: ids.map(id => ({ id, label: tags[id]?.label ?? id, selected: state.tags.includes(id) })), reset: state.tags.length ? { href: searchUrl({ baseRoute: state.baseRoute, homeRoute: state.homeRoute }), label: '초기화' } : undefined }));
+    choices.replaceWith(next);
+    if (resetFocused) root.querySelector('[data-public-search] input')?.focus({ preventScroll: true });
+    if (focusedTag !== undefined) {
+      const buttons = [...next.querySelectorAll('[data-tag-toggle]')];
+      const target = buttons.find(button => button.dataset.tagToggle === focusedTag) ?? buttons[Math.min(focusedIndex, buttons.length - 1)] ?? root.querySelector('[data-public-search] input');
+      target?.focus({ preventScroll: true });
+    }
+  }
+  if (summary && state.query) summary.prepend(nodeFrom(ui.Tag({ href: searchUrl({ ...state, query: '', page: 1 }), label: `${state.query} ×` })));
 
   if (!result.entries.length) {
     output.append(element('p', '조건에 맞는 글이 없습니다. 검색어나 태그를 줄여 보세요.', 'app-search-message'));

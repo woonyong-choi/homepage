@@ -26,6 +26,7 @@ test('queryIndex_worker_unavailable_keeps_results_suggestions_and_retry', async 
     client.fail(false);
     const result = await client.queryIndex('results', state);
     assert.equal(result.result.total, 1);
+    assert.deepEqual([...result.result.tagIds], ['js']);
     assert.match(result.result.entries[0].excerpt, /Promise/);
     assert.equal(result.result.entries[0].text, undefined);
     const suggest = await client.queryIndex('suggest', { ...state, query: 'JS' });

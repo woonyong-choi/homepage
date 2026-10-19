@@ -6,7 +6,7 @@ const renderMarkup = async (body, options = {}) => (await renderArticle({ id: op
 import { compileDiagrams } from './diagrams.mjs';
 import { bindTabs } from '@woonyong-choi/design-tokens/ui/runtime/tabs.js';
 
-const source = 'thinkflow\nbox a "서버" icon=server\nbox b "저장소" icon=db\na -> b\nscene "구조"\nscene "트래픽" mode=loop for=3s\n  track a -> b every=1s time=500ms\n';
+const source = 'thinkflow\nbox a "서버" badge="APP"\nbox b "저장소" badge="DATA"\na -> b\nscene "구조"\nscene "트래픽" mode=loop for=3s\n  track a -> b every=1s time=500ms\n';
 
 test('nested_diagrams_are_built_once_and_embed_static_html_with_original_source', async () => {
   const input = `:::tabs\n@tab 도표\n\n\`\`\`thinkflow\n${source}\`\`\`\n@tab 같은 도표\n\n\`\`\`thinkflow\n${source}\`\`\`\n:::end\n`;
@@ -47,7 +47,7 @@ test('embedded_sources_reject_external_files_with_the_page_location', async () =
   ]) await assert.rejects(compileDiagrams(new Map([[text, 'private-page']])), /private-page:.*file-based/);
 });
 
-const single = 'thinkflow\nbox a "서버" icon=server\nbox b "저장소" icon=db\na -> b\n';
+const single = 'thinkflow\nbox a "서버" badge="APP"\nbox b "저장소" badge="DATA"\na -> b\n';
 const tabsOf = (diagram, options = '') => `:::tabs${options}\n@tab 도표\n\n\`\`\`thinkflow\n${diagram}\`\`\`\n@tab 글\n\n본문\n:::end\n`;
 
 test('multi_scene_diagram_tabs_fill_only_omitted_position_and_selector', async () => {

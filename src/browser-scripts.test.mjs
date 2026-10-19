@@ -25,6 +25,7 @@ test('bundled_worker_searches_body_and_retries_without_module_requests', async (
   fail = false;
   await listener({ data: { id: 2, action: 'results', state } });
   assert.equal(messages[1].result.total, 1);
+  assert.deepEqual([...messages[1].result.tagIds], ['js']);
   assert.match(messages[1].result.entries[0].excerpt, /Promise/);
   assert.equal(messages[1].result.entries[0].text, undefined);
   await listener({ data: { id: 3, action: 'suggest', state: { ...state, query: 'JS' } } });

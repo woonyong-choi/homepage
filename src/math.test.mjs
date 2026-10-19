@@ -48,7 +48,7 @@ test('inline_math_next_to_directives_renders_in_headings_and_paragraphs', async 
   const directives = [
     { source: ':kbd[Ctrl]', label: 'Ctrl' },
     { source: ':menu[파일]', label: '파일' },
-    { source: ':icon[search]', label: 'search' },
+    { source: ':icon[document]', label: 'document' },
     { source: ':tip[단어 <b>]{text="설명"}', label: '단어 <b>' },
   ];
   const combinations = directives.flatMap(({ source, label }) => [

@@ -97,7 +97,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
       try { readAsset(path.startsWith('/') ? path : `/${path}`); return true; } catch { return false; }
     } });
     page = { route: '/', title: context.config.title ?? context.config.name };
-    body = personalHome(context);
+    body = personalHome({ ...context, knownTags: context.tags, tags: {} });
   } else if (kind === 'search') {
     page = { route: '/search/', title: '검색' };
     body = privateWikiSearch(context.layout);

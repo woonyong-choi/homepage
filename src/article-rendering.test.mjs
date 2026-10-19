@@ -60,7 +60,9 @@ test('document_composition_example_renders_every_block_with_unique_ids', async (
   assert.ok(document.querySelector('dl.app-definitions'));
   const related = [...document.querySelectorAll('.app-related-grid > a.app-help-card.app-related-link')];
   assert.equal(related.length, 3);
-  assert.ok(related.every(card => card.querySelector(':scope > .app-content-icon.is-small') && card.querySelector(':scope > strong') && !card.querySelector('span:not(.app-content-icon), p')));
+  assert.ok(related.every(card => card.querySelector(':scope > strong') && !card.querySelector('span:not(.app-content-icon), p')));
+  assert.ok(related[0].querySelector(':scope > .app-content-icon.is-small'));
+  assert.ok(related.slice(1).every(card => !card.querySelector('.app-content-icon')));
   assert.deepEqual(related.map(card => card.textContent.trim()), ['Markdown 문법 전체 보기', '큐에 경계 두기', '증거로 원인 좁히기']);
   assert.equal(document.querySelectorAll('.is-centered, .app-inline-links').length, 0);
   assert.equal(headings.length, 7);

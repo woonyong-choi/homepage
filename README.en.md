@@ -33,7 +33,7 @@ For a blog with public content only, a static site tool without a separate appro
 ## How it works
 
 1. Read approved Blog Markdown, author settings, and assets, then check them against the publication manifest.
-2. Parse the content with the document engine and compile diagrams with ThinkFlow.
+2. Parse the content with the document engine and compile diagrams with DiagramPlay.
 3. Assemble pages and check internal links, anchors, and assets.
 4. Replace the publication output in `dist/site/` after the checks pass.
 
@@ -80,12 +80,12 @@ npm run check:product
 npm run check:tokens
 ```
 
-CI runs installation, token checks, product checks, and the build on Node.js 22. The design package, ThinkFlow, and document engine use pinned Git commits. To change shared components, update their source repository and follow [스타일 수정 지도](docs/design/styles.md#갱신) to update the dependency.
+CI runs installation, token checks, product checks, and the build on Node.js 22. The design package, DiagramPlay, and document engine use pinned Git commits. To change shared components, update their source repository and follow [스타일 수정 지도](docs/design/styles.md#갱신) to update the dependency.
 
-Regenerate the publication diagram with the installed ThinkFlow version.
+Regenerate the publication diagram with the installed DiagramPlay version.
 
 ```sh
-node node_modules/thinkflow/src/cli.js render docs/assets/publication-flow.thinkflow --strict --static
+node node_modules/diagramplay/src/cli.js render docs/assets/publication-flow.diagramplay --strict --static
 ```
 
 Create a production build with `SITE_ORIGIN=https://woonyong.com npm run build:site -- --production`. Run the `Deploy woonyong.com` GitHub Actions workflow manually on `main` to check the site and deploy it to GitHub Pages.

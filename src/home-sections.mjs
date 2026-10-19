@@ -3,6 +3,7 @@ import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { href } from './home-content.mjs';
 import { searchUrl } from './search-model.mjs';
+import { serviceTagCatalog, publishedServiceTag, serviceRailItems } from './service-tags.mjs';
 import { renderContentSvg } from './content-icons.mjs';
 import { interviewCards, publicInterviews } from './interviews.mjs';
 import { SocialIcon as socialIcon } from '@woonyong-choi/design-tokens/ui/index.mjs';
@@ -58,12 +59,15 @@ export function projectsSection({ id, items }) {
 
 const flowRail = (options, items) => String(ui.FlowRail({ ...options, items: trusted(items) }));
 
-export function technologySection(section, brandIcon) {
-  if (!section.items.length) return '';
-  const list = section.items.map(name => {
+export function technologySection(section, brandIcon, { tags = {}, knownTags = {}, services = serviceTagCatalog(knownTags) } = {}) {
+  const items = serviceRailItems(section.items, services, tags);
+  if (!items.length) return '';
+  const list = items.map(name => {
     const brand = brandIcon(name);
     if (!brand) throw new Error(`unknown technology: ${name}`);
-    return String(ui.LogoItem({ href: searchUrl({ tags: [name] }), label: `${brand.label} 태그 글 보기`, src: brand.src }));
+    const service = services.find(service => service.id === name);
+    const tag = service ? publishedServiceTag(service, tags) : undefined;
+    return String(ui.LogoItem({ href: tag === undefined ? undefined : searchUrl({ tags: [tag] }), label: tag === undefined ? `${brand.label} · 관련 글 없음` : `${brand.label} · ${tag} 태그 글 보기`, src: brand.src }));
   }).join('');
   const id = escape(section.id);
   return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, icon: undefined, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));

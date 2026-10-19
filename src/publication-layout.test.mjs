@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom';
 import { privateWikiArticle as articlePage } from './private-wiki-layout.mjs';
 
 test('source_links_preserve_safe_urls_and_reject_executable_schemes', () => {
-  const page = { id: 'source', slug: 'source', route: '/docs/source/', title: '원문', description: '설명', type: 'wiki', tags: [], headings: [], html: '', contentIcon: { name: 'project' } };
+  const page = { id: 'source', slug: 'source', route: '/docs/source/', title: '원문', description: '설명', type: 'wiki', tags: [], headings: [], html: '', contentIcon: { name: 'document' } };
   for (const sourceUrl of ['https://example.com/wiki/?a=1&b=2#part', 'http://example.com/wiki/', '/docs/original/#part']) {
     const html = articlePage({ ...page, sourceUrl }, { topics: {} });
     assert.equal(JSDOM.fragment(html).querySelector('.app-source-link a').getAttribute('href'), sourceUrl);

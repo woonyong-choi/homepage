@@ -59,3 +59,19 @@ test('unlimited_rows_keeps_more_than_twelve_results_on_one_page', () => {
   assert.equal(result.page, 1);
   assert.equal(result.totalPages, 1);
 });
+
+
+test('tag_facets_come_from_all_matching_posts_before_pagination_and_follow_the_intersection', () => {
+  const posts = prepareIndex([
+    { ...source[0], id: 'one', tags: ['설계', 'python'], title: '구조', date: '2026-10-03' },
+    { ...source[0], id: 'two', tags: ['설계', '독서'], title: '책', date: '2026-10-02' },
+    { ...source[0], id: 'three', tags: ['회고'], title: '기록', date: '2026-10-01' },
+  ]);
+  const one = searchDocuments(posts, { ...state, tags: ['설계'], pageSize: 1 });
+  assert.equal(one.entries.length, 1);
+  assert.deepEqual(one.tagIds, ['설계', 'python', '독서']);
+  assert.deepEqual(searchDocuments(posts, { ...state, tags: ['설계', 'python'] }).tagIds, ['설계', 'python']);
+  assert.deepEqual(searchDocuments(posts, { ...state, query: '책', tags: ['설계'] }).tagIds, ['설계', '독서']);
+  assert.deepEqual(searchDocuments(posts, { ...state, tags: ['설계', '회고'] }).tagIds, []);
+  assert.deepEqual(new Set(searchDocuments(posts, state).tagIds), new Set(['설계', 'python', '독서', '회고']));
+});

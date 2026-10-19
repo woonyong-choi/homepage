@@ -36,7 +36,7 @@ export function searchDocuments(entries, state) {
   const size = state.pageSize === 'all' ? Math.max(1, selected.length) : Number.isSafeInteger(state.pageSize) && state.pageSize > 0 ? state.pageSize : PAGE_SIZE;
   const totalPages = Math.max(1, Math.ceil(selected.length / size));
   const page = Math.min(totalPages, state.page);
-  return { entries: selected.slice((page - 1) * size, page * size).map(entry => ({ ...entry, excerpt: searchExcerpt(entry, terms) })), all: selected, total: selected.length, page, totalPages };
+  return { tagIds: [...new Set(selected.flatMap(entry => entry.tags))], entries: selected.slice((page - 1) * size, page * size).map(entry => ({ ...entry, excerpt: searchExcerpt(entry, terms) })), all: selected, total: selected.length, page, totalPages };
 }
 
 function searchExcerpt(entry, terms) {

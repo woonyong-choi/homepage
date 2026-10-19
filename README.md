@@ -20,7 +20,7 @@ npm ci
 npm run dev
 ```
 
-[로컬 미리보기](http://localhost:8796/)에서 홈을 엽니다. `/search/`에서 전체 글을 검색·태그로 찾고 `/blog/`에서 최근 글 본문을 읽습니다. 파일을 바꾸면 명령을 다시 실행하세요. 빌드 결과는 `dist/site/`에 있습니다. 기본 빌드는 승인 사본을 읽고 검색엔진 수집을 막는 미리보기입니다. 합성 글로 화면을 확인하려면 `npm run dev:demo`를 실행하세요. 첫 글에는 코드 블록 5개와 Torso 요청 흐름·시퀀스·상태 예제 3개가 있습니다. 이 모드의 글은 운영 빌드에 포함하지 않습니다.
+[로컬 미리보기](http://localhost:8796/)에서 홈을 엽니다. `/search/`에서 전체 글을 검색·태그로 찾고 `/blog/`에서 최근 글 본문을 읽습니다. 파일을 바꾸면 명령을 다시 실행하세요. 빌드 결과는 `dist/site/`에 있습니다. 기본 빌드는 승인 사본을 읽고 검색엔진 수집을 막는 미리보기입니다. 합성 글로 화면을 확인하려면 `npm run dev:demo`를 실행하세요. 첫 글에는 코드 블록 5개와 DiagramPlay 요청 흐름·시퀀스·상태 예제 3개가 있습니다. 이 모드의 글은 운영 빌드에 포함하지 않습니다.
 
 저장소에 포함된 승인 사본과 공개 Git 의존성으로 실행할 수 있습니다. 새 원고를 가져올 때는 비공개 Vault의 발행 목록이 필요합니다. GitHub CLI를 설치·인증하지 않았거나 조회에 실패하면 댓글 수 대신 댓글 링크를 표시합니다.
 
@@ -35,7 +35,7 @@ Search 카드는 대표 이미지가 없으면 제목 표지를 자동으로 표
 ## 작동 방식
 
 1. 승인된 Blog Markdown·작성 설정·자산을 읽고 발행 목록과 대조합니다.
-2. 문서 엔진이 본문을 해석하고 ThinkFlow가 도표를 컴파일합니다.
+2. 문서 엔진이 본문을 해석하고 DiagramPlay가 도표를 컴파일합니다.
 3. 홈페이지가 페이지를 조립하고 내부 링크·앵커·자산을 검사합니다.
 4. 검사를 통과하면 `dist/site/`의 발행 결과를 교체합니다.
 
@@ -80,12 +80,12 @@ npm run check:product
 npm run check:tokens
 ```
 
-CI는 Node.js 22에서 설치·토큰 검사·제품 검사·빌드를 실행합니다. 디자인·ThinkFlow·문서 엔진은 고정 커밋으로 설치합니다. 공통 구성 요소를 고치려면 원본 저장소를 수정한 뒤 [스타일 수정 지도](docs/design/styles.md#갱신)에 따라 의존성을 갱신합니다.
+CI는 Node.js 22에서 설치·토큰 검사·제품 검사·빌드를 실행합니다. 디자인·DiagramPlay·문서 엔진은 고정 커밋으로 설치합니다. 공통 구성 요소를 고치려면 원본 저장소를 수정한 뒤 [스타일 수정 지도](docs/design/styles.md#갱신)에 따라 의존성을 갱신합니다.
 
-발행 흐름 그림은 설치한 ThinkFlow로 다시 만듭니다.
+발행 흐름 그림은 설치한 DiagramPlay로 다시 만듭니다.
 
 ```sh
-node node_modules/thinkflow/src/cli.js render docs/assets/publication-flow.thinkflow --strict --static
+node node_modules/diagramplay/src/cli.js render docs/assets/publication-flow.diagramplay --strict --static
 ```
 
 운영용 빌드는 `SITE_ORIGIN=https://woonyong.com npm run build:site -- --production`으로 만듭니다. GitHub Actions의 `Deploy woonyong.com`을 `main`에서 수동 실행하면 검사 후 GitHub Pages에 배포합니다.

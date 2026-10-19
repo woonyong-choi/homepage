@@ -25,7 +25,9 @@ test('blog_cards_keep_post_and_tag_links_independent', () => {
     assert.equal((card.match(/<a class="app-blog-card-link"/g) ?? []).length, 1);
     assert.match(card, /<a class="app-blog-card-link" href="\/articles\/post-0\/"/);
     assert.match(card, /<p class="app-card-summary">설명<\/p><\/div><\/a><div class="app-blog-card-tags"[\s\S]*?<div class="app-blog-card-meta">.*<time class="app-blog-card-date" datetime="2026-10-01">2026년 10월 1일<\/time>/);
-    assert.match(card, /<a class="app-blog-card-comments" href="\/articles\/post-0\/#comments">댓글 2개<\/a><\/div><\/article>$/);
+    assert.equal(document.querySelector('.app-blog-card-comments').getAttribute('href'), '/articles/post-0/#comments');
+    assert.equal(document.querySelector('.app-blog-card-comments').textContent, '댓글 · 2');
+    assert.equal(document.querySelector('.app-blog-card-comments svg'), null);
     assert.doesNotMatch(card, /app-blog-card-author|app-blog-card-avatar|작성자/);
     assert.doesNotMatch(card, /href="\/author\/"/);
     assert.doesNotMatch(card, /app-blog-card-footer/);
@@ -38,22 +40,25 @@ test('blog_cards_keep_post_and_tag_links_independent', () => {
   assert.doesNotMatch(fallback, /app-content-icon/);
   assert.doesNotMatch(fallback, /cover.webp|object-position/);
   assert.match(blogCard({ ...post, commentCount: undefined }), />댓글 보기<\/a>/);
-  assert.match(blogCard({ ...post, commentCount: 0 }), />댓글 0개<\/a>/);
+  assert.match(blogCard({ ...post, commentCount: 0 }), />댓글 · 0<\/a>/);
 });
 
 test('blog_listing_keeps_all_static_cards_and_offers_only_used_tags_without_subject_icons', () => {
   const entries = posts(14).map((post, i) => ({ ...post, route: `/blog/post-${i}/`, tags: i === 0 ? [] : ['산책'] }));
-  const dom = new JSDOM(searchListing(entries, { 산책: { label: '산책' } }, { demo: true }));
+  const dom = new JSDOM(searchListing(entries, { 산책: { label: '산책' } }));
   const document = dom.window.document;
   assert.equal(document.querySelectorAll('.app-blog-card').length, 14);
   assert.equal(document.querySelectorAll('.app-title-cover').length, 14);
   assert.equal(document.querySelectorAll('.app-blog-card-tags, .app-content-icon').length, 0);
-  assert.equal(document.querySelectorAll('[data-blog-tags] .app-tag.is-medium').length, 0);
+  assert.equal(document.querySelectorAll('[data-tag-filter] .app-tag.is-medium').length, 0);
   assert.equal(document.querySelector('h1.app-page-heading .app-article-icon'), null);
   assert.equal(document.querySelector('h1').textContent, 'Search');
   assert.equal(document.querySelector('form').getAttribute('action'), '/search/');
-  assert.equal(document.querySelector('[data-blog-tags] a').getAttribute('href'), '/search/?tag=%EC%82%B0%EC%B1%85');
-  assert.match(document.querySelector('main').textContent, /합성 예시/);
+  assert.equal(document.querySelector('[data-tag-filter] button').dataset.tagToggle, '산책');
+  assert.equal(document.querySelector('[data-filter-summary]'), null);
+  assert.ok(document.querySelector('[data-public-search] [data-tag-filter]'));
+  assert.ok(document.querySelector('[data-public-search]').compareDocumentPosition(document.querySelector('h1')) & 4);
+  assert.ok(!document.body.textContent.includes('화면을 확인하기 위한 합성 예시 글입니다.'));
   assert.equal(document.querySelectorAll('[data-blog-list]').length, 0);
   dom.window.close();
 });
@@ -92,7 +97,7 @@ test('search_and_recent_blog_share_posts_but_keep_distinct_views', () => {
 test('known_zero_comments_without_a_thread_are_visible_and_disabled_policy_hides_them', () => {
   const page = { ...posts(1)[0], example: true, comments: false, commentCount: 0 };
   const document = new JSDOM(blogCard(page)).window.document;
-  assert.equal(document.querySelector('.app-blog-card-comments').textContent, '댓글 0개');
+  assert.equal(document.querySelector('.app-blog-card-comments').textContent, '댓글 · 0');
   assert.equal(document.querySelector('.app-blog-card-comments').tagName, 'SPAN');
   const layout = loadBlogLayout();
   layout.blog.card.comments = false;

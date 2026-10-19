@@ -119,6 +119,19 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     }
   });
   page?.addEventListener('click', event => {
+    const toggle = event.target.closest('[data-tag-toggle], [data-tag-reset]');
+    if (toggle) {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      const selected = state();
+      const tag = toggle.dataset.tagToggle;
+      const reset = toggle.hasAttribute('data-tag-reset');
+      const tags = reset ? [] : selected.tags.includes(tag) ? selected.tags.filter(value => value !== tag) : [...selected.tags, tag];
+      history.replaceState({ ...history.state, searchPosition: { x: window.scrollX, y: window.scrollY } }, '');
+      history.pushState({ searchPosition: null }, '', new URL(searchUrl({ ...selected, query: reset ? '' : selected.query, tags, page: 1 }), location.origin));
+      revision++; close(); results();
+      return;
+    }
     const anchor = event.target.closest('a[href]');
     if (!anchor || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const target = new URL(anchor.href);

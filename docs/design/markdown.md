@@ -16,7 +16,7 @@
 
 ### 사용 장면
 
-일반 글은 Markdown으로 작성한다. 같은 도표의 단계를 비교할 때는 ThinkFlow `scene`을 쓰고, 서로 다른 글·그림·코드를 나란히 둘 때는 `:::tabs`와 `@tab`을 쓴다.
+일반 글은 Markdown으로 작성한다. 같은 도표의 단계를 비교할 때는 DiagramPlay `scene`을 쓰고, 서로 다른 글·그림·코드를 나란히 둘 때는 `:::tabs`와 `@tab`을 쓴다.
 
 ## 작동 방식
 
@@ -79,7 +79,7 @@ slug `all`, `page`, `feed`는 예약어다. 태그는 양끝 공백 제거와 Un
 | 정의 목록 | 용어 줄 다음 `: 설명` | `markdown-it-deflist`의 의미를 따른다. 여러 문단과 블록 포함 가능 |
 | 접기 | `<details>`(`open` 선택), `<summary>글자</summary>` | `details`는 `open`만, `summary`는 속성 없이 사용한다. 요약의 인라인 서식과 본문은 Markdown이며 펜스 코드 안의 `</details>`는 짝이 아니다 |
 | 수식 | `$...$`, `$$...$$` | KaTeX. 아래 절 |
-| 도표 | ` ```thinkflow ` | ThinkFlow. 아래 절 |
+| 도표 | ` ```diagramplay ` | DiagramPlay. 아래 절 |
 | 키·메뉴 | `:kbd[⌘ K]` `:menu[파일]` | |
 | 아이콘·설명 | `:icon[search]` `:tip[글]{text="설명"}` | 아래 "구성 블록" 절 |
 | 구성 블록 | `:::tabs` `:::note` `:::steps` 등 | 아래 "구성 블록" 절 |
@@ -118,11 +118,11 @@ items:
 
 #### 도표
 
-`thinkflow` 펜스에는 첫 줄에 `thinkflow`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 ThinkFlow 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
+`diagramplay` 펜스에는 첫 줄에 `diagramplay`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 DiagramPlay 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
 
 카드·선은 한 번 선언하고 `scene "이름"`으로 장면을 나눈다. 빈 장면은 정지, 이동이 있는 장면은 한 번 재생이 기본이다. 반복은 `mode=loop`, 배속은 `speed=`, 연속 트래픽은 `track … every= …`로 표현한다. 장면 선택 줄은 문서 탭과 같은 공통 부품이다.
 
-작성 기준은 하나다. 같은 카드와 선이 단계별로 바뀌면 ThinkFlow `scene`으로, 서로 다른 그림·글·코드를 나란히 두면 문서 `@tab`으로 쓴다. 이름 집합의 유사도로 이를 강제하거나 경고하지 않는다.
+작성 기준은 하나다. 같은 카드와 선이 단계별로 바뀌면 DiagramPlay `scene`으로, 서로 다른 그림·글·코드를 나란히 두면 문서 `@tab`으로 쓴다. 이름 집합의 유사도로 이를 강제하거나 경고하지 않는다.
 
 장면이 둘 이상인 도표를 품은 `:::tabs` 묶음은 바깥 선택 줄과 안쪽 장면 선택 줄의 역할이 갈리도록 생략한 `position`을 `top`, 생략한 `selector`를 `segmented`로 보완한다. 장면 수는 도표 컴파일 결과의 `timeline.steps.length`이며(`compileDiagrams`가 `scenes`로 전달) 원문이나 HTML을 다시 읽어 세지 않는다. 탭 묶음은 이 값을 렌더 전에 한 번 정해 열기와 닫기가 같은 결과를 쓴다. 명시한 옵션은 그대로 두고 `box` 테두리는 더하지 않는다. 장면이 하나인 도표와 장면 없는 탭은 기본값이 바뀌지 않는다. `:::platform`(신규 `@tab`과 옛 형식 모두)은 테두리 있는 고정 모양이라 이 보완에서 제외하며 장면이 몇 개든 기존 동작 그대로다. 결정은 도표를 품은 탭 묶음 하나에만 걸리고 뒤따르는 다른 탭 묶음에는 전해지지 않는다. 문법 복사·HTML 다운로드·전체화면은 도표 프레임에서 제공한다.
 
@@ -175,7 +175,7 @@ items:
 
 | 표시 역할 | 권장 옵션 | 적용 대상 |
 |---|---|---|
-| 폭 | `w-narrow`, `w-wide` | 그림·영상·탭·기기 탭·기존 갤러리·코드블록·ThinkFlow |
+| 폭 | `w-narrow`, `w-wide` | 그림·영상·탭·기기 탭·기존 갤러리·코드블록·DiagramPlay |
 | 탭 상자와 위치 | `box`, `top` | 탭·기기 탭 |
 | 탭 선택 줄 | `segmented`, `numbers` | 탭·기기 탭 |
 | 카드 모양 | `related`, `centered`, `grouped`, `inline` | 카드 목록 |
@@ -272,7 +272,7 @@ const message = "넓은 코드블록";
 
 - 탭도 `:::tabs w-narrow`, `:::tabs w-wide`로 쓴다. 같은 규칙이 묶음 전체에 적용된다.
 - 블록 폭은 `width` 하나로 정한다. `w-narrow`와 `w-wide`는 각각 `width=narrow`와 `width=wide`로 해석하며, 기본값 `width=content`는 생략과 같다. 같은 폭을 중복 지정하거나 다른 폭을 함께 지정하면 오류다. 옛 블록 속성 `wide`와 `size=compact`는 받지 않는다. `ui:video`의 플레이어 치수·비율(`width`, `height`, `wide`), 그림 격자의 `size`, 카드의 `compact`는 블록 폭과 다른 속성으로 유지한다.
-- ThinkFlow도 `thinkflow`, `thinkflow w-wide`, `thinkflow w-narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
+- DiagramPlay도 `diagramplay`, `diagramplay w-wide`, `diagramplay w-narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
 - 폭은 공통 구성 요소가 클래스(`app-width-narrow`, `app-width-wide`)로 정하고 값은 테마 토큰이다. CSS나 픽셀 값을 글마다 직접 넣지 않는다.
 - 기기 탭 상자 안에서 `w-wide`를 쓰면 상자 밖으로 나오므로 안쪽 요소의 폭은 보통 생략한다.
 
