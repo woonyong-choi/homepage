@@ -9,7 +9,7 @@ import { brandNames } from './brand-icons.mjs';
 import { THEME_ROOT } from './design-package.mjs';
 
 const TECHNOLOGIES = new Set(['python', 'git']);
-const render = (yaml, preview = true) => personalHome({ config: { name: '이름' }, home: parseHomeSections(parseYaml(yaml), { technologies: TECHNOLOGIES }), preview });
+const render = (yaml, preview = true) => personalHome({ config: { name: '이름' }, home: parseHomeSections(parseYaml(yaml), { technologies: TECHNOLOGIES }), tags: { Python: {} }, preview });
 const positions = (html, marks) => marks.map(mark => html.indexOf(mark));
 const ascending = values => values.every((value, index) => value >= 0 && (!index || value > values[index - 1]));
 
@@ -204,13 +204,12 @@ test('the_shipped_hero_plays_the_selected_local_video_from_the_beginning', () =>
 test('technology_logos_only_link_to_actual_published_tag_ids', () => {
   const home = parseHomeSections(parseYaml('sections:\n  - { id: tech, type: technologies, items: [python, git] }'), { technologies: TECHNOLOGIES });
   const draw = tags => personalHome({ config: { name: '이름' }, home, tags, knownTags: { python: { label: 'Python', aliases: ['파이썬'] } } });
-  const disabled = draw({});
-  assert.doesNotMatch(disabled, /href="\/search\//);
-  assert.match(disabled, /role="link" aria-disabled="true" aria-label="Python · 관련 글 없음"/);
-  assert.match(disabled, /role="link" aria-disabled="true" aria-label="Git · 관련 글 없음"/);
+  const inactive = draw({});
+  assert.doesNotMatch(inactive, /id="tech"|id="tech-title"|data-flow-rail|app-technology/);
   const enabled = draw({ Python: { label: 'Python' } });
   assert.match(enabled, /href="\/search\/\?tag=Python"/);
-  assert.doesNotMatch(enabled, /tag=python|tag=git/);
+  assert.doesNotMatch(enabled, /tag=python|tag=git|Git ·|aria-disabled/);
+  assert.equal((enabled.match(/class="app-technology"/g) ?? []).length, 1);
   assert.match(draw({ PYTHON: {} }), /href="\/search\/\?tag=PYTHON"/);
   assert.match(draw({ 파이썬: {} }), /href="\/search\/\?tag=%ED%8C%8C%EC%9D%B4%EC%8D%AC"/);
   const preferred = draw({ Python: {}, python: {}, 파이썬: {} });
@@ -222,9 +221,13 @@ test('technology_logos_only_link_to_actual_published_tag_ids', () => {
 
 test('new_service_tags_join_after_configured_logos_without_reviving_an_empty_rail', () => {
   const home = parseHomeSections(parseYaml('sections:\n  - { id: tech, type: technologies, items: [python, git] }'), { technologies: TECHNOLOGIES });
-  const html = personalHome({ config: { name: '이름' }, home, tags: { Redis: {} } });
+  const html = personalHome({ config: { name: '이름' }, home, tags: { Python: {}, Redis: {} } });
   assert.match(html, /href="\/search\/\?tag=Redis"/);
-  assert.ok(html.indexOf('Git · 관련 글 없음') < html.indexOf('Redis · Redis 태그 글 보기'));
+  assert.ok(html.indexOf('Python · Python 태그 글 보기') < html.indexOf('Redis · Redis 태그 글 보기'));
+  assert.doesNotMatch(html, /Git ·|aria-disabled/);
   const empty = personalHome({ config: { name: '이름' }, home: [{ ...home[0], items: [] }], tags: { Redis: {} } });
   assert.doesNotMatch(empty, /app-technology|tag=Redis/);
+  const disabledHome = parseHomeSections(parseYaml('sections:\n  - { id: tech, type: technologies, enabled: false, items: [python, git] }'), { technologies: TECHNOLOGIES });
+  const disabled = personalHome({ config: { name: '이름' }, home: disabledHome, tags: { Redis: {} } });
+  assert.doesNotMatch(disabled, /id="tech"|app-technology|tag=Redis/);
 });

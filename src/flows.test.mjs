@@ -6,7 +6,7 @@ import { test } from 'node:test';
 
 const script = browserScripts(fileURLToPath(new URL('./', import.meta.url))).get('flows.js');
 
-function run(cards, directions = [], shared = true) {
+function run(cards, directions = [], shared = true, viewportWidth = 50) {
   let now = 0;
   const listeners = {}; const visibility = []; const resize = [];
   const motion = { matches: false, addEventListener: (_, fn) => { motion.change = fn; } };
@@ -34,7 +34,7 @@ function run(cards, directions = [], shared = true) {
     const track = element({ append() {}, animate: (keys, options) => {
       row.keys = keys; const handle = animation(options); row.animations.push(handle); return handle;
     } });
-    const viewport = element({ clientWidth: 450, scrollLeft: 0, addEventListener: scope.addEventListener });
+    const viewport = element({ clientWidth: viewportWidth, scrollLeft: 0, getBoundingClientRect() { return { width: this.clientWidth }; }, addEventListener: scope.addEventListener });
     const rail = element({ dataset: directions[index] ? { flowDirection: directions[index] } : {}, closest: () => scope, querySelector: selector => ({ '[data-flow-viewport]': viewport, '[data-flow-track]': track, '[data-flow-group]': group })[selector] });
     return Object.assign(row, { rail, viewport, group, track });
   });
@@ -57,7 +57,7 @@ function run(cards, directions = [], shared = true) {
 
 const near = (value, expected) => assert.ok(Math.abs(value - expected) < 1e-8, `${value} ≠ ${expected}`);
 
-test('flows_use_fractional_transforms_and_equal_pixel_speed_for_unequal_rows', () => {
+test('overflowing_rows_use_fractional_transforms_and_equal_pixel_speed_for_unequal_rows', () => {
   for (const cards of [[1, 1], [2, 1], [3, 2]]) {
     const state = run(cards);
     state.advance(16.67);
@@ -149,8 +149,8 @@ test('resize_preserves_progress_and_touch_navigation_stays_paused_until_the_rail
   near(state.offset(state.rows[0]), 180);
 });
 
-test('a_single_unshared_card_stays_static', () => {
-  const state = run([1], [], false);
+test('a_fitting_single_unshared_card_stays_static', () => {
+  const state = run([1], [], false, 100);
   state.advance(1000);
   assert.equal(state.rows[0].animations.length, 0);
 });

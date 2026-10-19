@@ -66,8 +66,8 @@ export function technologySection(section, brandIcon, { tags = {}, knownTags = {
     const brand = brandIcon(name);
     if (!brand) throw new Error(`unknown technology: ${name}`);
     const service = services.find(service => service.id === name);
-    const tag = service ? publishedServiceTag(service, tags) : undefined;
-    return String(ui.LogoItem({ href: tag === undefined ? undefined : searchUrl({ tags: [tag] }), label: tag === undefined ? `${brand.label} · 관련 글 없음` : `${brand.label} · ${tag} 태그 글 보기`, src: brand.src }));
+    const tag = publishedServiceTag(service, tags);
+    return String(ui.LogoItem({ href: searchUrl({ tags: [tag] }), label: `${brand.label} · ${tag} 태그 글 보기`, src: brand.src }));
   }).join('');
   const id = escape(section.id);
   return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, icon: undefined, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));

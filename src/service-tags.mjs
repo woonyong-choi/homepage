@@ -18,7 +18,8 @@ export function publishedServiceTag({ id, label, aliases }, tags) {
 
 export function serviceRailItems(items, catalog, tags) {
   if (!items.length) return [];
-  return [...new Set([...items, ...catalog.filter(service => publishedServiceTag(service, tags) !== undefined).map(service => service.id)])];
+  const active = new Set(catalog.filter(service => publishedServiceTag(service, tags) !== undefined).map(service => service.id));
+  return [...new Set([...items.filter(id => active.has(id)), ...[...active].sort()])];
 }
 
 export function serviceTagInventory(catalog, tags, home) {

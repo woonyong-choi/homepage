@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { serviceTagCatalog, serviceTagInventory, publishedServiceTag } from './service-tags.mjs';
+import { serviceTagCatalog, serviceTagInventory, publishedServiceTag, serviceRailItems } from './service-tags.mjs';
 import { brandNames } from './brand-icons.mjs';
 
 const catalog = serviceTagCatalog({ python: { label: 'Python', aliases: ['파이썬'] }, javascript: { label: 'JavaScript', aliases: ['JS'] }, unrelated: { label: '산책' } });
@@ -27,9 +27,22 @@ test('service_inventory_distinguishes_candidates_active_tags_and_rail_membership
   const home = [{ type: 'technologies', items: ['python', 'git'] }];
   const empty = serviceTagInventory(catalog, {}, home);
   assert.equal(empty.find(service => service.id === 'python').active, false);
-  assert.equal(empty.find(service => service.id === 'python').inRail, true);
+  assert.equal(empty.length, catalog.length);
+  assert.ok(empty.every(service => !service.active && !service.inRail && service.tag === null));
+  assert.equal(empty.find(service => service.id === 'python').inRail, false);
   assert.equal(empty.find(service => service.id === 'redis').inRail, false);
   const used = serviceTagInventory(catalog, { Redis: {} }, home).find(service => service.id === 'redis');
   assert.deepEqual({ active: used.active, tag: used.tag, inRail: used.inRail }, { active: true, tag: 'Redis', inRail: true });
   for (const sections of [[], [{ type: 'technologies', items: [] }], [{ type: 'technologies', enabled: false, items: ['python'] }]]) assert.ok(serviceTagInventory(catalog, { Redis: {} }, sections).every(service => !service.inRail));
+});
+
+test('service_rail_filters_inactive_items_and_appends_sorted_active_candidates_once', () => {
+  const items = ['python', 'git', 'python'];
+  const tags = { Python: {}, Redis: {}, Docker: {} };
+
+  assert.deepEqual(serviceRailItems(items, catalog, {}), []);
+  assert.deepEqual(serviceRailItems(items, catalog, { Python: {} }), ['python']);
+  assert.deepEqual(serviceRailItems(items, [...catalog].reverse(), tags), ['python', 'docker', 'redis']);
+  assert.deepEqual(serviceRailItems(['redis', 'python'], catalog, tags), ['redis', 'python', 'docker']);
+  assert.deepEqual(serviceRailItems([], catalog, tags), []);
 });
