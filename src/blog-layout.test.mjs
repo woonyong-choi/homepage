@@ -49,7 +49,7 @@ test('blog_listing_keeps_all_static_cards_and_offers_only_used_tags_without_subj
   assert.equal(document.querySelectorAll('.app-title-cover').length, 14);
   assert.equal(document.querySelectorAll('.app-blog-card-tags, .app-content-icon').length, 0);
   assert.equal(document.querySelectorAll('[data-blog-tags] .app-tag.is-medium').length, 0);
-  assert.ok(document.querySelector('h1.app-page-heading .app-article-icon'));
+  assert.equal(document.querySelector('h1.app-page-heading .app-article-icon'), null);
   assert.equal(document.querySelector('h1').textContent, 'Search');
   assert.equal(document.querySelector('form').getAttribute('action'), '/search/');
   assert.equal(document.querySelector('[data-blog-tags] a').getAttribute('href'), '/search/?tag=%EC%82%B0%EC%B1%85');
