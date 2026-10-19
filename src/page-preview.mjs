@@ -5,8 +5,9 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 
 import { mathAssets } from 'document-engine';
+import { WritingPreview, trusted } from '@woonyong-choi/design-tokens/components';
 
-import { privateWikiArticle, privateWikiSearch } from './private-wiki-layout.mjs';
+import { privateWikiArticle, privateWikiSearch, sourceLink } from './private-wiki-layout.mjs';
 import { readPost } from './blog-model.mjs';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
 import { readDocument, parseContent } from './content-model.mjs';
@@ -21,6 +22,8 @@ import { browserScripts } from './browser-scripts.mjs';
 import { compileDiagrams } from './diagrams.mjs';
 import { brandNames } from './brand-icons.mjs';
 import { THEME_ROOT, THEME_MANIFEST } from './design-package.mjs';
+import { shiftHeadings, detailLevels, thumbnailImage } from './post-article.mjs';
+import { searchUrl } from './search-model.mjs';
 
 export { publicationLinks, documentRoute } from './publication-routes.mjs';
 export { normalizePublicationAssets } from './publication-assets.mjs';
@@ -64,7 +67,7 @@ async function renderPreview({ source, file, id, kind = 'article', previewMode =
   const scripts = browserScripts(SOURCE_ROOT);
   const context = {
     config: json('site.json'), tags: json('tags.json'), layout: loadLayoutConfig(pathToFileURL(configRoot + sep)),
-    topics: readContent(within(root, topicsFile)).metadata.topics, colorScheme,
+    topics: readContent(within(root, topicsFile)).metadata.topics, colorScheme, previewMode,
     navigation: loadHomeNavigation(root, readContent), preview: true, origin, math,
     themeHash: THEME_MANIFEST.contentHash,
     scriptHash: createHash('sha256').update([...scripts.values()].join('\n')).digest('hex'),
@@ -101,20 +104,33 @@ async function renderPreview({ source, file, id, kind = 'article', previewMode =
     page = { route: '/search/', title: '검색' };
     body = privateWikiSearch(context.layout);
   } else {
-    page = parseContent(selectedSource).metadata.type === 'wiki' ? readDocument(selectedSource, context.tags, new Date(), context.topics) : readPost(selectedSource, { includeUnpublished: true });
+    const { metadata } = parseContent(selectedSource);
+    page = metadata.type === 'wiki' ? readDocument(selectedSource, context.tags, new Date(), context.topics) : readPost(selectedSource, { includeUnpublished: true });
     if (id !== undefined && id !== page.id) throw new Error('preview document id does not match source');
     const document = await parseArticle(page, { assets: documentAssets });
     diagrams = await compileDiagrams(new Map(document.metadata.diagrams.map(item => [item.source, page.id])));
     const rendered = await renderArticle(page, { document, diagrams: diagrams.diagrams, assets: documentAssets, previewMode });
     Object.assign(page, rendered);
     diagnostics = rendered.diagnostics;
-    body = page.type === 'wiki' ? privateWikiArticle(page, context) : articlePage(page, context);
+    body = previewMode === 'writing' ? writingArticle(page, metadata, context) : page.type === 'wiki' ? privateWikiArticle(page, context) : articlePage(page, context);
   }
   const html = normalizePublicationAssets(documentShell(page, body, context));
   const files = publicationAssets(new Map([[page.route, html]]), [], readAsset);
   for (const [name, bytes] of scripts) files.set(`/${name}`, bytes);
   for (const [name, bytes] of diagrams.assets) files.set(name, bytes);
   return { html, assets: files, links: publicationLinks(html, page.route, origin || undefined), origin, diagnostics, route: page.route, id: page.id, previewMode };
+}
+
+function writingArticle(page, metadata, context) {
+  const isDraft = metadata.visibility === 'draft' || metadata.publish === false || metadata.status === 'draft';
+  const cover = page.thumbnail ? thumbnailImage(page, true) : '';
+  const content = WritingPreview({
+    title: page.title, titleId: page.titleId,
+    intro: trusted(page.leadHtml), body: trusted(cover + shiftHeadings(page.html, detailLevels) + sourceLink(page)),
+    statusLabel: isDraft ? '초안' : '미리보기',
+    tags: page.tags.map(id => ({ href: searchUrl({ tags: [id] }), label: context.tags[id]?.label ?? id })),
+  });
+  return `<main id="main" class="app-shell">${content}</main>`;
 }
 
 function within(root, name) {
