@@ -5,7 +5,13 @@ import { stringify } from 'yaml';
 import { parseContent, isDocumentId } from './content-model.mjs';
 
 export function markdownFiles(root) {
-  return readdirSync(root, { recursive: true, withFileTypes: true })
+  let entries;
+  try { entries = readdirSync(root, { recursive: true, withFileTypes: true }); }
+  catch (error) {
+    if (error.code === 'ENOENT' && error.path === root) return [];
+    throw error;
+  }
+  return entries
     .filter(entry => entry.isFile() && entry.name.endsWith('.md'))
     .map(entry => join(entry.parentPath, entry.name)).sort();
 }

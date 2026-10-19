@@ -48,14 +48,13 @@
 ```sh
 npm install --save-dev github:woonyong-choi/design-tokens#<commit>
 npm install --save-dev github:woonyong-choi/thinkflow#<commit>
-node scripts/sync-project-documents.mjs <thinkflow-root>
 npm install --save-dev github:woonyong-choi/document-engine#<commit>
 npm run check:tokens
 npm run check:product
 npm run build:site
 ```
 
-`<commit>`은 선택한 전체 커밋 해시이고 `<thinkflow-root>`는 해당 커밋을 가진 ThinkFlow 저장소 루트다. 바꾸는 패키지의 설치 명령만 실행한다. ThinkFlow를 갱신하면 공개 문서도 같은 커밋으로 동기화한다.
+`<commit>`은 선택한 전체 커밋 해시다. 바꾸는 패키지의 설치 명령만 실행한다.
 
 디자인 커밋은 홈페이지의 `package.json`이 정한다. ThinkFlow와 문서 엔진은 디자인을 peer 의존성으로 받으므로 홈페이지가 설치한 한 벌을 함께 읽고, 서로 다른 디자인 패키지를 읽으면 빌드가 실패한다. 의존성 갱신은 홈페이지의 PR로 반영한다. 미리보기 댓글 테마는 고정 commit의 `dist/assets/giscus.css`를 jsDelivr에서 읽고, 운영 빌드는 사이트의 `/theme/assets/giscus.css`를 쓴다.
 

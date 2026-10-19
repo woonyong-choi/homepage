@@ -164,15 +164,9 @@ PurgeCSS는 빌드에서만 사용한다. 버전과 전이 의존성의 고정 �
 
 댓글 추천·반응 버튼은 공통 작은 버튼의 곡률·높이·간격과 회색 바탕을 사용한다. 선택과 호버는 파란색 역할로 구분한다. 반응의 의미·개수·서비스 권한은 바꾸지 않는다.
 
-### 공식 도구 안내
+### 의존성 갱신
 
-Search 입구는 CS·Tech 목록 다음에 `config/site.json`의 `guides`를 표시한다. 첫 카드는 시작 안내와 대표 아이콘, 나머지는 짧은 문서 링크다. `Card`와 `CardGroup({ split: true })`의 공통 배치·초점·반응형을 사용한다. ThinkFlow의 사용법·표현·장면·Markdown·배포·문제 해결은 ThinkFlow 저장소 문서가 정본이다. 홈페이지는 `content/projects/thinkflow/`에 고정 버전의 공개 문서와 자산을 가져와 `/projects/thinkflow/` 아래에서 같은 본문·목차·표·코드·도표 뷰어로 보여 준다. 상대 문서 링크와 절 제목은 내부 주소로 연결하고 코드 원문 링크는 해당 Git 커밋으로 연결한다. `docs/` 안의 문서·그림(`.md`, `.svg`, `.png`, `.jpg`, `.webp`)이 가져온 목록에 없으면 빌드를 멈추고, 발행하지 않는 형식(출처 JSON 등)은 같은 커밋의 GitHub 원본으로 연결한다. 문서 본문은 홈페이지에서 편집하지 않는다.
-
-도표 울타리 다음의 첫 SVG는 인터랙티브 도표와 겹치므로 Markdown 토큰 단계에서 걷는다. ThinkFlow md가 그 바로 뒤에 만든 장면 구간(`thinkflow scenes v1` 표식)도 같은 이유로 걷되, 울타리의 식별자와 같은 시작·끝 표식, 장면마다 닫힌 `<details>`와 `<summary>`, 이 문서 자산 목록에 있는 SVG 이미지 한 줄이 모두 맞을 때만 걷는다. 식별자는 이름 있는 울타리는 그 `name=이름`과 표식이 같아야 한다. 이름 없는 울타리는 순번을 홈페이지가 다시 세지 않고, 바로 뒤 생성 그림 다음 시작 표식의 `n=` 값(1 이상의 정수, 앞자리 0·부호·문자 제외)을 생성기의 원자료 계약으로 읽는다. 끝 표식은 같은 `n=` 값이어야 하고 `name=` 표식은 허용하지 않는다. 블록 선택과 순번 문법(예: 표식 없는 인용 안 울타리 제외)을 소비자가 복제하면 생성기와 어긋나므로, 이 값의 재검증 대신 프로젝트 SVG 자산·인접성·온전한 생성 구간 검사로 소유를 판단한다. 이미지 파일명 규칙은 따로 검사하지 않는다. 사용자 `<details>`, 불완전한 표식, 코드 예제, 프로젝트 밖 글은 그대로 두며 판단이 불확실하면 지우지 않는다. 표식 문법은 해석하지 않고 기존 `details` 토큰 구조와 `projectReference`의 자산 판정을 쓴다.
-
-ThinkFlow 의존성을 갱신한 뒤 `node scripts/sync-project-documents.mjs <ThinkFlow 저장소>`를 실행한다. 잠금 파일의 커밋에서 Git blob을 읽으므로 미커밋 원고를 가져오지 않는다. `config/project-documents.json`의 출처·버전·SHA-256과 모든 파일이 일치해야 빌드한다. 갱신 전에 기존 사본의 해시와 심볼릭 링크를 검사하며 로컬 변경이 있으면 중단한다. 사라진 파일은 이전 목록과 해시로 소유권을 확인한 뒤 제거한다. 라이선스와 고지도 발행 자산에 포함한다.
-
-디자인·ThinkFlow·문서 엔진의 고정 commit은 홈페이지의 `package.json`이 정한다. 갱신은 `npm install --save-dev github:woonyong-choi/<저장소>#<commit>`, ThinkFlow를 올렸다면 문서 동기화, `npm run check:tokens`, `npm run check:product`, `npm run build:site`를 거친 일반 PR로 한다. 다른 저장소가 이 저장소로 변경을 밀어 넣는 자동 수신은 없다.
+디자인·ThinkFlow·문서 엔진의 고정 commit은 홈페이지의 `package.json`이 정한다. 갱신은 `npm install --save-dev github:woonyong-choi/<저장소>#<commit>`, `npm run check:tokens`, `npm run check:product`, `npm run build:site`를 거친 일반 PR로 한다. 다른 저장소가 이 저장소로 변경을 밀어 넣는 자동 수신은 없다.
 
 ### 문서와 블로그 탐색
 
@@ -269,6 +263,8 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 동기화는 기존 잠금·복구 트랜잭션을 사용한다. 목록에서 제거된 기존 관리 파일은 같은 트랜잭션으로 제거하며, 직접 수정된 생성 사본이 있으면 중단한다. 최초 전환에서 이미 존재하는 작성 파일을 바꾸려면 `tooling/migration-receipt.json`의 `homepageAdoption`에 `sourceCommit`, `before` 경로별 SHA-256, `retire` 경로 목록, `applied: false`를 명시한다. 현재 바이트와 `before`가 다르면 중단한다. 제거 가능한 옛 경로는 `content/tech.md`, `content/interviews.md`뿐이며 두 경로도 이전 해시가 필요하다. 발행 목록으로 덮어쓰거나 명시적으로 제거하지 않는 이전 경로는 허용하지 않는다.
 
 전환 후 승인 스냅샷의 `origin: vault`가 발행 입력 소유권을 나타내며 주제 설정은 `content/pages/tech.md`에서 읽는다. 후속 동기화는 이관 receipt를 재적용하지 않고 생성 사본의 해시를 검사한다. 옛 assets 승인 동기화로 돌아가는 것도 거부한다. 이 명령은 원본 Vault를 수정하거나 배포하지 않는다.
+
+운영 배포 전에는 Vault의 발행 내보내기에 `--production`을 지정해 최신 목록을 만든 뒤 동기화한다. 관리 지침은 원고로 읽지 않으며 `example: true`인 예시는 운영 목록에서 제외한다. 공개를 철회한 문서와 제외한 예시는 동기화할 때 기존 관리 사본에서도 제거된다. 문서나 글이 하나도 없으면 해당 입력 폴더가 없는 상태에서도 빈 집합으로 빌드한다. 외부 프로젝트 문서를 별도 경로로 추가하지 않는다.
 
 ### 요구사항
 

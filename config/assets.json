@@ -233,18 +233,6 @@
     "license": "MIT"
   },
   {
-    "file": "media/manta-code-blocks-poster.png",
-    "origin": "project-original",
-    "license": "MIT",
-    "source": "https://github.com/woonyong-choi/manta-code-blocks",
-    "notice": "media/manta-code-blocks-LICENSE.txt"
-  },
-  {
-    "file": "media/manta-code-blocks-LICENSE.txt",
-    "origin": "project-original",
-    "license": "MIT"
-  },
-  {
     "file": "media/woonyong-interview.mp4",
     "origin": "third-party",
     "license": "used with the source notice",

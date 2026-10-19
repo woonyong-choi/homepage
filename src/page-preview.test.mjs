@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { test } from 'node:test';
-import { readFileSync, existsSync, statSync, mkdirSync, copyFileSync, rmSync } from 'node:fs';
+import { readFileSync, existsSync, statSync, mkdirSync, mkdtempSync, copyFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderPagePreview, normalizePublicationAssets } from './page-preview.mjs';
 
@@ -9,6 +11,7 @@ const siteRoot = fileURLToPath(new URL('../', import.meta.url));
 const contentRoot = siteRoot + 'content';
 const input = { siteRoot, contentRoot, topicsFile: 'pages/tech.md' };
 const saved = file => readFileSync(`${contentRoot}/${file}`, 'utf8');
+const articleSource = readFileSync(new URL('./fixtures/preview-article.md', import.meta.url), 'utf8');
 const output = siteRoot + 'dist/site/index.html';
 const stamp = () => existsSync(output) ? [statSync(output).mtimeMs, readFileSync(output, 'utf8')] : null;
 
@@ -28,8 +31,8 @@ test('renderPagePreview_uses_unsaved_home_without_writing_source_or_publication'
 });
 
 test('renderPagePreview_renders_article_tabs_math_and_runtime_with_shared_page_shell', async () => {
-  const source = saved('blog/bounded-queue.md') + '\n\n## 저장 전 문단\n\n수식 $x^2$.\n\n:::tabs\n@tab 첫째\n하나\n@tab 둘째\n둘\n:::end\n';
-  const result = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md', source });
+  const source = articleSource + '\n\n## 저장 전 문단\n\n수식 $x^2$.\n\n:::tabs\n@tab 첫째\n하나\n@tab 둘째\n둘\n:::end\n';
+  const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source });
   assert.deepEqual(result.diagnostics, []);
   assert.match(result.html, /저장 전 문단/);
   assert.match(result.html, /role="tablist"/);
@@ -39,12 +42,13 @@ test('renderPagePreview_renders_article_tabs_math_and_runtime_with_shared_page_s
   for (const [, path] of result.html.matchAll(/<script[^>]+src="([^"?]+)/g)) assert.ok(result.assets.has(path), path);
 });
 
-test('renderPagePreview_supplies_site_icon_without_requiring_host_content_assets', async () => {
-  const externalRoot = siteRoot + 'content/docs';
+test('renderPagePreview_supplies_site_icon_without_requiring_host_content_assets', async t => {
+  const externalRoot = mkdtempSync(join(tmpdir(), 'homepage-preview-'));
+  t.after(() => rmSync(externalRoot, { recursive: true, force: true }));
   assert.equal(existsSync(externalRoot + '/assets/site-icon.svg'), false);
   const requests = [];
   const result = await renderPagePreview({ ...input, contentRoot: externalRoot, file: 'draft.md',
-    source: saved('blog/bounded-queue.md').split('## 큐가')[0] + '저장 전 원고\n',
+    source: articleSource + '저장 전 원고\n',
     readContent: (name, edited) => edited ?? saved(name),
     assets: { read: path => {
       requests.push(path);
@@ -58,8 +62,8 @@ test('renderPagePreview_supplies_site_icon_without_requiring_host_content_assets
 });
 
 test('renderPagePreview_preserves_host_denial_for_document_assets', async () => {
-  const result = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md',
-    source: saved('blog/bounded-queue.md').split('## 큐가')[0] + '![제한된 이미지](/assets/denied.png)\n',
+  const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md',
+    source: articleSource + '![제한된 이미지](/assets/denied.png)\n',
     assets: { exists: () => true, read: path => {
       if (path === '/assets/denied.png') throw new Error(`host denied asset: ${path}`);
       return readFileSync(contentRoot + path);
@@ -85,8 +89,8 @@ test('renderPagePreview_reports_file_and_id_and_rejects_paths_outside_explicit_r
 
 
 test('renderPagePreview_compiles_diagrams_and_returns_iframe_bytes', async () => {
-  const source = saved('blog/bounded-queue.md') + '\n\n```thinkflow\nthinkflow\nbox a "서버"\nbox b "저장소"\na -> b\n```\n';
-  const result = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md', source });
+  const source = articleSource + '\n\n```thinkflow\nthinkflow\nbox a "서버"\nbox b "저장소"\na -> b\n```\n';
+  const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source });
   assert.deepEqual(result.diagnostics, []);
   const path = /src="(\/diagrams\/[^"?]+)"/.exec(result.html)?.[1];
   assert.ok(path);
@@ -125,7 +129,7 @@ test('renderPagePreview_applies_host_reader_to_edited_and_referenced_content_wit
   const denied = await renderPagePreview({ ...input, file: 'home.md', kind: 'home', source: source.replace('interviews/index.md', 'drafts/private.md'), readContent });
   assert.match(denied.diagnostics[0].message, /content not allowed: drafts\/private.md/);
   assert.equal(denied.html, '');
-  const edited = await renderPagePreview({ ...input, file: 'docs/private.md', source: saved('blog/bounded-queue.md'), readContent });
+  const edited = await renderPagePreview({ ...input, file: 'docs/private.md', source: articleSource, readContent });
   assert.match(edited.diagnostics[0].message, /content not allowed: docs\/private.md/);
   const invalid = await renderPagePreview({ ...input, file: 'home.md', source, kind: 'home', readContent: () => undefined });
   assert.match(invalid.diagnostics[0].message, /reader must return a string/);
@@ -150,8 +154,8 @@ test('preview_and_publication_share_existing_asset_prefixes', async () => {
   assert.equal(normalizePublicationAssets('/things/assets/image.png?q=1#part'), '/assets/image.png?q=1#part');
   assert.equal(normalizePublicationAssets('/things/theme/tokens.css'), '/theme/tokens.css');
   assert.equal(normalizePublicationAssets('/media/video.mp4'), '/media/video.mp4');
-  const source = saved('blog/bounded-queue.md') + '\n\n![예시](/things/assets/preview-prefix.png)\n';
-  const result = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md', source,
+  const source = articleSource + '\n\n![예시](/things/assets/preview-prefix.png)\n';
+  const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source,
     assets: { read: path => path === '/assets/preview-prefix.png' ? Buffer.from('image') : readFileSync(contentRoot + path) } });
   assert.deepEqual(result.diagnostics, []);
   assert.match(result.html, /src="\/assets\/preview-prefix.png"/);
@@ -160,12 +164,12 @@ test('preview_and_publication_share_existing_asset_prefixes', async () => {
 });
 
 test('preview_normalizes_same_site_absolute_links_using_the_build_origin_contract', async () => {
-  const source = saved('blog/bounded-queue.md') + '\n\n[문서](https://example.test/docs/private/)\n';
-  const result = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md', source, origin: 'https://example.test' });
+  const source = articleSource + '\n\n[문서](https://example.test/docs/private/)\n';
+  const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source, origin: 'https://example.test' });
   assert.deepEqual(result.diagnostics, []);
   assert.equal(result.origin, 'https://example.test');
   assert.ok(result.links.includes('/docs/private/'));
-  const bad = await renderPagePreview({ ...input, file: 'blog/bounded-queue.md', source, origin: 'https://example.test/path' });
+  const bad = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source, origin: 'https://example.test/path' });
   assert.match(bad.diagnostics[0].message, /invalid site origin/);
 });
 

@@ -15,7 +15,7 @@
 ## 구성
 
 - `content/home.md`, `content/interviews/index.md`, `content/pages/tech.md`: Vault에서 승인받아 가져오는 홈 원고
-- `config/`: 승인된 작성 설정과 빌드가 관리하는 승인·자산·프로젝트 문서 목록
+- `config/`: 승인된 작성 설정과 빌드가 관리하는 승인·자산 목록
 - `src/`: 콘텐츠 해석, 검색·댓글, 경로와 페이지 조립
 - `package.json`: 디자인(`@woonyong-choi/design-tokens`)·ThinkFlow·문서 엔진의 고정 commit Git 의존성. 사본을 두지 않는다
 - `content/docs/`, `content/blog/`: 승인된 원문의 사본. 직접 수정 금지

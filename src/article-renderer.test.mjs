@@ -58,3 +58,22 @@ test('separate_articles_keep_unique_footnote_targets_in_a_shared_feed', async ()
   assert.equal(new Set(ids).size, ids.length);
   for (const [, target] of joined.matchAll(/href="#([^"]+)"/g)) assert.ok(ids.includes(target));
 });
+
+test('article_content_keeps_headings_images_and_user_details', async () => {
+  const body = '# 본문 제목\n\n![흐름](usage-request.svg)<!-- thinkflow -->\n\n<details>\n<summary>내 설명</summary>\n\n![장면](usage-trace.svg)\n\n</details>\n\n뒤 문단\n';
+  const rendered = await renderArticle({ id: 'article', description: '', body });
+  assert.match(rendered.html, /<h1\b/);
+  assert.match(rendered.html, /src="usage-request\.svg"/);
+  assert.match(rendered.html, /<details/);
+  assert.match(rendered.html, /내 설명/);
+  assert.match(rendered.html, /src="usage-trace\.svg"/);
+  assert.match(rendered.html, /뒤 문단/);
+  assert.equal(rendered.headings[0].id, 'article-본문-제목');
+});
+
+test('article_content_keeps_generated_scene_markers_in_code_examples', async () => {
+  const body = '```text\n<!-- thinkflow scenes v1 name=flow -->\n<details>\n<summary>장면</summary>\n\n![장면](usage-trace.svg)<!-- thinkflow -->\n\n</details>\n<!-- /thinkflow scenes v1 name=flow -->\n```\n';
+  const rendered = await renderArticle({ id: 'example', description: '', body });
+  assert.match(rendered.html, /thinkflow scenes v1 name=flow/);
+  assert.match(rendered.html, /usage-trace\.svg/);
+});

@@ -3,7 +3,6 @@ import { realpathSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { DEFAULT_THEME_FILES, parseDocument, renderDocument } from 'document-engine';
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
-import { prepareProjectTokens } from './project-documents.mjs';
 import { documentAssets as assets } from './document-assets.mjs';
 import { THEME_ROOT } from './design-package.mjs';
 
@@ -31,9 +30,6 @@ function rejectErrors(output, page) {
 export async function parseArticle(page, options = {}) {
   const document = await parseDocument(page.body, { id: page.id, pageId: page.id, assets: options.assets ?? assets });
   rejectErrors(document, page);
-  const env = { ...document.env, headings: document.metadata.headings };
-  prepareProjectTokens(document.tokens, page, env);
-  document.metadata.headings = env.headings;
   return document;
 }
 

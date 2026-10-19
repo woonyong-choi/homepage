@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { readDocument } from './content-model.mjs';
-import { markdownFiles, readContentFile } from './content-files.mjs';
+import { readContentFile } from './content-files.mjs';
 import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 import { THEME_ROOT } from './design-package.mjs';
 
@@ -26,10 +26,10 @@ test('design_is_an_installed_package_pinned_to_a_commit_without_a_copy', () => {
   assert.ok(existsSync(join(THEME_ROOT, 'ui/index.mjs')));
 });
 
-// 예시, 구성 요소 견본, 공개 글 한 편을 실제 렌더 경로(마크다운 → 글 페이지)로 렌더해 소비자가 표현 값을 더하지 않는지 본다.
+const ARTICLE_FIXTURES = ['document-composition.md', 'markdown-guide.md', 'preview-article.md'];
+
 async function corpus() {
-  const documents = ['docs', 'blog'].flatMap(folder => markdownFiles(join(product, '../content', folder)).map(file => readDocument(readFileSync(file, 'utf8'), TAGS, new Date(), TOPICS)));
-  const pages = [...documents.filter(page => page.example), ...documents.filter(page => !page.example).slice(0, 3)];
+  const pages = ARTICLE_FIXTURES.map(name => readDocument(readFileSync(join(product, 'fixtures', name), 'utf8'), TAGS, new Date('2026-10-19'), TOPICS));
   const all = await Promise.all(pages.map(async page => Object.assign(page, await renderArticle(page))));
   const specimen = (await renderArticle({ id: 'specimen', description: '', body: readFileSync(join(product, 'fixtures/syntax-specimen.md'), 'utf8') })).html;
   return [...all.map(page => articlePage(page, { topics: TOPICS, tags: TAGS })), specimen];
@@ -44,7 +44,9 @@ test('rendered_markdown_pages_carry_no_consumer_presentation', async () => {
   }
   assert.ok(!iconPaint.has('#010203'));
   assert.throws(() => assertThemePaint('<svg><path fill="#010203"/></svg>', iconPaint), /#010203/);
-  assert.ok(pages.length > 8);
+  assert.equal(pages.length, ARTICLE_FIXTURES.length + 1);
+  const corpusDocument = new JSDOM(pages.join('')).window.document;
+  for (const selector of ['.app-tabs', '.app-code', '.katex', '.footnotes', '.app-related-grid']) assert.ok(corpusDocument.querySelector(selector), selector);
   for (const html of pages) {
     // 수식 조판이 계산한 기하(KaTeX 출력)만 style 속성을 가질 수 있다.
     const styled = [...new JSDOM(`<body>${html}</body>`).window.document.querySelectorAll('[style]')].filter(node => !node.closest('.katex, .katex-error'));
