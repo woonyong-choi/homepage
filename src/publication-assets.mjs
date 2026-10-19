@@ -1,4 +1,3 @@
-// 발행 HTML과 런타임 색인의 의존 파일만 복사 대상으로 모은다.
 import { runtimeEntrypoints } from '@woonyong-choi/design-tokens/ui/manifest.mjs';
 import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 const ORIGIN = 'https://publication.invalid';
