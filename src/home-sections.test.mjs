@@ -218,6 +218,28 @@ test('technology_logos_only_link_to_actual_published_tag_ids', () => {
   assert.doesNotMatch(draw({ 'python tips': {} }), /href="\/search\//);
 });
 
+test('heading_pngs_use_the_shared_section_image_slot_and_empty_technology_stays_hidden', () => {
+  const png = name => `/theme/assets/icons/communication/${name}.png`;
+  const home = parseHomeSections({ sections: [
+    { id: 'tech', type: 'technologies', icon: { src: png('technology-thought') }, items: ['python'] },
+    { id: 'talk', type: 'interviews', icon: { src: png('testimonials') }, items: [{ id: 'a', summary: '합성 데이터: 요약' }] },
+    { id: 'contact', type: 'contact', mode: 'newsletter', icon: { src: png('newsletter') } },
+  ] }, { technologies: TECHNOLOGIES });
+  for (const preview of [false, true]) {
+    const html = personalHome({ config: { name: '이름' }, home, tags: { Python: {} }, preview });
+    for (const name of ['technology-thought', 'testimonials', 'newsletter']) {
+      assert.match(html, new RegExp(`<span class="app-landing-icon"[^>]*><img src="${png(name)}"`));
+    }
+    assert.doesNotMatch(html, /app-content-icon/);
+  }
+  const empty = personalHome({ config: { name: '이름' }, home, tags: {} });
+  assert.doesNotMatch(empty, /technology-thought\.png|id="tech"/);
+  const shipped = loadHomeContent(brandNames());
+  for (const [type, name] of [['technologies', 'technology-thought'], ['interviews', 'testimonials'], ['contact', 'newsletter']]) {
+    assert.equal(shipped.find(section => section.type === type).icon.src, png(name));
+  }
+});
+
 
 test('new_service_tags_join_after_configured_logos_without_reviving_an_empty_rail', () => {
   const home = parseHomeSections(parseYaml('sections:\n  - { id: tech, type: technologies, items: [python, git] }'), { technologies: TECHNOLOGIES });

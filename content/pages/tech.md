@@ -2,6 +2,8 @@
 id: technologies
 type: technologies
 enabled: true
+icon:
+  src: /theme/assets/icons/communication/technology-thought.png
 items:
   - c
   - csharp

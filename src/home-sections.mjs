@@ -70,7 +70,7 @@ export function technologySection(section, brandIcon, { tags = {}, knownTags = {
     return String(ui.LogoItem({ href: searchUrl({ tags: [tag] }), label: `${brand.label} · ${tag} 태그 글 보기`, src: brand.src }));
   }).join('');
   const id = escape(section.id);
-  return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, icon: undefined, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));
+  return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));
 }
 
 export function interviewsSection(section, { preview = false } = {}) {

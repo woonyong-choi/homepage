@@ -45,6 +45,17 @@ test('renderPagePreview_renders_article_tabs_math_and_runtime_with_shared_page_s
   for (const [, path] of result.html.matchAll(/<script[^>]+src="([^"?]+)/g)) assert.ok(result.assets.has(path), path);
 });
 
+test('renderPagePreview_reads_migrated_brand_bytes_and_notices_from_the_shared_theme', async () => {
+  const source = articleSource.replace(/\nicon:.*\n/, '\nicon: python\n') + '\n\n![Python](/theme/assets/icons/brands/python.svg)\n';
+  const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source });
+  assert.deepEqual(result.diagnostics, []);
+  const theme = new URL('../node_modules/@woonyong-choi/design-tokens/dist/', import.meta.url);
+  for (const file of ['brands/python.svg', 'licenses/technology-logos-NOTICE.txt']) {
+    assert.deepEqual(result.assets.get(`/theme/assets/icons/${file}`), readFileSync(new URL(`assets/icons/${file}`, theme)));
+  }
+  assert.equal([...result.assets.keys()].some(path => path.startsWith('/assets/brands/')), false);
+});
+
 test('renderPagePreview_supplies_site_icon_without_requiring_host_content_assets', async t => {
   const externalRoot = mkdtempSync(join(tmpdir(), 'homepage-preview-'));
   t.after(() => rmSync(externalRoot, { recursive: true, force: true }));

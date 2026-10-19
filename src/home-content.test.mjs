@@ -122,9 +122,14 @@ test('disabled_icon_references_do_not_require_retired_catalog_entries_but_active
 });
 
 
-test('hidden_technology_heading_icons_skip_catalog_resolution_but_keep_shape_validation', () => {
+test('technology_heading_icons_check_catalog_safe_paths_and_existing_files', () => {
   const yaml = icon => `sections:\n  - { id: tech, type: technologies, icon: ${icon}, items: [python] }`;
-  assert.equal(parse(yaml('retired-code'))[0].icon, undefined);
-  assert.equal(parse(yaml('retired-code'), { exists: () => { throw new Error('unexpected asset lookup'); } })[0].icon, undefined);
+  rejects(yaml('retired-code'), /unknown icon/);
+  assert.equal(parse(yaml('document'))[0].icon.src, '/theme/assets/icons/documents/document.svg');
+  const png = '/theme/assets/icons/communication/technology-thought.png';
+  assert.equal(parse(yaml(`{ src: ${png} }`), { exists: path => path === png })[0].icon.src, png);
+  assert.throws(() => parse(yaml(`{ src: ${png} }`), { exists: () => false }), /파일이 없습니다/);
+  for (const path of ['/theme/assets/../missing.png', '/theme/assets//missing.png', '/private/missing.png']) rejects(yaml(`{ src: ${path} }`), /안전한 경로/);
+  assert.deepEqual(parse(yaml('retired-code').replace('type: technologies,', 'type: technologies, enabled: false,')), []);
   rejects(yaml('42'), /icon: 키와 값을 가진 항목/);
 });

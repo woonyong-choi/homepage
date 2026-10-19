@@ -1,7 +1,6 @@
 // 발행 HTML과 런타임 색인의 의존 파일만 복사 대상으로 모은다.
 import { runtimeEntrypoints } from '@woonyong-choi/design-tokens/ui/manifest.mjs';
 import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
-import { BRAND_NOTICES } from './brand-icons.mjs';
 const ORIGIN = 'https://publication.invalid';
 const ICON_CATALOG = getIconCatalog();
 const ICON_NOTICES = [...new Set([...ICON_CATALOG.libraries, ...Object.values(ICON_CATALOG.brands)].map(item => item.notice).filter(Boolean))].map(file => `/theme/assets/icons/${file}`);
@@ -14,7 +13,6 @@ const ASSET_NOTICES = new Map([
   ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
   ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],
   ...['j2ysoft', 'jusin-background', 'neople-background', 'nexon', 'roborobo'].map(name => [`/assets/company-${name}.png`, '/assets/company-logos-NOTICE.txt']),
-  ...BRAND_NOTICES,
 ]);
 
 export function clientEntrypoints(body) {

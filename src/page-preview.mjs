@@ -19,7 +19,7 @@ import { FAVICON, siteOrigin } from './publication-metadata.mjs';
 import { publicationLinks } from './publication-routes.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { compileDiagrams } from './diagrams.mjs';
-import { brandNames, readBrandAsset } from './brand-icons.mjs';
+import { brandNames } from './brand-icons.mjs';
 import { THEME_ROOT, THEME_MANIFEST } from './design-package.mjs';
 
 export { publicationLinks, documentRoute } from './publication-routes.mjs';
@@ -72,8 +72,6 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     if (path === FAVICON) return readFileSync(new URL(`../content${FAVICON}`, import.meta.url));
     if (math.assets.has(path)) return math.assets.get(path);
     if (path.startsWith('/theme/')) return readFileSync(containedFile(THEME_ROOT, path.slice('/theme/'.length)));
-    const brand = readBrandAsset(path);
-    if (brand) return brand;
     if (assets.read) return assets.read(path);
     if (!/^\/(assets|media)\//.test(path)) throw new Error(`unsupported preview asset: ${path}`);
     return readFileSync(containedFile(root, path.slice(1)));
