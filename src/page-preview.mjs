@@ -40,8 +40,9 @@ export async function renderPagePreview(input) {
   }
 }
 
-async function renderPreview({ source, file, id, kind = 'article', siteRoot, contentRoot, assets = {}, colorScheme = 'light', topicsFile = 'tech.md', readContent: readSource, origin = process.env.SITE_ORIGIN ?? '' }) {
+async function renderPreview({ source, file, id, kind = 'article', previewMode = 'publication', siteRoot, contentRoot, assets = {}, colorScheme = 'light', topicsFile = 'tech.md', readContent: readSource, origin = process.env.SITE_ORIGIN ?? '' }) {
   if (typeof source !== 'string') throw new TypeError('preview source must be a string');
+  if (!['writing', 'publication'].includes(previewMode)) throw new TypeError('invalid preview mode');
   if (!['light', 'dark'].includes(colorScheme)) throw new TypeError('invalid preview color scheme');
   if (!['article', 'home', 'search'].includes(kind)) throw new TypeError('invalid preview kind');
   origin = siteOrigin(origin, true);
@@ -104,7 +105,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     if (id !== undefined && id !== page.id) throw new Error('preview document id does not match source');
     const document = await parseArticle(page, { assets: documentAssets });
     diagrams = await compileDiagrams(new Map(document.metadata.diagrams.map(item => [item.source, page.id])));
-    const rendered = await renderArticle(page, { document, diagrams: diagrams.diagrams, assets: documentAssets });
+    const rendered = await renderArticle(page, { document, diagrams: diagrams.diagrams, assets: documentAssets, previewMode });
     Object.assign(page, rendered);
     diagnostics = rendered.diagnostics;
     body = page.type === 'wiki' ? privateWikiArticle(page, context) : articlePage(page, context);
@@ -113,7 +114,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   const files = publicationAssets(new Map([[page.route, html]]), [], readAsset);
   for (const [name, bytes] of scripts) files.set(`/${name}`, bytes);
   for (const [name, bytes] of diagrams.assets) files.set(name, bytes);
-  return { html, assets: files, links: publicationLinks(html, page.route, origin || undefined), origin, diagnostics, route: page.route, id: page.id };
+  return { html, assets: files, links: publicationLinks(html, page.route, origin || undefined), origin, diagnostics, route: page.route, id: page.id, previewMode };
 }
 
 function within(root, name) {

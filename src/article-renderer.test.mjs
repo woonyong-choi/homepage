@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { renderArticle } from './article-renderer.mjs';
+import { parseArticle, renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { privateWikiArticle } from './private-wiki-layout.mjs';
 
@@ -73,4 +73,36 @@ test('article_content_keeps_generated_scene_markers_in_code_examples', async () 
   const rendered = await renderArticle({ id: 'example', description: '', body });
   assert.match(rendered.html, /thinkflow scenes v1 name=flow/);
   assert.match(rendered.html, /usage-trace\.svg/);
+});
+
+test('renderArticle_writing_moves_only_the_matching_initial_h1_without_mutating_the_parsed_document', async () => {
+  const page = { id: 'writing', title: '같은 제목', description: '소개와 참조.', body: '# 같은 **제목**\n\n소개와 [참조](/docs/source/).[^n]\n\n## 본문\n\n$x^2$\n\n```md\n# 같은 제목\n```\n\n![예시](/assets/image.png)\n\n[^n]: 각주 원문' };
+  const document = await parseArticle(page);
+  const before = JSON.stringify(document);
+  const publication = await renderArticle(page, { document });
+  const writing = await renderArticle(page, { document, previewMode: 'writing' });
+  assert.equal(JSON.stringify(document), before);
+  assert.equal(writing.titleId, 'writing-같은-제목');
+  assert.doesNotMatch(writing.html, /<h1\b/);
+  assert.match(publication.html, /<h1\b/);
+  assert.deepEqual(writing.headings.map(heading => heading.title), ['본문']);
+  assert.match(writing.leadHtml, /href="\/docs\/source\/"/);
+  assert.match(writing.html, /각주 원문/);
+  assert.match(writing.html, /#<\/span> 같은 제목/);
+  assert.match(writing.html, /src="\/assets\/image.png"/);
+  assert.equal(writing.math, true);
+  assert.deepEqual(writing.assets, publication.assets);
+  assert.deepEqual(writing.runtime, publication.runtime);
+  assert.equal((await renderArticle(page, { document })).html, publication.html);
+});
+
+test('renderArticle_writing_keeps_nonmatching_nested_and_reference_bearing_headings', async () => {
+  for (const body of ['# 다른 제목', '## 같은 제목', '> # 같은 제목', '문단\n\n# 같은 제목', '```md\n# 같은 제목\n```', '# [같은 제목](/docs/source/)', '# 같은 제목[^n]\n\n[^n]: 각주']) {
+    const page = { id: 'boundary', title: '같은 제목', description: '', body };
+    const publication = await renderArticle(page);
+    const writing = await renderArticle(page, { previewMode: 'writing' });
+    assert.equal(writing.html, publication.html, body);
+    assert.deepEqual(writing.headings, publication.headings, body);
+    assert.equal(writing.titleId, undefined);
+  }
 });

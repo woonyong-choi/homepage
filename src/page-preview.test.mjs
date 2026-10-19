@@ -37,12 +37,29 @@ test('renderPagePreview_renders_article_tabs_math_and_runtime_with_shared_page_s
   const source = articleSource + '\n\n## 저장 전 문단\n\n수식 $x^2$.\n\n:::tabs\n@tab 첫째\n하나\n@tab 둘째\n둘\n:::end\n';
   const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source });
   assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.previewMode, 'publication');
   assert.match(result.html, /저장 전 문단/);
   assert.match(result.html, /role="tablist"/);
   assert.match(result.html, /katex/);
   assert.ok(result.assets.has('/katex/katex.css'));
   assert.ok(result.assets.has('/document.js'));
   for (const [, path] of result.html.matchAll(/<script[^>]+src="([^"?]+)/g)) assert.ok(result.assets.has(path), path);
+});
+
+test('renderPagePreview_publication_is_the_compatible_default_and_invalid_modes_are_diagnostics', async () => {
+  const request = { ...input, file: 'blog/preview-article.md', source: articleSource };
+  const implicit = await renderPagePreview(request);
+  const explicit = await renderPagePreview({ ...request, previewMode: 'publication' });
+  assert.deepEqual(explicit, implicit);
+  for (const previewMode of [null, '', 'preview', 0]) {
+    const bad = await renderPagePreview({ ...request, previewMode, id: 'preview-article' });
+    assert.equal(bad.html, '');
+    assert.equal(bad.assets.size, 0);
+    assert.equal(bad.diagnostics[0].file, request.file);
+    assert.equal(bad.diagnostics[0].id, 'preview-article');
+    assert.match(bad.diagnostics[0].message, /invalid preview mode/);
+  }
+  assert.equal((await renderPagePreview(request)).html, implicit.html);
 });
 
 test('renderPagePreview_reads_migrated_brand_bytes_and_notices_from_the_shared_theme', async () => {

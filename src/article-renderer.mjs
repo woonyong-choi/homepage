@@ -37,6 +37,7 @@ export async function renderArticle(page, options = {}) {
   const document = options.document ?? await parseArticle(page, options);
   for (const diagram of document.metadata.diagrams) options.diagramSources?.set(diagram.source, page.id);
   const tokens = [...document.tokens];
+  const titleId = options.previewMode === 'writing' ? removeDuplicateTitle(tokens, page.title) : undefined;
   const context = { assets: options.assets ?? assets, diagrams: options.diagrams };
   let leadHtml = escape(page.description);
   let lead;
@@ -50,7 +51,22 @@ export async function renderArticle(page, options = {}) {
       tokens.splice(0, 3);
     }
   }
-  const output = await renderDocument({ ...document, tokens }, context);
+  const metadata = titleId === undefined ? document.metadata : { ...document.metadata, headings: document.metadata.headings.filter(heading => heading.id !== titleId) };
+  const output = await renderDocument({ ...document, tokens, metadata }, context);
   rejectErrors(output, page);
-  return { ...output, leadHtml, assets: [...new Map([...(lead?.assets ?? []), ...output.assets].map(item => [item.name, item])).values()], runtime: [...new Set([...(lead?.runtime ?? []), ...output.runtime])], math: Boolean(lead?.math || output.math) };
+  return { ...output, ...(titleId === undefined ? {} : { titleId }), leadHtml, assets: [...new Map([...(lead?.assets ?? []), ...output.assets].map(item => [item.name, item])).values()], runtime: [...new Set([...(lead?.runtime ?? []), ...output.runtime])], math: Boolean(lead?.math || output.math) };
+}
+
+function removeDuplicateTitle(tokens, title) {
+  if (typeof title !== 'string') return;
+  const [open, inline, close] = tokens;
+  if (open?.type !== 'heading_open' || open.tag !== 'h1' || open.level !== 0) return;
+  if (inline?.type !== 'inline' || close?.type !== 'heading_close') return;
+  if (inline.children.some(token => ['link_open', 'footnote_ref'].includes(token.type))) return;
+  const plain = visibleText(inline.children);
+  if (plain === null || normalize(plain) !== normalize(title)) return;
+  const titleId = open.attrGet('id');
+  if (!titleId) return;
+  tokens.splice(0, 3);
+  return titleId;
 }
