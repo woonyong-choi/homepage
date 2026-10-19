@@ -9,7 +9,9 @@
     "file": "assets/site-icon.svg",
     "origin": "project-original",
     "license": "MIT",
-    "note": "브라우저 탭 아이콘 자리표시. 내용 없는 투명 32×32 SVG이며 사이트 표식이 정해지면 같은 경로의 파일을 바꾼다."
+    "source": "https://github.com/woonyong-choi/homepage/blob/4b2328365dcdf61ea168c4cb6d0b8204ae65461c/content/assets/who-knows.svg",
+    "sourceSha256": "2e139069615a71eb036e9c910e0bc84623dfd14997f699842fbf8d7f85cec79b",
+    "note": "승인된 WHO 글자 로고 첫 path의 첫 닫힌 W 도형을 그대로 재사용한다. 정사각 viewBox만 원본 경계에서 계산한다. 브라우저 UI의 독립 SVG는 제품 CSS를 상속하지 않으므로 CanvasText와 native color-scheme으로 시스템 대비를 따른다."
   },
   {
     "file": "assets/company-j2ysoft.png",
