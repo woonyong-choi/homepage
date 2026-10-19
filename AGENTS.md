@@ -20,7 +20,6 @@
 - `package.json`: 디자인(`@woonyong-choi/design-tokens`)·DiagramPlay·문서 엔진의 고정 commit Git 의존성. 사본을 두지 않는다
 - `content/blog/`: 공개 Blog의 승인 사본. 직접 수정 금지
 - `content/docs/`: 개인 미리보기·동기화 호환 입력. 공개 빌드는 발행하지 않으며 승인된 문서가 있으면 중단
-- `src/fixtures/blog-demo/`: 명시적인 데모 모드에서만 사용하는 합성 글
 - `content/assets/`, `content/media/`: 사용 중인 콘텐츠 자산과 고지
 - `docs/`: 현재 구현의 설계와 사용 안내
 - `scripts/`: 검사. 산출물은 Git 밖 `dist/site/`

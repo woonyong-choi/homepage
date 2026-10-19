@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
+import { parseArgs } from 'node:util';
 
 import { collectPosts, postTags, searchEntry, relatedPosts, keywordRanking } from './blog-model.mjs';
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
@@ -36,16 +37,14 @@ const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
 const digest = value => createHash('sha256').update(value).digest('hex');
 
 export async function buildPublication({ origin = '', mode = 'approved-preview' } = {}) {
-  if (!['demo', 'approved-preview', 'production'].includes(mode)) throw new Error('invalid publication mode');
+  if (!['approved-preview', 'production'].includes(mode)) throw new Error('invalid publication mode');
   const approved = verifyApprovedContent();
   const config = JSON.parse(readFileSync(join(SETTINGS, 'site.json')));
   const knownTags = JSON.parse(readFileSync(join(SETTINGS, 'tags.json')));
-  if (mode !== 'demo' && Object.keys(approved).some(path => path.startsWith('content/docs/'))) throw new Error('legacy wiki content requires explicit blog migration approval');
+  if (Object.keys(approved).some(path => path.startsWith('content/docs/'))) throw new Error('legacy wiki content requires explicit blog migration approval');
   const preview = mode !== 'production';
   origin = siteOrigin(origin, preview);
-  const root = mode === 'demo' ? join(ROOT, 'fixtures/blog-demo') : join(CONTENT, 'blog');
-  const posts = collectPosts(markdownFiles(root).map(file => readFileSync(file, 'utf8')), { includeExamples: mode === 'demo' });
-  if (mode === 'demo' && posts.some(post => !post.example)) throw new Error('demo posts must be examples');
+  const posts = collectPosts(markdownFiles(join(CONTENT, 'blog')).map(file => readFileSync(file, 'utf8')));
   const documents = posts;
   const tags = postTags(posts, knownTags);
   const layout = loadBlogLayout();
@@ -53,7 +52,7 @@ export async function buildPublication({ origin = '', mode = 'approved-preview' 
   layout.search.box.suggestions = recommendations.map(item => item.keyword);
   const comments = readCommentCounts(posts, config);
   for (const post of posts) {
-    post.commentCount = post.example && !post.comments ? 0 : comments.counts.get(post.id);
+    post.commentCount = comments.counts.get(post.id);
     post.related = relatedPosts(post, posts);
   }
   const diagramSources = new Map();
@@ -143,7 +142,7 @@ async function writeSite(output, documents, context, scripts, notFound) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  if (process.argv.includes('--demo') && process.argv.includes('--production')) throw new Error('demo and production modes cannot be combined');
-  const mode = process.argv.includes('--demo') ? 'demo' : process.argv.includes('--production') ? 'production' : 'approved-preview';
+  const { values } = parseArgs({ options: { production: { type: 'boolean', default: false } } });
+  const mode = values.production ? 'production' : 'approved-preview';
   console.log(await buildPublication({ origin: process.env.SITE_ORIGIN ?? '', mode }));
 }

@@ -2,7 +2,6 @@
 id: technologies
 type: technologies
 enabled: true
-icon: code
 items:
   - c
   - csharp

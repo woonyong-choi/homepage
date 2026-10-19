@@ -24,7 +24,7 @@
 
 홈은 `content/home.md`의 `sections` 순서로 조립한다. 홈 소개·영상·연락은 이 파일에서 읽고, 홈의 기술 로고는 `content/pages/tech.md`, 동료평가 소개와 카드는 `content/interviews/index.md`에서 읽는다. 세 파일은 Vault의 승인 사본이므로 원문을 수정하고 [발행 목록을 동기화](publication.md#vault-발행-입력)한다. 제목과 소개는 Markdown 본문을 읽으며, 같은 내용을 JSON이나 YAML 필드에 중복해서 적지 않는다. 각 항목의 `enabled: false`는 그 섹션을 끄고 HTML·자산·스크립트에서 제외한다.
 
-기본 설정의 projects는 꺼져 있다. 두 예시 항목과 섹션 렌더러는 재사용을 위해 남긴다. 실제 프로젝트의 제목·설명·링크·이미지로 바꾼 뒤 해당 섹션의 `enabled`를 `true`로 설정하면 표시한다.
+기본 홈 원고에는 프로젝트 예시 항목을 두지 않는다. 실제 프로젝트를 공개할 때 승인 원문에 제목·설명·링크·이미지를 작성하고 해당 섹션의 `enabled`를 `true`로 설정하면 표시한다.
 
 ```sh
 npm run build:site        # 설정을 검증하고 dist/site를 만든다
@@ -118,7 +118,7 @@ sections:
 | contact | `mode`: `email` 또는 `newsletter`. 공통 속성: `icon`, `title`, `description`, `button`, `email` |
 
 - hero: 영상이 있고 `action.href`가 없으면 재생 버튼(`action.label`은 처음 문구)이 된다. `href`를 쓰면 그 링크가 된다. 현재 홈은 사용자가 선택한 인터뷰 영상의 로컬 MP4를 사용한다. 프로젝트 영상 보기에서 같은 페이지 안의 영상 영역이 펼쳐지며 0초부터 재생한다. 출처와 웹 변환 정보는 `content/media/README.md`에 기록한다. `image`는 영상이 없을 때 소개 아래에 크게 보인다. 재생 버튼의 문구는 항상 `action.label`로 고정이고 아이콘만 재생과 일시정지 두 가지다. 영상이 끝나면 재생 아이콘으로 돌아가며 다시 누르면 처음부터 재생한다. 영상은 크롬 등에서 색이 어긋나지 않도록 `yuv420p`, BT.709 H.264로 둔다(변환 방법은 `content/media/README.md`).
-- projects: 링크 문구는 `link.label`, 이동 주소는 `link.href`이며 둘 다 직접 정한다(예: `label: 기능 보기`, `href: /blog/`). 기본 예시는 `자세히 보기`다. 항목 하나가 제목 → 소개 → 링크 → 큰 이미지 구간 하나다. 항목을 추가한 만큼 구간이 늘고, 목록이 비면 섹션이 없다. 기본 예시 두 항목은 큰 그림 `project-placeholder.svg`와 공통 `project` 아이콘을 쓴다.
+- projects: 링크 문구는 `link.label`, 이동 주소는 `link.href`이며 둘 다 직접 정한다(예: `label: 기능 보기`, `href: /blog/`). 항목 하나가 제목 → 소개 → 링크 → 큰 이미지 구간 하나다. 항목을 추가한 만큼 구간이 늘고, 목록이 비면 섹션이 없다.
 - technologies, interviews, contact는 projects와 같은 머리(아이콘, 제목, 설명)를 쓴다. 기술·인터뷰는 그 아래에 흐르는 목록을, contact는 모드에 따라 이메일 연락 링크나 구독 입력을 둔다. 머리 바탕과 간격은 공통 섹션이 정한다.
 - interviews: `links`는 제목 아래의 링크 행이다. `icon`은 내장 이름(`github`, `rss`, `linkedin`) 또는 이미지 파일이고 생략하면 `label`을 글자로 표시한다. 내장 아이콘은 `href`를 비워 둘 수 있으며 그러면 아이콘만 보이고 링크도 클릭도 없다(`aria-label`은 `<label> · 주소 준비 중`). 주소가 생기면 `href`만 채운다. 어떤 계정 주소도 추정해 넣지 않는다.
 - interviews 요약 링크: `summary` 안에서 `[@만난 곳](https://...)` 문법의 링크만 읽는다. 주소는 링크 `href`와 같은 규칙(HTTPS 또는 `/`로 시작하는 사이트 경로, `#` 페이지 안 연결)이고 `javascript:`, `data:`, `//host`는 설정 오류다. 라벨의 `@`는 글자 그대로이고 `@word`만 쓰면 링크도 주소 추정도 없다. 라벨 안의 `[`, `]`는 `\[`, `\]`로 쓰며 한 요약에 링크를 여러 개 넣을 수 있다. HTML, 이미지, 강조 등 다른 문법은 해석하지 않고 글자로 표시한다. 프로필 세 자리와 별개인 본문 기능이다.

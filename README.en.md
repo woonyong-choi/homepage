@@ -20,7 +20,7 @@ npm ci
 npm run dev
 ```
 
-Open the home page in the [local preview](http://localhost:8796/). Browse all posts and filter by query and tags at `/search/`. Read recent posts in full at `/blog/`. Restart the command after you change a file. The build output is in `dist/site/`. The default build reads approved copies and blocks search engine indexing. Run `npm run dev:demo` to preview synthetic posts. These posts never enter production builds.
+Open the home page in the [local preview](http://localhost:8796/). Browse all posts and filter by query and tags at `/search/`. Read recent posts in full at `/blog/`. Restart the command after you change a file. The build output is in `dist/site/`. The default build reads approved copies and blocks search engine indexing. The list stays empty until an approved real post is published.
 
 The approved copies in this repository and the public Git dependencies are enough to run the site. Importing new content requires a publication manifest from the private Vault. If GitHub CLI is unavailable, unauthenticated, or a lookup fails, the site shows comment links instead of comment counts.
 

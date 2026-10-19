@@ -49,10 +49,9 @@
 | 모드 | 입력과 결과 |
 |---|---|
 | 기본 `approved-preview` | 승인 사본 사용. 검색엔진 수집 금지 |
-| 명시적 `demo` | `src/fixtures/blog-demo/`의 합성 글 사용. 승인 원고를 데모로 대체하지 않으며 수집 금지 |
 | `production` | 승인된 실제 공개 글만 발행. 합성 글과 예시 글 제외 |
 
-`npm run build:demo`는 합성 글을 빌드하고 `npm run dev:demo`는 같은 결과를 로컬 서버로 연다. `--demo`와 `--production`을 함께 지정하면 실행 시작 시 거부한다. 운영 빌드는 `SITE_ORIGIN=https://woonyong.com npm run build:site -- --production`으로 만든다. `.github/workflows/deploy.yml`의 수동 실행은 검사 후 GitHub Pages에 배포한다. 로컬 빌드 성공은 배포 완료가 아니다.
+기본 미리보기와 운영 빌드는 같은 승인 입력만 사용한다. 실제 공개 글이 없으면 빈 목록을 표시하며 합성 글을 생성하지 않는다. 운영 빌드는 `SITE_ORIGIN=https://woonyong.com npm run build:site -- --production`으로 만든다. `.github/workflows/deploy.yml`의 수동 실행은 검사 후 GitHub Pages에 배포한다. 로컬 빌드 성공은 배포 완료가 아니다.
 
 빌드는 모든 페이지·스크립트·자산을 준비하고 내부 링크·앵커·중복 ID·출력 경로를 검사한 뒤 발행 폴더를 교체한다. 입력·자산 읽기·검증이 실패하면 기존 결과를 유지한다. 같은 실제 출력 경로는 잠금으로 직렬화한다. 모든 파일을 새 작업 폴더에 쓴 뒤 교체하며 설치 실패 시 이전 결과를 복원한다. 교체 사이의 짧은 경로 공백과 강제 종료까지 무중단으로 보장하지 않는다. 복원 실패 시 오류에 표시된 이전 결과와 잠금을 보존한다. 남은 잠금은 실행 중인 빌드가 없는지 확인한 뒤 처리한다.
 

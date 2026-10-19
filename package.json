@@ -12,9 +12,7 @@
     "content:revoke": "node src/approved-content.mjs revoke",
     "content:sync-vault": "node src/approved-content.mjs sync-vault",
     "content:sync": "node src/approved-content.mjs sync",
-    "content:check": "node src/approved-content.mjs check",
-    "dev:demo": "npm run build:demo && node src/serve.mjs --port 8796 --root dist/site",
-    "build:demo": "node src/build-publication.mjs --demo"
+    "content:check": "node src/approved-content.mjs check"
   },
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",
