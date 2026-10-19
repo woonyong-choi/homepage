@@ -123,13 +123,14 @@ test('technologies_and_interviews_share_the_section_intro_with_projects', () => 
   const tech = render('sections:\n  - { id: tech, type: technologies, items: [python] }');
   assert.match(intro(tech), /<h2 id="tech-title">함께 쓰는 기술<\/h2><p>기술별 기록을 모았습니다\.<\/p>/);
   const rich = render('sections:\n  - id: talk\n    type: interviews\n    icon: { src: https://example.com/i.png }\n    title: 이야기\n    description: 설명\n    links: [{ label: GitHub, href: "https://github.com/x", icon: github }, { label: 글, href: /blog/ }]\n    items: [{ id: a, summary: 예시 요약 }]');
-  assert.match(intro(rich), /<h2 id="talk-title">.*?<img src="https:\/\/example.com\/i.png" alt="" loading="lazy" decoding="async">.*? 이야기<\/h2><p>설명<\/p><p class="app-landing-social"><a href="https:\/\/github.com\/x" aria-label="GitHub"><svg[^>]*class="app-landing-symbol"/);
+  assert.match(intro(rich), /<h2 id="talk-title">이야기<\/h2><p>설명<\/p><p class="app-landing-social"><a href="https:\/\/github.com\/x" aria-label="GitHub"><svg[^>]*class="app-landing-symbol"/);
+  assert.doesNotMatch(intro(rich), /<img/);
   assert.match(intro(rich), /<a href="\/blog\/">글<\/a>/);
   assert.doesNotMatch(rich, /data-flow-controls|data-flow-(?:toggle|prev|next)|<button/);
   assert.match(rich, /class="app-landing-section app-landing-interviews"/);
   assert.deepEqual(clientEntrypoints(rich), ['flows.js']);
   const named = render('sections:\n  - { id: contact, type: contact, email: hello@example.com, icon: document }');
-  assert.match(intro(named), /<img src="\/theme\/assets\/icons\/documents\/document.svg"/);
+  assert.doesNotMatch(intro(named), /<img/);
   assert.throws(() => render('sections:\n  - { id: contact, type: contact, email: hello@example.com, icon: missing-icon }'), /unknown icon/);
 });
 
@@ -222,7 +223,7 @@ test('technology_logos_only_link_to_actual_published_tag_ids', () => {
   assert.doesNotMatch(draw({ 'python tips': {} }), /href="\/search\//);
 });
 
-test('heading_pngs_and_technology_intro_remain_without_published_posts', () => {
+test('technology_interview_and_contact_headings_omit_decorative_icons', () => {
   const png = name => `/theme/assets/icons/communication/${name}.png`;
   const home = parseHomeSections({ sections: [
     { id: 'tech', type: 'technologies', icon: { src: png('technology-thought') }, items: ['python'] },
@@ -232,12 +233,12 @@ test('heading_pngs_and_technology_intro_remain_without_published_posts', () => {
   for (const preview of [false, true]) {
     const html = personalHome({ config: { name: '이름' }, home, tags: { Python: {} }, preview });
     for (const name of ['technology-thought', 'testimonials', 'newsletter']) {
-      assert.match(html, new RegExp(`<span class="app-landing-icon"[^>]*><img src="${png(name)}"`));
+      assert.doesNotMatch(html, new RegExp(png(name).replaceAll('.', '\\.')));
     }
     assert.doesNotMatch(html, /app-content-icon/);
   }
   const empty = personalHome({ config: { name: '이름' }, home, tags: {} });
-  assert.match(empty, /technology-thought\.png/);
+  assert.doesNotMatch(empty, /technology-thought\.png/);
   assert.match(empty, /id="tech"/);
   const shipped = loadHomeContent(brandNames());
   for (const [type, name] of [['technologies', 'technology-thought'], ['interviews', 'testimonials'], ['contact', 'newsletter']]) {
