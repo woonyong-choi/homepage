@@ -38,12 +38,87 @@ test('renderPagePreview_renders_article_tabs_math_and_runtime_with_shared_page_s
   const source = articleSource + '\n\n## 저장 전 문단\n\n수식 $x^2$.\n\n:::tabs\n@tab 첫째\n하나\n@tab 둘째\n둘\n:::end\n';
   const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source });
   assert.deepEqual(result.diagnostics, []);
+  assert.equal(result.previewMode, 'publication');
   assert.match(result.html, /저장 전 문단/);
   assert.match(result.html, /role="tablist"/);
   assert.match(result.html, /katex/);
   assert.ok(result.assets.has('/katex/katex.css'));
   assert.ok(result.assets.has('/document.js'));
   for (const [, path] of result.html.matchAll(/<script[^>]+src="([^"?]+)/g)) assert.ok(result.assets.has(path), path);
+});
+
+test('renderPagePreview_publication_is_the_compatible_default_and_invalid_modes_are_diagnostics', async () => {
+  const request = { ...input, file: 'blog/preview-article.md', source: articleSource };
+  const implicit = await renderPagePreview(request);
+  const explicit = await renderPagePreview({ ...request, previewMode: 'publication' });
+  assert.deepEqual(explicit, implicit);
+  for (const previewMode of [null, '', 'preview', 0]) {
+    const bad = await renderPagePreview({ ...request, previewMode, id: 'preview-article' });
+    assert.equal(bad.html, '');
+    assert.equal(bad.assets.size, 0);
+    assert.equal(bad.diagnostics[0].file, request.file);
+    assert.equal(bad.diagnostics[0].id, 'preview-article');
+    assert.match(bad.diagnostics[0].message, /invalid preview mode/);
+  }
+  assert.equal((await renderPagePreview(request)).html, implicit.html);
+});
+
+test('renderPagePreview_writing_keeps_draft_content_and_tags_without_publication_chrome_for_blog_and_wiki', async () => {
+  const before = stamp();
+  for (const type of ['blog', 'wiki']) {
+    const source = articleSource.replace('type: blog', `type: ${type}`).replace('visibility: public', 'visibility: draft\npublish: false\nstatus: draft').replace('tags: []', 'tags: [python]')
+      .replace('## 미리보기 본문', '# 미리보기 시험 원고\n\n저장 전 원고를 공개하지 않고 렌더링합니다.\n\n## 미리보기 본문')
+      + '\n\n[제목으로](#preview-article-미리보기-시험-원고)\n\n```md\n# 미리보기 시험 원고\n```\n\n수식 $x^2$와 참조.[^n]\n\n[^n]: 보존할 출처\n';
+    const request = { ...input, file: `${type}/preview-article.md`, source };
+    const publication = await renderPagePreview(request);
+    const result = await renderPagePreview({ ...request, previewMode: 'writing' });
+    assert.deepEqual(result.diagnostics, []);
+    assert.deepEqual(publication.diagnostics, []);
+    assert.equal(result.previewMode, 'writing');
+    assert.equal(result.id, publication.id);
+    assert.equal(result.route, publication.route);
+    const document = new JSDOM(result.html).window.document;
+    const publicDocument = new JSDOM(publication.html).window.document;
+    for (const selector of ['.app-header', '.app-logo', '.app-nav', '.app-footer', '.app-footer-links', '.app-comments', '.app-document-sidebar', '.app-document-outline', '.app-search', 'link[type="application/rss+xml"]']) {
+      assert.equal(document.querySelector(selector), null, selector);
+    }
+    assert.ok(publicDocument.querySelector('.app-header'));
+    assert.ok(publicDocument.querySelector('.app-footer'));
+    assert.equal(document.querySelectorAll('h1').length, 1);
+    assert.equal(document.querySelector('h1').textContent, '미리보기 시험 원고');
+    assert.equal(document.querySelector('h1').id, 'preview-article-미리보기-시험-원고');
+    assert.match(document.querySelector('main').textContent, /초안/);
+    assert.equal(document.querySelector('main time'), null);
+    assert.equal(document.querySelector('a[href="/search/?tag=python"]').textContent, 'Python');
+    assert.equal(document.querySelector('pre code').textContent, '# 미리보기 시험 원고\n');
+    assert.ok(document.querySelector('[data-tool="copy"]'));
+    assert.ok(document.querySelector('.katex'));
+    assert.match(document.querySelector('.footnotes').textContent, /보존할 출처/);
+    for (const anchor of document.querySelectorAll('a[href^="#"]')) {
+      assert.ok(document.getElementById(decodeURIComponent(anchor.getAttribute('href').slice(1))), anchor.href);
+    }
+    assert.ok(result.assets.has('/document.js'));
+    assert.ok(result.assets.has('/katex/katex.css'));
+    assert.match(source, /visibility: draft\npublish: false\nstatus: draft/);
+    assert.equal((await renderPagePreview(request)).html, publication.html);
+  }
+  assert.deepEqual(stamp(), before);
+});
+
+test('renderPagePreview_writing_reports_content_errors_and_preserves_source_reference_and_images', async () => {
+  const source = articleSource.replace('type: blog', 'type: wiki').replace('tags: []', 'tags: [python]')
+    .replace('comments: true', 'comments: true\nsourceUrl: https://example.test/reference') + '\n\n![Python](/theme/assets/icons/brands/python.svg)\n';
+  const result = await renderPagePreview({ ...input, file: 'docs/preview.md', source, previewMode: 'writing' });
+  assert.deepEqual(result.diagnostics, []);
+  const document = new JSDOM(result.html).window.document;
+  assert.equal(document.querySelector('a[href="https://example.test/reference"]').textContent, '공개 원문');
+  assert.ok(document.querySelector('img[alt="Python"]'));
+  assert.ok(result.assets.has('/theme/assets/icons/brands/python.svg'));
+  const bad = await renderPagePreview({ ...input, file: 'docs/preview.md', source: source + '\n:::note\n닫히지 않음\n', previewMode: 'writing' });
+  assert.equal(bad.html, '');
+  assert.equal(bad.assets.size, 0);
+  assert.equal(bad.diagnostics[0].file, 'docs/preview.md');
+  assert.match(bad.diagnostics[0].message, /본문/);
 });
 
 test('renderPagePreview_reads_migrated_brand_bytes_and_notices_from_the_shared_theme', async () => {

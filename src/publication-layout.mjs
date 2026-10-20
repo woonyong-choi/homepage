@@ -17,15 +17,18 @@ const NAVIGATION = Object.freeze([{ href: '/search/', label: 'Search', match: ['
 export function documentShell(page, body, context) {
   const { config, themeHash, scriptHash, scriptHashes = {}, math, colorScheme = 'light' } = context;
   if (!['light', 'dark'].includes(colorScheme)) throw new Error('invalid page color scheme');
+  const isWriting = context.previewMode === 'writing';
   const hashOf = file => scriptHashes[file] ?? scriptHash;
   const navigation = context.navigation ?? NAVIGATION;
   const active = navigation.flatMap(item => item.match.filter(prefix => prefix === '/' ? page.route === '/' : page.route.startsWith(prefix)).map(prefix => ({ href: item.href, length: prefix.length }))).sort((a, b) => b.length - a.length)[0]?.href;
-  const footer = personalFooter(config);
+  const footer = isWriting ? '' : personalFooter(config);
   const entries = clientEntrypoints(body + footer);
   const searchScript = entries.includes('publication.js') ? `<script type="module" async src="/publication.js?v=${hashOf('publication.js')}"></script>` : '';
   const scripts = entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
-  const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : undefined;
-  return `<!doctype html><html lang="ko" data-theme="${colorScheme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="${colorScheme}">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
+  const logo = !isWriting && config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : undefined;
+  const header = isWriting ? '' : ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active });
+  const feed = isWriting ? '' : '<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml">';
+  return `<!doctype html><html lang="ko" data-theme="${colorScheme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="${colorScheme}">${publicationMetadata(page, context)}${feed}<link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${header}${body}${footer}${searchScript}</body></html>`;
 }
 
 export function searchBox({ large = false, query = '', combobox = true, action = '/search/', filters, config = loadBlogLayout().search.box } = {}) {
