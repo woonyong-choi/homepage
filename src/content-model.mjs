@@ -1,4 +1,5 @@
 import { isDocumentId, parseContent, validateThumbnail } from './content-metadata.mjs';
+import { readPost } from './blog-model.mjs';
 export { isDocumentId, parseContent, validateThumbnail } from './content-metadata.mjs';
 
 export const TOPIC_GROUPS = Object.freeze(['cs', 'tech']);
@@ -6,9 +7,13 @@ export const FIELDS = Object.freeze(['languages', 'cs', 'frameworks', 'infrastru
 
 export const dateLabel = value => value ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(value)) : undefined;
 
-// 개인 위키 미리보기의 문서만 읽는다. 공개 Blog 글은 blog-model.mjs의 readPost가 읽는다.
+// Vault 발행 검사(tooling/src/service/render.mjs의 publishedPage)가 위키 문서와 Blog 글 모두에 호출하는 계약이다.
 export function readDocument(source, tags, now = new Date(), categories = tags) {
   const { metadata: page, body } = parseContent(source);
+  if (page.type === 'blog') {
+    const post = readPost(source, { now, includeUnpublished: true });
+    return { ...post, type: 'blog', visibility: page.visibility, published: Boolean(readPost(source, { now })) };
+  }
   for (const name of ['id', 'slug']) {
     if (!isDocumentId(page[name])) throw new Error(`invalid document ${name}`);
   }
