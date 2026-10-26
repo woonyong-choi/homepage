@@ -14,7 +14,3 @@ ffmpeg -i original.mp4 -map 0:v:0 -map 0:a:0 \
   -c:a aac -b:a 96k -movflags +faststart woonyong-interview.mp4
 ffmpeg -ss 10 -i woonyong-interview.mp4 -frames:v 1 -q:v 2 woonyong-interview-poster.jpg
 ```
-
-## Markdown 문서 예시
-
-`manta-code-blocks-poster.png`는 승인된 Markdown 문법 예시에서 쓰는 Manta Code Blocks 데모의 첫 프레임이다. 해당 이미지와 `manta-code-blocks-LICENSE.txt`만 발행한다. 사용하지 않는 동영상은 홈페이지에 포함하지 않는다.
