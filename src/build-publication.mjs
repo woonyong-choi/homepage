@@ -36,7 +36,8 @@ const SETTINGS = fileURLToPath(new URL('../config/', import.meta.url));
 const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
 const digest = value => createHash('sha256').update(value).digest('hex');
 
-export async function buildPublication({ origin = '', mode = 'approved-preview' } = {}) {
+// blogRoot·outputRoot는 통합 검사가 승인 사본 대신 임시 입력과 출력 위치를 주입하는 지점이다.
+export async function buildPublication({ origin = '', mode = 'approved-preview', blogRoot = join(CONTENT, 'blog'), outputRoot = OUTPUT } = {}) {
   if (!['approved-preview', 'production'].includes(mode)) throw new Error('invalid publication mode');
   const approved = verifyApprovedContent();
   const config = JSON.parse(readFileSync(join(SETTINGS, 'site.json')));
@@ -44,7 +45,7 @@ export async function buildPublication({ origin = '', mode = 'approved-preview' 
   if (Object.keys(approved).some(path => path.startsWith('content/docs/'))) throw new Error('legacy wiki content requires explicit blog migration approval');
   const preview = mode !== 'production';
   origin = siteOrigin(origin, preview);
-  const posts = collectPosts(markdownFiles(join(CONTENT, 'blog')).map(file => readFileSync(file, 'utf8')));
+  const posts = collectPosts(markdownFiles(blogRoot).map(file => readFileSync(file, 'utf8')));
   const documents = posts;
   const tags = postTags(posts, knownTags);
   const layout = loadBlogLayout();
@@ -84,7 +85,7 @@ export async function buildPublication({ origin = '', mode = 'approved-preview' 
   }
   for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
   const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), context);
-  await writeSite(output, documents, context, scripts, notFound);
+  await writeSite(output, documents, context, scripts, notFound, outputRoot);
   return { pages: output.size, documents: documents.length, themeHash: MANIFEST.contentHash };
 }
 
@@ -111,7 +112,7 @@ async function renderDocuments(documents, options) {
   }
 }
 
-async function writeSite(output, documents, context, scripts, notFound) {
+async function writeSite(output, documents, context, scripts, notFound, outputRoot) {
   // 404 문서는 경로가 아닌 파일로 싣지만 스타일 선별과 자산 수집에는 다른 페이지처럼 포함한다.
   const rendered = new Map([...output, [NOT_FOUND_FILE, notFound]]);
   const sourceStyles = readFileSync(join(THEME, 'styles.css'), 'utf8');
@@ -133,12 +134,17 @@ async function writeSite(output, documents, context, scripts, notFound) {
   files.set('/search-index.json', indexJson);
   files.set('/search-index.json.gz', gzipSync(indexJson, { level: 9 }));
   const posts = documents.filter(page => !page.example);
-  files.set('/blog/feed.xml', `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escape(siteTitle(context.config))}</title><link>${escape(context.origin + '/blog/')}</link><description>${escape(context.config.description)}</description>${posts.map(page => `<item><title>${escape(page.title)}</title><link>${escape(context.origin + page.route)}</link><guid isPermaLink="false">${page.id}</guid><pubDate>${new Date(page.publishedAt).toUTCString()}</pubDate><description>${escape(page.description)}</description></item>`).join('')}</channel></rss>`);
+  files.set('/blog/feed.xml', blogFeedXml(posts, { title: siteTitle(context.config), description: context.config.description, origin: context.origin }));
   files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
   files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: documents.length, examples: documents.filter(page => page.example).length, preview: context.preview, mode: context.mode, commentsStatus: context.commentsStatus, recommendations: context.recommendations, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
   files.set(NOT_FOUND_FILE, rendered.get(NOT_FOUND_FILE));
   files.set('/robots.txt', context.preview ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\nSitemap: ${context.origin}/sitemap.xml\n`);
-  replacePublication(OUTPUT, output, files);
+  replacePublication(outputRoot, output, files);
+}
+
+export function blogFeedXml(posts, { title, description, origin }) {
+  const items = posts.map(page => `<item><title>${escape(page.title)}</title><link>${escape(origin + page.route)}</link><guid isPermaLink="false">${page.id}</guid><pubDate>${new Date(page.publishedAt).toUTCString()}</pubDate><description>${escape(page.description)}</description></item>`).join('');
+  return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escape(title)}</title><link>${escape(origin + '/blog/')}</link><description>${escape(description)}</description>${items}</channel></rss>`;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
