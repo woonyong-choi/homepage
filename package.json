@@ -8,10 +8,7 @@
     "check:product": "node --test src/*.test.mjs",
     "dev": "npm run build:site && node src/serve.mjs --port 8796 --root dist/site",
     "build:site": "node src/build-publication.mjs",
-    "content:approve": "node src/approved-content.mjs approve",
-    "content:revoke": "node src/approved-content.mjs revoke",
     "content:sync-vault": "node src/approved-content.mjs sync-vault",
-    "content:sync": "node src/approved-content.mjs sync",
     "content:check": "node src/approved-content.mjs check"
   },
   "devDependencies": {
