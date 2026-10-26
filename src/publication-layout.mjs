@@ -66,7 +66,7 @@ export function relatedPostsSection(page) {
 
 // 없는 주소의 응답. 어느 경로에서든 읽히므로 링크는 모두 루트 기준이다.
 export function notFoundPage() {
-  return `<main class="app-shell app-body" id="main">${searchBox()}${ui.PageHeading({ title: '페이지를 찾을 수 없습니다' })}<p class="app-empty">주소가 바뀌었거나 없는 페이지입니다. <a href="/">홈</a>이나 <a href="/search/">글 목록</a>에서 찾거나 검색해 주세요.</p></main>`;
+  return `<main class="app-shell app-body" id="main">${searchBox()}${ui.PageHeading({ title: '페이지를 찾을 수 없습니다' })}<p>주소가 바뀌었거나 없는 페이지입니다. <a href="/">홈</a>이나 <a href="/search/">글 목록</a>에서 찾거나 검색해 주세요.</p></main>`;
 }
 
 export function dateLine(page) {
