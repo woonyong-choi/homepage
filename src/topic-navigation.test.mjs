@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createTopicTrees, navigationDocuments } from './topic-navigation.mjs';
+import { createTopicTrees } from './topic-navigation.mjs';
 import { privateWikiArticle as articlePage } from './private-wiki-layout.mjs';
 import { documentPager } from './document-navigation.mjs';
 import { renderArticle } from './article-renderer.mjs';
@@ -47,31 +47,12 @@ test('createTopicTrees_keeps_parent_relations_and_excludes_blog_documents', () =
   assert.equal((navigation.match(/aria-current="page"/g) ?? []).length, 1);
   assert.equal(pages[2].type, 'blog');
 
-  // #200: AI 입구의 하위 문서와 기존 ML·LLM 분류를 원문 변경 없이 연결한다.
-  const topics = {
-    foundations: { label: '기초', article: 'foundations' },
-    ai: { label: '인공지능', article: 'ai' }, ml: { topic: 'ai' }, llm: { topic: 'ai' },
-  };
-  const originals = [page('foundations', null, { category: 'foundations' }),
-    page('ai', null, { category: 'foundations' }), page('deep-learning', 'ai', { category: 'foundations' }),
-    page('learning', 'ml', { category: 'ml' }), page('language-model', 'llm', { category: 'llm' })];
-  const classified = navigationDocuments(originals, topics);
-  assert.deepEqual(classified.map(document => document.topic), ['foundations', 'ai', 'ai', 'ai', 'ai']);
-  assert.deepEqual(classified.map(({ id, route, category }) => ({ id, route, category })),
-    originals.map(({ id, route, category }) => ({ id, route, category })));
-  assert.ok(originals.every(document => document.topic === undefined));
-  const context = { topics, tags: { python: { label: 'Python' } }, topicTrees: createTopicTrees(classified) };
-  const combined = JSDOM.fragment(articlePage(classified[3], context));
-  assert.equal(combined.querySelector('.app-document-nav nav').getAttribute('aria-label'), '인공지능 하위 문서');
-  assert.deepEqual([...combined.querySelectorAll('.app-document-nav nav a')].map(link => link.getAttribute('href')),
-    ['/articles/deep-learning/', '/articles/learning/', '/articles/language-model/']);
 });
 
 test('createTopicTrees_preserves_deep_input_without_using_the_call_stack', () => {
   const pages = Array.from({ length: 10000 }, (_, i) => page(`p-${i}`, i ? `p-${i - 1}` : null));
-  const classified = navigationDocuments(pages, { python: { article: 'p-0' } });
-  let nodes = createTopicTrees(classified).get('python');
-  for (const expected of classified) {
+  let nodes = createTopicTrees(pages).get('python');
+  for (const expected of pages) {
     assert.equal(nodes.length, 1);
     assert.strictEqual(nodes[0].page, expected);
     nodes = nodes[0].children;

@@ -7,7 +7,6 @@ const ASSET_ROOTS = ['/theme/', '/assets/', '/media/', '/katex/'];
 // Pretendard는 unicode-range 부분 집합 여러 개로 나뉘며 모두 같은 OFL 고지를 따른다.
 const PRETENDARD_SUBSETS = '/theme/assets/fonts/pretendard-variable/';
 const ASSET_NOTICES = new Map([
-  ['/media/manta-code-blocks-poster.png', '/media/manta-code-blocks-LICENSE.txt'],
   ['/theme/assets/fonts/jetbrains-mono-regular.woff2', '/theme/assets/fonts/jetbrains-mono-license.txt'],
   ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
   ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],

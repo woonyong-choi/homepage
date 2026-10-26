@@ -1,12 +1,4 @@
 {
-  "https://picsum.photos/seed/bounded-queue/960/540": [
-    960,
-    540
-  ],
-  "https://picsum.photos/seed/diagnosis-evidence/960/540": [
-    960,
-    540
-  ],
   "https://picsum.photos/seed/markdown-guide/960/540": [
     960,
     540
@@ -14,10 +6,6 @@
   "https://picsum.photos/seed/python-copy/1200/500": [
     1200,
     500
-  ],
-  "https://picsum.photos/seed/search-without-stale-results/960/540": [
-    960,
-    540
   ],
   "https://picsum.photos/seed/transaction-boundary/800/1000": [
     800,

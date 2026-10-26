@@ -46,7 +46,6 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   const preview = mode !== 'production';
   origin = siteOrigin(origin, preview);
   const posts = collectPosts(markdownFiles(blogRoot).map(file => readFileSync(file, 'utf8')));
-  const documents = posts;
   const tags = postTags(posts, knownTags);
   const layout = loadBlogLayout();
   const recommendations = keywordRanking(posts, knownTags).slice(0, 3);
@@ -58,13 +57,13 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   }
   const diagramSources = new Map();
   const parsed = new Map();
-  for (const page of documents) {
+  for (const page of posts) {
     const document = await parseArticle(page);
     parsed.set(page.id, document);
     for (const diagram of document.metadata.diagrams) diagramSources.set(diagram.source, page.id);
   }
   const diagrams = await compileDiagrams(diagramSources);
-  await renderDocuments(documents, { diagrams: diagrams.diagrams, parsed });
+  await renderDocuments(posts, { diagrams: diagrams.diagrams, parsed });
   const scripts = browserScripts(ROOT);
   const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))));
   const context = { config, layout, tags, knownTags, recommendations, origin, preview, mode, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
@@ -85,8 +84,8 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   }
   for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
   const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), context);
-  await writeSite(output, documents, context, scripts, notFound, outputRoot);
-  return { pages: output.size, documents: documents.length, themeHash: MANIFEST.contentHash };
+  await writeSite(output, posts, context, scripts, notFound, outputRoot);
+  return { pages: output.size, documents: posts.length, themeHash: MANIFEST.contentHash };
 }
 
 async function renderDocuments(documents, options) {
@@ -112,7 +111,7 @@ async function renderDocuments(documents, options) {
   }
 }
 
-async function writeSite(output, documents, context, scripts, notFound, outputRoot) {
+async function writeSite(output, posts, context, scripts, notFound, outputRoot) {
   // 404 문서는 경로가 아닌 파일로 싣지만 스타일 선별과 자산 수집에는 다른 페이지처럼 포함한다.
   const rendered = new Map([...output, [NOT_FOUND_FILE, notFound]]);
   const sourceStyles = readFileSync(join(THEME, 'styles.css'), 'utf8');
@@ -124,7 +123,7 @@ async function writeSite(output, documents, context, scripts, notFound, outputRo
   }
   for (const route of output.keys()) output.set(route, rendered.get(route));
   const files = new Map([...scripts].map(([file, source]) => [`/${file}`, source]));
-  const index = { entries: documents.map(page => searchEntry(page, context.knownTags)), tags: context.tags };
+  const index = { entries: posts.map(page => searchEntry(page, context.knownTags)), tags: context.tags };
   const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
   for (const [path, content] of context.diagrams) assets.set(path, content);
   for (const [path, content] of assets) files.set(path, content);
@@ -133,10 +132,9 @@ async function writeSite(output, documents, context, scripts, notFound, outputRo
   files.set('/search-version.json', JSON.stringify({ revision: digest(indexJson) }));
   files.set('/search-index.json', indexJson);
   files.set('/search-index.json.gz', gzipSync(indexJson, { level: 9 }));
-  const posts = documents.filter(page => !page.example);
   files.set('/blog/feed.xml', blogFeedXml(posts, { title: siteTitle(context.config), description: context.config.description, origin: context.origin }));
   files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
-  files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: documents.length, examples: documents.filter(page => page.example).length, preview: context.preview, mode: context.mode, commentsStatus: context.commentsStatus, recommendations: context.recommendations, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
+  files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: posts.length, examples: posts.filter(page => page.example).length, preview: context.preview, mode: context.mode, commentsStatus: context.commentsStatus, recommendations: context.recommendations, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
   files.set(NOT_FOUND_FILE, rendered.get(NOT_FOUND_FILE));
   files.set('/robots.txt', context.preview ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\nSitemap: ${context.origin}/sitemap.xml\n`);
   replacePublication(outputRoot, output, files);
