@@ -105,3 +105,72 @@ test('login_callback_keeps_the_comment_anchor_and_logout_updates_all_loaded_thre
   for (const frame of doc.querySelectorAll('iframe')) assert.equal(new URL(frame.src).searchParams.get('session'), '');
   dom.window.close();
 });
+
+function observeVisibility(window) {
+  const observers = [];
+  window.IntersectionObserver = class {
+    constructor(callback, options) { this.callback = callback; this.options = options; this.targets = new Set(); observers.push(this); }
+    observe(target) { this.targets.add(target); }
+    unobserve(target) { this.targets.delete(target); }
+    disconnect() { this.targets.clear(); }
+    show(target) { if (this.targets.has(target)) this.callback([{ target, isIntersecting: true }]); }
+  };
+  return observers;
+}
+
+test('offscreen_threads_load_only_when_visible_or_expanded', () => {
+  const { dom, doc, sections, emit } = setup(markup('first') + markup('second') + markup('third'));
+  const observers = observeVisibility(dom.window);
+  initComments(doc);
+  assert.equal(observers.length, 1);
+  assert.equal(observers[0].options.rootMargin, '100% 0px');
+  assert.equal(doc.querySelectorAll('iframe').length, 0);
+  observers[0].show(sections[1]);
+  assert.equal(doc.querySelectorAll('iframe').length, 1);
+  assert.ok(sections[1].querySelector('iframe'));
+  assert.equal(observers[0].targets.has(sections[1]), false);
+  sections[2].querySelector('button[data-comments-expand]').click();
+  assert.equal(doc.activeElement, sections[2].querySelector('iframe'));
+  assert.equal(observers[0].targets.has(sections[2]), false);
+  assert.equal(sections[0].querySelector('iframe'), null);
+  emit(1, { resizeHeight: 300 });
+  assert.equal(Number.parseFloat(sections[1].querySelector('iframe').style.height), 300);
+  observers[0].show(sections[1]);
+  assert.equal(doc.querySelectorAll('iframe').length, 2);
+  dom.window.close();
+});
+
+test('linked_thread_loads_immediately_even_when_offscreen', () => {
+  const { dom, doc, sections } = setup(markup('first') + markup('second'), 'https://example.com/blog/#comments-second');
+  observeVisibility(dom.window);
+  initComments(doc);
+  assert.equal(sections[0].querySelector('iframe'), null);
+  assert.ok(sections[1].querySelector('iframe'));
+  assert.equal(sections[1].dataset.expanded, 'true');
+  dom.window.close();
+});
+
+test('appended_threads_share_one_message_listener_and_route_by_source', () => {
+  const { dom, doc, sections, emit } = setup(markup('first'));
+  let listeners = 0;
+  const add = dom.window.addEventListener.bind(dom.window);
+  dom.window.addEventListener = (type, ...rest) => { if (type === 'message') listeners++; return add(type, ...rest); };
+  initComments(doc);
+  const added = [];
+  for (const id of ['second', 'third', 'fourth']) {
+    const holder = doc.createElement('div');
+    holder.innerHTML = markup(id);
+    doc.body.append(holder);
+    initComments(holder);
+    added.push(holder.querySelector('[data-comments]'));
+  }
+  assert.equal(listeners, 1);
+  const send = (section, data) => dom.window.dispatchEvent(new dom.window.MessageEvent('message', { origin: 'https://giscus.app', source: section.querySelector('iframe').contentWindow, data: { giscus: data } }));
+  send(added[1], { resizeHeight: 640 });
+  assert.equal(Number.parseFloat(added[1].querySelector('iframe').style.height), 640);
+  for (const section of [sections[0], added[0], added[2]]) assert.equal(section.querySelector('iframe').style.height, '');
+  added[0].parentElement.remove();
+  emit(0, { signOut: true });
+  for (const section of [sections[0], ...added.slice(1)]) assert.equal(new URL(section.querySelector('iframe').src).searchParams.get('session'), '');
+  dom.window.close();
+});
