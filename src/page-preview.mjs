@@ -12,9 +12,9 @@ import { parseArticle, renderArticle } from './article-renderer.mjs';
 import { readDocument, parseContent } from './content-model.mjs';
 import { parseContentSource } from './content-files.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
-import { loadLayoutConfig } from './layout-config.mjs';
+import { loadBlogLayout } from './layout-config.mjs';
 import { articlePage, documentShell, personalHome } from './publication-layout.mjs';
-import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
+import { publicationAssets } from './publication-assets.mjs';
 import { FAVICON, siteOrigin } from './publication-metadata.mjs';
 import { publicationLinks } from './publication-routes.mjs';
 import { browserScripts } from './browser-scripts.mjs';
@@ -23,7 +23,6 @@ import { brandNames } from './brand-icons.mjs';
 import { THEME_ROOT, THEME_MANIFEST } from './design-package.mjs';
 
 export { publicationLinks, documentRoute } from './publication-routes.mjs';
-export { normalizePublicationAssets } from './publication-assets.mjs';
 
 const SOURCE_ROOT = fileURLToPath(new URL('.', import.meta.url));
 
@@ -62,7 +61,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   const math = mathAssets();
   const scripts = browserScripts(SOURCE_ROOT);
   const context = {
-    config: json('site.json'), tags: json('tags.json'), layout: loadLayoutConfig(pathToFileURL(configRoot + sep)),
+    config: json('site.json'), tags: json('tags.json'), layout: loadBlogLayout(pathToFileURL(configRoot + sep)),
     topics: readContent(within(root, topicsFile)).metadata.topics, colorScheme,
     navigation: loadHomeNavigation(root, readContent), preview: true, origin, math,
     themeHash: THEME_MANIFEST.contentHash,
@@ -109,11 +108,17 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     diagnostics = rendered.diagnostics;
     body = page.type === 'wiki' ? privateWikiArticle(page, context) : articlePage(page, context);
   }
-  const html = normalizePublicationAssets(documentShell(page, body, context));
+  const html = documentShell(page, body, context);
   const files = publicationAssets(new Map([[page.route, html]]), [], readAsset);
   for (const [name, bytes] of scripts) files.set(`/${name}`, bytes);
   for (const [name, bytes] of diagrams.assets) files.set(name, bytes);
   return { html, assets: files, links: publicationLinks(html, page.route, origin || undefined), origin, diagnostics, route: page.route, id: page.id };
+}
+
+/** 기존 호스트가 가져오는 이름을 유지한다. 현재 원고와 의존성은 옛 `/things/` 경로를 만들지 않으므로 바꿀 경로가 없다. */
+export function normalizePublicationAssets(value) {
+  if (typeof value !== 'string') throw new TypeError('publication asset value must be a string');
+  return value;
 }
 
 function within(root, name) {

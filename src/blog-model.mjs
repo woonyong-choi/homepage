@@ -1,6 +1,12 @@
 import { isDocumentId, parseContent, validateThumbnail } from './content-metadata.mjs';
 
 export function readPost(source, { now = new Date(), includeUnpublished = false } = {}) {
+  const post = parsePost(source);
+  return includeUnpublished || isPublished(post, now) ? post.page : null;
+}
+
+// 형식 검증은 공개 여부와 무관하게 한 번만 한다.
+function parsePost(source) {
   const { metadata, body } = parseContent(source);
   for (const key of ['id', 'slug']) if (!isDocumentId(metadata[key])) throw new Error(`invalid post ${key}`);
   if (['all', 'page', 'feed'].includes(metadata.slug)) throw new Error(`reserved post slug: ${metadata.slug}`);
@@ -21,8 +27,11 @@ export function readPost(source, { now = new Date(), includeUnpublished = false 
   if (!Array.isArray(keywords) || keywords.some(word => typeof word !== 'string' || !word.trim())) throw new Error(`invalid keywords: ${metadata.id}`);
   for (const key of ['comments', 'example']) if (metadata[key] !== undefined && typeof metadata[key] !== 'boolean') throw new Error(`invalid ${key}: ${metadata.id}`);
   validateThumbnail(metadata.thumbnail);
-  if (!includeUnpublished && (metadata.visibility === 'draft' || metadata.publish === false || metadata.status === 'draft' || metadata.publishedAt > now.toISOString().slice(0, 10))) return null;
-  return { id: metadata.id, slug: metadata.slug, title: metadata.title.trim(), description: metadata.description.trim(), tags: normalized, ...(metadata.keywords ? { keywords: [...new Set(keywords.map(word => word.trim().normalize('NFC')))] } : {}), publishedAt: metadata.publishedAt, ...(metadata.updatedAt ? { updatedAt: metadata.updatedAt } : {}), ...(metadata.thumbnail ? { thumbnail: metadata.thumbnail } : {}), comments: metadata.comments ?? false, example: metadata.example ?? false, body, route: `/blog/${metadata.slug}/` };
+  return { metadata, page: { id: metadata.id, slug: metadata.slug, title: metadata.title.trim(), description: metadata.description.trim(), tags: normalized, ...(metadata.keywords ? { keywords: [...new Set(keywords.map(word => word.trim().normalize('NFC')))] } : {}), publishedAt: metadata.publishedAt, ...(metadata.updatedAt ? { updatedAt: metadata.updatedAt } : {}), ...(metadata.thumbnail ? { thumbnail: metadata.thumbnail } : {}), comments: metadata.comments ?? false, example: metadata.example ?? false, body, route: `/blog/${metadata.slug}/` } };
+}
+
+function isPublished({ metadata }, now) {
+  return !(metadata.visibility === 'draft' || metadata.publish === false || metadata.status === 'draft' || metadata.publishedAt > now.toISOString().slice(0, 10));
 }
 
 export function postTags(posts, knownLabels = {}) {
@@ -30,9 +39,9 @@ export function postTags(posts, knownLabels = {}) {
 }
 
 export function collectPosts(sources, { now = new Date(), includeExamples = false } = {}) {
-  const posts = sources.map(source => readPost(source, { now, includeUnpublished: true }));
-  for (const key of ['id', 'slug']) if (new Set(posts.map(post => post[key])).size !== posts.length) throw new Error(`duplicate post ${key}`);
-  return sources.map(source => readPost(source, { now })).filter(post => post && (includeExamples || !post.example)).sort(comparePosts);
+  const posts = sources.map(parsePost);
+  for (const key of ['id', 'slug']) if (new Set(posts.map(post => post.page[key])).size !== posts.length) throw new Error(`duplicate post ${key}`);
+  return posts.filter(post => isPublished(post, now)).map(post => post.page).filter(post => includeExamples || !post.example).sort(comparePosts);
 }
 
 export function comparePosts(left, right) {

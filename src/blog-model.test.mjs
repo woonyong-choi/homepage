@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { collectPosts, postTags, readPost, relatedPosts, searchEntry, keywordRanking } from './blog-model.mjs';
-import { readDocument } from './content-model.mjs';
 import { searchUrl, prepareIndex, readSearchState, searchDocuments } from './search-model.mjs';
 
 const NOW = new Date('2026-10-19T00:00:00Z');
@@ -37,12 +36,6 @@ test('readPost_requires_explicit_publication_and_rejects_invalid_metadata', () =
   assert.deepEqual(collectPosts([source({ example: true })], { now: NOW }), []);
   assert.equal(collectPosts([source({ example: true })], { now: NOW, includeExamples: true }).length, 1);
   assert.throws(() => collectPosts([source(), source({ visibility: 'draft' })], { now: NOW }), /duplicate post id/);
-});
-
-test('readDocument_keeps_the_external_host_blog_adapter_without_requiring_legacy_classification', () => {
-  const post = readDocument(source({ type: 'blog' }), {}, NOW, {});
-  assert.deepEqual([post.type, post.visibility, post.published, post.route], ['blog', 'public', true, '/blog/plain/']);
-  assert.equal(readDocument(source({ type: 'blog', visibility: 'draft' }), {}, NOW, {}).published, false);
 });
 
 test('blog_query_preserves_arbitrary_tags_and_sorts_matched_posts_by_publication_date', () => {

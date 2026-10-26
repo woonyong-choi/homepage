@@ -63,15 +63,15 @@ test('thumbnail_without_registered_dimensions_does_not_guess_an_aspect_ratio', (
   assert.doesNotMatch(html, /\s(?:width|height)=/);
 });
 
-test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column', async () => {
-  const page = (await post('wiki'));
-  const tree = { page, children: [{ page: { ...page, id: 'child', title: '하위 문서', route: '/articles/child/' }, children: [] }] };
-  const html = privateWikiArticle(page, { topics, topicTrees: new Map([['python', [tree]]]) });
+test('wiki_detail_places_the_heading_outline_beside_the_reading_column', async () => {
+  const page = { ...(await post('wiki')), sourceUrl: 'https://example.com/source' };
+  const html = privateWikiArticle(page, { topics }, '<section id="comments">댓글</section>');
   assert.match(html, /^<main id="main" class="app-shell app-document-shell"><section class="app-search/);
   assert.doesNotMatch(html, /class="app-tag is-medium"/);
   assert.match(html, /class="app-document-layout" data-document-layout/);
   assert.match(html, /<h1 class="app-article-title"><span class="app-content-icon is-medium">/);
-  const positions = order(html, ['data-public-search', 'app-document-sidebar', 'app-document-outline', 'app-document-content', 'app-article-title', 'app-document-lead', 'app-document-metadata', 'app-document-body']);
+  const positions = order(html, ['data-public-search', 'app-document-outline', 'app-document-content', 'app-article-title', 'app-document-lead', 'app-document-metadata', 'app-document-body', 'app-source-link', 'id="comments"']);
+  assert.doesNotMatch(html, /app-document-sidebar|app-document-pager/);
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
   assert.match(html.match(/<details class="app-document-nav"[^>]*>/)[0], /\sopen/);
   assert.doesNotMatch(html, />문서 목록<|>이 글의 목차</);

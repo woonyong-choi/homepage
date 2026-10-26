@@ -151,7 +151,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 호스트가 공개 입력 범위를 제한할 때는 `readContent(relativePath, editedSource?)`를 제공한다. 선택 원고와 홈·주제·참조 섹션 원고가 모두 이 함수를 통과한다. 경로는 콘텐츠 루트 기준이며 선택한 원고에는 저장 전 문자열이 두 번째 인자로 전달된다. 호스트는 허용 목록·공개 상태·실제 경로를 확인하고, 검사한 동일 문자열을 동기 반환하거나 거절 시 예외를 던진다. 어댑터는 반환 문자열을 다시 파일에서 읽지 않으며 콜백 거절 시 기본 읽기로 우회하지 않는다. 콜백 제공 시 파일 열기와 심볼릭 링크 검증의 책임은 호스트에 있다. 콜백을 생략한 기존 소비자는 입력 루트 안의 파일 읽기를 유지한다. 자산 접근은 별도의 `assets.read` 경계를 따른다.
 
-`src/page-preview.mjs`가 내보내는 `normalizePublicationAssets(value)`는 기존 원문의 `/things/assets/`, `/things/theme/`를 발행 경로 `/assets/`, `/theme/`로 바꾼다. 정식 빌드와 미리보기가 같은 함수를 사용하며 호스트의 자산 검사에도 사용할 수 있다. 경로 또는 HTML 문자열을 받아 문자열을 반환하고 원고는 수정하지 않는다. 문서 주소와 앵커 해석은 이 함수의 범위가 아니다.
+`src/page-preview.mjs`가 내보내는 `normalizePublicationAssets(value)`는 기존 호스트가 가져오는 이름을 유지하는 호환 함수다. 현재 승인 원고와 의존성은 옛 `/things/` 자산 경로를 만들지 않으므로 받은 문자열을 그대로 반환하고, 문자열이 아니면 오류를 낸다. 정식 빌드와 미리보기는 이 변환을 거치지 않는다.
 
 미리보기 성공 결과의 `links`는 최종 HTML의 `a[href]`, `area[href]`에서 수집한 문자열 배열이다. frontmatter와 설정에서 출력된 메뉴도 포함한다. `publicationLinks(html, route, origin)`는 상대 링크를 페이지 경로 기준으로 해석해 같은 출처는 경로·쿼리·앵커, 외부는 전체 URL로 반환한다. 기본 origin은 검사 전용 `https://publication.invalid`다. 실제 사이트의 절대 주소까지 내부로 검사하려면 해당 origin을 전달한다. 잘못된 URL은 오류로 발행을 막으며 미리보기 API에서는 diagnostics로 반환한다. JavaScript 실행 후 추가되는 링크는 정적 수집 범위 밖이다.
 

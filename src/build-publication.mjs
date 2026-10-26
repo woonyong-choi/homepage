@@ -16,7 +16,7 @@ import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { brandNames } from './brand-icons.mjs';
 import { serviceTagCatalog, serviceTagInventory } from './service-tags.mjs';
-import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
+import { publicationAssets } from './publication-assets.mjs';
 import { replacePublication, NOT_FOUND_FILE } from './publication-output.mjs';
 import { loadHomeContent } from './home-content.mjs';
 import { browserScripts } from './browser-scripts.mjs';
@@ -106,8 +106,8 @@ async function renderDocuments(documents, options) {
       const prefixed = `${page.id}-${decodeURIComponent(fragment)}`;
       return (page.leadHtml + page.html).includes(`id="${prefixed}"`) ? `href="#${prefixed}"` : original;
     });
-    page.leadHtml = normalizePublicationAssets(rewrite(page.leadHtml));
-    page.html = normalizePublicationAssets(rewrite(page.html));
+    page.leadHtml = rewrite(page.leadHtml);
+    page.html = rewrite(page.html);
   }
 }
 

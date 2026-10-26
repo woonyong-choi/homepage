@@ -64,7 +64,3 @@ export function publicationAssets(pages, searchEntries, readAsset) {
   include('/theme/assets/giscus.css');
   return files;
 }
-
-export function normalizePublicationAssets(value) {
-  return value.replaceAll('/things/assets/', '/assets/').replaceAll('/things/theme/', '/theme/');
-}
