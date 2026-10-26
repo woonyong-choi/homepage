@@ -1,8 +1,7 @@
 // 미리보기는 지정된 원고만 읽고 결과를 메모리로 반환한다. 발행 경로에는 쓰지 않는다.
 import { readFileSync, realpathSync } from 'node:fs';
-import { isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createHash } from 'node:crypto';
 
 import { mathAssets } from 'document-engine';
 
@@ -12,18 +11,19 @@ import { parseArticle, renderArticle } from './article-renderer.mjs';
 import { readDocument, parseContent } from './content-model.mjs';
 import { parseContentSource } from './content-files.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
-import { loadLayoutConfig } from './layout-config.mjs';
+import { loadBlogLayout } from './layout-config.mjs';
 import { articlePage, documentShell, personalHome } from './publication-layout.mjs';
-import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
+import { publicationAssets } from './publication-assets.mjs';
 import { FAVICON, siteOrigin } from './publication-metadata.mjs';
 import { publicationLinks } from './publication-routes.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { compileDiagrams } from './diagrams.mjs';
 import { brandNames } from './brand-icons.mjs';
 import { THEME_ROOT, THEME_MANIFEST } from './design-package.mjs';
+import { containedFile, within } from './content-paths.mjs';
+import { sha256 } from './sha256.mjs';
 
 export { publicationLinks, documentRoute } from './publication-routes.mjs';
-export { normalizePublicationAssets } from './publication-assets.mjs';
 
 const SOURCE_ROOT = fileURLToPath(new URL('.', import.meta.url));
 
@@ -62,11 +62,11 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   const math = mathAssets();
   const scripts = browserScripts(SOURCE_ROOT);
   const context = {
-    config: json('site.json'), tags: json('tags.json'), layout: loadLayoutConfig(pathToFileURL(configRoot + sep)),
+    config: json('site.json'), tags: json('tags.json'), layout: loadBlogLayout(pathToFileURL(configRoot + sep)),
     topics: readContent(within(root, topicsFile)).metadata.topics, colorScheme,
     navigation: loadHomeNavigation(root, readContent), preview: true, origin, math,
     themeHash: THEME_MANIFEST.contentHash,
-    scriptHash: createHash('sha256').update([...scripts.values()].join('\n')).digest('hex'),
+    scriptHash: sha256([...scripts.values()].join('\n')),
   };
   const readAsset = path => {
     if (path === FAVICON) return readFileSync(new URL(`../content${FAVICON}`, import.meta.url));
@@ -109,23 +109,15 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     diagnostics = rendered.diagnostics;
     body = page.type === 'wiki' ? privateWikiArticle(page, context) : articlePage(page, context);
   }
-  const html = normalizePublicationAssets(documentShell(page, body, context));
+  const html = documentShell(page, body, context);
   const files = publicationAssets(new Map([[page.route, html]]), [], readAsset);
   for (const [name, bytes] of scripts) files.set(`/${name}`, bytes);
   for (const [name, bytes] of diagrams.assets) files.set(name, bytes);
   return { html, assets: files, links: publicationLinks(html, page.route, origin || undefined), origin, diagnostics, route: page.route, id: page.id };
 }
 
-function within(root, name) {
-  if (typeof name !== 'string' || !name || isAbsolute(name)) throw new Error('preview path must be relative');
-  const target = resolve(root, name);
-  const path = relative(root, target);
-  if (path === '..' || path.startsWith(`..${sep}`) || isAbsolute(path)) throw new Error('preview path escapes input root');
-  return target;
-}
-
-function containedFile(root, name) {
-  const target = realpathSync(within(root, name));
-  within(root, relative(root, target));
-  return target;
+/** 기존 호스트가 가져오는 이름을 유지한다. 현재 원고와 의존성은 옛 `/things/` 경로를 만들지 않으므로 바꿀 경로가 없다. */
+export function normalizePublicationAssets(value) {
+  if (typeof value !== 'string') throw new TypeError('publication asset value must be a string');
+  return value;
 }

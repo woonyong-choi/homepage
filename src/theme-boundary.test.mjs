@@ -7,7 +7,8 @@ import { JSDOM } from 'jsdom';
 import { fileURLToPath } from 'node:url';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
-import { readDocument } from './content-model.mjs';
+import { readDocument, parseContent } from './content-model.mjs';
+import { readPost } from './blog-model.mjs';
 import { readContentFile } from './content-files.mjs';
 import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 import { THEME_ROOT } from './design-package.mjs';
@@ -31,7 +32,8 @@ test('design_is_an_installed_package_pinned_to_a_commit_without_a_copy', () => {
 const ARTICLE_FIXTURES = ['document-composition.md', 'markdown-guide.md', 'preview-article.md'];
 
 async function corpus() {
-  const pages = ARTICLE_FIXTURES.map(name => readDocument(readFileSync(join(product, 'fixtures', name), 'utf8'), TAGS, new Date('2026-10-19'), TOPICS));
+  const read = source => parseContent(source).metadata.type === 'wiki' ? readDocument(source, TAGS, new Date('2026-10-19'), TOPICS) : readPost(source, { includeUnpublished: true });
+  const pages = ARTICLE_FIXTURES.map(name => read(readFileSync(join(product, 'fixtures', name), 'utf8')));
   const all = await Promise.all(pages.map(async page => Object.assign(page, await renderArticle(page))));
   const specimen = (await renderArticle({ id: 'specimen', description: '', body: readFileSync(join(product, 'fixtures/syntax-specimen.md'), 'utf8') })).html;
   return [...all.map(page => articlePage(page, { topics: TOPICS, tags: TAGS })), specimen];

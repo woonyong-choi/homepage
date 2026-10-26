@@ -1,10 +1,10 @@
 // Vault가 명시한 파일의 동일 바이트를 검증하며 원고 트리를 탐색하지 않는다.
-import { existsSync, readFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 
 import { parseContentSource } from './content-files.mjs';
 import { safeFile, validatePath } from './content-paths.mjs';
 import { isDocumentId } from './content-model.mjs';
+import { sha256 } from './sha256.mjs';
 
 export const VAULT_CONFIGS = Object.freeze(['site', 'tags', 'search', 'cs', 'tech', 'blog']);
 
@@ -20,8 +20,7 @@ export function readVaultPublication(root) {
     sources.add(entry.source);
     targets.add(entry.target);
     const content = readFileSync(safeFile(root, entry.source));
-    const sha256 = createHash('sha256').update(content).digest('hex');
-    if (sha256 !== entry.sha256) throw new Error(`Vault source changed after manifest: ${entry.source}`);
+    if (sha256(content) !== entry.sha256) throw new Error(`Vault source changed after manifest: ${entry.source}`);
     const metadata = entry.source.endsWith('.md') ? parseContentSource(content.toString('utf8'), entry.source).metadata : undefined;
     if (metadata) validateMetadata(entry, metadata, identities);
     if (entry.target.startsWith('config/')) JSON.parse(content.toString('utf8'));
@@ -75,23 +74,3 @@ function validateMetadata(entry, metadata, identities) {
   if (entry.url !== undefined && entry.url !== route && entry.url !== `https://woonyong.com${route}`) throw new Error(`Vault document URL changed: ${entry.source}`);
 }
 
-
-export function readVaultAdoption(sourceRoot, siteRoot, targets) {
-  const path = safeFile(sourceRoot, 'tooling/migration-receipt.json');
-  if (!existsSync(path)) return { before: {}, retire: [] };
-  const receipt = JSON.parse(readFileSync(path, 'utf8'));
-  const adoption = receipt.homepageAdoption;
-  if (receipt.version !== 1 || !adoption || adoption.applied !== false || !/^[a-f0-9]{40}$/.test(adoption.sourceCommit) || !adoption.before || typeof adoption.before !== 'object' || !Array.isArray(adoption.retire)) throw new Error('invalid homepage adoption receipt');
-  const allowed = new Set(['content/home.md', 'content/tech.md', 'content/interviews.md', ...VAULT_CONFIGS.map(name => `config/${name}.json`)]);
-  for (const [file, hash] of Object.entries(adoption.before)) {
-    if (!allowed.has(file) || !/^[a-f0-9]{64}$/.test(hash)) throw new Error(`invalid homepage adoption target: ${file}`);
-    const current = createHash('sha256').update(readFileSync(safeFile(siteRoot, file))).digest('hex');
-    if (current !== hash) throw new Error(`homepage adoption target changed: ${file}`);
-    if (!targets.has(file) && !adoption.retire.includes(file)) throw new Error(`unaccounted homepage adoption target: ${file}`);
-  }
-  if (new Set(adoption.retire).size !== adoption.retire.length) throw new Error('duplicate homepage retirement target');
-  for (const file of adoption.retire) {
-    if (!['content/tech.md', 'content/interviews.md'].includes(file) || !Object.hasOwn(adoption.before, file) || targets.has(file)) throw new Error(`invalid homepage retirement target: ${file}`);
-  }
-  return adoption;
-}

@@ -5,7 +5,6 @@ import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { privateWikiArticle } from './private-wiki-layout.mjs';
 import { thumbnailImage } from './post-article.mjs';
-import { token, px, box } from './theme-measure.mjs';
 import { THEME_ROOT } from './design-package.mjs';
 
 const near = (value, expected) => assert.equal(Math.round(value * 10000) / 10000, expected);
@@ -63,15 +62,15 @@ test('thumbnail_without_registered_dimensions_does_not_guess_an_aspect_ratio', (
   assert.doesNotMatch(html, /\s(?:width|height)=/);
 });
 
-test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column', async () => {
-  const page = (await post('wiki'));
-  const tree = { page, children: [{ page: { ...page, id: 'child', title: '하위 문서', route: '/articles/child/' }, children: [] }] };
-  const html = privateWikiArticle(page, { topics, topicTrees: new Map([['python', [tree]]]) });
+test('wiki_detail_places_the_heading_outline_beside_the_reading_column', async () => {
+  const page = { ...(await post('wiki')), sourceUrl: 'https://example.com/source' };
+  const html = privateWikiArticle(page, { topics }, '<section id="comments">댓글</section>');
   assert.match(html, /^<main id="main" class="app-shell app-document-shell"><section class="app-search/);
   assert.doesNotMatch(html, /class="app-tag is-medium"/);
   assert.match(html, /class="app-document-layout" data-document-layout/);
   assert.match(html, /<h1 class="app-article-title"><span class="app-content-icon is-medium">/);
-  const positions = order(html, ['data-public-search', 'app-document-sidebar', 'app-document-outline', 'app-document-content', 'app-article-title', 'app-document-lead', 'app-document-metadata', 'app-document-body']);
+  const positions = order(html, ['data-public-search', 'app-document-outline', 'app-document-content', 'app-article-title', 'app-document-lead', 'app-document-metadata', 'app-document-body', 'app-source-link', 'id="comments"']);
+  assert.doesNotMatch(html, /app-document-sidebar|app-document-pager/);
   assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
   assert.match(html.match(/<details class="app-document-nav"[^>]*>/)[0], /\sopen/);
   assert.doesNotMatch(html, />문서 목록<|>이 글의 목차</);
@@ -82,6 +81,29 @@ test('wiki_detail_places_hierarchy_and_heading_outline_beside_the_reading_column
 });
 
 const css = readFileSync(`${THEME_ROOT}/styles.css`, 'utf8');
+const TOKENS = new Map([...readFileSync(`${THEME_ROOT}/tokens.css`, 'utf8').matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(match => [match[1], match[2].trim()]));
+
+// 가져온 테마의 토큰 사슬을 따라 값을 풀어 원본 실측값과 대조한다.
+function token(name) {
+  let value = TOKENS.get(name);
+  if (value === undefined) throw new Error(`undefined token: ${name}`);
+  for (let depth = 0; depth < 12; depth += 1) {
+    const next = value.replace(/var\((--[\w-]+)\)/g, (_, inner) => TOKENS.get(inner) ?? inner);
+    if (next === value) return value;
+    value = next;
+  }
+  throw new Error(`token cycle: ${name}`);
+}
+
+// 길이를 px로 바꾼다. em은 기준 글자 크기를 곱하고, 단위 없는 값은 그대로 둔다.
+function px(value, em = 18) {
+  const match = /^(-?[\d.]+)(px|em|%)?$/.exec(value.trim());
+  if (!match) throw new Error(`not a length: ${value}`);
+  const number = Number(match[1]);
+  return match[2] === 'em' ? number * em : number;
+}
+
+const box = (value, em = 18) => value.trim().split(/\s+/).map(part => (part === 'auto' ? part : px(part, em)));
 const rule = selector => { const match = css.match(new RegExp(`(?:^|\\n)${selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\{([^}]*)\\}`)); assert.ok(match, selector); return match[1]; };
 
 test('document_column_keeps_reading_width_and_soft_wrapping_between_navigation_columns', () => {

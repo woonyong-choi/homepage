@@ -57,7 +57,7 @@ export function articlePage(page, context, comments = '') {
   return `<main id="main" class="app-shell">${postArticle({ ...page, html: page.html + relatedPostsSection(page) }, { detail: true, tags: tagLinks(page, context.tags ?? {}), footer: `${updated}${example}`, after: comments })}</main>`;
 }
 
-export function relatedPostsSection(page) {
+function relatedPostsSection(page) {
   const posts = page.related ?? [];
   if (!posts.length) return '';
   const cards = posts.map(post => ui.Card({ href: post.route, title: post.title, variant: 'related' }));

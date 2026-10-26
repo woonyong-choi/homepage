@@ -1,5 +1,4 @@
 // 공개 입력을 정적 페이지와 검색 색인으로 만들며 깨진 내부 연결을 차단한다.
-import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,7 +15,7 @@ import { commentsSection, commentThemeUrl } from './comments.mjs';
 import { readCommentCounts } from './comment-counts.mjs';
 import { brandNames } from './brand-icons.mjs';
 import { serviceTagCatalog, serviceTagInventory } from './service-tags.mjs';
-import { publicationAssets, normalizePublicationAssets } from './publication-assets.mjs';
+import { publicationAssets } from './publication-assets.mjs';
 import { replacePublication, NOT_FOUND_FILE } from './publication-output.mjs';
 import { loadHomeContent } from './home-content.mjs';
 import { browserScripts } from './browser-scripts.mjs';
@@ -29,12 +28,12 @@ import { siteIdentity } from './site-identity.mjs';
 import { markdownFiles } from './content-files.mjs';
 import { loadBlogLayout } from './layout-config.mjs';
 import { verifyApprovedContent } from './approved-content.mjs';
+import { sha256 as digest } from './sha256.mjs';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 const CONTENT = fileURLToPath(new URL('../content/', import.meta.url));
 const SETTINGS = fileURLToPath(new URL('../config/', import.meta.url));
 const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
-const digest = value => createHash('sha256').update(value).digest('hex');
 
 // blogRoot·outputRoot는 통합 검사가 승인 사본 대신 임시 입력과 출력 위치를 주입하는 지점이다.
 export async function buildPublication({ origin = '', mode = 'approved-preview', blogRoot = join(CONTENT, 'blog'), outputRoot = OUTPUT } = {}) {
@@ -106,8 +105,8 @@ async function renderDocuments(documents, options) {
       const prefixed = `${page.id}-${decodeURIComponent(fragment)}`;
       return (page.leadHtml + page.html).includes(`id="${prefixed}"`) ? `href="#${prefixed}"` : original;
     });
-    page.leadHtml = normalizePublicationAssets(rewrite(page.leadHtml));
-    page.html = normalizePublicationAssets(rewrite(page.html));
+    page.leadHtml = rewrite(page.leadHtml);
+    page.html = rewrite(page.html);
   }
 }
 

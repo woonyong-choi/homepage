@@ -4,7 +4,7 @@ import { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync, symlinkSync
 import { createHash, randomUUID } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { syncVaultPublication, syncApprovedContent, verifyApprovedContent, publicationTopicsFile } from './approved-content.mjs';
+import { syncVaultPublication, verifyApprovedContent } from './approved-content.mjs';
 import { VAULT_CONFIGS } from './vault-publication.mjs';
 
 function fixture(t) {
@@ -43,7 +43,6 @@ test('syncVaultPublication_copies_only_listed_bytes_and_tracks_home_config_and_r
   assert.equal(syncVaultPublication(f.vault, f.site), f.entries.length);
   assert.equal(readFileSync(join(f.site, entry.target), 'utf8'), doc());
   assert.equal(existsSync(join(f.site, 'drafts')), false);
-  assert.equal(publicationTopicsFile(f.site), 'pages/tech.md');
   assert.equal(existsSync(join(f.site, 'content/tech.md')), false);
   assert.ok(verifyApprovedContent(f.site)['config/site.json']);
   f.entries.splice(f.entries.indexOf(entry), 1);
@@ -88,29 +87,35 @@ test('syncVaultPublication_rejects_escape_duplicate_symlink_and_generated_config
 });
 
 
-test('syncVaultPublication_adopts_only_hash_verified_previous_files_and_retires_explicit_paths', t => {
+test('syncVaultPublication_rejects_unmanaged_existing_files_before_changes', t => {
   const f = fixture(t);
   mkdirSync(join(f.site, 'content'), { recursive: true });
-  const before = {};
-  for (const file of ['content/home.md', 'content/tech.md', 'content/interviews.md']) {
-    writeFileSync(join(f.site, file), 'previous');
-    before[file] = createHash('sha256').update('previous').digest('hex');
-  }
+  writeFileSync(join(f.site, 'content/home.md'), 'previous');
   f.save();
   assert.throws(() => syncVaultPublication(f.vault, f.site), /unmanaged existing/);
-  const receipt = { version: 1, homepageAdoption: { sourceCommit: 'a'.repeat(40), before,
-    retire: ['content/tech.md', 'content/interviews.md'], applied: false } };
-  writeFileSync(join(f.vault, 'tooling/migration-receipt.json'), JSON.stringify(receipt));
-  writeFileSync(join(f.site, 'content/tech.md'), 'local edit');
-  assert.throws(() => syncVaultPublication(f.vault, f.site), /adoption target changed/);
   assert.equal(readFileSync(join(f.site, 'content/home.md'), 'utf8'), 'previous');
-  writeFileSync(join(f.site, 'content/tech.md'), 'previous');
+  assert.equal(existsSync(join(f.site, 'config/approved-content.json')), false);
+});
+
+// #164: 발행 목록은 기존 순서와 원문 출처를 유지하고 해석 오류가 나면 사본을 바꾸지 않는다.
+test('syncVaultPublication_manifest_keeps_order_and_provenance_and_stops_on_invalid_json', t => {
+  const f = fixture(t);
+  const documents = [
+    { id: 'first', slug: 'first-page', sourceUrl: 'https://docs.example.com/first/', sourceHash: 'a'.repeat(64) },
+    { id: 'second', slug: 'second-page' },
+  ];
+  for (const document of documents) f.put(`docs/${document.id}.md`, `content/docs/${document.id}.md`, `---\n${JSON.stringify({ type: 'wiki', publish: true, ...document })}\n---\n# Wiki\n`);
+  f.save();
+  mkdirSync(join(f.site, 'config'));
+  const manifest = join(f.site, 'config/publication-manifest.json');
+  writeFileSync(manifest, JSON.stringify({ source: 'https://docs.example.com', documents: [{ id: 'second' }, { id: 'first' }] }));
   syncVaultPublication(f.vault, f.site);
-  assert.equal(existsSync(join(f.site, 'content/tech.md')), false);
-  assert.equal(existsSync(join(f.site, 'content/interviews.md')), false);
-  assert.equal(publicationTopicsFile(f.site), 'pages/tech.md');
-  syncVaultPublication(f.vault, f.site);
-  assert.throws(() => syncApprovedContent(f.vault, f.site), /cannot fall back/);
+  assert.deepEqual(JSON.parse(readFileSync(manifest)), { source: 'https://docs.example.com', documents: documents.toReversed().map(document => ({ ...document, file: `${document.id}.md` })) });
+  const snapshot = readFileSync(join(f.site, 'config/approved-content.json'));
+  writeFileSync(manifest, '{');
+  assert.throws(() => syncVaultPublication(f.vault, f.site), SyntaxError);
+  assert.equal(readFileSync(manifest, 'utf8'), '{');
+  assert.deepEqual(readFileSync(join(f.site, 'config/approved-content.json')), snapshot);
 });
 
 test('syncVaultPublication_rejects_unlisted_home_section', t => {

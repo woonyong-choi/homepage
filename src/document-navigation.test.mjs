@@ -4,72 +4,8 @@ import { JSDOM } from 'jsdom';
 import { initDocumentNavigation } from '@woonyong-choi/design-tokens/ui/runtime/document-navigation.js';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 
-test('group_titles_toggle_children_and_leaf_titles_keep_their_document_link', () => {
-  const dom = new JSDOM(String(ui.DocumentNavigation({ label: 'OS', nodes: [
-    { title: '프로세스', href: '/docs/process/', current: true, children: [
-      { title: 'Thread', href: '/docs/thread/' },
-    ] },
-  ] })), { url: 'https://example.com/docs/process/' });
-  const group = dom.window.document.querySelector('li > details');
-  const title = group.querySelector('summary').lastElementChild;
-  title.click();
-  assert.equal(group.open, true);
-  assert.equal(title.getAttribute('aria-current'), 'page');
-  assert.equal(group.querySelector('ul a').getAttribute('href'), '/docs/thread/');
-  title.click();
-  assert.equal(group.open, false);
-  dom.window.close();
-});
-
-test('document_navigation_selects_the_clicked_row_and_keeps_only_its_ancestor_branch_open', () => {
-  const dom = new JSDOM(String(ui.DocumentLayout({
-    navigation: ui.DocumentNavigation({ label: 'OS', nodes: [
-      { title: 'OS', href: '/docs/os/', current: true, open: true, children: [
-        { title: '파일 시스템', href: '/docs/files/', children: [
-          { title: '파일 접근', href: '/docs/access/', children: [
-            { title: '권한', href: '/docs/permissions/' },
-          ] },
-        ] },
-        { title: '프로세스', href: '/docs/process/', children: [
-          { title: 'Thread', href: '/docs/thread/' },
-        ] },
-      ] },
-    ] }),
-    content: ui.trusted('<article>본문</article>'),
-  })), { url: 'https://example.com/docs/os/', pretendToBeVisual: true });
-  const doc = dom.window.document;
-  const layout = doc.querySelector('[data-document-layout]');
-  layout.querySelector('aside').style.position = 'sticky';
-  initDocumentNavigation(layout);
-  const [root, files, access, process] = layout.querySelectorAll('nav details');
-  const click = group => group.querySelector('summary > span').click();
-  const selected = () => [...layout.querySelectorAll('.is-selected')].map(row => row.textContent);
-  click(files);
-  assert.equal(files.open, true);
-  assert.deepEqual(selected(), ['파일 시스템']);
-  click(access);
-  assert.ok(root.open && files.open && access.open);
-  assert.deepEqual(selected(), ['파일 접근']);
-  click(process);
-  assert.ok(root.open && process.open);
-  assert.ok(!files.open && !access.open);
-  assert.deepEqual(selected(), ['프로세스']);
-  assert.equal(layout.querySelector('[aria-current="page"]').textContent, 'OS');
-  const leaf = process.querySelector('a');
-  leaf.addEventListener('click', event => event.preventDefault());
-  leaf.click();
-  assert.deepEqual(selected(), ['Thread']);
-  assert.equal(leaf.getAttribute('href'), '/docs/thread/');
-  click(root);
-  assert.ok(!root.open && !process.open);
-  assert.deepEqual(selected(), ['OS']);
-  dom.window.close();
-});
-
-test('document_navigation_tracks_subheadings_and_preserves_mobile_disclosure_choices', () => {
+test('document_outline_tracks_subheadings_and_preserves_mobile_disclosure_choices', () => {
   const html = ui.DocumentLayout({
-    navigation: ui.DocumentNavigation({ label: 'Python',
-      nodes: [{ title: 'Python', href: '/docs/python/', current: true }] }),
     outline: ui.DocumentOutline({ sections: [
       { id: 'one', title: '첫 절', level: 2 }, { id: 'child', title: '하위 절', level: 3 },
       { id: 'two', title: '다음 절', level: 2 },
@@ -82,8 +18,7 @@ test('document_navigation_tracks_subheadings_and_preserves_mobile_disclosure_cho
   const panes = [...layout.querySelectorAll('aside')];
   panes.forEach(pane => { pane.style.position = 'sticky'; });
   const panels = [...layout.querySelectorAll('[data-document-panel]')];
-  // 문서 탐색과 목차가 같은 접기 패널 동작을 쓴다.
-  assert.equal(panels.length, 2);
+  assert.equal(panels.length, 1);
   assert.equal(layout.querySelector('.app-document-outline > details > nav').getAttribute('aria-label'), '본문 목차');
   assert.equal(layout.querySelector('.app-document-outline > details > summary').textContent, '목차');
   let scheduled;
