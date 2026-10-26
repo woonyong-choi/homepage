@@ -97,3 +97,16 @@ test('category_is_independent_from_optional_shared_tags', () => {
   assert.deepEqual(tagged.tags, ['javascript']);
   assert.throws(() => readDocument(source({ type: 'wiki', category: 'missing' }), TAGS, now, categories), /invalid category/);
 });
+
+// Vault 발행 검사(publishedPage)는 Blog 글도 readDocument로 판정한다. 초안은 읽되 published=false로 구분한다.
+test('read_document_accepts_blog_posts_for_the_vault_publish_check', () => {
+  const now = new Date('2026-10-08');
+  const page = readDocument(source(), TAGS, now);
+  assert.equal(page.type, 'blog');
+  assert.equal(page.route, '/blog/a/');
+  assert.equal(page.visibility, 'public');
+  assert.equal(page.published, true);
+  const draft = readDocument(source({ visibility: 'draft' }), TAGS, now);
+  assert.equal(draft.published, false);
+  assert.equal(draft.visibility, 'draft');
+});

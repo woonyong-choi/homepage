@@ -45,7 +45,7 @@ npm run check:tokens
 - 비공개 Vault 원문을 수정하고 명시적으로 승인한 뒤 `content:sync-vault`로 가져온다. 홈 원고와 승인 목록의 작성 설정·자산도 사본이며 직접 수정하지 않는다. 승인 목록에 없는 파일은 공개하지 않는다.
 - 공개 글은 Blog 하나다. 목록·검색·태그는 `/search/`, 최근 본문 피드는 `/blog/`, 상세는 `/blog/<slug>/`, RSS는 `/blog/feed.xml`이다. 공개 분류·문서 계층·글 아이콘을 요구하지 않는다.
 - 태그는 기술·산책·독서·회고 같은 임의 문자열이다. `config/tags.json`은 표시 이름·별칭이며 허용 목록이 아니다.
-- 개인 Vault의 `renderPagePreview`, `documentRoute`, `publicationLinks`와 승인·해시·동기화 트랜잭션 계약을 유지한다. 개인 위키의 `category`, `parent`는 공개 Blog 모델과 분리한다.
+- 개인 Vault의 `renderPagePreview`, `documentRoute`, `publicationLinks`, `normalizePublicationAssets`(`src/page-preview.mjs`), `readDocument`(위키·Blog 모두, `src/content-model.mjs`), `searchEntry`(`src/blog-model.mjs`)와 승인·해시·동기화 트랜잭션 계약을 유지한다. Vault `tooling/src/service/render.mjs`가 이 경로로 직접 불러오므로 테스트 밖 사용처가 없어 보여도 삭제하지 않는다. 개인 위키의 `category`, `parent`는 공개 Blog 모델과 분리한다.
 - 루트에는 도구가 요구하는 메타데이터와 README·AGENTS·문서 색인만 둔다. 미사용 코드·자산·산출물은 보관용 폴더를 만들어 남기지 않는다.
 - 커밋 전 명령 절의 검사를 모두 통과한다. 화면 변경은 실제 내부 URL에서 확인하고 작업용 Chrome 탭을 닫는다.
 - Things와의 비교는 공식 화면의 실제 동작을 근거로 한다. 개인 사이트의 의도된 확장을 원본 기능으로 설명하지 않는다.
