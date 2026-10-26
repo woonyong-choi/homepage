@@ -5,7 +5,6 @@ import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { privateWikiArticle } from './private-wiki-layout.mjs';
 import { thumbnailImage } from './post-article.mjs';
-import { token, px, box } from './theme-measure.mjs';
 import { THEME_ROOT } from './design-package.mjs';
 
 const near = (value, expected) => assert.equal(Math.round(value * 10000) / 10000, expected);
@@ -82,6 +81,29 @@ test('wiki_detail_places_the_heading_outline_beside_the_reading_column', async (
 });
 
 const css = readFileSync(`${THEME_ROOT}/styles.css`, 'utf8');
+const TOKENS = new Map([...readFileSync(`${THEME_ROOT}/tokens.css`, 'utf8').matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(match => [match[1], match[2].trim()]));
+
+// 가져온 테마의 토큰 사슬을 따라 값을 풀어 원본 실측값과 대조한다.
+function token(name) {
+  let value = TOKENS.get(name);
+  if (value === undefined) throw new Error(`undefined token: ${name}`);
+  for (let depth = 0; depth < 12; depth += 1) {
+    const next = value.replace(/var\((--[\w-]+)\)/g, (_, inner) => TOKENS.get(inner) ?? inner);
+    if (next === value) return value;
+    value = next;
+  }
+  throw new Error(`token cycle: ${name}`);
+}
+
+// 길이를 px로 바꾼다. em은 기준 글자 크기를 곱하고, 단위 없는 값은 그대로 둔다.
+function px(value, em = 18) {
+  const match = /^(-?[\d.]+)(px|em|%)?$/.exec(value.trim());
+  if (!match) throw new Error(`not a length: ${value}`);
+  const number = Number(match[1]);
+  return match[2] === 'em' ? number * em : number;
+}
+
+const box = (value, em = 18) => value.trim().split(/\s+/).map(part => (part === 'auto' ? part : px(part, em)));
 const rule = selector => { const match = css.match(new RegExp(`(?:^|\\n)${selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\{([^}]*)\\}`)); assert.ok(match, selector); return match[1]; };
 
 test('document_column_keeps_reading_width_and_soft_wrapping_between_navigation_columns', () => {

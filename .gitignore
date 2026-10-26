@@ -1,13 +1,9 @@
-/pages/
-search-index.json
 .DS_Store
 node_modules/
 .env
 .env.*
 !.env.example
 *.log
-__pycache__/
-*.pyc
 
 dist/
 content/interviews.local.md
