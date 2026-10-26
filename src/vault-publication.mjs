@@ -1,10 +1,10 @@
 // Vault가 명시한 파일의 동일 바이트를 검증하며 원고 트리를 탐색하지 않는다.
 import { readFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
 
 import { parseContentSource } from './content-files.mjs';
 import { safeFile, validatePath } from './content-paths.mjs';
 import { isDocumentId } from './content-model.mjs';
+import { sha256 } from './sha256.mjs';
 
 export const VAULT_CONFIGS = Object.freeze(['site', 'tags', 'search', 'cs', 'tech', 'blog']);
 
@@ -20,8 +20,7 @@ export function readVaultPublication(root) {
     sources.add(entry.source);
     targets.add(entry.target);
     const content = readFileSync(safeFile(root, entry.source));
-    const sha256 = createHash('sha256').update(content).digest('hex');
-    if (sha256 !== entry.sha256) throw new Error(`Vault source changed after manifest: ${entry.source}`);
+    if (sha256(content) !== entry.sha256) throw new Error(`Vault source changed after manifest: ${entry.source}`);
     const metadata = entry.source.endsWith('.md') ? parseContentSource(content.toString('utf8'), entry.source).metadata : undefined;
     if (metadata) validateMetadata(entry, metadata, identities);
     if (entry.target.startsWith('config/')) JSON.parse(content.toString('utf8'));

@@ -1,8 +1,7 @@
 // 미리보기는 지정된 원고만 읽고 결과를 메모리로 반환한다. 발행 경로에는 쓰지 않는다.
 import { readFileSync, realpathSync } from 'node:fs';
-import { isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createHash } from 'node:crypto';
 
 import { mathAssets } from 'document-engine';
 
@@ -21,6 +20,8 @@ import { browserScripts } from './browser-scripts.mjs';
 import { compileDiagrams } from './diagrams.mjs';
 import { brandNames } from './brand-icons.mjs';
 import { THEME_ROOT, THEME_MANIFEST } from './design-package.mjs';
+import { containedFile, within } from './content-paths.mjs';
+import { sha256 } from './sha256.mjs';
 
 export { publicationLinks, documentRoute } from './publication-routes.mjs';
 
@@ -65,7 +66,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
     topics: readContent(within(root, topicsFile)).metadata.topics, colorScheme,
     navigation: loadHomeNavigation(root, readContent), preview: true, origin, math,
     themeHash: THEME_MANIFEST.contentHash,
-    scriptHash: createHash('sha256').update([...scripts.values()].join('\n')).digest('hex'),
+    scriptHash: sha256([...scripts.values()].join('\n')),
   };
   const readAsset = path => {
     if (path === FAVICON) return readFileSync(new URL(`../content${FAVICON}`, import.meta.url));
@@ -119,18 +120,4 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
 export function normalizePublicationAssets(value) {
   if (typeof value !== 'string') throw new TypeError('publication asset value must be a string');
   return value;
-}
-
-function within(root, name) {
-  if (typeof name !== 'string' || !name || isAbsolute(name)) throw new Error('preview path must be relative');
-  const target = resolve(root, name);
-  const path = relative(root, target);
-  if (path === '..' || path.startsWith(`..${sep}`) || isAbsolute(path)) throw new Error('preview path escapes input root');
-  return target;
-}
-
-function containedFile(root, name) {
-  const target = realpathSync(within(root, name));
-  within(root, relative(root, target));
-  return target;
 }

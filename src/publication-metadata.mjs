@@ -1,12 +1,12 @@
-import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+import { sha256 } from './sha256.mjs';
 
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { iconFile } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
 
 export const FAVICON = '/assets/site-icon.svg';
 export const SITE_ICON = `/theme/assets/icons/${iconFile('document')}`;
-const FAVICON_HASH = createHash('sha256').update(readFileSync(new URL(`../content${FAVICON}`, import.meta.url))).digest('hex');
+const FAVICON_HASH = sha256(readFileSync(new URL(`../content${FAVICON}`, import.meta.url)));
 
 export function siteTitle(config) {
   return config.title ?? config.name;

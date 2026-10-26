@@ -24,7 +24,7 @@ export function blogFeed(posts, tags, page, { commentConfig, commentTheme, layou
   return `<main id="main"><h1 class="app-sr">${ui.escape(layout.blog.title)}</h1>${posts.length ? `<div${layout.blog.autoLoad ? ' data-blog-list="feed"' : ''}><div class="app-blog-feed-items">${result.items.map(post => feedArticle(post, tags, commentConfig, commentTheme, returnRoute)).join('')}</div><div class="app-shell">${pagination(result, '/blog/', true)}<p class="app-caption" data-blog-status role="status"></p></div></div>` : `<div class="app-shell">${emptyBlog()}</div>`}${posts.length ? `<div class="app-shell">${ui.ListLink({ href: '/search/', text: layout.blog.archiveLabel })}</div>` : ''}</main>`;
 }
 
-export function pagination(result, route, feed = false) {
+function pagination(result, route, feed = false) {
   return collectionNavigation(result, route, {
     label: '블로그 페이지', before: feed ? '최신 글' : '이전', after: feed ? '이전 글' : '다음',
     summary: feed ? `${result.page} / ${result.totalPages}` : undefined,

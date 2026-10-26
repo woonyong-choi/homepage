@@ -1,5 +1,4 @@
 // 공개 승인한 원문의 해시와 일치하는 사본만 홈페이지 입력으로 내보낸다.
-import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { isDocumentId } from './content-model.mjs';
 import { updateContent } from './content-update.mjs';
 import { safeFile } from './content-paths.mjs';
+import { sha256 } from './sha256.mjs';
 import { readVaultPublication, VAULT_CONFIGS } from './vault-publication.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -22,7 +22,7 @@ export function syncVaultPublication(sourceRoot, siteRoot = ROOT) {
     const hashes = Object.fromEntries(entries.map(entry => [entry.target, entry.sha256]));
     for (const entry of entries) {
       const target = safeFile(root, entry.target);
-      if (!Object.hasOwn(previous, entry.target) && existsSync(target) && digest(readFileSync(target)) !== entry.sha256) {
+      if (!Object.hasOwn(previous, entry.target) && existsSync(target) && sha256(readFileSync(target)) !== entry.sha256) {
         throw new Error(`unmanaged existing content: ${entry.target}`);
       }
     }
@@ -49,7 +49,7 @@ export function verifyApprovedContent(siteRoot = ROOT) {
   const expected = Object.keys(snapshot.files).sort();
   if (JSON.stringify(expected) !== JSON.stringify([...managedFiles(siteRoot), ...expected.filter(path => /^content\/(assets|media)\//.test(path))].sort())) throw new Error('unapproved, missing or renamed public content');
   for (const [file, hash] of Object.entries(snapshot.files)) {
-    if (!/^[a-f0-9]{64}$/.test(hash) || digest(readFileSync(safeFile(siteRoot, file))) !== hash) throw new Error(`public content changed outside approval: ${file}`);
+    if (!/^[a-f0-9]{64}$/.test(hash) || sha256(readFileSync(safeFile(siteRoot, file))) !== hash) throw new Error(`public content changed outside approval: ${file}`);
   }
   return snapshot.files;
 }
@@ -93,8 +93,6 @@ function createPublicationManifest(path, documents) {
   manifest.documents = documents.sort((left, right) => (order.get(left.id) ?? Infinity) - (order.get(right.id) ?? Infinity) || left.id.localeCompare(right.id));
   return manifest;
 }
-
-function digest(content) { return createHash('sha256').update(content).digest('hex'); }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const [command, sourceRoot] = process.argv.slice(2);

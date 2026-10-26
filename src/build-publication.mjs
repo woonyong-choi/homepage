@@ -1,5 +1,4 @@
 // 공개 입력을 정적 페이지와 검색 색인으로 만들며 깨진 내부 연결을 차단한다.
-import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,12 +28,12 @@ import { siteIdentity } from './site-identity.mjs';
 import { markdownFiles } from './content-files.mjs';
 import { loadBlogLayout } from './layout-config.mjs';
 import { verifyApprovedContent } from './approved-content.mjs';
+import { sha256 as digest } from './sha256.mjs';
 
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 const CONTENT = fileURLToPath(new URL('../content/', import.meta.url));
 const SETTINGS = fileURLToPath(new URL('../config/', import.meta.url));
 const OUTPUT = fileURLToPath(new URL('../dist/site/', import.meta.url));
-const digest = value => createHash('sha256').update(value).digest('hex');
 
 // blogRoot·outputRoot는 통합 검사가 승인 사본 대신 임시 입력과 출력 위치를 주입하는 지점이다.
 export async function buildPublication({ origin = '', mode = 'approved-preview', blogRoot = join(CONTENT, 'blog'), outputRoot = OUTPUT } = {}) {

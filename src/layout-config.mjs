@@ -1,26 +1,12 @@
 // 공개 Blog와 검색창의 문구·표시 정책만 읽는다. 공개할 원문은 승인 목록이 별도로 정한다.
 import { readFileSync } from 'node:fs';
 
+import { settingsValidator } from './settings-validation.mjs';
+
 const ROOT = new URL('../config/', import.meta.url);
 const SEARCH_LABELS = ['region', 'input', 'placeholder', 'clear', 'suggestions'];
 const CARD_FIELDS = ['title', 'description', 'media', 'tags', 'date', 'comments'];
-const fail = (path, message) => { throw new Error(`${path}: ${message}`); };
-
-function record(value, path, keys) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) fail(path, '설정 객체가 필요합니다');
-  for (const key of Object.keys(value)) if (!keys.includes(key)) fail(`${path}.${key}`, '알 수 없는 설정입니다');
-  return value;
-}
-
-function text(value, path) {
-  if (typeof value !== 'string' || !value.trim()) fail(path, '문자열이 필요합니다');
-  return value.trim();
-}
-
-function flag(value, path) {
-  if (typeof value !== 'boolean') fail(path, 'true 또는 false여야 합니다');
-  return value;
-}
+const { fail, record, text, flag } = settingsValidator();
 
 function integer(value, path, maximum) {
   if (!Number.isSafeInteger(value) || value < 1 || value > maximum) fail(path, `1~${maximum} 정수여야 합니다`);
