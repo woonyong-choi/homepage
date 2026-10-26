@@ -1,4 +1,9 @@
-export function initBlogList(root, { fetchPage, Observer } = {}) {
+import { RUNTIMES } from '@woonyong-choi/design-tokens/ui/manifest.mjs';
+
+// 이어 붙인 글이 쓰는 공통 런타임과 댓글 런타임. 페이지 조립의 clientEntrypoints와 같은 정본 목록을 읽는다.
+const CONTENT_SCRIPTS = new Set([...Object.keys(RUNTIMES), 'comments.js'].map(file => `/${file}`));
+
+export function initBlogList(root, { fetchPage, Observer, loadModule = url => import(url) } = {}) {
   const doc = root.ownerDocument;
   const view = doc.defaultView;
   const containerSelector = '.app-blog-feed-items';
@@ -50,7 +55,7 @@ export function initBlogList(root, { fetchPage, Observer } = {}) {
         return true;
       });
       if (!added.length) throw new Error('no new articles');
-      await prepareContent(page, doc, url);
+      await prepareContent(page, doc, url, loadModule);
       grid.append(...added);
       doc.dispatchEvent(new view.CustomEvent('content-added', { detail: grid }));
       incoming.forEach(key => articles.add(key));
@@ -88,14 +93,14 @@ export function initBlogList(root, { fetchPage, Observer } = {}) {
   observer?.observe(nav);
 }
 
-async function prepareContent(page, doc, url) {
-  const scripts = new Set(['/document.js', '/video.js', '/diagram.js', '/comments.js']);
+async function prepareContent(page, doc, url, loadModule) {
   for (const script of page.querySelectorAll('script[type=module][src]')) {
     const source = new URL(script.getAttribute('src'), url);
-    if (source.origin === doc.location.origin && scripts.has(source.pathname)) await import(source.href);
+    if (source.origin === doc.location.origin && CONTENT_SCRIPTS.has(source.pathname)) await loadModule(source.href);
   }
-  const math = page.querySelector('link[href^="/katex/katex.css"]');
-  if (math && !doc.querySelector('link[href^="/katex/katex.css"]')) doc.head.append(math.cloneNode(true));
+  // 수식 스타일 주소는 페이지 조립이 document-engine의 MATH_STYLESHEET로 표시한 link에서 읽는다.
+  const math = page.querySelector('link[data-math-stylesheet]');
+  if (math && !doc.querySelector('link[data-math-stylesheet]')) doc.head.append(math.cloneNode(true));
 }
 
 if (typeof document !== 'undefined') document.querySelectorAll('[data-blog-list]').forEach(root => initBlogList(root));
