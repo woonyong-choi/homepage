@@ -59,7 +59,9 @@ export function renderResults(root, result, state, tags) {
   if (summary && state.query) summary.prepend(nodeFrom(ui.Tag({ href: searchUrl({ ...state, query: '', page: 1 }), label: `${state.query} ×` })));
 
   if (!result.entries.length) {
-    output.append(element('p', '조건에 맞는 글이 없습니다. 검색어나 태그를 줄여 보세요.', 'app-search-message'));
+    output.append(state.query || state.tags.length
+      ? element('p', '조건에 맞는 글이 없습니다.', 'app-search-message')
+      : element('p', '아직 발행한 글이 없습니다.', 'app-empty'));
   }
   const multiple = result.totalPages > 1;
   const pages = nodeFrom(ui.PageLinks({

@@ -95,7 +95,7 @@ publishedAt: 2026-10-08
 
 이미지는 대체 글과 함께 씁니다. 이미지는 본문 폭을 넘지 않습니다.
 
-![코드 블록 소개 영상의 첫 화면](/media/manta-code-blocks-poster.png "코드 블록 소개")
+![Who Knows 글자 로고](/assets/who-knows.svg "사이트 로고")
 
 ## 인용
 

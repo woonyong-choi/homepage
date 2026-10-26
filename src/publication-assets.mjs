@@ -7,7 +7,6 @@ const ASSET_ROOTS = ['/theme/', '/assets/', '/media/', '/katex/'];
 // Pretendard는 unicode-range 부분 집합 여러 개로 나뉘며 모두 같은 OFL 고지를 따른다.
 const PRETENDARD_SUBSETS = '/theme/assets/fonts/pretendard-variable/';
 const ASSET_NOTICES = new Map([
-  ['/media/manta-code-blocks-poster.png', '/media/manta-code-blocks-LICENSE.txt'],
   ['/theme/assets/fonts/jetbrains-mono-regular.woff2', '/theme/assets/fonts/jetbrains-mono-license.txt'],
   ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
   ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],
@@ -64,8 +63,4 @@ export function publicationAssets(pages, searchEntries, readAsset) {
   // iframe에서 직접 읽는 테마는 부모 HTML에 stylesheet 링크가 없다.
   include('/theme/assets/giscus.css');
   return files;
-}
-
-export function normalizePublicationAssets(value) {
-  return value.replaceAll('/things/assets/', '/assets/').replaceAll('/things/theme/', '/theme/');
 }

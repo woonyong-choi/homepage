@@ -1,6 +1,6 @@
-// 모든 발행 입력은 정해진 루트 안의 실제 일반 경로만 사용한다.
-import { lstatSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+// 모든 발행·미리보기 입력은 정해진 루트 안의 경로만 사용한다.
+import { lstatSync, realpathSync } from 'node:fs';
+import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 export function validatePath(path) {
   if (typeof path !== 'string' || path.includes('\\') || path.includes('\0') || path.split('/').some(part => !part || part === '.' || part === '..')) throw new Error('invalid content path');
@@ -22,3 +22,17 @@ export function safeFile(root, path) {
   return cursor;
 }
 
+// 미리보기 입력은 루트 안의 상대 경로만 허용한다. 심볼릭 링크는 실제 위치도 루트 안이어야 한다.
+export function within(root, name) {
+  if (typeof name !== 'string' || !name || isAbsolute(name)) throw new Error('preview path must be relative');
+  const target = resolve(root, name);
+  const path = relative(root, target);
+  if (path === '..' || path.startsWith(`..${sep}`) || isAbsolute(path)) throw new Error('preview path escapes input root');
+  return target;
+}
+
+export function containedFile(root, name) {
+  const target = realpathSync(within(root, name));
+  within(root, relative(root, target));
+  return target;
+}

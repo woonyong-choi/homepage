@@ -25,7 +25,8 @@ test('renderPagePreview_uses_unsaved_home_without_writing_source_or_publication'
   assert.match(result.html, /저장 전 미리보기 문장/);
   assert.match(result.html, /app-landing/);
   const technologies = new JSDOM(result.html).window.document.querySelector('#technologies');
-  assert.equal(technologies, null);
+  assert.equal(technologies.querySelector('h2').textContent.trim(), '기술과 생각');
+  assert.ok(technologies.querySelector('[aria-disabled="true"]'));
   assert.match(result.html, /noindex,nofollow/);
   assert.ok(result.assets.has('/theme/tokens.css'));
   assert.ok(result.assets.has('/theme/styles.css'));
@@ -237,21 +238,15 @@ test('renderPagePreview_host_asset_sizes_do_not_require_generated_config', async
   assert.deepEqual(result.diagnostics, []);
   assert.match(result.html, /app-landing/);
   const technologies = new JSDOM(result.html).window.document.querySelector('#technologies');
-  assert.equal(technologies, null);
+  assert.equal(technologies.querySelector('h2').textContent.trim(), '기술과 생각');
+  assert.ok(technologies.querySelector('[aria-disabled="true"]'));
   assert.equal(existsSync(root + '/config/image-sizes.json'), false);
 });
 
-test('preview_and_publication_share_existing_asset_prefixes', async () => {
-  assert.equal(normalizePublicationAssets('/things/assets/image.png?q=1#part'), '/assets/image.png?q=1#part');
-  assert.equal(normalizePublicationAssets('/things/theme/tokens.css'), '/theme/tokens.css');
-  assert.equal(normalizePublicationAssets('/media/video.mp4'), '/media/video.mp4');
-  const source = articleSource + '\n\n![예시](/things/assets/preview-prefix.png)\n';
-  const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source,
-    assets: { read: path => path === '/assets/preview-prefix.png' ? Buffer.from('image') : readFileSync(contentRoot + path) } });
-  assert.deepEqual(result.diagnostics, []);
-  assert.match(result.html, /src="\/assets\/preview-prefix.png"/);
-  assert.ok(result.assets.has('/assets/preview-prefix.png'));
-  assert.match(source, /\/things\/assets\//);
+// 기존 호스트가 가져오는 이름은 유지하고 입력 경로를 바꾸지 않는다.
+test('preview_keeps_the_host_asset_normalizer_name_without_rewriting_paths', () => {
+  for (const value of ['/assets/image.png?q=1#part', '/theme/tokens.css', '/media/video.mp4']) assert.equal(normalizePublicationAssets(value), value);
+  assert.throws(() => normalizePublicationAssets(null), TypeError);
 });
 
 test('preview_normalizes_same_site_absolute_links_using_the_build_origin_contract', async () => {

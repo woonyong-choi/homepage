@@ -1,4 +1,4 @@
-import { collectPosts, comparePosts } from './blog-model.mjs';
+import { collectPosts, comparePosts, readPost } from './blog-model.mjs';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readDocument, paginate } from './content-model.mjs';
@@ -20,24 +20,24 @@ test('publication_contract_excludes_drafts_and_future_posts', () => {
 });
 
 test('document_type_controls_the_public_route_without_changing_the_comment_identity', () => {
-  const blog = readDocument(source(), TAGS);
+  const blog = readPost(source());
   const wiki = readDocument(source({ type: 'wiki' }), TAGS);
   assert.deepEqual([blog.route, wiki.route], ['/blog/a/', '/docs/a/']);
   assert.equal(blog.id, wiki.id);
-  for (const slug of ['all', 'page', 'feed']) assert.throws(() => readDocument(source({ slug }), TAGS), /reserved (?:document|post) slug/);
-  assert.throws(() => readDocument(source({ type: 'wiki', slug: 'topics' }), TAGS), /reserved (?:document|post) slug/);
+  for (const slug of ['all', 'page', 'feed']) assert.throws(() => readPost(source({ slug })), /reserved post slug/);
+  assert.throws(() => readDocument(source({ type: 'wiki', slug: 'topics' }), TAGS), /reserved document slug/);
 });
 
 test('publication_contract_rejects_missing_comments_invalid_dates_and_tags', () => {
   for (const invalid of [{ comments: 'false' }, { publishedAt: '2026-02-30' }, { tags: [''] }, { updatedAt: '2025-01-01' }, { thumbnail: { src: '/media/../secret.svg', alt: '' } }]) {
-    assert.throws(() => readDocument(source(invalid), TAGS));
+    assert.throws(() => readPost(source(invalid)));
   }
 });
 
 // #164: 식별자는 승인 동기화와 문서 해석 모두 문자열로 제한한다.
 test('publication_contract_rejects_numeric_document_identity', () => {
   for (const key of ['id', 'slug']) {
-    assert.throws(() => readDocument(source({ [key]: 123 }), TAGS), new RegExp(`invalid post ${key}`));
+    assert.throws(() => readPost(source({ [key]: 123 })), new RegExp(`invalid post ${key}`));
   }
 });
 
@@ -54,10 +54,10 @@ test('publication_contract_accepts_only_optional_slug_parents', () => {
 test('publication_contract_accepts_only_finite_thumbnail_coordinates', () => {
   const thumbnail = { src: '/media/cover.webp', alt: '검색 화면' };
   for (const position of [undefined, { x: 0, y: 100 }, { x: 50, y: 50 }, { x: 37.5, y: 60.49 }]) {
-    assert.deepEqual(readDocument(source({ thumbnail: { ...thumbnail, position } }), TAGS).thumbnail.position, position);
+    assert.deepEqual(readPost(source({ thumbnail: { ...thumbnail, position } })).thumbnail.position, position);
   }
   for (const position of [null, {}, [], 'top', { x: 50 }, { x: -1, y: 50 }, { x: 50, y: 101 }, { x: '50', y: 50 }, { x: 50, y: Infinity }, { x: '0; color:red', y: 50 }]) {
-    assert.throws(() => readDocument(source({ thumbnail: { ...thumbnail, position } }), TAGS), /invalid thumbnail position/);
+    assert.throws(() => readPost(source({ thumbnail: { ...thumbnail, position } })), /invalid thumbnail position/);
   }
 });
 
@@ -79,10 +79,10 @@ test('blog_order_uses_publication_date_instead_of_update_date', () => {
 // 더미 이미지처럼 확장자가 없는 HTTPS 이미지도 쓸 수 있다.
 test('thumbnail_accepts_https_without_credentials_and_rejects_unsafe_urls', () => {
   for (const src of ['https://picsum.photos/seed/demo/960/540', 'https://images.example.com/cover?w=960&h=540']) {
-    assert.equal(readDocument(source({ thumbnail: { src, alt: '' } }), TAGS).thumbnail.src, src);
+    assert.equal(readPost(source({ thumbnail: { src, alt: '' } })).thumbnail.src, src);
   }
   for (const src of ['javascript:alert(1)', 'data:image/png;base64,a', '//example.com/a', 'http://example.com/a', 'https://user:secret@example.com/a', 'https://', 123]) {
-    assert.throws(() => readDocument(source({ thumbnail: { src, alt: '' } }), TAGS), /invalid thumbnail path/);
+    assert.throws(() => readPost(source({ thumbnail: { src, alt: '' } })), /invalid thumbnail path/);
   }
 });
 
@@ -93,7 +93,7 @@ test('category_is_independent_from_optional_shared_tags', () => {
   const wiki = readDocument(source({ type: 'wiki', category: 'os', tags: [] }), TAGS, now, categories);
   assert.deepEqual(wiki.tags, []);
   assert.equal(wiki.category, 'os');
-  const tagged = readDocument(source({ category: 'os' }), TAGS, now, categories);
+  const tagged = readPost(source({ category: 'os' }), { now });
   assert.deepEqual(tagged.tags, ['javascript']);
   assert.throws(() => readDocument(source({ type: 'wiki', category: 'missing' }), TAGS, now, categories), /invalid category/);
 });

@@ -83,7 +83,7 @@ test('katex_assets_are_selected_only_for_pages_with_math', async () => {
   const plain = documentShell({ route: '/a/', title: '글' }, '<main><p>본문</p></main>', context);
   const withMath = documentShell({ route: '/b/', title: '글' }, await render('$x$'), context);
   assert.doesNotMatch(plain, /katex|mermaid/);
-  assert.match(withMath, new RegExp(`<link rel="stylesheet" href="${MATH_STYLESHEET}\\?v=${math.hash}">`));
+  assert.match(withMath, new RegExp(`<link rel="stylesheet" href="${MATH_STYLESHEET}\\?v=${math.hash}" data-math-stylesheet>`));
   assert.doesNotMatch(withMath, /mermaid/);
   const pages = new Map([['/a/', plain], ['/b/', withMath]]);
   const files = publicationAssets(pages, [], path => (path.startsWith('/katex/') ? math.assets.get(path) : Buffer.from('')));

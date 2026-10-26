@@ -61,16 +61,15 @@ const flowRail = (options, items) => String(ui.FlowRail({ ...options, items: tru
 
 export function technologySection(section, brandIcon, { tags = {}, knownTags = {}, services = serviceTagCatalog(knownTags) } = {}) {
   const items = serviceRailItems(section.items, services, tags);
-  if (!items.length) return '';
   const list = items.map(name => {
     const brand = brandIcon(name);
     if (!brand) throw new Error(`unknown technology: ${name}`);
     const service = services.find(service => service.id === name);
     const tag = publishedServiceTag(service, tags);
-    return String(ui.LogoItem({ href: searchUrl({ tags: [tag] }), label: `${brand.label} · ${tag} 태그 글 보기`, src: brand.src }));
+    return String(ui.LogoItem({ href: tag === undefined ? undefined : searchUrl({ tags: [tag] }), label: tag === undefined ? `${brand.label} · 발행된 글 없음` : `${brand.label} · ${tag} 태그 글 보기`, src: brand.src }));
   }).join('');
   const id = escape(section.id);
-  return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list)) }));
+  return String(ui.Section({ id, variant: 'icons', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, icon: undefined, titleId: `${section.id}-title` })), content: trusted(list ? flowRail({ kind: 'technologies', direction: 'right', label: '기술', ariaLabel: '기술 아이콘' }, list) : '') }));
 }
 
 export function interviewsSection(section, { preview = false } = {}) {
@@ -82,12 +81,12 @@ export function interviewsSection(section, { preview = false } = {}) {
   const rails = rows.map((row, index) => flowRail({ kind: 'interviews', direction: index ? 'right' : undefined, label: '인터뷰', ariaLabel: rows.length > 1 ? `인터뷰 카드 ${index + 1}행` : '인터뷰 카드' }, interviewCards(row, href))).join('');
   const body = rows.length > 1 ? String(ui.FlowRows({ rails: trusted(rails) })) : rails;
   const id = escape(section.id);
-  return String(ui.Section({ id, variant: 'quotes', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, titleId: `${section.id}-title` })), content: trusted(body) }));
+  return String(ui.Section({ id, variant: 'quotes', labelledBy: `${id}-title`, heading: trusted(sectionIntro({ ...section, icon: undefined, titleId: `${section.id}-title` })), content: trusted(body) }));
 }
 
 function newsletter(contact, id) {
   const isReady = !!contact.endpoint;
-  const heading = sectionIntro({ icon: contact.icon, title: contact.title, titleId: `${id}-title`, description: contact.description });
+  const heading = sectionIntro({ title: contact.title, titleId: `${id}-title`, description: contact.description });
   const privacy = contact.privacy ? ` <a href="${escape(contact.privacy.href)}">${escape(contact.privacy.label)}</a>` : '';
   const state = isReady
     ? (contact.note || privacy ? `<p class="app-newsletter-note" id="${id}-state">${escape(contact.note ?? '')}${privacy}</p>` : '')
@@ -100,6 +99,6 @@ function newsletter(contact, id) {
 export function contactSection(contact) {
   if (contact.mode === 'newsletter') return newsletter(contact, escape(contact.id));
   const titleId = `${contact.id}-title`;
-  const heading = sectionIntro({ ...contact, titleId, action: { label: contact.button, href: `mailto:${contact.email}` } });
+  const heading = sectionIntro({ ...contact, icon: undefined, titleId, action: { label: contact.button, href: `mailto:${contact.email}` } });
   return String(ui.Section({ id: contact.id, labelledBy: titleId, heading: trusted(heading), content: trusted('') }));
 }

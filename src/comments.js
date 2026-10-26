@@ -1,6 +1,6 @@
 // 각 글의 iframe과 상태를 따로 관리해 연속 읽기에서도 토론과 높이가 섞이지 않게 한다.
 const initialized = new WeakSet();
-const sessions = new WeakMap();
+const documents = new WeakMap();
 const host = 'https://giscus.app';
 const sessionKey = 'giscus-session';
 const widgetFields = ['repo', 'repoId', 'category', 'categoryId', 'term', 'strict', 'reactionsEnabled', 'emitMetadata', 'inputPosition', 'theme'];
@@ -20,11 +20,38 @@ function readSession(view) {
   } catch { return ''; }
 }
 
+// 문서마다 message 리스너와 화면 관찰자를 하나만 두고 event.source로 해당 댓글 iframe을 찾는다.
+function documentState(doc) {
+  if (documents.has(doc)) return documents.get(doc);
+  const view = doc.defaultView;
+  const state = { session: readSession(view), threads: new Set(), pending: new Map(), observer: null };
+  view.addEventListener('message', event => {
+    if (event.origin !== host || !event.source || !event.data?.giscus) return;
+    for (const thread of liveThreads(state)) {
+      if (thread.source() === event.source) { thread.receive(event.data.giscus); return; }
+    }
+  });
+  if (view.IntersectionObserver) {
+    state.observer = new view.IntersectionObserver(entries => {
+      for (const entry of entries) if (entry.isIntersecting) state.pending.get(entry.target)?.();
+    }, { rootMargin: '100% 0px' });
+  }
+  documents.set(doc, state);
+  return state;
+}
+
+// 무한 피드에서 문서 밖으로 빠진 댓글 영역은 등록에서 지운다.
+function* liveThreads(state) {
+  for (const thread of state.threads) {
+    if (thread.section.isConnected) yield thread;
+    else { state.threads.delete(thread); state.pending.delete(thread.section); state.observer?.unobserve(thread.section); }
+  }
+}
+
 export function initComments(root) {
   const doc = root.ownerDocument ?? root;
   const view = doc.defaultView;
-  if (!sessions.has(doc)) sessions.set(doc, { value: readSession(view), reload: new Set() });
-  const session = sessions.get(doc);
+  const state = documentState(doc);
   for (const section of root.querySelectorAll('[data-comments]')) {
     if (initialized.has(section)) continue;
     initialized.add(section);
@@ -68,6 +95,8 @@ export function initComments(root) {
 
     function load(reload = false) {
       if (frame && !reload) return;
+      state.pending.delete(section);
+      state.observer?.unobserve(section);
       view.clearTimeout(timeout);
       failed = false;
       status.hidden = false;
@@ -83,7 +112,7 @@ export function initComments(root) {
       params.set('origin', origin.href);
       params.set('backLink', backLink.href);
       params.set('description', section.dataset.commentsDescription);
-      params.set('session', session.value);
+      params.set('session', state.session);
       frame = doc.createElement('iframe');
       frame.className = 'app-comments-frame';
       frame.title = '댓글';
@@ -95,23 +124,12 @@ export function initComments(root) {
       timeout = view.setTimeout(fail, 15000);
     }
 
-    retry.addEventListener('click', () => load(true));
-    session.reload.add(() => { if (frame) load(true); });
-    if (expand) {
-      section.dataset.expanded = 'false';
-      content.inert = true;
-      content.setAttribute('aria-hidden', 'true');
-      expand.hidden = false;
-      expand.addEventListener('click', () => showFull(true));
-    }
-    view.addEventListener('message', event => {
-      if (event.origin !== host || event.source !== frame?.contentWindow || !event.data?.giscus) return;
-      const data = event.data.giscus;
+    function receive(data) {
       const expired = typeof data.error === 'string' && /Bad credentials|Invalid state value|State has expired/.test(data.error);
-      if (data.signOut || expired && session.value) {
+      if (data.signOut || expired && state.session) {
         try { view.localStorage.removeItem(sessionKey); } catch { /* 저장소 접근이 막힌 환경에서도 로그아웃한다. */ }
-        session.value = '';
-        session.reload.forEach(reload => reload());
+        state.session = '';
+        for (const thread of liveThreads(state)) thread.reload();
         return;
       }
       if (data.error) {
@@ -129,9 +147,25 @@ export function initComments(root) {
         const prefix = `https://github.com/${section.dataset.repo}/discussions/`;
         if (typeof url === 'string' && url.startsWith(prefix) && /^\d+$/.test(url.slice(prefix.length))) section.querySelector('[data-discussion-link]').href = url;
       }
-    });
-    load();
-    if (expand && view.location.hash === `#${section.id}`) showFull();
+    }
+
+    state.threads.add({ section, source: () => frame?.contentWindow, receive, reload: () => { if (frame) load(true); } });
+    retry.addEventListener('click', () => load(true));
+    if (expand) {
+      section.dataset.expanded = 'false';
+      content.inert = true;
+      content.setAttribute('aria-hidden', 'true');
+      expand.hidden = false;
+      expand.addEventListener('click', () => showFull(true));
+    }
+    if (view.location.hash === `#${section.id}`) {
+      if (expand) showFull();
+      else load();
+    } else if (state.observer) {
+      // 화면 근처에 오기 전까지 iframe을 만들지 않아 연속 읽기의 요청 수를 보이는 글로 제한한다.
+      state.pending.set(section, () => load());
+      state.observer.observe(section);
+    } else load();
   }
 }
 

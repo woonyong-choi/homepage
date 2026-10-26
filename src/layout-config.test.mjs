@@ -3,34 +3,28 @@ import fs from 'node:fs';
 import { syncBuiltinESMExports } from 'node:module';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
-import { loadLayoutConfig, loadBlogLayout, parseLayoutConfig } from './layout-config.mjs';
+import { loadBlogLayout } from './layout-config.mjs';
 import { parseHomeNavigation } from './home-content.mjs';
 import { documentShell } from './publication-layout.mjs';
-const LAYOUT = loadLayoutConfig();
+const CONFIG = Object.fromEntries(['blog', 'search'].map(name => [name, JSON.parse(fs.readFileSync(new URL(`../config/${name}.json`, import.meta.url), 'utf8'))]));
+const LAYOUT = loadBlogLayout();
 
 const document = html => JSDOM.fragment(html);
-const posts = Array.from({ length: 7 }, (_, i) => ({ id: `post-${i}`, title: `글 ${i}`, route: `/blog/post-${i}/`, description: '요약', publishedAt: '2026-10-01', contentIcon: { name: 'processor' }, tags: [], html: '<p>내용</p>' }));
-const topics = Object.fromEntries(['a', 'b', 'c'].map(id => [id, { group: 'cs', field: 'cs', label: id, icon: 'processor', description: `${id} 설명` }]));
-const articles = Object.keys(topics).map(id => ({ id, slug: id, title: id, category: id, type: 'wiki', route: `/docs/${id}/` }));
 
-
-
-test('layout_validation_reports_setting_paths_instead_of_ignoring_typographical_errors', () => {
-  assert.deepEqual(parseLayoutConfig(LAYOUT), LAYOUT);
+test('blog_layout_reports_setting_paths_instead_of_ignoring_typographical_errors', t => {
   for (const [change, expected] of [
-    [value => { value.cs.preview.columns = 0; }, /config\/cs.json.preview.columns/],
-    [value => { value.tech.collection.rows = -1; }, /config\/tech.json.collection.rows/],
+    [value => { value.blog.collection.columns = 0; }, /config\/blog.json.collection.columns/],
+    [value => { value.blog.collection.rows = -1; }, /config\/blog.json.collection.rows/],
     [value => { value.blog.card.title = 'false'; }, /config\/blog.json.card.title/],
-    [value => { value.cs.card.media = 'video'; }, /config\/cs.json.card.media/],
-    [value => { value.cs.card = { title: false, description: false, media: 'none' }; }, /config\/cs.json.card/],
-    [value => { value.cs.card = { title: false, description: false, media: 'icon' }; }, /config\/cs.json.card/],
-    [value => { value.tech.card = { title: false, description: false, media: 'icon' }; }, /config\/tech.json.card/],
-    [value => { value.search.sections.push(value.search.sections[0]); }, /config\/search.json.sections/],
-    [value => { value.search.box.lables = {}; }, /config\/search.json.box.lables/],
+    [value => { value.blog.card.media = 'video'; }, /config\/blog.json.card.media/],
+    [value => { value.blog.card.icon = true; }, /config\/blog.json.card.icon/],
+    [value => { value.search.box.labels.input = ''; }, /config\/search.json.box.labels.input/],
   ]) {
-    const value = structuredClone(LAYOUT);
-    change(value);
-    assert.throws(() => parseLayoutConfig(value), expected);
+    const input = structuredClone(CONFIG);
+    change(input);
+    const readFile = t.mock.method(fs, 'readFileSync', url => JSON.stringify(input[url.pathname.split('/').at(-1).replace('.json', '')]));
+    syncBuiltinESMExports();
+    try { assert.throws(() => loadBlogLayout(), expected); } finally { readFile.mock.restore(); syncBuiltinESMExports(); }
   }
 });
 
@@ -47,19 +41,17 @@ test('home_navigation_owns_labels_order_targets_and_active_page_matching', () =>
   assert.throws(() => parseHomeNavigation([{ label: '홈', href: '/' }, { label: '홈 2', href: '/' }]), /중복 메뉴/);
 });
 
-test('layout_loaders_reject_icon_cards_without_title_or_description', t => {
-  const input = structuredClone(LAYOUT);
+test('blog_layout_rejects_icon_cards_without_title_or_description', t => {
+  const input = structuredClone(CONFIG);
   const readFile = t.mock.method(fs, 'readFileSync', url => JSON.stringify(input[url.pathname.split('/').at(-1).replace('.json', '')]));
   syncBuiltinESMExports();
   try {
     for (const media of ['icon', 'none']) {
       input.blog.card = { media, title: false, description: false, tags: false, date: false, comments: false };
-      for (const load of [loadLayoutConfig, loadBlogLayout]) {
-        assert.throws(() => load(), /config\/blog.json.card/);
-      }
+      assert.throws(() => loadBlogLayout(), /config\/blog.json.card/);
       for (const field of ['title', 'description']) {
         input.blog.card[field] = true;
-        for (const load of [loadLayoutConfig, loadBlogLayout]) assert.deepEqual(load().blog.card, input.blog.card);
+        assert.deepEqual(loadBlogLayout().blog.card, input.blog.card);
         input.blog.card[field] = false;
       }
     }

@@ -28,7 +28,7 @@ export function documentShell(page, body, context) {
   const logo = !isWriting && config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : undefined;
   const header = isWriting ? '' : ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active });
   const feed = isWriting ? '' : '<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml">';
-  return `<!doctype html><html lang="ko" data-theme="${colorScheme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="${colorScheme}">${publicationMetadata(page, context)}${feed}<link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}">` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${header}${body}${footer}${searchScript}</body></html>`;
+  return `<!doctype html><html lang="ko" data-theme="${colorScheme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="${colorScheme}">${publicationMetadata(page, context)}${feed}<link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}" data-math-stylesheet>` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}"><a class="app-skip" href="#main">본문으로 이동</a>${header}${body}${footer}${searchScript}</body></html>`;
 }
 
 export function searchBox({ large = false, query = '', combobox = true, action = '/search/', filters, config = loadBlogLayout().search.box } = {}) {
@@ -60,7 +60,7 @@ export function articlePage(page, context, comments = '') {
   return `<main id="main" class="app-shell">${postArticle({ ...page, html: page.html + relatedPostsSection(page) }, { detail: true, tags: tagLinks(page, context.tags ?? {}), footer: `${updated}${example}`, after: comments })}</main>`;
 }
 
-export function relatedPostsSection(page) {
+function relatedPostsSection(page) {
   const posts = page.related ?? [];
   if (!posts.length) return '';
   const cards = posts.map(post => ui.Card({ href: post.route, title: post.title, variant: 'related' }));
@@ -69,7 +69,7 @@ export function relatedPostsSection(page) {
 
 // 없는 주소의 응답. 어느 경로에서든 읽히므로 링크는 모두 루트 기준이다.
 export function notFoundPage() {
-  return `<main class="app-shell app-body" id="main">${searchBox()}${ui.PageHeading({ title: '페이지를 찾을 수 없습니다' })}<p class="app-empty">주소가 바뀌었거나 없는 페이지입니다. <a href="/">홈</a>이나 <a href="/search/">글 목록</a>에서 찾거나 검색해 주세요.</p></main>`;
+  return `<main class="app-shell app-body" id="main">${searchBox()}${ui.PageHeading({ title: '페이지를 찾을 수 없습니다' })}<p>주소가 바뀌었거나 없는 페이지입니다. <a href="/">홈</a>이나 <a href="/search/">글 목록</a>에서 찾거나 검색해 주세요.</p></main>`;
 }
 
 export function dateLine(page) {
