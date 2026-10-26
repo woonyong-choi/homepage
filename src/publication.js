@@ -46,7 +46,8 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
       status.textContent = `검색 결과 ${result.count}개`;
     } catch { if (request === revision) { showSearchError(output, propose); output.hidden = false; input.setAttribute('aria-expanded', 'true'); status.textContent = failureStatus; } }
   }
-  async function results() {
+  // 첫 진입의 조건 없는 1쪽은 서버가 그린 목록과 같으므로 불러오는 중 문구로 바꾸지 않고 결과가 올 때까지 유지한다.
+  async function results({ initial = false } = {}) {
     if (!page) return;
     const request = ++resultRevision;
     const selected = state();
@@ -54,7 +55,8 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     restoreQuery(selected.query);
     resultStatus = '검색 결과를 불러오는 중입니다.';
     status.textContent = resultStatus;
-    showResultsLoading(page, resultStatus);
+    if (initial && !selected.query && !selected.tags.length && selected.page === 1) page.setAttribute('aria-busy', 'true');
+    else showResultsLoading(page, resultStatus);
     try {
       const { result, tags } = await queryIndex('results', selected);
       if (request !== resultRevision || composing) return;
@@ -142,5 +144,5 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     revision++; close(); results();
   });
   window.addEventListener('popstate', () => { revision++; close(); results(); });
-  results();
+  results({ initial: true });
 }
