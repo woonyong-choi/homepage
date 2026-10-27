@@ -4,15 +4,13 @@ import { isScalar, parseDocument } from 'yaml';
 const FRONT = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/;
 export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const IMAGE_TYPES = Object.freeze({ 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp' });
-// 글 상태 하나가 Vault 글 머리의 세 항목을 함께 정한다. 임시는 작성 중, 비공개는 다 썼지만 사이트에 싣지 않는 글이다.
+// 글 상태 하나가 Vault 글 머리의 세 항목을 함께 정한다. 임시는 작성 중이라 사이트에 싣지 않는 글이다.
 export const STATES = Object.freeze({
   public: { visibility: 'public', status: 'published', publish: true },
-  private: { visibility: 'private', status: 'published', publish: false },
   draft: { visibility: 'draft', status: 'draft', publish: false },
 });
 export function postState(data) {
-  if (data.visibility === 'public' && data.publish !== false && data.status !== 'draft') return 'public';
-  return data.visibility === 'private' ? 'private' : 'draft';
+  return data.visibility === 'public' && data.publish !== false && data.status !== 'draft' ? 'public' : 'draft';
 }
 
 function split(text) {

@@ -132,7 +132,8 @@ test('browser_search_view_renders_through_theme_components_and_only_converts_the
     assert.equal(result.querySelector('.app-blog-card-link').getAttribute('href'), '/articles/a/');
     assert.equal(result.querySelector('.app-blog-card-tags'), null);
     assert.equal(result.querySelector('.app-blog-card-title').textContent, entry.title);
-    assert.equal(result.querySelector('.app-title-cover'), null);
+    // 그림이 없는 글은 제목으로 자동 표지를 만든다.
+    assert.equal(result.querySelector('.app-title-cover').textContent, entry.title);
     const pages = window.document.querySelector('nav.app-page-links[data-result-pages]');
     assert.equal(pages.querySelector('[aria-current=page]').textContent, '2');
     assert.deepEqual([...pages.children].map(node => node.textContent), ['이전', '1', '2', '3', '다음']);

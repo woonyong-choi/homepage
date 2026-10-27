@@ -89,7 +89,7 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   }
   for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
   // 관리자 로그인 화면은 설정이 있을 때만 만들고 검색 엔진과 사이트맵에서 뺀다.
-  if (context.admin) add('/admin/', '글 관리', adminPage(context.admin, { siteTitle: siteTitle(config) }), { noindex: true, bare: true });
+  if (context.admin) add('/admin/', '글 관리', adminPage(context.admin), { noindex: true });
   const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), context);
   await writeSite(output, posts, context, scripts, notFound, outputRoot);
   return { pages: output.size, documents: posts.length, themeHash: MANIFEST.contentHash };
@@ -147,6 +147,9 @@ async function writeSite(output, posts, context, scripts, notFound, outputRoot) 
   const index = { entries: posts.map(page => searchEntry(page, context.knownTags)), tags: context.tags };
   const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
   for (const [path, content] of context.diagrams) assets.set(path, content);
+  // 글 관리의 미리보기는 글이 없어도 글쓴이 사진을 쓴다.
+  const avatar = context.admin?.author?.avatar;
+  if (avatar?.startsWith('/assets/') && !assets.has(avatar)) assets.set(avatar, readFileSync(join(CONTENT, avatar)));
   for (const [path, content] of assets) files.set(path, content);
   const indexJson = JSON.stringify(index);
   files.set('/service-tags.json', JSON.stringify({ version: 1, services: serviceTagInventory(context.services, context.tags, context.home) }, null, 2));

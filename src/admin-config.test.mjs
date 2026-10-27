@@ -20,15 +20,15 @@ test('admin_config_accepts_repository_folders_deploy_and_https_login_server_only
 });
 
 test('admin_login_page_offers_github_login_only_when_login_server_exists', () => {
-  const { document } = new JSDOM(adminPage({ ...base, authUrl: 'https://auth.example.workers.dev' }, { siteTitle: 'Who Knows' })).window;
+  const { document } = new JSDOM(adminPage({ ...base, authUrl: 'https://auth.example.workers.dev' })).window;
+  assert.equal(document.querySelector('main.app-shell .app-admin-login h1').textContent, '글 관리');
   assert.equal(document.querySelector('[data-action=signin]').textContent, 'GitHub로 로그인');
   assert.equal(document.querySelector('[data-action=signout]').hidden, true);
-  assert.equal(document.querySelector('.app-editor-notice-footer a').textContent, 'Who Knows 홈으로');
   const setup = new JSDOM(adminPage(base)).window.document;
   assert.equal(setup.querySelector('[data-action=signin]'), null);
   assert.equal(setup.querySelector('[data-action=demo-start]').textContent, '로그인 없이 체험하기');
   assert.equal(setup.querySelector('[data-action=demo-end]').hidden, true);
-  assert.match(setup.querySelector('[data-admin-login]').textContent, /authUrl/);
+  assert.match(setup.querySelector('[data-admin-login]').textContent, /로그인 서버를 연결하면/);
 });
 
 test('every_page_gets_small_admin_loader_with_settings_only_when_admin_is_configured', () => {

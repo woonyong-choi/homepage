@@ -32,7 +32,7 @@
 
 공개 빌드와 개인 미리보기가 함께 쓰는 로더 `loadBlogLayout`은 `config/blog.json`의 `title`, `collection`, `card`, `feedSize`, `autoLoad`, `archiveLabel`과 `config/search.json`의 `title`, `box`를 읽는다. `cs`, `tech`, 검색 입구의 `sections`를 필수 입력으로 요구하지 않는다. `feedSize`는 Blog의 페이지당 본문 수이고 `autoLoad`는 다음 페이지 자동 추가 여부다. `archiveLabel`은 Search 전체 글로 이동하는 문구다. 기존 `preview`, `archiveTitle`, `feedLabel`은 별도 공개 목록을 만들지 않는다.
 
-`collection.columns`, `collection.rows`는 목록 배치와 한 페이지의 항목 수를 정한다. `rows: null`은 필터 결과 전체를 한 페이지로 표시한다. 카드의 `title`, `description`, `tags`, `date`, `comments`는 각 항목의 표시 여부다. 선택 항목 `author`(기본 `false`)를 켜면 `config/site.json`의 `name`과 선택 사진 `avatar`를 카드 아래와 글 도입문 아래의 글쓴이 줄에 표시한다. 카드 태그는 앞의 3개만 보인다. `media: image`는 지정한 대표 이미지, 없으면 본문의 첫 공개 그림을 카드 표지로 쓰고, 둘 다 없으면 제목 표지를 표시한다. `icon`, `none`은 공개 글의 장식 이미지를 만들지 않는다. 같은 표시 정책을 정적 목록과 검색 뒤 다시 그린 목록에 적용한다. 실제 글 포함 여부는 승인·공개 상태·발행일·빌드 모드로 정하며 카드 설정 때문에 글을 제외하지 않는다. 자동 표지는 카드에만 표시한다.
+`collection.columns`, `collection.rows`는 목록 배치와 한 페이지의 항목 수를 정한다. `rows: null`은 필터 결과 전체를 한 페이지로 표시한다. 카드의 `title`, `description`, `tags`, `date`, `comments`는 각 항목의 표시 여부다. 선택 항목 `author`(기본 `false`)를 켜면 `config/site.json`의 `name`과 선택 사진 `avatar`를 카드 아래와 글 도입문 아래의 글쓴이 줄에 표시한다. 카드 태그는 앞의 3개만 보인다. `media: image`는 지정한 대표 이미지, 없으면 본문의 첫 공개 그림을 카드 표지로 쓰고, 둘 다 없으면 제목으로 표지를 자동으로 만든다. `icon`, `none`은 공개 글의 장식 이미지를 만들지 않는다. 같은 표시 정책을 정적 목록과 검색 뒤 다시 그린 목록에 적용한다. 실제 글 포함 여부는 승인·공개 상태·발행일·빌드 모드로 정하며 카드 설정 때문에 글을 제외하지 않는다. 자동 표지는 카드에만 표시한다.
 
 검색어와 태그, 페이지는 `q`, 반복 `tag`, `page`로 `/search/`에 저장한다. 검색창은 공통 구성 요소를 사용하며 검색어와 태그의 AND 조건은 표시 설정으로 바뀌지 않는다. 목록·검색·태그는 같은 공개 글 집합을 사용한다. 분야별 목록은 만들지 않는다. Blog 본문 피드는 같은 글 집합과 `feedSize`, `autoLoad` 설정을 사용한다.
 
