@@ -12,7 +12,7 @@ function parsePost(source) {
   if (['all', 'page', 'feed'].includes(metadata.slug)) throw new Error(`reserved post slug: ${metadata.slug}`);
   for (const key of ['title', 'description']) if (typeof metadata[key] !== 'string' || !metadata[key].trim()) throw new Error(`missing ${key}: ${metadata.id}`);
   if (metadata.type !== undefined && metadata.type !== 'blog') throw new Error(`unsupported public post type: ${metadata.id}`);
-  if (!['public', 'draft'].includes(metadata.visibility)) throw new Error(`invalid visibility: ${metadata.id}`);
+  if (!VISIBILITIES.includes(metadata.visibility)) throw new Error(`invalid visibility: ${metadata.id}`);
   for (const key of ['publishedAt', 'updatedAt']) {
     const value = metadata[key];
     if (key === 'updatedAt' && value === undefined) continue;
@@ -30,8 +30,22 @@ function parsePost(source) {
   return { metadata, page: { id: metadata.id, slug: metadata.slug, title: metadata.title.trim(), description: metadata.description.trim(), tags: normalized, ...(metadata.keywords ? { keywords: [...new Set(keywords.map(word => word.trim().normalize('NFC')))] } : {}), publishedAt: metadata.publishedAt, ...(metadata.updatedAt ? { updatedAt: metadata.updatedAt } : {}), ...(metadata.thumbnail ? { thumbnail: metadata.thumbnail } : {}), comments: metadata.comments ?? false, example: metadata.example ?? false, body, route: `/blog/${metadata.slug}/` } };
 }
 
+// 공개 글만 사이트에 싣는다. 임시(draft)와 비공개(private)는 원본 저장소에만 남는다.
+export const VISIBILITIES = Object.freeze(['public', 'draft', 'private']);
 function isPublished({ metadata }, now) {
-  return !(metadata.visibility === 'draft' || metadata.publish === false || metadata.status === 'draft' || metadata.publishedAt > now.toISOString().slice(0, 10));
+  return !(metadata.visibility !== 'public' || metadata.publish === false || metadata.status === 'draft' || metadata.publishedAt > now.toISOString().slice(0, 10));
+}
+
+// 작성 중인 임시·비공개 글의 형식 오류가 공개 글 배포를 막지 않게 한다. 공개 글의 오류는 그대로 멈춘다.
+function parseSource(source) {
+  try {
+    return parsePost(source);
+  } catch (error) {
+    let metadata = {};
+    try { ({ metadata } = parseContent(source)); } catch { throw error; }
+    if (metadata.visibility === 'public' && metadata.publish !== false && metadata.status !== 'draft') throw error;
+    return null;
+  }
 }
 
 export function postTags(posts, knownLabels = {}) {
@@ -39,7 +53,7 @@ export function postTags(posts, knownLabels = {}) {
 }
 
 export function collectPosts(sources, { now = new Date(), includeExamples = false } = {}) {
-  const posts = sources.map(parsePost);
+  const posts = sources.map(parseSource).filter(Boolean);
   for (const key of ['id', 'slug']) if (new Set(posts.map(post => post.page[key])).size !== posts.length) throw new Error(`duplicate post ${key}`);
   return posts.filter(post => isPublished(post, now)).map(post => post.page).filter(post => includeExamples || !post.example).sort(comparePosts);
 }

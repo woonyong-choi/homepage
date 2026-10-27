@@ -19,7 +19,29 @@ jobs:
       - run: npm ci
       - run: npm run check:tokens
       - run: npm run check:product
-      - run: npm run build:site -- --production
+      # 글 원본은 비공개 Vault 저장소에 있다. 읽기 토큰(VAULT_TOKEN)이 있으면 publish·assets만 받아 공개 글을 싣고,
+      # 없으면 이 저장소의 승인 사본(content/blog)으로 빌드한다.
+      - id: vault
+        run: echo "enabled=${{ secrets.VAULT_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+      - if: steps.vault.outputs.enabled == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: woonyong-choi/vault
+          token: ${{ secrets.VAULT_TOKEN }}
+          path: .vault
+          sparse-checkout: |
+            publish
+            assets
+          persist-credentials: false
+      - if: steps.vault.outputs.enabled == 'true'
+        run: |
+          mkdir -p content/assets
+          cp -Rn .vault/assets/. content/assets/
+          npm run build:site -- --production --blog-root .vault/publish
+        env:
+          SITE_ORIGIN: https://woonyong.com
+      - if: steps.vault.outputs.enabled != 'true'
+        run: npm run build:site -- --production
         env:
           SITE_ORIGIN: https://woonyong.com
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

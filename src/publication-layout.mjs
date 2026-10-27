@@ -24,7 +24,10 @@ export function documentShell(page, body, context) {
   const footer = page.bare ? '' : personalFooter(config);
   const entries = clientEntrypoints(body + footer);
   const searchScript = entries.includes('publication.js') ? `<script type="module" async src="/publication.js?v=${hashOf('publication.js')}"></script>` : '';
-  const scripts = entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
+  // 글 관리 설정이 있으면 모든 페이지에 작은 로더를 붙인다. 로그인한 관리자에게만 작성 기능을 불러온다.
+  const admin = context.admin ? `<meta name="admin-settings" content="${ui.escape(JSON.stringify({ ...context.admin, editor: `/admin-editor.js?v=${hashOf('admin-editor.js')}` }))}">` : '';
+  if (context.admin && !entries.includes('admin.js')) entries.push('admin.js');
+  const scripts = admin + entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
   const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : undefined;
   return `<!doctype html><html lang="ko" data-theme="${colorScheme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="${colorScheme}">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}" data-math-stylesheet>` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}">${page.bare ? '' : '<a class="app-skip" href="#main">본문으로 이동</a>'}${page.bare ? '' : ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
 }

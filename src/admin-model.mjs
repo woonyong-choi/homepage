@@ -4,11 +4,16 @@ import { isScalar, parseDocument } from 'yaml';
 const FRONT = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/;
 export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const IMAGE_TYPES = Object.freeze({ 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp' });
-// 공개 여부 하나가 Vault 글 머리의 세 항목을 함께 정한다.
-const STATES = Object.freeze({
+// 글 상태 하나가 Vault 글 머리의 세 항목을 함께 정한다. 임시는 작성 중, 비공개는 다 썼지만 사이트에 싣지 않는 글이다.
+export const STATES = Object.freeze({
   public: { visibility: 'public', status: 'published', publish: true },
+  private: { visibility: 'private', status: 'published', publish: false },
   draft: { visibility: 'draft', status: 'draft', publish: false },
 });
+export function postState(data) {
+  if (data.visibility === 'public' && data.publish !== false && data.status !== 'draft') return 'public';
+  return data.visibility === 'private' ? 'private' : 'draft';
+}
 
 function split(text) {
   const match = FRONT.exec(text);
@@ -18,12 +23,12 @@ function split(text) {
 export function readPost(text) {
   const { yaml, body } = split(text);
   const data = parseDocument(yaml).toJS() ?? {};
-  const published = data.visibility === 'public' && data.publish === true;
   return {
     id: String(data.id ?? data.slug ?? ''), slug: String(data.slug ?? data.id ?? ''), type: String(data.type ?? ''),
     title: String(data.title ?? ''), description: String(data.description ?? ''),
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [], publishedAt: String(data.publishedAt ?? ''),
-    state: published ? 'public' : 'draft', body: body.replace(/^\r?\n/, ''),
+    thumbnail: data.thumbnail && typeof data.thumbnail.src === 'string' ? { src: data.thumbnail.src, alt: String(data.thumbnail.alt ?? '') } : null,
+    state: postState(data), body: body.replace(/^\r?\n/, ''),
   };
 }
 
@@ -45,10 +50,14 @@ export function writePost(original, values) {
     doc.contents = doc.createNode({});
     for (const [key, value] of Object.entries({ id: values.slug, slug: values.slug, type: 'blog' })) setValue(doc, key, value);
   }
+  // 임시 주소(draft-)로 저장한 글은 출간할 때 정한 주소로 id·slug를 바꾼다.
+  if (original && values.slug) { setValue(doc, 'id', values.slug); setValue(doc, 'slug', values.slug); }
   setValue(doc, 'title', values.title);
   setValue(doc, 'description', values.description);
   setValue(doc, 'tags', values.tags);
   setValue(doc, 'publishedAt', values.publishedAt);
+  if (values.thumbnail) setValue(doc, 'thumbnail', { src: values.thumbnail.src, alt: values.thumbnail.alt });
+  else if (values.thumbnail === null) doc.delete('thumbnail');
   for (const [key, value] of Object.entries(STATES[values.state] ?? STATES.draft)) setValue(doc, key, value);
   if (!original) setValue(doc, 'comments', false);
   const head = doc.toString({ lineWidth: 0, flowCollectionPadding: false }).replace(/\n$/, '');

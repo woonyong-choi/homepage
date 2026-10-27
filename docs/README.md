@@ -7,6 +7,6 @@
   - [홈 원고 가이드](design/home-content.md)
   - [영역 설정](design/layout-settings.md)
 - [Markdown 글 작성](design/markdown.md)
-  - [글 작성 화면](design/admin.md)
+  - [글 관리](design/admin.md)
 - [개인 사이트 발행](design/publication.md)
   - [스타일 수정 지도](design/styles.md)

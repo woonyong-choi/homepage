@@ -54,7 +54,7 @@ npm run content:check
 
 | 구분 | 범위 |
 |---|---|
-| 구현 | 개인 소개, Search 목록·검색·태그, Blog 최근 본문 피드, RSS, 댓글, Markdown·도표 발행, GitHub 로그인 글 작성 화면(`/admin/`) |
+| 구현 | 개인 소개, Search 목록·검색·태그, Blog 최근 본문 피드, RSS, 댓글, Markdown·도표 발행, 관리자에게만 보이는 글 작성·출간·수정(`/admin/`) |
 | 제한 | 발행 화면은 라이트 테마 고정, 코드 실행 환경 없음, 구독 전송 주소 미설정 |
 | 다음 | [전체 검수](https://github.com/woonyong-choi/homepage/issues/215), [통합 검증](https://github.com/woonyong-choi/homepage/issues/28), [사이트 표식](https://github.com/woonyong-choi/homepage/issues/303) |
 
@@ -67,7 +67,7 @@ npm run content:check
   - [홈 원고 가이드](docs/design/home-content.md)
   - [영역 설정](docs/design/layout-settings.md)
 - [Markdown 글 작성](docs/design/markdown.md)
-  - [글 작성 화면](docs/design/admin.md)
+  - [글 관리](docs/design/admin.md)
 - [개인 사이트 발행](docs/design/publication.md)
   - [스타일 수정 지도](docs/design/styles.md)
 

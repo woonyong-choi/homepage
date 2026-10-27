@@ -1,6 +1,6 @@
 // 공개 입력을 정적 페이지와 검색 색인으로 만들며 깨진 내부 연결을 차단한다.
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { parseArgs } from 'node:util';
@@ -69,6 +69,8 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))));
   const context = { config, layout, tags, knownTags, recommendations, origin, preview, mode, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
+  const admin = loadAdminConfig();
+  if (admin) context.admin = { ...admin, author: layout.blog.card.author };
   context.home = loadHomeContent(brandNames(), CONTENT, { preview });
   context.services = serviceTagCatalog(knownTags);
   const output = new Map();
@@ -86,9 +88,8 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
     add(page === 1 ? '/blog/' : `/blog/page/${page}/`, layout.blog.title, blogFeed(posts, tags, page, { commentConfig, commentTheme, layout }));
   }
   for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
-  // 글 작성 화면은 설정이 있을 때만 만들고 검색 엔진과 사이트맵에서 뺀다.
-  const admin = loadAdminConfig();
-  if (admin) add('/admin/', '글 관리', adminPage(admin, { siteTitle: siteTitle(config), author: layout.blog.card.author }), { noindex: true, bare: true });
+  // 관리자 로그인 화면은 설정이 있을 때만 만들고 검색 엔진과 사이트맵에서 뺀다.
+  if (context.admin) add('/admin/', '글 관리', adminPage(context.admin, { siteTitle: siteTitle(config) }), { noindex: true, bare: true });
   const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), context);
   await writeSite(output, posts, context, scripts, notFound, outputRoot);
   return { pages: output.size, documents: posts.length, themeHash: MANIFEST.contentHash };
@@ -166,7 +167,8 @@ export function blogFeedXml(posts, { title, description, origin }) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const { values } = parseArgs({ options: { production: { type: 'boolean', default: false } } });
+  // --blog-root: 글 원본 폴더. 배포는 비공개 Vault의 publish 폴더를 넘겨 공개 글만 싣는다.
+  const { values } = parseArgs({ options: { production: { type: 'boolean', default: false }, 'blog-root': { type: 'string' } } });
   const mode = values.production ? 'production' : 'approved-preview';
-  console.log(await buildPublication({ origin: process.env.SITE_ORIGIN ?? '', mode }));
+  console.log(await buildPublication({ origin: process.env.SITE_ORIGIN ?? '', mode, ...(values['blog-root'] ? { blogRoot: resolve(values['blog-root']) } : {}) }));
 }
