@@ -19,10 +19,12 @@ test('admin_config_accepts_repository_folders_deploy_and_https_login_server_only
   assert.throws(() => parseAdminConfig({ ...base, token: 'x' }), /알 수 없는 설정/);
 });
 
-test('admin_login_page_has_only_github_login_and_logout', () => {
-  const { document } = new JSDOM(adminPage()).window;
-  assert.equal(document.querySelector('main.app-shell .app-admin-login h1').textContent, '로그인');
-  assert.equal(document.querySelector('.app-admin-login-body'), null);
+test('admin_login_page_is_logo_and_github_login_only', () => {
+  const config = { title: 'Who Knows', logo: { src: '/assets/who-knows.svg', alt: 'Who Knows' } };
+  const { document } = new JSDOM(adminPage(config, { readAsset: () => Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0h1v1z"/></svg>') })).window;
+  assert.equal(document.querySelector('.app-admin-login h1.app-sr').textContent, '로그인');
+  assert.equal(document.querySelector('.app-admin-login-logo').getAttribute('aria-label'), 'Who Knows 홈');
+  assert.ok(document.querySelector('.app-admin-login-logo svg'));
   assert.deepEqual([...document.querySelectorAll('[data-action]')].map(node => node.dataset.action), ['signin', 'signout']);
   assert.equal(document.querySelector('[data-action=signout]').hidden, true);
 });
