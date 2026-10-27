@@ -49,8 +49,8 @@ test('blog_listing_keeps_all_static_cards_and_offers_only_used_tags_without_subj
   const dom = new JSDOM(searchListing(entries, { 산책: { label: '산책' } }));
   const document = dom.window.document;
   assert.equal(document.querySelectorAll('.app-blog-card').length, 14);
-  // 본문 제목이 보이는 카드는 같은 제목을 표지로 다시 그리지 않는다.
-  assert.equal(document.querySelectorAll('.app-title-cover').length, 0);
+  // 그림이 없는 글은 제목으로 표지를 자동으로 만든다.
+  assert.equal(document.querySelectorAll('.app-title-cover').length, 14);
   assert.equal(document.querySelectorAll('.app-blog-card-title').length, 14);
   assert.equal(document.querySelectorAll('.app-blog-card-tags').length, 13);
   assert.equal(document.querySelectorAll('.app-content-icon').length, 0);

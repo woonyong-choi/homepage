@@ -34,14 +34,14 @@ function nodeFrom(component) {
 
 export function startAdmin(settings, token, { fetcher = (...args) => fetch(...args), storage = localStorage, doc = document } = {}) {
   const view = doc.defaultView;
-  const state = { token, posts: [], current: null, tags: [], thumbnail: undefined, visibility: 'public', dirty: false, images: new Map() };
+  const state = { token, posts: [], current: null, tags: [], thumbnail: undefined, dirty: false, closing: false, images: new Map() };
 
   // 화면 조각은 모두 공통 구성 요소로 만든다.
   const toast = nodeFrom(ui.Toast());
   const dock = nodeFrom(ui.AdminDock({ count: 0 }));
   let panel = nodeFrom(ui.AdminDrafts({ items: [] }));
   const write = nodeFrom(ui.WriteScreen({ preview: ui.trusted('<div data-write-preview></div>') }));
-  const publish = nodeFrom(ui.PublishScreen());
+  const publish = nodeFrom(ui.PublishScreen({ card: ui.trusted('') }));
   const dialog = nodeFrom(ui.Dialog({ id: 'admin-confirm', title: '확인', body: '', actions: [ui.Button({ label: '취소', variant: 'quiet', action: 'dialog-cancel' }), ui.Button({ label: '확인', variant: 'primary', action: 'dialog-confirm' })] }));
   const fileInput = Object.assign(doc.createElement('input'), { type: 'file', accept: 'image/png,image/jpeg,image/gif,image/webp', hidden: true });
   doc.body.append(panel, dock, write, publish, dialog, toast, fileInput);
@@ -100,9 +100,9 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
 
   // 목록과 개수, 글 화면의 수정·삭제 줄을 지금 글 목록에 맞춘다.
   function renderAdminUi() {
-    const hidden = state.posts.filter(post => post.state !== 'public');
+    const hidden = state.posts.filter(post => post.state === 'draft');
     dock.querySelector('[data-admin-count]').textContent = String(hidden.length);
-    const next = nodeFrom(ui.AdminDrafts({ items: hidden.map(post => ({ id: post.path, title: post.title || post.name, state: post.state, date: post.publishedAt })) }));
+    const next = nodeFrom(ui.AdminDrafts({ items: hidden.map(post => ({ id: post.path, title: post.title || post.name, date: post.publishedAt })) }));
     next.hidden = panel.hidden;
     panel.replaceWith(next);
     panel = next;
@@ -111,7 +111,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     const post = slug && state.posts.find(item => item.slug === slug);
     const byline = article?.querySelector('.app-post-byline') ?? article?.querySelector('.app-post-header');
     article?.querySelector('.app-post-owner')?.remove();
-    if (byline && post) byline.append(nodeFrom(ui.PostOwnerActions({ state: post.state })));
+    if (byline && post) byline.append(nodeFrom(ui.PostOwnerActions()));
   }
 
   async function loadPosts() {
@@ -144,7 +144,6 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     state.current = post;
     state.tags = [...(post?.tags ?? [])];
     state.thumbnail = undefined;
-    state.visibility = post?.state === 'private' ? 'private' : 'public';
     title.value = post?.title ?? '';
     body.value = post?.body ?? '';
     tagInput.value = '';
@@ -153,17 +152,41 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     state.dirty = false;
     panel.hidden = true;
     dock.querySelector('[data-action=open-drafts]').setAttribute('aria-expanded', 'false');
+    // 공개된 글은 임시저장으로 사이트에서 내리지 않는다. 출간하기 대신 수정하기로 바로 반영한다.
+    const published = post?.state === 'public';
+    write.querySelector('[data-action=save-draft]').hidden = published;
+    write.querySelector('[data-action=open-publish]').textContent = published ? '수정하기' : '출간하기';
+    publish.querySelector('[data-action=publish]').textContent = published ? '수정하기' : '출간하기';
     write.hidden = false;
     lockPage(true);
     write.querySelector('.app-write-fields').scrollTop = 0;
     title.focus({ preventScroll: true });
+    pushView('write');
   }
-  async function closeWrite() {
-    if (state.dirty && !await confirm('작성 화면 나가기', '저장하지 않은 내용이 있습니다. 나가면 바뀐 내용을 잃습니다.', '나가기')) return;
+
+  // 작성·출간 화면은 브라우저 기록에 한 칸씩 쌓는다. 뒤로 가기는 열린 화면을 하나씩 닫는다.
+  function pushView(name) {
+    view.history.pushState({ admin: name }, '', view.location.href);
+  }
+  function hideWrite() {
     write.hidden = true;
     publish.hidden = true;
     lockPage(false);
     state.dirty = false;
+  }
+  async function onBack() {
+    if (state.closing) { state.closing = false; return; }
+    if (!dialog.hidden) closeDialog(false);
+    if (!publish.hidden) { publish.hidden = true; return; }
+    if (write.hidden) return;
+    if (state.dirty && !await confirm('작성 화면 나가기', '저장하지 않은 내용이 있습니다. 나가면 바뀐 내용을 잃습니다.', '나가기')) { pushView('write'); return; }
+    hideWrite();
+  }
+  // 저장을 마친 뒤 열린 화면 수만큼 기록을 되돌리며 닫는다.
+  function closeAll() {
+    const steps = (publish.hidden ? 0 : 1) + (write.hidden ? 0 : 1);
+    hideWrite();
+    if (steps) { state.closing = true; view.history.go(-steps); }
   }
 
   let previewTimer = 0;
@@ -193,21 +216,42 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     if (url) image.src = url;
   }
 
+  // 서식 단추는 고른 줄·글자에 Markdown 문법을 넣거나, 이미 있으면 뺀다(다시 누르면 해제).
   function applyFormat(format) {
-    const rule = FORMATS[format];
     if (format === 'image') { pickImage('body'); return; }
-    const start = body.selectionStart;
-    const end = body.selectionEnd;
+    const rule = FORMATS[format];
+    const { value } = body;
+    let start = body.selectionStart;
+    let end = body.selectionEnd;
     if (rule.line) {
-      const lineStart = body.value.lastIndexOf('\n', start - 1) + 1;
-      body.setRangeText(rule.line, lineStart, lineStart, 'end');
-    } else {
-      const selected = body.value.slice(start, end) || rule.fallback;
-      body.setRangeText(`${rule.wrap[0]}${selected}${rule.wrap[1]}`, start, end, 'select');
-    }
+      const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+      const lineEnd = value.indexOf('\n', end) === -1 ? value.length : value.indexOf('\n', end);
+      const lines = value.slice(lineStart, lineEnd).split('\n');
+      const strip = line => format === 'quote' ? line.replace(/^>\s?/, '') : line.replace(/^#{1,6}\s+/, '');
+      const active = lines.every(line => format === 'quote' ? /^>\s?/.test(line) : line.startsWith(rule.line));
+      const next = lines.map(line => active ? strip(line) : `${rule.line}${strip(line)}`).join('\n');
+      body.setRangeText(next, lineStart, lineEnd, 'end');
+    } else if (format === 'code' && !value.slice(start, end).includes('\n') && start !== end) {
+      toggleWrap('`', '`', start, end, '코드');
+    } else if (format === 'link') {
+      const text = value.slice(start, end) || rule.fallback;
+      body.setRangeText(`[${text}](https://)`, start, end, 'end');
+      const url = body.selectionEnd - 1;
+      body.setSelectionRange(url - 'https://'.length, url);
+    } else toggleWrap(rule.wrap[0], rule.wrap[1], start, end, rule.fallback);
     body.focus();
     state.dirty = true;
     schedulePreview();
+  }
+  function toggleWrap(before, after, start, end, fallback) {
+    const { value } = body;
+    if (value.slice(start - before.length, start) === before && value.slice(end, end + after.length) === after) {
+      body.setRangeText(value.slice(start, end), start - before.length, end + after.length, 'select');
+      return;
+    }
+    const selected = value.slice(start, end) || fallback;
+    body.setRangeText(`${before}${selected}${after}`, start, end, 'end');
+    body.setSelectionRange(start + before.length, start + before.length + selected.length);
   }
 
   let imageTarget = 'body';
@@ -231,7 +275,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     state.images.set(name, Promise.resolve(view.URL.createObjectURL(file)));
     if (imageTarget === 'thumbnail') {
       state.thumbnail = { src: `/assets/${name}`, alt: title.value.trim() };
-      renderThumbnail();
+      renderCard();
     } else {
       body.setRangeText(`\n${imageMarkdown(file.name.replace(/\.[^.]*$/, ''), name)}\n`, body.selectionStart, body.selectionEnd, 'end');
       schedulePreview();
@@ -240,31 +284,32 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     say('그림을 올렸습니다.');
   }
 
-  // 출간 화면
+  // 출간 화면: 왼쪽에 사이트 목록 카드와 같은 BlogCard를 그린다. 썸네일은 고른 그림, 본문 첫 그림, 제목 표지 순서다.
   const currentThumbnail = () => state.thumbnail === undefined ? state.current?.thumbnail ?? null : state.thumbnail;
-  function renderThumbnail() {
-    const box = publish.querySelector('[data-publish-thumbnail]');
+  function renderCard() {
+    const heading = title.value.replace(/\s*\n\s*/g, ' ').trim() || '제목 없음';
     const thumbnail = currentThumbnail();
     const first = body.value.match(/!\[[^\]]*\]\(\.\.\/assets\/([^)\s]+)\)/)?.[1];
-    const file = thumbnail?.src.startsWith('/assets/') ? thumbnail.src.slice('/assets/'.length) : first;
+    const file = thumbnail?.src.startsWith('/assets/') ? thumbnail.src.slice('/assets/'.length) : thumbnail ? null : first;
+    const external = thumbnail && !thumbnail.src.startsWith('/assets/') ? thumbnail.src : '';
+    const date = publishField('publishedAt').value || today();
+    const slug = publishField('slug').value.trim() || 'new-post';
+    const card = ui.BlogCard({
+      href: `/blog/${slug}/`, title: heading, level: 3, automaticCover: true,
+      cover: file || external ? ui.trusted('<img data-card-image alt="">') : undefined,
+      description: publishField('description').value.trim(), tagItems: state.tags.map(tag => ({ href: `/search/?tag=${encodeURIComponent(tag)}`, label: tag })),
+      author: settings.author, publishedAt: date, dateLabel: DATE.format(new Date(date)),
+    });
+    const box = publish.querySelector('[data-publish-card]');
+    box.replaceChildren(nodeFrom(card));
+    const image = box.querySelector('[data-card-image]');
+    if (image && file) showImage(image, file);
+    else if (image) image.src = external;
     publish.querySelector('[data-action=remove-thumbnail]').hidden = !thumbnail;
-    const empty = box.querySelector('.app-publish-thumbnail-empty');
-    box.querySelector('img')?.remove();
-    empty.hidden = Boolean(file);
-    if (file) {
-      const image = Object.assign(doc.createElement('img'), { alt: '' });
-      box.append(image);
-      showImage(image, file);
-    }
-  }
-  function setVisibility(value) {
-    state.visibility = value;
-    for (const button of publish.querySelectorAll('[data-visibility]')) button.setAttribute('aria-pressed', String(button.dataset.visibility === value));
   }
   function openPublish() {
     const heading = title.value.replace(/\s*\n\s*/g, ' ').trim();
     if (!heading) { say('제목을 입력해 주세요.'); title.focus(); return; }
-    publish.querySelector('[data-publish-title]').textContent = heading;
     const description = publishField('description');
     description.value = state.current?.description ?? '';
     publish.querySelector('[data-publish-count]').textContent = String(description.value.length);
@@ -273,9 +318,9 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     slug.readOnly = Boolean(state.current) && !state.current.slug.startsWith('draft-');
     if (slug.value.startsWith('draft-')) slug.value = '';
     publishField('publishedAt').value = state.current?.publishedAt || today();
-    setVisibility(state.visibility);
-    renderThumbnail();
+    renderCard();
     publish.hidden = false;
+    pushView('publish');
     description.focus();
   }
 
@@ -310,7 +355,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     const wasPublic = current?.state === 'public';
     if (current && text === current.text && nextState === current.state) { say('바뀐 내용이 없습니다.'); return; }
     say(nextState === 'draft' ? '임시저장하는 중입니다.' : '저장하는 중입니다.', { stay: true });
-    const verb = !current ? '추가' : nextState === 'draft' ? '임시저장' : nextState === 'private' ? '비공개로 저장' : '출간';
+    const verb = nextState === 'draft' ? (current ? '임시저장' : '임시 글 추가') : wasPublic ? '수정' : '출간';
     const response = await api(contentPath(path), { method: 'PUT', body: JSON.stringify({ message: `docs(publish): ${input.title} ${verb}`, content: toBase64(text), branch: settings.branch, ...(current && !renamed ? { sha: current.sha } : {}) }) });
     if (response.status === 409 || response.status === 422) return say('다른 곳에서 먼저 바뀌었습니다. 새로고침한 뒤 다시 저장해 주세요.');
     if (!response.ok) return say(`저장하지 못했습니다(${response.status}).`);
@@ -324,9 +369,10 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     state.dirty = false;
     renderAdminUi();
     // 사이트에 보이는 글이 생기거나 바뀌거나 사라질 때만 배포한다.
-    if (nextState === 'public' || wasPublic) await deploy(nextState === 'public' ? '출간했습니다.' : '사이트에서 내렸습니다.');
-    else say(`${nextState === 'draft' ? '임시저장했습니다.' : '비공개로 저장했습니다. 사이트에는 보이지 않습니다.'}${settings.demo ? ' (체험 모드)' : ''}`);
-    if (nextState !== 'draft') { publish.hidden = true; write.hidden = true; lockPage(false); }
+    if (nextState === 'public') {
+      closeAll();
+      await deploy(wasPublic ? '수정했습니다.' : '출간했습니다.');
+    } else say(`임시저장했습니다.${settings.demo ? ' (체험 모드)' : ''}`);
   }
 
   async function removePost(post) {
@@ -365,13 +411,12 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   doc.addEventListener('click', event => {
     const target = event.target;
     const action = target.closest('[data-action]')?.dataset.action;
-    if (!action && !target.closest('[data-item],[data-format],[data-visibility],[data-tag]')) {
+    if (!action && !target.closest('[data-item],[data-format],[data-tag]')) {
       if (!panel.hidden && !target.closest('.app-admin-panel, .app-admin-dock')) { panel.hidden = true; dock.querySelector('[data-action=open-drafts]').setAttribute('aria-expanded', 'false'); }
       return;
     }
     const item = target.closest('[data-item]')?.dataset.item;
     const format = target.closest('[data-format]')?.dataset.format;
-    const visibility = target.closest('[data-visibility]')?.dataset.visibility;
     const tag = target.closest('.app-tag-entry [data-tag]')?.dataset.tag;
     const current = () => state.posts.find(post => post.slug === view.location.pathname.match(/^\/blog\/([^/]+)\/$/)?.[1]);
     if (action === 'new-post') openWrite(null);
@@ -381,17 +426,16 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     } else if (item) { const post = state.posts.find(entry => entry.path === item); if (post) openWrite(post); }
     else if (action === 'edit-post') { const post = current(); if (post) openWrite(post); }
     else if (action === 'delete-post') { const post = current(); if (post) run(() => removePost(post)); }
-    else if (action === 'close-write') run(closeWrite);
+    else if (action === 'close-write') view.history.back();
     else if (action === 'save-draft') run(() => save('draft'));
     else if (action === 'open-publish') openPublish();
-    else if (action === 'close-publish') publish.hidden = true;
-    else if (action === 'publish') run(() => save(state.visibility));
+    else if (action === 'close-publish') view.history.back();
+    else if (action === 'publish') run(() => save('public'));
     else if (action === 'upload-thumbnail') pickImage('thumbnail');
-    else if (action === 'remove-thumbnail') { state.thumbnail = null; state.dirty = true; renderThumbnail(); }
+    else if (action === 'remove-thumbnail') { state.thumbnail = null; state.dirty = true; renderCard(); }
     else if (action === 'dialog-cancel') closeDialog(false);
     else if (action === 'dialog-confirm') closeDialog(true);
     else if (format) applyFormat(format);
-    else if (visibility) setVisibility(visibility);
     else if (tag !== undefined) { state.tags = state.tags.filter(value => value !== tag); state.dirty = true; renderTags(); schedulePreview(); tagInput.focus(); }
   });
   writeForm.addEventListener('input', event => {
@@ -400,9 +444,18 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   });
   writeForm.addEventListener('submit', event => event.preventDefault());
   publishForm.addEventListener('submit', event => event.preventDefault());
-  publishField('description').addEventListener('input', event => {
-    publish.querySelector('[data-publish-count]').textContent = String(Math.min(event.target.value.length, DESCRIPTION_LIMIT));
+  publishForm.addEventListener('input', event => {
+    if (event.target === publishField('description')) publish.querySelector('[data-publish-count]').textContent = String(Math.min(event.target.value.length, DESCRIPTION_LIMIT));
     state.dirty = true;
+    renderCard();
+  });
+  view.addEventListener('popstate', () => run(onBack));
+  // 서식 단추를 눌러도 본문의 선택 영역이 풀리지 않게 한다.
+  write.querySelector('.app-write-toolbar').addEventListener('mousedown', event => event.preventDefault());
+  body.addEventListener('keydown', event => {
+    if (!(event.metaKey || event.ctrlKey) || event.isComposing) return;
+    const format = { b: 'bold', i: 'italic', k: 'link' }[event.key.toLowerCase()];
+    if (format) { event.preventDefault(); applyFormat(format); }
   });
   title.addEventListener('keydown', event => { if (event.key === 'Enter' && !event.isComposing) { event.preventDefault(); tagInput.focus(); } });
   tagInput.addEventListener('keydown', event => {
@@ -415,8 +468,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   doc.addEventListener('keydown', event => {
     if (event.key !== 'Escape') return;
     if (!dialog.hidden) closeDialog(false);
-    else if (!publish.hidden) publish.hidden = true;
-    else if (!write.hidden) run(closeWrite);
+    else if (!publish.hidden || !write.hidden) view.history.back();
     else if (!panel.hidden) { panel.hidden = true; dock.querySelector('[data-action=open-drafts]').setAttribute('aria-expanded', 'false'); }
   });
   view.addEventListener('beforeunload', event => { if (state.dirty && !write.hidden) event.preventDefault(); });

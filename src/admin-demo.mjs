@@ -11,10 +11,9 @@ slug: ${slug}
 type: blog
 title: "${title}"
 description: "${description}"
-tags: [체험, 글쓰기]
 publishedAt: "${today()}"
-visibility: ${state === 'public' ? 'public' : state}
-status: ${state === 'draft' ? 'draft' : 'published'}
+visibility: ${state}
+status: ${state === 'public' ? 'published' : 'draft'}
 publish: ${state === 'public'}
 comments: false
 ---
@@ -23,8 +22,8 @@ ${body}
 `];
 
 export const DEMO_POSTS = Object.freeze([
-  post('demo-draft', '쓰다 만 임시 글', '임시저장한 글은 오른쪽 아래 목록에서 다시 열 수 있습니다.', 'draft', '아직 쓰는 중인 글입니다.\n\n## 남은 일\n\n- 그림 넣기\n- 요약 다듬기'),
-  post('demo-private', '나만 보는 비공개 글', '비공개로 출간한 글은 사이트에 보이지 않고 관리자 목록에만 남습니다.', 'private', '비공개 글은 다 쓴 글이지만 사이트에 싣지 않습니다.\n\n> 출간 화면에서 전체 공개로 바꾸면 사이트에 올라갑니다.'),
+  post('demo-draft', '쓰다 만 임시 글', '임시저장한 글은 오른쪽 아래 임시 글 목록에서 다시 열 수 있습니다.', 'draft', '아직 쓰는 중인 글입니다.\n\n## 남은 일\n\n- 그림 넣기\n- 요약 다듬기'),
+  post('demo-outline', '목차만 잡아 둔 글', '출간하기를 누르면 목록 카드 미리보기와 주소·요약을 정하는 화면이 열립니다.', 'draft', '## 들어가며\n\n## 본론\n\n## 마치며'),
 ]);
 
 export function demoFetcher(seed = DEMO_POSTS) {
