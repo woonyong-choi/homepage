@@ -5,6 +5,7 @@ import { parseDocumentSync, renderPreview } from 'document-engine/preview';
 import { bodyWithSummary, splitLead, summaryOf } from './article-summary.mjs';
 import { publishDate } from './content-metadata.mjs';
 import { createSiteSync } from './admin-site.mjs';
+import { RESERVED_SLUGS } from './blog-model.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { fromBase64, imageFileName, imageMarkdown, postFileName, readPost, SLUG, toBase64, writePost } from './admin-model.mjs';
 import { TOKEN_KEY } from './admin-token.mjs';
@@ -33,7 +34,7 @@ function nodeFrom(component) {
 
 export function startAdmin(settings, token, { fetcher = (...args) => fetch(...args), storage = localStorage, doc = document } = {}) {
   const view = doc.defaultView;
-  const state = { token, posts: [], current: null, tags: [], visibility: 'public', dirty: false, edits: 0, saving: false, closing: false, images: new Map() };
+  const state = { token, posts: [], current: null, session: 0, tags: [], visibility: 'public', dirty: false, edits: 0, saving: false, closing: false, images: new Map() };
 
   // 화면 조각은 모두 공통 구성 요소로 만든다.
   const toast = nodeFrom(ui.Toast());
@@ -79,7 +80,9 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   }
 
   async function api(url, init = {}) {
+    // GitHub API 응답은 브라우저에 60초 캐시된다. 저장 직후 예전 내용을 읽지 않게 캐시를 쓰지 않는다.
     const response = await fetcher(url.startsWith('https://') ? url : `${API}/repos/${settings.repository}/${url}`, {
+      cache: 'no-store',
       ...init,
       headers: { authorization: `Bearer ${state.token}`, accept: 'application/vnd.github+json', 'x-github-api-version': '2022-11-28', ...(init.body ? { 'content-type': 'application/json' } : {}), ...init.headers },
     });
@@ -132,22 +135,35 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   }
 
   // 공개 글 중 사이트 저장소의 승인 사본과 내용이 다른 글은 사이트 반영이 끝나지 않은 글이다. 승인 목록을 못 읽으면 표시하지 않는다.
+  // 사이트에서 내리지 못한 글(임시·비공개로 바꿨거나 다른 이름으로 옮긴 글의 옛 사본)도 찾아 둔다.
+  let staleCopies = [];
   async function markOffline() {
     if (!siteSync) return;
     try {
-      const pending = new Set(await siteSync.pending(state.posts));
-      for (const post of state.posts) post.offline = pending.has(post);
+      const { publish: missing, remove } = await siteSync.pending(state.posts);
+      for (const post of state.posts) post.offline = missing.includes(post);
+      staleCopies = remove;
     } catch { /* 반영 여부를 모르면 표시하지 않는다. */ }
   }
-  // 반영되지 않은 공개 글은 관리 화면을 열 때 자동으로 다시 올린다.
+  // 사이트와 어긋난 글은 관리 화면을 열 때 자동으로 맞춘다. 한 글이 실패해도 나머지 글은 계속 맞춘다.
   async function repairSite() {
-    const pending = state.posts.filter(post => post.offline);
-    if (!pending.length) return;
-    say(`사이트에 반영되지 않은 글 ${pending.length}개를 다시 올리는 중입니다.`, { stay: true });
-    await updateSite(pending.map(post => ({ post })));
-    for (const post of pending) post.offline = false;
+    const changes = [...state.posts.filter(post => post.offline).map(post => ({ post })), ...staleCopies.map(post => ({ post, remove: true }))];
+    if (!changes.length) return;
+    say(`사이트와 어긋난 글 ${changes.length}개를 맞추는 중입니다.`, { stay: true });
+    const failed = [];
+    for (const change of changes) {
+      try {
+        await updateSite([change]);
+        if (!change.remove) change.post.offline = false;
+      } catch (error) {
+        if (error.message === 'unauthorized') throw error;
+        failed.push({ change, message: error.message });
+      }
+    }
+    staleCopies = staleCopies.filter(copy => failed.some(item => item.change.post === copy));
     renderAdminUi();
-    await deploy(`사이트에 반영되지 않은 글 ${pending.length}개를 다시 올렸습니다.`);
+    if (failed.length === changes.length) { say(failed[0].message, { stay: true }); return; }
+    await deploy(`사이트와 어긋난 글 ${changes.length - failed.length}개를 맞췄습니다.${failed.length ? ` ${failed.length}개는 실패했습니다: ${failed[0].message}` : ''}`);
   }
 
   // 공개 글은 사이트 저장소에도 커밋한다. 토큰에 그 저장소 쓰기 권한이 없으면 출간 전에 알린다.
@@ -165,13 +181,15 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     for (const tag of state.tags) tagInput.before(nodeFrom(ui.TagInput({ id: 'admin-tag-chip', label: '태그', tags: [tag] })).querySelector('[data-tag]'));
   }
   function addTags(text) {
-    const next = String(text).split(/[,#]/).map(tag => tag.trim()).filter(Boolean);
+    const next = String(text).normalize('NFC').split(/[,#]/).map(tag => tag.trim()).filter(Boolean);
     const before = state.tags.length;
     state.tags = [...new Set([...state.tags, ...next])];
     if (state.tags.length !== before) { markDirty(); renderTags(); schedulePreview(); }
   }
 
   function openWrite(post) {
+    // 글을 열 때마다 작성 회차를 바꾼다. 앞 회차의 저장·그림 올리기가 늦게 끝나도 지금 연 글을 건드리지 않는다.
+    state.session += 1;
     state.current = post;
     state.tags = [...(post?.tags ?? [])];
     title.value = post?.title ?? '';
@@ -186,6 +204,9 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     // 공개된 글은 임시저장으로 사이트에서 내리지 않는다. 출간하기 대신 수정하기로 바로 반영한다.
     const published = post?.state === 'public';
     write.querySelector('[data-action=save-draft]').hidden = published;
+    // 비공개 글의 저장은 비공개 그대로 저장한다. 저장된 글은 작성 화면에서 지울 수 있다.
+    write.querySelector('[data-action=save-draft]').textContent = post?.state === 'private' ? '저장' : '임시저장';
+    write.querySelector('[data-action=delete-current]').hidden = !post;
     write.querySelector('[data-action=open-publish]').textContent = published ? '수정하기' : '출간하기';
     publish.querySelector('[data-action=publish]').textContent = published ? '수정하기' : '출간하기';
     write.hidden = false;
@@ -302,7 +323,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     fileInput.click();
   }
   async function uploadImage(file) {
-    const name = imageFileName(file.name, file.type, today());
+    const session = state.session;
     say('그림을 올리는 중입니다.', { stay: true });
     const content = await new Promise((resolve, reject) => {
       const reader = new view.FileReader();
@@ -310,10 +331,17 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
       reader.onerror = () => reject(reader.error);
       reader.readAsDataURL(file);
     });
-    const response = await api(contentPath(`${settings.assets}/${name}`), { method: 'PUT', body: JSON.stringify({ message: `docs(assets): ${name} 추가`, content, branch: settings.branch }) });
-    if (response.status === 422) return say('같은 이름의 그림이 이미 있습니다. 파일 이름을 바꿔 다시 올려 주세요.');
-    if (!response.ok) return say(`그림을 올리지 못했습니다(${response.status}).`);
+    // 같은 이름의 그림이 이미 있으면(같은 날 한글 이름 그림 등) 뒤에 짧은 임의 글자를 붙여 다시 올린다.
+    let name = imageFileName(file.name, file.type, today());
+    let response;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      response = await api(contentPath(`${settings.assets}/${name}`), { method: 'PUT', body: JSON.stringify({ message: `docs(assets): ${name} 추가`, content, branch: settings.branch }) });
+      if (response.status !== 422) break;
+      name = name.replace(/(\.[a-z]+)$/, `-${Math.random().toString(36).slice(2, 6)}$1`);
+    }
+    if (!response.ok) return say(response.status === 422 ? '같은 이름의 그림이 이미 있습니다. 파일 이름을 바꿔 다시 올려 주세요.' : `그림을 올리지 못했습니다(${response.status}).`);
     state.images.set(name, Promise.resolve(view.URL.createObjectURL(file)));
+    if (session !== state.session || write.hidden) return say('그림을 올렸지만 작성 중인 글이 바뀌어 본문에 넣지 않았습니다.');
     body.setRangeText(`\n${imageMarkdown(file.name.replace(/\.[^.]*$/, ''), name)}\n`, body.selectionStart, body.selectionEnd, 'end');
     schedulePreview();
     markDirty();
@@ -352,6 +380,8 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     slug.readOnly = Boolean(state.current) && !state.current.slug.startsWith('draft-');
     if (slug.value.startsWith('draft-')) slug.value = '';
     publishField('publishedAt').value = state.current?.publishedAt || today();
+    // 예약 출간은 없다. 사이트는 오늘 이후 날짜의 글을 싣지 않으므로 오늘까지만 고른다.
+    publishField('publishedAt').max = today();
     renderCard();
     publish.hidden = false;
     pushView('publish');
@@ -382,10 +412,13 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   async function store(nextState, auto) {
     const input = values(nextState);
     const edits = state.edits;
+    const session = state.session;
     if (!input.title) return auto ? undefined : say('제목을 입력해 주세요.');
     if (nextState !== 'draft') {
       if (!SLUG.test(input.slug)) return say('주소 이름은 영어 소문자·숫자와 - 만 쓸 수 있습니다.');
+      if (RESERVED_SLUGS.includes(input.slug)) return say(`주소 이름 ${input.slug}은(는) 사이트 주소와 겹쳐 쓸 수 없습니다.`);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(input.publishedAt)) return say('발행일을 입력해 주세요.');
+      if (input.publishedAt > today()) return say('발행일은 오늘이나 그 전 날짜만 고를 수 있습니다.');
     } else if (!input.slug) input.slug = draftSlug();
     const current = state.current;
     const renamed = Boolean(current) && current.slug !== input.slug;
@@ -415,38 +448,54 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     if (!response.ok) return say(`저장하지 못했습니다(${response.status}).`);
     const result = await response.json();
     // 임시 주소 파일은 새 주소 파일을 만든 뒤 지운다.
-    if (renamed) await api(contentPath(current.path), { method: 'DELETE', body: JSON.stringify({ message: `docs(publish): ${input.title} 임시 파일 정리`, sha: current.sha, branch: settings.branch }) });
+    let leftover = false;
+    if (renamed) leftover = !(await api(contentPath(current.path), { method: 'DELETE', body: JSON.stringify({ message: `docs(publish): ${input.title} 임시 파일 정리`, sha: current.sha, branch: settings.branch }) })).ok;
     const post = { ...readPost(text), path, name: path.split('/').pop(), sha: result.content.sha, text };
-    state.posts = sortPosts([post, ...state.posts.filter(item => item.path !== path && item.path !== current?.path)]);
-    state.current = post;
-    // 저장하는 동안 더 고친 내용이 있으면 아직 저장할 것이 남은 상태다.
-    state.dirty = state.edits !== edits;
+    state.posts = sortPosts([post, ...state.posts.filter(item => item.path !== path && (leftover || item.path !== current?.path))]);
+    // 저장하는 동안 다른 글로 바꿨으면 지금 연 글은 건드리지 않는다.
+    const same = session === state.session;
+    if (same) {
+      state.current = post;
+      // 저장하는 동안 더 고친 내용이 있으면 아직 저장할 것이 남은 상태다.
+      state.dirty = state.edits !== edits;
+    }
     renderAdminUi();
+    if (leftover) say(`임시 주소 파일(${current.name})을 지우지 못했습니다. 목록에서 열어 삭제해 주세요.`, { stay: true });
     // 사이트에 보이는 글이 생기거나 바뀌거나 사라질 때만 배포한다.
     if (nextState === 'public') {
-      closeAll();
+      if (same) closeAll();
       say('사이트에 올리는 중입니다.', { stay: true });
       await updateSite([{ post }]);
       await deploy(wasPublic ? '수정했습니다.' : '출간했습니다.');
     } else if (wasPublic) {
-      closeAll();
+      if (same) closeAll();
       say('사이트에서 내리는 중입니다.', { stay: true });
       await updateSite([{ post, remove: true }]);
       await deploy(nextState === 'private' ? '비공개로 바꿨습니다.' : '임시 글로 바꿨습니다.');
-    } else if (nextState === 'private') {
+    } else if (nextState === 'private' && !auto && same && !publish.hidden) {
       closeAll();
       say('비공개로 저장했습니다. 오른쪽 아래 목록에서 다시 열 수 있습니다.');
-    } else say(auto ? '자동으로 임시저장했습니다.' : '임시저장했습니다.');
+    } else if (!leftover) say(auto ? '자동으로 저장했습니다.' : nextState === 'private' ? '저장했습니다.' : '임시저장했습니다.');
   }
 
+  // 공개 글은 사이트에서 먼저 내린 뒤 Vault에서 지운다. 사이트에서 내리지 못하면 Vault 글도 그대로 두어 다시 시도할 수 있다.
   async function removePost(post) {
     if (!await confirm('글 삭제', `「${post.title}」을(를) 삭제할까요? Vault 저장소의 기록에는 남지만 사이트와 목록에서 사라집니다.`, '삭제')) return;
-    const response = await api(contentPath(post.path), { method: 'DELETE', body: JSON.stringify({ message: `docs(publish): ${post.title} 삭제`, sha: post.sha, branch: settings.branch }) });
-    if (!response.ok) return say(`삭제하지 못했습니다(${response.status}).`);
-    state.posts = state.posts.filter(item => item.path !== post.path);
-    renderAdminUi();
-    if (post.state === 'public') { await updateSite([{ post, remove: true }]); await deploy('삭제했습니다.'); }
-    else say('삭제했습니다.');
+    if (state.saving) return say('저장하는 중입니다. 잠시 뒤 다시 눌러 주세요.');
+    state.saving = true;
+    try {
+      if (post.state === 'public') {
+        say('사이트에서 내리는 중입니다.', { stay: true });
+        await updateSite([{ post, remove: true }]);
+      }
+      const response = await api(contentPath(post.path), { method: 'DELETE', body: JSON.stringify({ message: `docs(publish): ${post.title} 삭제`, sha: post.sha, branch: settings.branch }) });
+      if (!response.ok) return say(`Vault에서 삭제하지 못했습니다(${response.status}).${post.state === 'public' ? ' 사이트에서는 내렸습니다.' : ''}`, { stay: true });
+      state.posts = state.posts.filter(item => item.path !== post.path);
+      if (state.current?.path === post.path && !write.hidden) closeAll();
+      renderAdminUi();
+      if (post.state === 'public') await deploy('삭제했습니다.');
+      else say('삭제했습니다.');
+    } finally { state.saving = false; }
   }
 
   // 공개 글은 사이트 저장소의 승인 사본으로 옮긴다(src/admin-site.mjs). 사이트 저장소는 공개라 임시·비공개 글은 올리지 않는다.
@@ -462,8 +511,12 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     repo: siteRepo, request: (path, init) => api(`${API}/repos/${siteRepo}/${path}`, init), readVaultAsset, digest, encode, decode: fromBase64,
     wait: ms => new Promise(resolve => view.setTimeout(resolve, ms)),
   }) : null;
-  async function updateSite(changes) {
-    if (siteSync) await siteSync.apply(changes);
+  // 사이트 반영은 한 번에 하나씩 차례로 한다(자동 맞춤과 출간·삭제가 겹치지 않게).
+  let siteQueue = Promise.resolve();
+  function updateSite(changes) {
+    const task = siteQueue.then(() => siteSync?.apply(changes));
+    siteQueue = task.catch(() => {});
+    return task;
   }
 
   // 배포 작업을 실행하고 끝날 때까지 상태를 알린다.
@@ -471,15 +524,16 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     if (!settings.deploy) { say(`${done} 사이트에는 다음 배포 때 반영됩니다.`); return; }
     const [owner, repo, workflow] = settings.deploy.split('/');
     const base = `${API}/repos/${owner}/${repo}/actions/workflows/${encodeURIComponent(workflow)}`;
-    const started = Date.now();
+    // 실행 전 마지막 배포 번호를 기억해 두고, 그보다 나중에 생긴 실행만 이번 배포로 본다.
+    const latest = async () => (await (await api(`${base}/runs?per_page=5&event=workflow_dispatch`)).json().catch(() => ({}))).workflow_runs ?? [];
+    const before = Math.max(0, ...(await latest()).map(item => item.id));
     const response = await api(`${base}/dispatches`, { method: 'POST', body: JSON.stringify({ ref: 'main' }) });
     if (!response.ok) { say(`${done} 배포를 시작하지 못했습니다(${response.status}). GitHub에서 직접 배포해 주세요.`, { stay: true }); return; }
     say(`${done} 사이트에 반영하는 중입니다(1~2분).`, { stay: true });
     for (let attempt = 0; attempt < 40; attempt++) {
       await new Promise(resolve => view.setTimeout(resolve, 6000));
-      const runs = await (await api(`${base}/runs?per_page=1&event=workflow_dispatch`)).json().catch(() => ({}));
-      const run = runs.workflow_runs?.[0];
-      if (!run || Date.parse(run.created_at) < started - 60000 || run.status !== 'completed') continue;
+      const run = (await latest()).filter(item => item.id > before).sort((a, b) => a.id - b.id)[0];
+      if (!run || run.status !== 'completed') continue;
       say(run.conclusion === 'success' ? '사이트에 반영했습니다. 새로고침하면 보입니다.' : '배포가 실패했습니다. GitHub Actions 기록을 확인해 주세요.', { stay: run.conclusion !== 'success' });
       return;
     }
@@ -507,7 +561,8 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     else if (action === 'edit-post') { const post = current(); if (post) openWrite(post); }
     else if (action === 'delete-post') { const post = current(); if (post) run(() => removePost(post)); }
     else if (action === 'close-write') view.history.back();
-    else if (action === 'save-draft') run(() => save('draft'));
+    else if (action === 'save-draft') run(() => save(state.current?.state === 'private' ? 'private' : 'draft'));
+    else if (action === 'delete-current') { if (state.current) run(() => removePost(state.current)); }
     else if (action === 'open-publish') openPublish();
     else if (action === 'close-publish') view.history.back();
     else if (action === 'publish') run(() => save(state.visibility));

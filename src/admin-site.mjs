@@ -1,6 +1,8 @@
 // 관리 화면에서 출간·삭제한 공개 글을 사이트 저장소의 승인 사본에 한 커밋으로 맞춘다.
 // 바꾸는 것: 글 사본(content/blog), 글이 쓰는 그림(content/assets)과 출처 기록(config/assets.json), 승인 목록 해시.
 // 브라우저에서 GitHub API로만 동작하므로 파일 시스템을 쓰지 않는다. 요청 함수는 호출하는 쪽이 넣는다.
+import { postAssets } from './post-assets.mjs';
+
 export const SITE_ATTEMPTS = 3;
 const SNAPSHOT = 'config/approved-content.json';
 const SOURCES = 'config/assets.json';
@@ -12,11 +14,6 @@ export class SiteError extends Error {
     super(message);
     this.retry = retry;
   }
-}
-
-/** 글 원문이 쓰는 그림 파일 이름. 본문의 `../assets/이름`과 글 머리의 `/assets/이름`을 모두 찾는다. */
-export function assetNames(text) {
-  return [...new Set([...String(text).matchAll(/(?:\.\.)?\/assets\/([\w.%-]+)/g)].map(match => decodeURIComponent(match[1])))];
 }
 
 const encodePath = path => path.split('/').map(encodeURIComponent).join('/');
@@ -61,15 +58,30 @@ export function createSiteSync(io) {
     return JSON.parse(io.decode(file.content));
   }
 
-  /** 공개 글 중 사이트 사본이 없거나 내용이 다른 글. 사이트에 반영되지 않은 글이다. */
+  /**
+   * 사이트 사본과 Vault 글이 어긋난 곳.
+   * publish: 공개 글인데 사이트 사본이 없거나 내용이 다른 글.
+   * remove: 사이트 사본이 있는데 Vault에서 임시·비공개가 된 글, 또는 같은 주소의 공개 글이 다른 파일 이름으로 있는 옛 사본.
+   * Vault에 같은 이름도 같은 주소도 없는 사본은 다른 경로(Vault 동기화)로 올린 것일 수 있어 건드리지 않는다.
+   */
   async function pending(posts) {
     const snapshot = await readSnapshot();
-    const result = [];
+    const byName = new Map(posts.map(post => [post.name, post]));
+    const publicSlugs = new Set(posts.filter(post => post.state === 'public').map(post => post.slug));
+    const publish = [];
     for (const post of posts) {
       if (post.state !== 'public') continue;
-      if (snapshot.files[`content/blog/${post.name}`] !== await io.digest(bytes(post.text))) result.push(post);
+      if (snapshot.files[`content/blog/${post.name}`] !== await io.digest(bytes(post.text))) publish.push(post);
     }
-    return result;
+    const remove = [];
+    for (const path of Object.keys(snapshot.files)) {
+      if (!path.startsWith('content/blog/')) continue;
+      const name = path.slice('content/blog/'.length);
+      const post = byName.get(name);
+      const slug = name.replace(/^\d{2}-\d{2}-\d{2}-/, '').replace(/\.md$/, '');
+      if (post ? post.state !== 'public' : publicSlugs.has(slug)) remove.push({ name, title: post?.title || name });
+    }
+    return { publish, remove };
   }
 
   // 지금 사이트 저장소의 마지막 커밋 위에 바뀐 파일을 얹은 커밋 하나를 만든다. 바뀐 것이 없으면 커밋하지 않는다.
@@ -88,7 +100,7 @@ export function createSiteSync(io) {
     for (const { post, remove = false } of changes) {
       const target = `content/blog/${post.name}`;
       const before = Object.hasOwn(snapshot.files, target) ? await readText(target) : null;
-      for (const name of assetNames(before ?? '')) dropped.add(name);
+      for (const name of (before === null ? [] : postAssets(before))) dropped.add(name);
       if (remove) {
         if (!Object.hasOwn(snapshot.files, target)) continue;
         delete snapshot.files[target];
@@ -99,10 +111,11 @@ export function createSiteSync(io) {
       const hash = await io.digest(text);
       if (snapshot.files[target] !== hash) await put(target, text);
       snapshot.files[target] = hash;
-      for (const name of assetNames(post.text)) {
+      for (const name of postAssets(post.text)) {
         kept.add(name);
         const path = `content/assets/${name}`;
-        const content = await io.readVaultAsset(name);
+        let content;
+        try { content = await io.readVaultAsset(name); } catch { throw new SiteError(`「${post.title}」이(가) 쓰는 그림을 Vault에서 찾지 못했습니다: ${name}`); }
         const assetHash = await io.digest(content);
         if (snapshot.files[path] !== assetHash) await put(path, content);
         snapshot.files[path] = assetHash;
