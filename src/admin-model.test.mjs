@@ -31,6 +31,10 @@ test('admin_round_trip_changes_only_edited_front_matter_fields', () => {
   assert.match(published, /tags: \[SQL\]\n/);
   assert.match(published, /series: keep\n/);
   assert.equal(readPost(published).body, post.body);
+  // 비공개는 다 쓴 글이지만 사이트에 싣지 않는다.
+  const hidden = writePost(source, { ...post, state: 'private' });
+  assert.match(hidden, /visibility: private\nstatus: published\npublish: false\n/);
+  assert.equal(readPost(hidden).state, 'private');
 });
 
 test('admin_new_post_uses_vault_front_matter_defaults', () => {

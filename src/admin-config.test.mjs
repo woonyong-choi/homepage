@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
 import { parseAdminConfig } from './admin-config.mjs';
 import { adminPage } from './admin-layout.mjs';
+import { initAdminLogin } from './admin.js';
 import { documentShell } from './publication-layout.mjs';
 import { loadBlogLayout } from './layout-config.mjs';
 
@@ -34,6 +35,32 @@ test('admin_login_page_is_logo_and_login_only', () => {
   assert.equal(help.origin + help.pathname, 'https://github.com/settings/personal-access-tokens/new');
   assert.equal(help.searchParams.get('contents'), 'write');
   assert.equal(help.searchParams.get('actions'), 'write');
+});
+
+test('token_login_requires_owner_token_that_can_write_both_vault_and_site_repositories', async () => {
+  const settings = { ...base, deploy: 'woonyong-choi/homepage/deploy.yml' };
+  const page = adminPage({ title: 'Who Knows' }, {}, settings);
+  const attempt = async push => {
+    const dom = new JSDOM(page, { url: 'https://woonyong.com/admin/' });
+    const root = dom.window.document.querySelector('[data-admin-login]');
+    const saved = new Map();
+    const storage = { getItem: key => saved.get(key) ?? null, setItem: (key, value) => saved.set(key, value), removeItem: key => saved.delete(key) };
+    const reply = body => ({ ok: true, json: async () => body });
+    const fetcher = async url => url.endsWith('/user') ? reply({ login: 'woonyong-choi' }) : reply({ permissions: { push: push[url.split('/').pop()] } });
+    initAdminLogin(root, settings, { storage, fetcher });
+    root.querySelector('#admin-token').value = 'token';
+    root.querySelector('[data-action=token-signin]').click();
+    await new Promise(resolve => setTimeout(resolve, 20));
+    const result = { status: root.querySelector('[data-admin-status]').textContent, saved: saved.size };
+    dom.window.close();
+    return result;
+  };
+  const vaultOnly = await attempt({ vault: true, homepage: false });
+  assert.equal(vaultOnly.saved, 0);
+  assert.match(vaultOnly.status, /homepage 저장소 쓰기 권한이 없습니다.*vault와 homepage 저장소를 모두 골라/);
+  const both = await attempt({ vault: true, homepage: true });
+  assert.equal(both.saved, 1);
+  assert.match(both.status, /woonyong-choi 계정으로 로그인했습니다/);
 });
 
 test('every_page_gets_small_admin_loader_with_settings_only_when_admin_is_configured', () => {
