@@ -14,11 +14,12 @@ export function initAdminLogin(root, settings, { storage = localStorage, openWin
   const tokenForm = root.querySelector('[data-admin-token-form]');
   const tokenSignin = root.querySelector('[data-action=token-signin]');
   const tokenHelp = root.querySelector('a[target=_blank]');
+  const home = root.querySelector('a[href="/"]:not(.app-admin-login-logo)');
   const show = () => {
     const on = Boolean(read(storage));
     for (const node of [signin, tokenForm, tokenSignin, tokenHelp]) if (node) node.hidden = on;
-    signout.hidden = !on;
-    if (on) status.textContent = '로그인되어 있습니다. 사이트 오른쪽 아래 단추로 글을 씁니다.';
+    for (const node of [signout, home]) if (node) node.hidden = !on;
+    status.textContent = '';
   };
   const saveToken = (token, login) => {
     try { storage.setItem(TOKEN_KEY, token); } catch { status.textContent = '이 브라우저에 로그인 정보를 저장할 수 없습니다.'; return; }
@@ -58,8 +59,8 @@ export function initAdminLogin(root, settings, { storage = localStorage, openWin
       tokenLogin().catch(() => { status.textContent = 'GitHub에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요.'; });
     } else if (action === 'signout') {
       try { storage.removeItem(TOKEN_KEY); } catch { /* 저장소를 쓸 수 없으면 이미 로그아웃 상태다. */ }
-      status.textContent = '로그아웃했습니다.';
       show();
+      status.textContent = '로그아웃했습니다.';
     }
   });
   view.addEventListener('message', event => {
