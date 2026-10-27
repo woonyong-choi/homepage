@@ -10,7 +10,7 @@
 | 글 화면 | 글쓴이 줄 끝의 수정·삭제 |
 | 작성 화면 | 왼쪽은 제목, 태그 칩(Enter·쉼표로 추가, 누르면 삭제), 서식 단추, 본문. 오른쪽은 사이트 글 화면과 같은 `PostArticle` 실시간 미리보기. 아래 막대는 나가기·임시저장·출간하기(공개 글은 수정하기만) |
 | 출간 화면 | 사이트 목록 카드와 같은 `BlogCard` 미리보기, 썸네일 바꾸기·자동 썸네일로, 요약 150자, 주소 이름, 발행일, 취소·출간하기 |
-| `/admin/` | 빈 화면 가운데에 사이트 로고와 GitHub로 로그인(로그인 뒤에는 로그아웃) 단추만 둔다 |
+| `/admin/` | 빈 화면 가운데에 사이트 로고와 로그인만 둔다. 로그인 서버가 없으면 GitHub 토큰 칸·로그인·토큰 만들기, 있으면 GitHub로 로그인 단추다 |
 
 방문자에게는 1KB 남짓한 로더만 내려가고 아무것도 보이지 않는다. 작성 기능(`admin-editor.js`)은 로그인한 브라우저에서만 불러온다.
 
@@ -23,7 +23,7 @@
 
 - 임시저장은 주소가 없으면 `draft-날짜-임의값` 임시 주소로 저장한다. 출간할 때 정한 주소로 파일 이름과 `id`·`slug`를 바꾼다.
 - 공개 글은 임시저장으로 사이트에서 내리지 않는다. 작성 화면의 단추가 수정하기 하나가 된다.
-- 출간·수정·삭제한 공개 글은 배포 작업(`config/admin.json`의 `deploy`)을 실행하고 끝날 때까지 알림으로 알린다. 임시저장은 배포하지 않는다.
+- 출간·수정·삭제한 공개 글은 사이트 저장소의 승인 사본(`content/blog`)·쓰는 그림(`content/assets`)·승인 목록 해시를 한 커밋으로 맞춘 뒤 배포 작업(`config/admin.json`의 `deploy`)을 실행하고 끝날 때까지 알림으로 알린다. 임시저장은 Vault에만 저장하고 배포하지 않는다.
 - 썸네일은 고른 그림, 본문의 첫 그림, 제목으로 만든 표지 순서로 정한다. 사이트 목록 카드도 같은 순서다.
 - 서식 단추는 고른 줄·글자에 문법을 넣고 다시 누르면 뺀다. Ctrl/Cmd+B·I·K는 굵게·기울임·링크다.
 - 작성·출간 화면은 브라우저 기록에 한 칸씩 쌓여 뒤로 가기로 하나씩 닫힌다. 저장하지 않은 내용이 있으면 확인 창을 띄운다.
@@ -32,21 +32,25 @@
 
 ## 배포
 
-글 원본은 비공개 Vault 저장소에 있다. 홈페이지 저장소는 공개이므로 임시 글을 두지 않는다. 배포 작업은 저장소 비밀 값 `VAULT_TOKEN`이 있으면 Vault의 `publish`·`assets`만 받아 공개 글을 싣고, 없으면 이 저장소의 승인 사본(`content/blog`)으로 빌드한다. 임시 글의 형식 오류는 공개 글 배포를 막지 않는다.
+글 원본은 비공개 Vault 저장소에 있다. 홈페이지 저장소는 공개이므로 임시 글은 올리지 않고, 출간한 공개 글만 Vault 동기화와 같은 경로(`publish/` → `content/blog/`, `assets/` → `content/assets/`)로 승인 사본에 함께 커밋한다. 배포는 이 사본으로 빌드한다. 저장소 비밀 값 `VAULT_TOKEN`이 있으면 배포가 Vault의 `publish`·`assets`를 직접 읽어 공개 글을 싣는다. 임시 글의 형식 오류는 공개 글 배포를 막지 않는다.
 
 ## 로그인
 
-1. `/admin/`의 "GitHub로 로그인"이 로그인 서버의 `/auth?origin=<사이트 주소>`를 새 창으로 연다.
+로그인 서버 주소(`authUrl`)가 없으면 GitHub 토큰으로 로그인한다.
+
+1. "토큰 만들기"가 이름·설명·권한(Contents 쓰기, Actions 쓰기)을 미리 채운 GitHub 토큰 화면을 새 창으로 연다. 저장소는 Vault와 홈페이지 둘을 고른다.
+2. 만든 토큰을 붙여 넣으면 GitHub에 토큰 주인이 글 저장소 주인인지, 글 저장소에 쓸 수 있는지 확인한 뒤 이 브라우저의 `localStorage`에 둔다.
+
+`authUrl`이 있으면 GitHub OAuth로 로그인한다.
+
+1. "GitHub로 로그인"이 로그인 서버의 `/auth?origin=<사이트 주소>`를 새 창으로 연다.
 2. 로그인 서버(`workers/admin-auth`)는 허용한 사이트 주소(`ADMIN_ORIGINS`)인지 확인하고 일회용 상태 값을 쿠키에 둔 채 GitHub 승인 화면으로 보낸다.
 3. 돌아온 코드를 비밀 값(`GITHUB_CLIENT_SECRET`)으로 토큰으로 바꾸고, 토큰 주인이 허용한 계정(`ALLOWED_LOGINS`)이면 연 창에만 토큰을 보낸다.
-4. 사이트는 로그인 서버 출처의 메시지만 받고 토큰을 이 브라우저의 `localStorage`에 둔다. `/admin/`의 로그아웃이 지운다.
+4. 사이트는 로그인 서버 출처의 메시지만 받고 토큰을 `localStorage`에 둔다.
 
-토큰 범위는 비공개 저장소 쓰기와 배포 실행을 위해 `repo`다. 로그인 서버는 토큰을 저장하지 않는다.
+어느 쪽이든 로그아웃은 `/admin/`에서 하며 토큰을 지운다.
 
 ## 준비
 
-1. `workers/admin-auth`에서 `npx wrangler deploy`로 로그인 서버를 배포한다.
-2. GitHub OAuth 앱을 만든다. Homepage URL은 사이트 주소, Authorization callback URL은 `https://<로그인 서버 주소>/callback`이다.
-3. `npx wrangler secret put GITHUB_CLIENT_ID`, `npx wrangler secret put GITHUB_CLIENT_SECRET`으로 비밀 값을 넣는다.
-4. `config/admin.json`의 `authUrl`에 로그인 서버 주소를 넣는다.
-5. 홈페이지 저장소 비밀 값 `VAULT_TOKEN`에 Vault 저장소 읽기 권한 토큰을 넣는다.
+- 토큰 로그인은 준비가 없다. `/admin/`에서 토큰을 만들어 붙여 넣는다.
+- OAuth 로그인을 쓰려면 `workers/admin-auth`를 `npx wrangler deploy`로 배포하고, GitHub OAuth 앱(콜백 `https://<로그인 서버 주소>/callback`)을 만든 뒤 `wrangler secret put`으로 `GITHUB_CLIENT_ID`·`GITHUB_CLIENT_SECRET`을 넣고 `config/admin.json`의 `authUrl`에 주소를 넣는다.

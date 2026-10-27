@@ -6,17 +6,42 @@ function read(storage) {
   try { return storage.getItem(TOKEN_KEY) ?? ''; } catch { return ''; }
 }
 
-export function initAdminLogin(root, settings, { storage = localStorage, openWindow = (...args) => window.open(...args) } = {}) {
+export function initAdminLogin(root, settings, { storage = localStorage, openWindow = (...args) => window.open(...args), fetcher = (...args) => fetch(...args) } = {}) {
   const view = root.ownerDocument.defaultView;
   const status = root.querySelector('[data-admin-status]');
   const signin = root.querySelector('[data-action=signin]');
   const signout = root.querySelector('[data-action=signout]');
+  const tokenForm = root.querySelector('[data-admin-token-form]');
+  const tokenSignin = root.querySelector('[data-action=token-signin]');
+  const tokenHelp = root.querySelector('a[target=_blank]');
   const show = () => {
     const on = Boolean(read(storage));
-    signin.hidden = on;
+    for (const node of [signin, tokenForm, tokenSignin, tokenHelp]) if (node) node.hidden = on;
     signout.hidden = !on;
-    if (on) status.textContent = '로그인되어 있습니다.';
+    if (on) status.textContent = '로그인되어 있습니다. 사이트 오른쪽 아래 단추로 글을 씁니다.';
   };
+  const saveToken = (token, login) => {
+    try { storage.setItem(TOKEN_KEY, token); } catch { status.textContent = '이 브라우저에 로그인 정보를 저장할 수 없습니다.'; return; }
+    status.textContent = `${login} 계정으로 로그인했습니다. 홈으로 이동합니다.`;
+    show();
+    view.setTimeout(() => view.location.assign('/'), 800);
+  };
+  // 붙여 넣은 토큰이 사이트 주인의 것이고 글 저장소에 쓸 수 있는지 GitHub에 확인한 뒤 저장한다.
+  async function tokenLogin() {
+    const token = root.querySelector('#admin-token').value.trim();
+    if (!token) { status.textContent = 'GitHub 토큰을 붙여 넣어 주세요.'; return; }
+    status.textContent = '토큰을 확인하는 중입니다.';
+    const headers = { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json' };
+    const [user, repo] = await Promise.all([fetcher('https://api.github.com/user', { headers }), fetcher(`https://api.github.com/repos/${settings.repository}`, { headers })]);
+    const profile = user.ok ? await user.json() : {};
+    const owner = settings.repository.split('/')[0].toLowerCase();
+    if (!user.ok) { status.textContent = '토큰이 올바르지 않거나 만료됐습니다.'; return; }
+    if (String(profile.login).toLowerCase() !== owner) { status.textContent = '이 사이트 주인의 토큰이 아닙니다.'; return; }
+    const permissions = repo.ok ? (await repo.json()).permissions : null;
+    if (!permissions?.push) { status.textContent = `토큰에 ${settings.repository} 쓰기 권한이 없습니다. 토큰 만들기에서 저장소를 골라 주세요.`; return; }
+    root.querySelector('#admin-token').value = '';
+    saveToken(token, profile.login);
+  }
   root.addEventListener('click', event => {
     const action = event.target.closest('[data-action]')?.dataset.action;
     if (action === 'signin') {
@@ -25,6 +50,8 @@ export function initAdminLogin(root, settings, { storage = localStorage, openWin
       url.searchParams.set('origin', view.location.origin);
       openWindow(String(url), 'admin-auth', 'width=600,height=720');
       status.textContent = 'GitHub 로그인 창에서 허용해 주세요.';
+    } else if (action === 'token-signin') {
+      tokenLogin().catch(() => { status.textContent = 'GitHub에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요.'; });
     } else if (action === 'signout') {
       try { storage.removeItem(TOKEN_KEY); } catch { /* 저장소를 쓸 수 없으면 이미 로그아웃 상태다. */ }
       status.textContent = '로그아웃했습니다.';
@@ -34,11 +61,9 @@ export function initAdminLogin(root, settings, { storage = localStorage, openWin
   view.addEventListener('message', event => {
     if (!settings.authUrl || event.origin !== new URL(settings.authUrl).origin || event.data?.type !== 'admin-auth') return;
     if (!event.data.token) { status.textContent = event.data.error ?? '로그인하지 못했습니다.'; return; }
-    try { storage.setItem(TOKEN_KEY, event.data.token); } catch { status.textContent = '이 브라우저에 로그인 정보를 저장할 수 없습니다.'; return; }
-    status.textContent = `${event.data.login ?? ''} 계정으로 로그인했습니다. 홈으로 이동합니다.`.trim();
-    show();
-    view.setTimeout(() => view.location.assign('/'), 800);
+    saveToken(event.data.token, event.data.login ?? '');
   });
+  root.querySelector('[data-admin-token-form]')?.addEventListener('submit', event => { event.preventDefault(); tokenLogin().catch(() => { status.textContent = 'GitHub에 연결하지 못했습니다. 잠시 뒤 다시 시도해 주세요.'; }); });
   show();
 }
 
