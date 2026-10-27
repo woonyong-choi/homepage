@@ -89,7 +89,7 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   }
   for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
   // 관리자 로그인 화면은 설정이 있을 때만 만들고 검색 엔진과 사이트맵에서 뺀다.
-  if (context.admin) add('/admin/', '로그인', adminPage(config, context), { noindex: true, bare: true });
+  if (context.admin) add('/admin/', '로그인', adminPage(config, context, context.admin), { noindex: true, bare: true });
   const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), context);
   await writeSite(output, posts, context, scripts, notFound, outputRoot);
   return { pages: output.size, documents: posts.length, themeHash: MANIFEST.contentHash };

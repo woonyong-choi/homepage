@@ -19,14 +19,21 @@ test('admin_config_accepts_repository_folders_deploy_and_https_login_server_only
   assert.throws(() => parseAdminConfig({ ...base, token: 'x' }), /알 수 없는 설정/);
 });
 
-test('admin_login_page_is_logo_and_github_login_only', () => {
+test('admin_login_page_is_logo_and_login_only', () => {
   const config = { title: 'Who Knows', logo: { src: '/assets/who-knows.svg', alt: 'Who Knows' } };
-  const { document } = new JSDOM(adminPage(config, { readAsset: () => Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0h1v1z"/></svg>') })).window;
-  assert.equal(document.querySelector('.app-admin-login h1.app-sr').textContent, '로그인');
-  assert.equal(document.querySelector('.app-admin-login-logo').getAttribute('aria-label'), 'Who Knows 홈');
-  assert.ok(document.querySelector('.app-admin-login-logo svg'));
-  assert.deepEqual([...document.querySelectorAll('[data-action]')].map(node => node.dataset.action), ['signin', 'signout']);
-  assert.equal(document.querySelector('[data-action=signout]').hidden, true);
+  const context = { readAsset: () => Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"><path d="M0 0h1v1z"/></svg>') };
+  const oauth = new JSDOM(adminPage(config, context, { ...base, authUrl: 'https://auth.example.workers.dev' })).window.document;
+  assert.equal(oauth.querySelector('.app-admin-login h1.app-sr').textContent, '로그인');
+  assert.equal(oauth.querySelector('.app-admin-login-logo').getAttribute('aria-label'), 'Who Knows 홈');
+  assert.deepEqual([...oauth.querySelectorAll('[data-action]')].map(node => node.dataset.action), ['signin', 'signout']);
+  // 로그인 서버가 없으면 토큰을 붙여 넣어 로그인한다. 토큰 만들기는 권한을 미리 채운 GitHub 화면이다.
+  const token = new JSDOM(adminPage(config, context, base)).window.document;
+  assert.equal(token.querySelector('#admin-token').type, 'password');
+  assert.deepEqual([...token.querySelectorAll('[data-action]')].map(node => node.dataset.action), ['token-signin', 'signout']);
+  const help = new URL(token.querySelector('a[target=_blank]').href);
+  assert.equal(help.origin + help.pathname, 'https://github.com/settings/personal-access-tokens/new');
+  assert.equal(help.searchParams.get('contents'), 'write');
+  assert.equal(help.searchParams.get('actions'), 'write');
 });
 
 test('every_page_gets_small_admin_loader_with_settings_only_when_admin_is_configured', () => {

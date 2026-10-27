@@ -370,6 +370,8 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     // 사이트에 보이는 글이 생기거나 바뀌거나 사라질 때만 배포한다.
     if (nextState === 'public') {
       closeAll();
+      say('사이트에 올리는 중입니다.', { stay: true });
+      await updateSite(post);
       await deploy(wasPublic ? '수정했습니다.' : '출간했습니다.');
     } else say('임시저장했습니다.');
   }
@@ -380,8 +382,60 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     if (!response.ok) return say(`삭제하지 못했습니다(${response.status}).`);
     state.posts = state.posts.filter(item => item.path !== post.path);
     renderAdminUi();
-    if (post.state === 'public') await deploy('삭제했습니다.');
+    if (post.state === 'public') { await updateSite(post, { remove: true }); await deploy('삭제했습니다.'); }
     else say('삭제했습니다.');
+  }
+
+  // 공개 글은 사이트 저장소의 승인 사본(content/blog)과 쓰는 그림(content/assets), 승인 목록 해시를 한 커밋으로 맞춘다.
+  // 사이트 저장소는 공개라 임시 글은 올리지 않는다. 배포는 이 사본으로 빌드한다.
+  const siteRepo = settings.deploy ? settings.deploy.split('/').slice(0, 2).join('/') : '';
+  const site = (path, init) => api(`${API}/repos/${siteRepo}/${path}`, init);
+  const json = async response => { if (!response.ok) throw new Error(`사이트 저장소에 반영하지 못했습니다(${response.status}).`); return response.json(); };
+  const encode = bytes => { let binary = ''; for (let at = 0; at < bytes.length; at += 0x8000) binary += String.fromCharCode(...bytes.subarray(at, at + 0x8000)); return btoa(binary); };
+  const digest = async bytes => [...new Uint8Array(await view.crypto.subtle.digest('SHA-256', bytes))].map(byte => byte.toString(16).padStart(2, '0')).join('');
+  async function vaultBytes(path) {
+    const response = await api(`${contentPath(path)}${ref}`, { headers: { accept: 'application/vnd.github.raw' } });
+    if (!response.ok) throw new Error(`그림을 읽지 못했습니다: ${path}`);
+    return new Uint8Array(await response.arrayBuffer());
+  }
+  function assetFiles(post) {
+    const files = new Set([...post.body.matchAll(/\]\(\.\.\/assets\/([^)\s]+)\)/g)].map(match => decodeURIComponent(match[1])));
+    if (post.thumbnail?.src.startsWith('/assets/')) files.add(post.thumbnail.src.slice('/assets/'.length));
+    return [...files];
+  }
+  async function updateSite(post, { remove = false } = {}) {
+    if (!siteRepo) return;
+    const head = await json(await site('git/ref/heads/main'));
+    const base = await json(await site(`git/commits/${head.object.sha}`));
+    const snapshotFile = await json(await site('contents/config/approved-content.json?ref=main'));
+    const snapshot = JSON.parse(fromBase64(snapshotFile.content));
+    const tree = [];
+    const put = async (path, bytes) => {
+      const blob = await json(await site('git/blobs', { method: 'POST', body: JSON.stringify({ content: encode(bytes), encoding: 'base64' }) }));
+      tree.push({ path, mode: '100644', type: 'blob', sha: blob.sha });
+    };
+    const target = `content/blog/${post.name}`;
+    if (remove) {
+      if (!Object.hasOwn(snapshot.files, target)) return;
+      delete snapshot.files[target];
+      tree.push({ path: target, mode: '100644', type: 'blob', sha: null });
+    } else {
+      const text = new TextEncoder().encode(post.text);
+      snapshot.files[target] = await digest(text);
+      await put(target, text);
+      for (const file of assetFiles(post)) {
+        const path = `content/assets/${file}`;
+        const bytes = await vaultBytes(`${settings.assets}/${file}`);
+        const hash = await digest(bytes);
+        if (snapshot.files[path] !== hash) await put(path, bytes);
+        snapshot.files[path] = hash;
+      }
+    }
+    snapshot.files = Object.fromEntries(Object.entries(snapshot.files).sort(([a], [b]) => a.localeCompare(b)));
+    await put('config/approved-content.json', new TextEncoder().encode(`${JSON.stringify(snapshot, null, 2)}\n`));
+    const nextTree = await json(await site('git/trees', { method: 'POST', body: JSON.stringify({ base_tree: base.tree.sha, tree }) }));
+    const commit = await json(await site('git/commits', { method: 'POST', body: JSON.stringify({ message: `content(blog): ${post.title} ${remove ? '삭제' : '반영'}`, tree: nextTree.sha, parents: [head.object.sha] }) }));
+    await json(await site('git/refs/heads/main', { method: 'PATCH', body: JSON.stringify({ sha: commit.sha }) }));
   }
 
   // 배포 작업을 실행하고 끝날 때까지 상태를 알린다.
