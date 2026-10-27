@@ -22,8 +22,8 @@ export function initAdminLogin(root, settings, { storage = localStorage, openWin
   };
   const saveToken = (token, login) => {
     try { storage.setItem(TOKEN_KEY, token); } catch { status.textContent = '이 브라우저에 로그인 정보를 저장할 수 없습니다.'; return; }
-    status.textContent = `${login} 계정으로 로그인했습니다. 홈으로 이동합니다.`;
     show();
+    status.textContent = `${login} 계정으로 로그인했습니다. 홈으로 이동합니다.`;
     view.setTimeout(() => view.location.assign('/'), 800);
   };
   // 붙여 넣은 토큰이 사이트 주인의 것이고 글 저장소에 쓸 수 있는지 GitHub에 확인한 뒤 저장한다.
@@ -37,8 +37,12 @@ export function initAdminLogin(root, settings, { storage = localStorage, openWin
     const owner = settings.repository.split('/')[0].toLowerCase();
     if (!user.ok) { status.textContent = '토큰이 올바르지 않거나 만료됐습니다.'; return; }
     if (String(profile.login).toLowerCase() !== owner) { status.textContent = '이 사이트 주인의 토큰이 아닙니다.'; return; }
-    const permissions = repo.ok ? (await repo.json()).permissions : null;
-    if (!permissions?.push) { status.textContent = `토큰에 ${settings.repository} 쓰기 권한이 없습니다. 토큰 만들기에서 저장소를 골라 주세요.`; return; }
+    // 글은 Vault에, 출간한 글은 사이트 저장소에도 커밋한다. 두 저장소 모두 쓸 수 있어야 한다.
+    const repositories = [settings.repository, ...(settings.deploy ? [settings.deploy.split('/').slice(0, 2).join('/')] : [])];
+    const responses = [repo, ...await Promise.all(repositories.slice(1).map(name => fetcher(`https://api.github.com/repos/${name}`, { headers })))];
+    const missing = [];
+    for (const [index, response] of responses.entries()) if (!(response.ok ? (await response.json()).permissions : null)?.push) missing.push(repositories[index].split('/')[1]);
+    if (missing.length) { status.textContent = `토큰에 ${missing.join('·')} 저장소 쓰기 권한이 없습니다. 토큰 만들기에서 ${repositories.map(name => name.split('/')[1]).join('와 ')} 저장소를 모두 골라 주세요.`; return; }
     root.querySelector('#admin-token').value = '';
     saveToken(token, profile.login);
   }

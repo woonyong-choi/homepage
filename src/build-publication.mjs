@@ -28,6 +28,7 @@ import { siteIdentity } from './site-identity.mjs';
 import { markdownFiles } from './content-files.mjs';
 import { loadBlogLayout } from './layout-config.mjs';
 import { loadAdminConfig } from './admin-config.mjs';
+import { SITE_FEATURES } from './site-features.mjs';
 import { adminPage } from './admin-layout.mjs';
 import { verifyApprovedContent } from './approved-content.mjs';
 import { sha256 as digest } from './sha256.mjs';
@@ -70,7 +71,8 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   const context = { config, layout, tags, knownTags, recommendations, origin, preview, mode, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
   context.diagrams = diagrams.assets;
   const admin = loadAdminConfig();
-  if (admin) context.admin = { ...admin, author: layout.blog.card.author };
+  // 작성 화면 미리보기는 사이트와 같은 선택 문법 스위치로 해석한다.
+  if (admin) context.admin = { ...admin, author: layout.blog.card.author, features: SITE_FEATURES };
   context.home = loadHomeContent(brandNames(), CONTENT, { preview });
   context.services = serviceTagCatalog(knownTags);
   const output = new Map();
