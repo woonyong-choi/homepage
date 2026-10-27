@@ -14,6 +14,13 @@
     "note": "승인된 WHO 글자 로고 첫 path의 첫 닫힌 W 도형을 그대로 재사용한다. 정사각 viewBox만 원본 경계에서 계산한다. 브라우저 UI의 독립 SVG는 제품 CSS를 상속하지 않으므로 CanvasText와 native color-scheme으로 시스템 대비를 따른다."
   },
   {
+    "file": "assets/profile.png",
+    "origin": "user-provided",
+    "license": "all rights reserved; site owner profile",
+    "source": "https://github.com/woonyong-choi",
+    "note": "사이트 주인의 GitHub 프로필 그림을 96px 흰 바탕으로 줄인 글쓴이 사진."
+  },
+  {
     "file": "assets/company-j2ysoft.png",
     "origin": "user-provided",
     "license": "trademark of the respective company; identification only",

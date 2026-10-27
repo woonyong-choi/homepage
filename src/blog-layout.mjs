@@ -22,7 +22,7 @@ export function searchListing(posts, tags, { layout = loadBlogLayout() } = {}) {
 export function blogFeed(posts, tags, page, { commentConfig, commentTheme, layout = loadBlogLayout() } = {}) {
   const result = paginate(posts, page, layout.blog.feedSize);
   const returnRoute = result.page === 1 ? '/blog/' : `/blog/page/${result.page}/`;
-  return `<main id="main"><h1 class="app-sr">${ui.escape(layout.blog.title)}</h1>${posts.length ? `<div${layout.blog.autoLoad ? ' data-blog-list="feed"' : ''}><div class="app-blog-feed-items">${result.items.map(post => feedArticle(post, tags, commentConfig, commentTheme, returnRoute)).join('')}</div><div class="app-shell">${pagination(result, '/blog/', true)}<p class="app-caption" data-blog-status role="status"></p></div></div>` : `<div class="app-shell">${emptyBlog()}</div>`}${posts.length ? `<div class="app-shell">${ui.ListLink({ href: '/search/', text: layout.blog.archiveLabel })}</div>` : ''}</main>`;
+  return `<main id="main"><h1 class="app-sr">${ui.escape(layout.blog.title)}</h1>${posts.length ? `<div${layout.blog.autoLoad ? ' data-blog-list="feed"' : ''}><div class="app-blog-feed-items">${result.items.map(post => feedArticle(post, tags, commentConfig, commentTheme, returnRoute, layout.blog.card.author)).join('')}</div><div class="app-shell">${pagination(result, '/blog/', true)}<p class="app-caption" data-blog-status role="status"></p></div></div>` : `<div class="app-shell">${emptyBlog()}</div>`}${posts.length ? `<div class="app-shell">${ui.ListLink({ href: '/search/', text: layout.blog.archiveLabel })}</div>` : ''}</main>`;
 }
 
 function pagination(result, route, feed = false) {
@@ -32,10 +32,10 @@ function pagination(result, route, feed = false) {
   });
 }
 
-function feedArticle(post, tags, commentConfig, commentTheme, returnRoute) {
+function feedArticle(post, tags, commentConfig, commentTheme, returnRoute, byline) {
   const updated = post.updatedAt && post.updatedAt !== post.publishedAt ? dateLine({ updatedAt: post.updatedAt }) : '';
   const comments = commentsSection(post, commentConfig, commentTheme, { preview: true, returnRoute });
-  return `<div class="app-blog-slice"><div class="app-shell">${postArticle(post, { tags: tagLinks(post, tags), footer: updated, after: comments })}</div></div>`;
+  return `<div class="app-blog-slice"><div class="app-shell">${postArticle(post, { tags: tagLinks(post, tags), footer: updated, after: comments, byline })}</div></div>`;
 }
 
 function emptyBlog() {
