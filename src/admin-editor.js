@@ -5,7 +5,6 @@ import { parseDocumentSync } from 'document-engine/parser';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { fromBase64, imageFileName, imageMarkdown, postFileName, readPost, SLUG, toBase64, writePost } from './admin-model.mjs';
 import { TOKEN_KEY } from './admin-token.mjs';
-export { demoFetcher } from './admin-demo.mjs';
 
 const API = 'https://api.github.com';
 const DATE = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
@@ -372,7 +371,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     if (nextState === 'public') {
       closeAll();
       await deploy(wasPublic ? '수정했습니다.' : '출간했습니다.');
-    } else say(`임시저장했습니다.${settings.demo ? ' (체험 모드)' : ''}`);
+    } else say('임시저장했습니다.');
   }
 
   async function removePost(post) {
@@ -387,7 +386,6 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
 
   // 배포 작업을 실행하고 끝날 때까지 상태를 알린다.
   async function deploy(done) {
-    if (settings.demo) { say(`${done} 체험 모드라 실제 저장소와 사이트는 바뀌지 않았습니다.`); return; }
     if (!settings.deploy) { say(`${done} 사이트에는 다음 배포 때 반영됩니다.`); return; }
     const [owner, repo, workflow] = settings.deploy.split('/');
     const base = `${API}/repos/${owner}/${repo}/actions/workflows/${encodeURIComponent(workflow)}`;
@@ -474,6 +472,5 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   view.addEventListener('beforeunload', event => { if (state.dirty && !write.hidden) event.preventDefault(); });
 
   run(loadPosts);
-  if (settings.demo) say('체험 모드입니다. 저장·삭제·배포는 이 탭 안에서만 흉내 냅니다. /admin/에서 끝낼 수 있습니다.', { stay: false });
   return state;
 }
