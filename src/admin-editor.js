@@ -3,6 +3,7 @@
 // 썸네일과 요약은 따로 고르지 않는다. 사이트와 같은 규칙으로 본문의 첫 그림과 첫 문단에서 정한다.
 import { parseDocumentSync, renderPreview } from 'document-engine/preview';
 import { splitLead, summaryOf } from './article-summary.mjs';
+import { publishDate } from './content-metadata.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { fromBase64, imageFileName, imageMarkdown, postFileName, readPost, SLUG, toBase64, writePost } from './admin-model.mjs';
 import { TOKEN_KEY } from './admin-token.mjs';
@@ -19,7 +20,7 @@ const FORMATS = {
   link: { wrap: ['[', '](https://)'], fallback: '링크 글자' }, code: { wrap: ['\n```\n', '\n```\n'], fallback: '코드' },
 };
 
-const today = () => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+const today = () => publishDate();
 const sortPosts = posts => posts.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.name.localeCompare(b.name));
 
 function nodeFrom(component) {
@@ -97,9 +98,11 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
 
   // 목록과 개수, 글 화면의 수정·삭제 줄을 지금 글 목록에 맞춘다.
   function renderAdminUi() {
-    const hidden = state.posts.filter(post => post.state !== 'public');
+    // 사이트에 없는 글(임시·비공개, 출간했지만 사이트 반영이 끝나지 않은 공개 글)을 목록에 둔다.
+    const hidden = state.posts.filter(post => post.state !== 'public' || post.offline);
     dock.querySelector('[data-admin-count]').textContent = String(hidden.length);
-    const next = nodeFrom(ui.AdminDrafts({ items: hidden.map(post => ({ id: post.path, title: post.title || post.name, date: post.publishedAt, label: post.state === 'private' ? '비공개' : '임시저장' })) }));
+    const label = post => post.state === 'private' ? '비공개' : post.state === 'public' ? '사이트 반영 안 됨' : '임시저장';
+    const next = nodeFrom(ui.AdminDrafts({ items: hidden.map(post => ({ id: post.path, title: post.title || post.name, date: post.publishedAt, label: label(post) })) }));
     next.hidden = panel.hidden;
     panel.replaceWith(next);
     panel = next;
@@ -122,8 +125,19 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
       return { ...readPost(text), path: file.path, name: file.name, sha: item.sha, text };
     }));
     state.posts = sortPosts(posts.filter(post => post.type === 'blog'));
+    await markOffline();
     renderAdminUi();
     await checkSiteAccess();
+  }
+
+  // 공개 글 중 사이트 지도(sitemap.xml)에 주소가 없는 글은 사이트 반영이 끝나지 않은 글이다. 지도를 못 읽으면 표시하지 않는다.
+  async function markOffline() {
+    try {
+      const response = await fetcher(new URL('/sitemap.xml', view.location.origin), { cache: 'no-store' });
+      if (!response.ok) return;
+      const routes = new Set([...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => new URL(match[1], view.location.origin).pathname));
+      for (const post of state.posts) post.offline = post.state === 'public' && !routes.has(`/blog/${post.slug}/`);
+    } catch { /* 지도를 못 읽으면 반영 여부를 표시하지 않는다. */ }
   }
 
   // 공개 글은 사이트 저장소에도 커밋한다. 토큰에 그 저장소 쓰기 권한이 없으면 출간 전에 알린다.
@@ -367,7 +381,21 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     const path = current && !renamed ? current.path : `${settings.posts}/${postFileName(input.slug, input.publishedAt)}`;
     const text = writePost(current?.text, input);
     const wasPublic = current?.state === 'public';
-    if (current && text === current.text && nextState === current.state) { state.dirty = false; if (!auto) say('바뀐 내용이 없습니다.'); return; }
+    if (current && text === current.text && nextState === current.state) {
+      state.dirty = false;
+      // 저장은 됐지만 사이트 반영이 끝나지 않은 공개 글은 바꾼 내용이 없어도 사이트에 다시 올린다.
+      if (nextState === 'public' && current.offline && !auto) {
+        closeAll();
+        say('사이트에 올리는 중입니다.', { stay: true });
+        await updateSite(current);
+        current.offline = false;
+        renderAdminUi();
+        await deploy('사이트에 올렸습니다.');
+        return;
+      }
+      if (!auto) say('바뀐 내용이 없습니다.');
+      return;
+    }
     if (!auto) say(nextState === 'public' ? '저장하는 중입니다.' : '임시저장하는 중입니다.', { stay: true });
     const verb = { draft: current ? '임시저장' : '임시 글 추가', private: '비공개 저장', public: wasPublic ? '수정' : '출간' }[nextState];
     const response = await api(contentPath(path), { method: 'PUT', body: JSON.stringify({ message: `docs(publish): ${input.title} ${verb}`, content: toBase64(text), branch: settings.branch, ...(current && !renamed ? { sha: current.sha } : {}) }) });
