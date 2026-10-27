@@ -3,5 +3,6 @@
   "branch": "main",
   "posts": "publish",
   "assets": "assets",
+  "deploy": "woonyong-choi/homepage/deploy.yml",
   "authUrl": ""
 }

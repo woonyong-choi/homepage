@@ -11,6 +11,6 @@ This repository contains the source for [woonyong.com](https://woonyong.com). It
 - [홈 원고 가이드](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/home-content.md)
 - [영역 설정](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/layout-settings.md)
 - [Markdown 글 작성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/markdown.md)
-- [글 작성 화면](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/admin.md)
+- [글 관리](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/admin.md)
 - [개인 사이트 발행](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/publication.md)
 - [스타일 수정 지도](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/styles.md)

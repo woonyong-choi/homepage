@@ -13,7 +13,7 @@ export function parseContent(source, missingMessage = 'missing document metadata
 export function validateThumbnail(thumbnail) {
   if (thumbnail === undefined) return;
   const src = thumbnail?.src;
-  const local = typeof src === 'string' && /^\/media\/[a-z0-9][a-z0-9./-]*\.(?:png|jpg|webp|svg)$/.test(src) && !src.includes('..');
+  const local = typeof src === 'string' && /^\/(?:media|assets)\/[a-z0-9][a-z0-9./-]*\.(?:png|jpg|jpeg|gif|webp|svg)$/.test(src) && !src.includes('..');
   let external = false;
   if (typeof src === 'string' && src.startsWith('https://')) {
     try {
