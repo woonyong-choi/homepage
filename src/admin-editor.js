@@ -2,7 +2,7 @@
 // 글 화면의 수정·삭제, 벨로그식 작성·출간 화면을 얹는다. 글은 Vault 저장소에 커밋하고 공개 글이 바뀌면 배포를 실행한다.
 // 썸네일과 요약은 따로 고르지 않는다. 사이트와 같은 규칙으로 본문의 첫 그림과 첫 문단에서 정한다.
 import { parseDocumentSync, renderPreview } from 'document-engine/preview';
-import { splitLead, summaryOf } from './article-summary.mjs';
+import { bodyWithSummary, splitLead, summaryOf } from './article-summary.mjs';
 import { publishDate } from './content-metadata.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { fromBase64, imageFileName, imageMarkdown, postFileName, readPost, SLUG, toBase64, writePost } from './admin-model.mjs';
@@ -164,7 +164,8 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     state.current = post;
     state.tags = [...(post?.tags ?? [])];
     title.value = post?.title ?? '';
-    body.value = post?.body ?? '';
+    // 요약을 따로 써 둔 기존 글은 그 요약을 본문 첫 문단으로 넣어 연다. 저장하면 요약이 그대로 유지된다.
+    body.value = post ? bodyWithSummary(post.body, parseDocumentSync(post.body, { id: 'admin-open', features: settings.features ?? {} }).tokens, post.description, post.title) : '';
     tagInput.value = '';
     renderTags();
     drawPreview();

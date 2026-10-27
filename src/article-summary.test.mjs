@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { parseDocumentSync } from 'document-engine/parser';
-import { SUMMARY_LIMIT, splitLead, summaryOf } from './article-summary.mjs';
+import { SUMMARY_LIMIT, bodyWithSummary, splitLead, summaryOf } from './article-summary.mjs';
 
 const tokens = body => parseDocumentSync(body, { id: 'a' }).tokens;
 
@@ -25,4 +25,15 @@ test('lead_moves_the_matching_first_paragraph_and_never_repeats_body_text', () =
   assert.equal(splitLead(tokens('# 머리\n'), '제목', '제목').kind, 'empty');
   // 손으로 쓴 요약은 그대로 글 머리에 둔다.
   assert.equal(splitLead(tokens('본문'), '따로 쓴 설명', '제목').kind, 'summary');
+});
+
+test('separately_written_summary_moves_into_the_body_as_the_first_paragraph', () => {
+  const body = '## 절\n\n본문 내용\n';
+  const moved = bodyWithSummary(body, tokens(body), ' 따로 쓴 요약 ', '제목');
+  assert.equal(moved, '따로 쓴 요약\n\n## 절\n\n본문 내용\n');
+  // 옮긴 뒤에는 첫 문단이 요약이고 글 머리로 올라간다.
+  assert.equal(summaryOf(tokens(moved), '제목'), '따로 쓴 요약');
+  assert.equal(splitLead(tokens(moved), '따로 쓴 요약', '제목').kind, 'lead');
+  // 이미 본문에 있는 요약, 빈 요약, 제목과 같은 요약은 그대로 둔다.
+  for (const description of ['본문 내용', '', '제목']) assert.equal(bodyWithSummary(body, tokens(body), description, '제목'), body);
 });
