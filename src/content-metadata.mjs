@@ -30,3 +30,8 @@ export function validateThumbnail(thumbnail) {
     }
   }
 }
+
+// 글의 발행일은 한국 날짜로 쓴다. 오늘 이후 글인지도 한국 날짜로 비교한다.
+// UTC로 비교하면 한국 0시~9시에는 오늘 날짜 글이 미래 글로 빠진다.
+export const PUBLISH_TIME_ZONE = 'Asia/Seoul';
+export const publishDate = (now = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: PUBLISH_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);

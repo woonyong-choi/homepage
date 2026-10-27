@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { parseContentSource } from './content-files.mjs';
 import { safeFile, validatePath } from './content-paths.mjs';
 import { isDocumentId } from './content-model.mjs';
+import { publishDate } from './content-metadata.mjs';
 import { sha256 } from './sha256.mjs';
 
 export const VAULT_CONFIGS = Object.freeze(['site', 'tags', 'search', 'cs', 'tech', 'blog']);
@@ -62,7 +63,7 @@ function validateMetadata(entry, metadata, identities) {
   if ((docs && metadata.publish !== true) || metadata.publish === false || metadata.status === 'draft' || (metadata.visibility !== undefined && metadata.visibility !== 'public')) {
     throw new Error(`private or draft Vault source: ${entry.source}`);
   }
-  if (metadata.publishedAt && metadata.publishedAt > new Date().toISOString().slice(0, 10)) throw new Error(`scheduled Vault source: ${entry.source}`);
+  if (metadata.publishedAt && metadata.publishedAt > publishDate()) throw new Error(`scheduled Vault source: ${entry.source}`);
   if (!docs && !article) return;
   for (const key of ['id', 'slug']) {
     if (!isDocumentId(metadata[key]) || identities[key].has(metadata[key])) throw new Error(`invalid or duplicate Vault document ${key}`);

@@ -36,6 +36,10 @@ test('readPost_requires_explicit_publication_and_rejects_invalid_metadata', () =
   assert.deepEqual(collectPosts([source({ example: true })], { now: NOW }), []);
   assert.equal(collectPosts([source({ example: true })], { now: NOW, includeExamples: true }).length, 1);
   assert.throws(() => collectPosts([source(), source({ visibility: 'draft' })], { now: NOW }), /duplicate post id/);
+  // 발행일은 한국 날짜다. 한국 10월 28일 0시 30분(UTC 27일)에 28일 글이 보이고 29일 글은 아직 보이지 않는다.
+  const koreanMidnight = new Date('2026-10-27T15:30:00Z');
+  assert.equal(readPost(source({ publishedAt: '2026-10-28' }), { now: koreanMidnight }).id, 'plain');
+  assert.equal(readPost(source({ publishedAt: '2026-10-29' }), { now: koreanMidnight }), null);
 });
 
 test('blog_query_preserves_arbitrary_tags_and_sorts_matched_posts_by_publication_date', () => {

@@ -1,4 +1,4 @@
-import { isDocumentId, parseContent, validateThumbnail } from './content-metadata.mjs';
+import { isDocumentId, parseContent, publishDate, validateThumbnail } from './content-metadata.mjs';
 
 export function readPost(source, { now = new Date(), includeUnpublished = false } = {}) {
   const post = parsePost(source);
@@ -33,7 +33,7 @@ function parsePost(source) {
 // 공개 글만 사이트에 싣는다. 임시(draft)와 비공개(private)는 원본 저장소에만 남는다.
 export const VISIBILITIES = Object.freeze(['public', 'draft', 'private']);
 function isPublished({ metadata }, now) {
-  return !(metadata.visibility !== 'public' || metadata.publish === false || metadata.status === 'draft' || metadata.publishedAt > now.toISOString().slice(0, 10));
+  return !(metadata.visibility !== 'public' || metadata.publish === false || metadata.status === 'draft' || metadata.publishedAt > publishDate(now));
 }
 
 // 작성 중인 임시·비공개 글의 형식 오류가 공개 글 배포를 막지 않게 한다. 공개 글의 오류는 그대로 멈춘다.

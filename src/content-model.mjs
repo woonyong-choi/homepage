@@ -1,4 +1,4 @@
-import { isDocumentId, parseContent, validateThumbnail } from './content-metadata.mjs';
+import { isDocumentId, parseContent, publishDate, validateThumbnail } from './content-metadata.mjs';
 import { readPost } from './blog-model.mjs';
 export { isDocumentId, parseContent, validateThumbnail } from './content-metadata.mjs';
 
@@ -36,7 +36,7 @@ export function readDocument(source, tags, now = new Date(), categories = tags) 
   validateThumbnail(page.thumbnail);
   if (page.slug === 'topics') throw new Error(`reserved document slug: ${page.slug}`);
   return { ...page, body, route: `/docs/${page.slug}/`,
-    published: page.visibility === 'public' && (!page.publishedAt || page.publishedAt <= now.toISOString().slice(0, 10)) };
+    published: page.visibility === 'public' && (!page.publishedAt || page.publishedAt <= publishDate(now)) };
 }
 
 export function paginate(items, page, size) {
