@@ -104,7 +104,7 @@ test('renderPagePreview_reports_file_and_id_and_rejects_paths_outside_explicit_r
 
 
 test('renderPagePreview_compiles_diagrams_and_returns_iframe_bytes', async () => {
-  const source = articleSource + '\n\n```thinkflow\nthinkflow\nbox a "서버"\nbox b "저장소"\na -> b\n```\n';
+  const source = articleSource + '\n\n```diagramplay\ndiagramplay\nbox a "서버"\nbox b "저장소"\na -> b\n```\n';
   const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source });
   assert.deepEqual(result.diagnostics, []);
   const path = /src="(\/diagrams\/[^"?]+)"/.exec(result.html)?.[1];

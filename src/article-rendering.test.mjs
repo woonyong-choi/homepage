@@ -19,7 +19,7 @@ const ids = html => [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1])
 const text = html => html.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#(?:39|x27);/g, "'").replace(/&amp;/g, '&');
 
 test('headings_and_ids_stay_unique_across_blocks_and_documents', async () => {
-  const source = '## 설정\n\n::::tabs\n:::tab[A]\n## 설정\n\n### 설정\n:::\n:::tab[B]\n## 설정\n:::\n::::\n';
+  const source = '## 설정\n\n:::tabs\n@tab A\n\n## 설정\n\n### 설정\n\n@tab B\n\n## 설정\n\n:::end\n';
   const html = await render(source);
   const all = ids(html);
   assert.equal(new Set(all).size, all.length);
@@ -96,7 +96,7 @@ test('article_pages_have_no_automatic_related_section_or_edit_suggestion_but_kee
 });
 
 test('bottom_selector_tabs_use_the_same_runtime_for_click_arrows_home_and_end', async () => {
-  const window = new JSDOM(`<body>${await render(':::tabs position-bottom\n@tab A\n\n가\n\n@tab B\n\n나\n\n@tab C\n\n다\n\n:::end\n')}</body>`, { runScripts: 'outside-only', url: 'https://example.com/' }).window;
+  const window = new JSDOM(`<body>${await render(':::tabs position=bottom\n@tab A\n\n가\n\n@tab B\n\n나\n\n@tab C\n\n다\n\n:::end\n')}</body>`, { runScripts: 'outside-only', url: 'https://example.com/' }).window;
   window.eval(browserScripts(fileURLToPath(new URL('./', import.meta.url))).get('document.js'));
   const buttons = [...window.document.querySelectorAll('[role=tab]')];
   const visible = () => [...window.document.querySelectorAll('[role=tabpanel]')].findIndex(panel => !panel.hidden);
@@ -118,7 +118,7 @@ test('bottom_selector_tabs_use_the_same_runtime_for_click_arrows_home_and_end', 
 });
 
 test('gallery_tabs_show_only_the_selected_panel_pause_hidden_videos_and_use_the_one_runtime', async () => {
-  const source = ':::tabs selector-numbers\n@tab 영상\n\n::video{src=who-knows.svg poster=who-knows.svg alt=영상 controls}\n\n@tab 그림\n\n::figure{src=who-knows.svg alt=그림 caption=캡션}\n\n@tab 셋째\n\n짧은 글\n\n:::end\n';
+  const source = ':::tabs selector=numbers\n@tab 영상\n\n::video{src=who-knows.svg poster=who-knows.svg alt=영상 controls}\n\n@tab 그림\n\n::figure{src=who-knows.svg alt=그림 caption=캡션}\n\n@tab 셋째\n\n짧은 글\n\n:::end\n';
   const window = new JSDOM(`<body>${await render(source)}</body>`, { runScripts: 'outside-only', url: 'https://example.com/' }).window;
   const paused = [];
   window.HTMLMediaElement.prototype.pause = function pause() { paused.push(this); };
@@ -202,3 +202,18 @@ test('the_markdown_guide_example_renders_every_supported_construct_and_round_tri
   assert.equal(rendered.leadHtml, '일반 Markdown만으로 글을 쓰는 방법과 지원하는 문법, 코드 블록 언어를 한 글에서 확인합니다.');
 });
 
+
+// 템플릿 기본값은 일반 Markdown만 허용하고, config/features.json에서 탭·도표를 켠다.
+test('optional_features_default_off_and_reject_disabled_syntax_with_the_setting_name', async () => {
+  const { parseFeatures } = await import('./site-features.mjs');
+  assert.deepEqual({ ...parseFeatures() }, { tabs: false, diagrams: false });
+  assert.deepEqual({ ...parseFeatures({ tabs: true }) }, { tabs: true, diagrams: false });
+  assert.throws(() => parseFeatures({ tab: true }), /알 수 없는 기능/);
+  assert.throws(() => parseFeatures({ tabs: 'yes' }), /true 또는 false/);
+  const { parseArticle } = await import('./article-renderer.mjs');
+  const page = body => ({ id: 'feature-check', body });
+  const tabs = ':::tabs\n@tab A\n\n가\n\n@tab B\n\n나\n\n:::end\n';
+  await assert.rejects(parseArticle(page(tabs), { features: parseFeatures() }), /features\.tabs/);
+  await assert.rejects(parseArticle(page('```diagramplay\nA\n```\n'), { features: parseFeatures() }), /features\.diagrams/);
+  await parseArticle(page(tabs), { features: parseFeatures({ tabs: true }) });
+});

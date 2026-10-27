@@ -8,6 +8,7 @@ import { mathAssets } from 'document-engine';
 import { privateWikiArticle, privateWikiSearch } from './private-wiki-layout.mjs';
 import { readPost } from './blog-model.mjs';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
+import { loadFeatures } from './site-features.mjs';
 import { readDocument, parseContent } from './content-model.mjs';
 import { parseContentSource } from './content-files.mjs';
 import { loadHomeContent, loadHomeNavigation } from './home-content.mjs';
@@ -102,7 +103,7 @@ async function renderPreview({ source, file, id, kind = 'article', siteRoot, con
   } else {
     page = parseContent(selectedSource).metadata.type === 'wiki' ? readDocument(selectedSource, context.tags, new Date(), context.topics) : readPost(selectedSource, { includeUnpublished: true });
     if (id !== undefined && id !== page.id) throw new Error('preview document id does not match source');
-    const document = await parseArticle(page, { assets: documentAssets });
+    const document = await parseArticle(page, { assets: documentAssets, features: loadFeatures(pathToFileURL(configRoot + sep)) });
     diagrams = await compileDiagrams(new Map(document.metadata.diagrams.map(item => [item.source, page.id])));
     const rendered = await renderArticle(page, { document, diagrams: diagrams.diagrams, assets: documentAssets });
     Object.assign(page, rendered);
