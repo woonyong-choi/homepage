@@ -13,7 +13,8 @@ export function tokenUrl(config) {
 
 export function adminPage(config, context, admin) {
   const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : ui.trusted(ui.escape(config.title ?? config.name ?? ''));
-  const signout = ui.Button({ label: '로그아웃', action: 'signout', hidden: true });
+  // 로그아웃 화면도 로그인 화면과 같은 짜임이다: 파란 주 단추 하나와 그 아래 글자 링크 하나.
+  const signout = `${ui.Button({ label: '로그아웃', variant: 'primary', action: 'signout', hidden: true })}${ui.LinkButton({ label: '홈으로', href: '/', variant: 'quiet', hidden: true })}`;
   const login = admin.authUrl
     ? [ui.Button({ label: 'GitHub로 로그인', variant: 'primary', action: 'signin' }), signout]
     : [ui.trusted(`<form data-admin-token-form>${ui.TextInput({ id: 'admin-token', name: 'token', label: 'GitHub 토큰', type: 'password', surface: 'field', placeholder: 'GitHub 토큰 붙여 넣기', autocomplete: 'off' })}</form>`), ui.Button({ label: '로그인', variant: 'primary', action: 'token-signin' }), ui.LinkButton({ label: '토큰 만들기', href: tokenUrl(admin), variant: 'quiet', external: true }), signout];

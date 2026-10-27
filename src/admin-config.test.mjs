@@ -27,6 +27,9 @@ test('admin_login_page_is_logo_and_login_only', () => {
   assert.equal(oauth.querySelector('.app-admin-login h1.app-sr').textContent, '로그인');
   assert.equal(oauth.querySelector('.app-admin-login-logo').getAttribute('aria-label'), 'Who Knows 홈');
   assert.deepEqual([...oauth.querySelectorAll('[data-action]')].map(node => node.dataset.action), ['signin', 'signout']);
+  // 로그아웃도 로그인처럼 파란 주 단추이고, 아래에 처음엔 숨긴 홈으로 링크가 있다.
+  assert.ok(oauth.querySelector('[data-action=signout]').classList.contains('is-primary'));
+  assert.equal(oauth.querySelector('.app-admin-login-actions a[href="/"]').hidden, true);
   // 로그인 서버가 없으면 토큰을 붙여 넣어 로그인한다. 토큰 만들기는 권한을 미리 채운 GitHub 화면이다.
   const token = new JSDOM(adminPage(config, context, base)).window.document;
   assert.equal(token.querySelector('#admin-token').type, 'password');
