@@ -6,16 +6,17 @@
     "rows": 2
   },
   "collection": {
-    "columns": 3,
-    "rows": 4
+    "columns": 2,
+    "rows": 5
   },
   "card": {
     "title": true,
     "description": true,
     "media": "image",
-    "tags": false,
+    "tags": true,
     "date": true,
-    "comments": true
+    "comments": true,
+    "author": true
   },
   "feedSize": 4,
   "archiveTitle": "모든 글",
