@@ -92,5 +92,6 @@ export function toBase64(text) {
 
 export function fromBase64(value) {
   const binary = atob(String(value).replace(/\s/g, ''));
+  // BOM은 뗀다. 남기면 글 머리(---)를 찾지 못한다. 열어서 저장하면 BOM 없는 파일이 된다.
   return new TextDecoder().decode(Uint8Array.from(binary, char => char.charCodeAt(0)));
 }

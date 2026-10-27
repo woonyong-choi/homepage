@@ -1,5 +1,8 @@
 import { isDocumentId, parseContent, publishDate, validateThumbnail } from './content-metadata.mjs';
 
+// /blog/ 아래 목록 주소와 겹쳐 글 주소로 쓸 수 없는 이름. 관리 화면도 출간 전에 같은 목록으로 막는다.
+export const RESERVED_SLUGS = Object.freeze(['all', 'page', 'feed']);
+
 export function readPost(source, { now = new Date(), includeUnpublished = false } = {}) {
   const post = parsePost(source);
   return includeUnpublished || isPublished(post, now) ? post.page : null;
@@ -9,7 +12,7 @@ export function readPost(source, { now = new Date(), includeUnpublished = false 
 function parsePost(source) {
   const { metadata, body } = parseContent(source);
   for (const key of ['id', 'slug']) if (!isDocumentId(metadata[key])) throw new Error(`invalid post ${key}`);
-  if (['all', 'page', 'feed'].includes(metadata.slug)) throw new Error(`reserved post slug: ${metadata.slug}`);
+  if (RESERVED_SLUGS.includes(metadata.slug)) throw new Error(`reserved post slug: ${metadata.slug}`);
   for (const key of ['title', 'description']) if (typeof metadata[key] !== 'string' || !metadata[key].trim()) throw new Error(`missing ${key}: ${metadata.id}`);
   if (metadata.type !== undefined && metadata.type !== 'blog') throw new Error(`unsupported public post type: ${metadata.id}`);
   if (!VISIBILITIES.includes(metadata.visibility)) throw new Error(`invalid visibility: ${metadata.id}`);
