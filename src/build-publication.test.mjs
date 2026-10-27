@@ -94,3 +94,10 @@ test('production_build_uses_site_origin_and_allows_robots', { timeout: 300000 },
   assert.match(sitemap, /<loc>https:\/\/example\.test\/blog\/page\/2\/<\/loc>/);
   assert.match(read(output, 'blog/first-post/index.html'), /<link rel="canonical" href="https:\/\/example\.test\/blog\/first-post\/">/);
 });
+
+// Vault 원고는 publish/ 기준 ../assets/ 주소로 그림과 첨부를 가리킨다. 어느 경로에서 읽어도 같은 공개 자산을 가리켜야 한다.
+test('vault_relative_asset_links_and_images_resolve_to_public_assets', async () => {
+  const { assetLinks } = await import('./build-publication.mjs');
+  const html = '<p><img src="../assets/a.png" alt=""><a href="../assets/png/b-light.png">밝은 화면</a><a href="assets/c.gif">c</a><a href="../assets/d.png#x">d</a><a href="/assets/e.png">e</a><a href="https://example.test/assets/f.png">f</a></p>';
+  assert.equal(assetLinks(html), '<p><img src="/assets/a.png" alt=""><a href="/assets/png/b-light.png">밝은 화면</a><a href="/assets/c.gif">c</a><a href="../assets/d.png#x">d</a><a href="/assets/e.png">e</a><a href="https://example.test/assets/f.png">f</a></p>');
+});

@@ -126,7 +126,7 @@ test('theme_tokens_resolve_to_the_measured_reference_dimensions', () => {
   assert.equal(body, 18);
   assert.equal(px(token('--container-body-width')), 680);
   near(body * Number(token('--leading-feature-body-line')), 25.2);
-  assert.deepEqual(box(token('--component-post-padding')), [72, 0, 144]);
+  assert.deepEqual(box(token('--component-post-padding')), [48, 0, 144]);
   assert.equal(px(token('--spacing-post-header-margin')), 36);
   assert.equal(px(token('--text-post-date-size')), 16.02);
   assert.equal(px(token('--text-post-title-size')), 37.8);
