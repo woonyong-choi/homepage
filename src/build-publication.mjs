@@ -87,6 +87,10 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   return { pages: output.size, documents: posts.length, themeHash: MANIFEST.contentHash };
 }
 
+// Vault 원고는 publish/ 기준 상대 주소(../assets/파일)로 그림과 첨부를 가리킨다. 문서 엔진은 이 주소를 그대로 두므로
+// /blog/<slug>/·/blog/page/2/ 같은 경로에서 깨지지 않게 같은 공개 자산 주소(/assets/파일)로 맞춘다.
+export const assetLinks = html => html.replace(/(href|src)="(?:\.\.\/)?assets\/([^"?#]+)"/g, '$1="/assets/$2"');
+
 async function renderDocuments(documents, options) {
   for (const page of documents) {
     Object.assign(page, await renderArticle(page, { ...options, document: options.parsed.get(page.id) }));
@@ -105,8 +109,8 @@ async function renderDocuments(documents, options) {
       const prefixed = `${page.id}-${decodeURIComponent(fragment)}`;
       return (page.leadHtml + page.html).includes(`id="${prefixed}"`) ? `href="#${prefixed}"` : original;
     });
-    page.leadHtml = rewrite(page.leadHtml);
-    page.html = rewrite(page.html);
+    page.leadHtml = rewrite(assetLinks(page.leadHtml));
+    page.html = rewrite(assetLinks(page.html));
   }
 }
 
