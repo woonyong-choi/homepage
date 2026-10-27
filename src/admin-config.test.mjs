@@ -27,4 +27,5 @@ test('admin_page_hides_editor_until_login_and_loads_only_admin_script', () => {
   const setup = new JSDOM(adminPage(base)).window.document;
   assert.equal(setup.querySelector('[data-action=signin]'), null);
   assert.match(setup.querySelector('[data-admin-signin]').textContent, /authUrl/);
+  assert.equal(setup.querySelector('.app-editor-notice-footer a').getAttribute('href'), '/');
 });

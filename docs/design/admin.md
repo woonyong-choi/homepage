@@ -7,10 +7,16 @@
 | 부분 | 위치 | 역할 |
 |---|---|---|
 | 설정 | `config/admin.json` | 글 원본 저장소, 브랜치, 글·그림 폴더, 로그인 서버 주소. 파일이 없으면 `/admin/`을 만들지 않는다 |
-| 화면 틀 | `src/admin-layout.mjs` | 공통 `Button`·`TextInput`·`TextArea`·`Select`·`Field`·`EditorLayout`·`Tabs`로 조립한다 |
+| 화면 틀 | `src/admin-layout.mjs` | 공통 `EditorLayout`·`EditorBar`·`EditorList`·`EditorNotice`·`Button`·`TextInput`·`TextArea`·`Select`·`Field`로 조립한다. 사이트 머리·꼬리말 없는 도구 화면(`bare`)이다 |
 | 동작 | `src/admin.js` | GitHub API로 글 목록을 읽고, 글 머리와 본문을 고쳐 커밋한다 |
 | 글 변환 | `src/admin-model.mjs` | 글 머리(YAML)의 고친 항목만 바꾸고 다른 항목과 따옴표 모양은 유지한다 |
 | 로그인 서버 | `workers/admin-auth/` | GitHub OAuth 코드를 토큰으로 바꾸는 Cloudflare Worker |
+
+## 화면
+
+- 로그인 전에는 가운데 안내 카드에서 "GitHub로 로그인"을 누른다. 로그인 서버 주소가 없으면 설정 방법을 안내한다.
+- 로그인 뒤에는 위 막대 아래로 글 목록, 편집 칸, 실시간 미리보기 세 칸이 화면 높이를 나눠 쓴다. 넓은 화면(1280px 이상)에서는 세 칸이 함께 보이고, 그보다 좁으면 목록과 작성·미리보기 중 하나, 휴대폰에서는 한 칸만 보이며 막대의 목록·작성·미리보기 단추로 바꾼다.
+- 미리보기는 사이트 글 화면과 같은 `PostArticle`로 제목·도입문·글쓴이 줄·태그·본문을 그린다.
 
 ## 로그인
 
@@ -29,7 +35,7 @@
 - 새 글 파일 이름은 `YY-MM-DD-주소-이름.md`이고 `id`·`slug`는 주소 이름이다. 주소 이름은 새 글에서만 정한다.
 - 저장은 `docs(publish): 제목 추가|수정` 커밋 하나다. 다른 곳에서 먼저 바뀌었으면 덮어쓰지 않고 다시 불러오라고 안내한다.
 - 그림 넣기는 PNG·JPG·GIF·WebP를 `assets` 폴더에 `YYMMDD-이름.확장자`로 커밋하고 본문 커서 위치에 `![설명](../assets/파일)`을 넣는다.
-- 미리보기는 사이트와 같은 문서 엔진 해석기로 문법 오류를 보여 주고 본문 글자 모양을 공통 `app-prose`로 그린다. 탭·도표 같은 전용 블록은 사이트 배포 뒤 확인한다.
+- 미리보기는 사이트와 같은 문서 엔진 해석기로 문법 오류를 편집 칸 아래에 보여 준다. 탭·도표 같은 전용 블록은 미리보기에서 생략하며 사이트 배포 뒤 확인한다.
 
 저장한 글이 사이트에 보이려면 지금처럼 Vault 발행 동기화(`npm run content:sync-vault`)와 배포를 거친다.
 
