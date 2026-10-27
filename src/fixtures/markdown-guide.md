@@ -464,10 +464,10 @@ $$
 
 ## 도표
 
-` ```thinkflow ` 블록에 ThinkFlow 문법을 씁니다. 첫 줄은 `thinkflow`입니다. 도표는 사이트를 빌드할 때 미리 만들며, 브라우저는 완성된 도표와 재생기만 읽습니다. 색·글꼴·아이콘·조작부는 사이트와 같은 공통 디자인을 사용합니다.
+` ```diagramplay ` 블록에 DiagramPlay 문법을 씁니다. 첫 줄은 `diagramplay`입니다. 도표는 사이트를 빌드할 때 미리 만들며, 브라우저는 완성된 도표와 재생기만 읽습니다. 색·글꼴·아이콘·조작부는 사이트와 같은 공통 디자인을 사용합니다.
 
-```thinkflow
-thinkflow
+```diagramplay
+diagramplay
 title "글이 발행되는 흐름"
 box write "글 작성" icon=document
 box review "검토" icon=code-review
@@ -486,8 +486,8 @@ scene "반복 발행" mode=loop for=6s
   track write -> review -> publish -> index every=2s time=3s
 ```
 
-```thinkflow
-thinkflow
+```diagramplay
+diagramplay
 title "페이지 요청과 응답"
 box reader "독자" icon=person
 box site "사이트" icon=server

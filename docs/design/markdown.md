@@ -116,6 +116,16 @@ items:
 
 `$...$`(한 줄)와 `$$...$$`(블록)를 쓴다. 빌드할 때 `@vscode/markdown-it-katex`와 KaTeX가 HTML과 MathML로 만들어 두므로 읽는 쪽에서 스크립트를 실행하지 않는다. 숫자 앞의 `$5`, 공백으로 끝나는 `$` 쌍, 코드 범위와 코드 블록 안의 `$`, `\$`는 수식이 아니다. 틀린 수식은 빌드를 멈추지 않고 원문을 흐린 점선 밑줄(`katex-error`)로 보여 준다. `trust`를 끄고 있어 `\href`, `\includegraphics`, `\htmlClass` 등은 링크나 요소를 만들지 못하고 글자로 남는다. 긴 수식은 `.katex-block` 안에서 가로로 스크롤한다. 수식이 있는 페이지만 `/katex/katex.css`(font-display swap)와 필요한 woff2 글꼴을 싣는다. 글꼴은 모두 로컬이고 woff·ttf는 배포하지 않는다.
 
+#### 선택 기능
+
+탭 문법(`:::tabs`·`:::platform`·`ui:tabs`)과 DiagramPlay 도표(` ```diagramplay `)는 선택 기능이다. `config/features.json`에서 켜며, 파일이 없거나 값을 생략하면 꺼짐이라 일반 Markdown 블로그로 동작한다. 꺼진 기능을 글에 쓰면 해당 줄 번호와 켜는 설정 이름이 담긴 오류로 빌드가 멈춘다.
+
+```json
+{ "tabs": true, "diagrams": true }
+```
+
+`config/features.json`은 홈페이지가 소유하는 설정이며 Vault 동기화 대상이 아니다. 개인 미리보기도 같은 설정 폴더의 값을 읽는다.
+
 #### 도표
 
 `diagramplay` 펜스에는 첫 줄에 `diagramplay`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 DiagramPlay 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
@@ -164,22 +174,22 @@ items:
 | `::이름 옵션` | 본문이 없는 한 줄 블록. 이미지·영상·카드의 내용 속성을 같은 줄에 쓴다 |
 | `:이름[글]{속성}` | 문장 안 표기. 중괄호는 뒤 문장과 내용 속성을 구분한다 |
 
-- 표시 옵션은 공백으로 조합한다. 폭은 `w-narrow`, `w-wide`, 탭은 `box top segmented`, 카드는 `centered cols-2`처럼 쓴다. Tailwind 방식의 작성 규칙이며 임의의 CSS 클래스나 값은 받지 않는다.
+- 표시 옵션은 `이름=값`을 공백으로 조합한다. 폭은 `width=narrow`, `width=wide`, 탭은 `frame=panel position=top selector=segmented`, 카드는 `variant=centered columns=2`처럼 쓴다. 값 없는 이름은 참거짓 옵션(`rounded`, `controls`)만 쓴다. 임의의 CSS 클래스나 값은 받지 않는다.
 - 기본값은 생략한다. 주소·제목·대체 글·캡션·파일 이름은 표시 옵션이 아닌 내용이므로 `src=파일`, `alt="화면 설명"`, `filename=main.ts`처럼 쓴다.
 - 표시 옵션과 내용 속성의 순서는 자유다. 같은 옵션을 여러 번 쓰거나 같은 역할에 다른 값을 지정하면 오류다. 해당 구성 요소가 지원하지 않는 옵션도 오류다.
 - 이름은 소문자 영문·숫자·`-`. 블록 줄은 줄 맨 앞에서 시작하고 들여쓰기 4칸 이상은 코드다.
 - 제목이 필요한 블록은 `:::note[제목]`처럼 라벨을 붙인다. 라벨은 한 줄 1~80자이고 `]`를 넣을 수 없다.
 - 내용 값에 공백이 있으면 큰따옴표를 쓴다. 그 안의 따옴표는 `\"`, 역슬래시는 `\\`로 쓴다. 옵션과 속성은 한 줄에 합계 12개, 값은 300자까지다.
-- `:::end`는 가장 안쪽 열린 블록을 닫는다. 기존 `:::이름[라벨]{속성}`·`::이름{속성}`·콜론 수를 맞춘 닫는 줄도 호환한다.
+- `:::end`는 가장 안쪽 열린 블록을 닫는다. `::이름{속성}` 한 줄 블록은 함께 쓸 수 있다. 옛 `::::tabs`+`:::tab[이름]`, 콜론 수를 맞춘 닫는 줄, `w-wide`·`box`·`top` 같은 약칭 옵션은 문서 엔진이 더 받지 않는다.
 - 코드 펜스와 4칸 이상 들여쓴 코드 안의 구성 문법은 해석하지 않는다. `::표시::` 강조 표기는 그대로다.
 
 | 표시 역할 | 권장 옵션 | 적용 대상 |
 |---|---|---|
-| 폭 | `w-narrow`, `w-wide` | 그림·영상·탭·기기 탭·기존 갤러리·코드블록·DiagramPlay |
-| 탭 상자와 위치 | `box`, `top` | 탭·기기 탭 |
-| 탭 선택 줄 | `segmented`, `numbers` | 탭·기기 탭 |
-| 카드 모양 | `related`, `centered`, `grouped`, `inline` | 카드 목록 |
-| 카드 열 수 | `cols-1`, `cols-2` | 기본·가운데·그룹 카드 목록 |
+| 폭 | `width=narrow`, `width=wide` | 그림·영상·탭·기기 탭·기존 갤러리·코드블록·DiagramPlay |
+| 탭 상자와 위치 | `frame=panel`, `position=top` | 탭·기기 탭 |
+| 탭 선택 줄 | `selector=segmented`, `selector=numbers` | 탭·기기 탭 |
+| 카드 모양 | `variant=related`, `variant=centered`, `variant=grouped`, `variant=inline` | 카드 목록 |
+| 카드 열 수 | `columns=1`, `columns=2` | 기본·가운데·그룹 카드 목록 |
 | 그림 모서리 | `rounded` | 그림 |
 | 기기 프레임 | `frame-iphone` | 영상. 틀은 공통 CSS가 그리며 별도 그림을 쓰지 않는다 |
 
@@ -196,7 +206,7 @@ items:
 | `fineprint` | 없음 | 없음 | 문서 바로 아래, `tab` 안 | 문단만. 작은 글씨 |
 | `steps` | 없음 | 없음 | 문서 바로 아래, `tab` 안 | 목록만. 항목 사이를 넓힌다 |
 | `qa` | 없음 | 없음 | 문서 바로 아래, `tab` 안 | 정의 목록(`질문` 다음 줄 `: 답`)만 |
-| `cards` | 없음 | `related`, `centered`, `grouped`, `inline`, `cols-1`, `cols-2` | 문서 바로 아래, `tab` 안 | `card`만 1개 이상 |
+| `cards` | 없음 | `variant=related`, `variant=centered`, `variant=grouped`, `variant=inline`, `columns=1`, `columns=2` | 문서 바로 아래, `tab` 안 | `card`만 1개 이상 |
 | `card`(리프) | 없음 | `title`·`href` 필수, `description`, `icon` | `cards` 안 | 없음 |
 | `gallery`(옛 형식) | 없음 | `title`(접근성 이름), 폭 옵션 | 문서 바로 아래, `tab` 안 | `slide`만 1개 이상. 새 글에는 `:::tabs numbers`를 권한다. 탭 구성 요소를 그대로 쓰므로 `ui:gallery`와 같은 마크업·스크립트 |
 | `slide`(리프) | 없음 | `src`·`alt` 필수, `caption` | `gallery` 안 | 없음 |
@@ -215,7 +225,7 @@ items:
 `:::tabs`와 `@tab 이름` 줄로 탭을 쓴다. 탭 본문은 일반 Markdown이고 `:::end`로 닫는다. 그림은 보통의 `![대체](경로)`와 캡션 문단으로 쓴다. 옵션 없이 쓰면 상자 없이 둥근 단추 줄이 패널 아래에 오고, 기본을 벗어나는 모양만 공백으로 구분한 옵션으로 적는다.
 
 ````markdown
-:::tabs segmented
+:::tabs selector=segmented
 @tab 변경 전
 
 ![변경 전 화면](/assets/sample-before.png)
@@ -231,24 +241,24 @@ items:
 :::end
 ````
 
-| 역할 | 기본 | 기본을 벗어나는 옵션(짧은 이름) | 긴 이름 |
-|---|---|---|---|
-| 상자 | 없음 | `box` | `frame-panel` |
-| 선택 줄 위치 | 패널 아래 | `top` | `position-top` |
-| 선택 줄 모양 | 둥근 단추(`Mac` `iPhone & iPad` `Watch` 같은 모양) | `segmented`(분할 선택 줄), `numbers`(번호) | `selector-segmented`, `selector-numbers` |
-| 폭 | 본문 폭 | `w-narrow`, `w-wide`(탭 묶음 전체) | `width-narrow`, `width-wide` |
+| 역할 | 기본 | 기본을 벗어나는 옵션 |
+|---|---|---|
+| 상자 | 없음(`frame=none`) | `frame=panel` |
+| 선택 줄 위치 | 패널 아래(`position=bottom`) | `position=top` |
+| 선택 줄 모양 | 둥근 단추(`selector=buttons`) | `selector=segmented`(분할 선택 줄), `selector=numbers`(번호) |
+| 폭 | 본문 폭(`width=content`) | `width=narrow`, `width=wide`(탭 묶음 전체) |
 
-짧은 이름이 권장 표기다. 이 이름들은 Tailwind CSS나 daisyUI 같은 도구의 유틸리티 이름을 참고해 짧게 지은 이 Markdown 문법의 옵션이고 실제 Tailwind 클래스가 아니다(`w-wide`는 Tailwind의 `w-*` 폭 유틸리티 꼴을 빌린 이름이다). 임의의 동의어(`panel`, `bottom`, `wide` 등)는 받지 않는다.
+옵션은 모두 `이름=값` 형식 하나로 쓴다. 이름은 Tailwind CSS 같은 도구의 이름 짓기를 참고했지만 실제 CSS 클래스가 아니며, 정해진 값 외의 동의어는 받지 않는다.
 
-- 옵션은 서로 독립이라 순서가 없다. 짧은 이름, 긴 이름, `selector=segmented` 같은 `이름=값` 형식은 같은 등록부에서 같은 (묶음, 값)으로 풀려 결과가 같다. 기본값은 긴 이름(`frame-none`, `position-bottom`, `selector-buttons`, `width-content`)으로만 받고 쓰지 않은 것과 같으며 기본값에는 클래스가 붙지 않는다.
-- 같은 묶음 옵션을 짧은·긴 이름으로 섞어 둘 쓰면 오류다. 같은 값이면 "겹칩니다"(`box frame-panel`), 다른 값이면 "충돌합니다"(`top position-bottom`)이고 모르는 옵션도 오류다. 폭은 탭 묶음 전체에만 걸리고 바깥 문단은 본문 폭이다.
-- `@tab` 줄에는 이름이 필요하다. `numbers`만 이름을 생략할 수 있고, 이때 버튼에는 번호가 나오며 이름을 쓰면 접근성 이름이 된다. 이름은 묶음 안에서 겹치지 않는다.
+- 옵션은 서로 독립이라 순서가 없다. 기본값을 직접 쓰는 것은 생략과 같고 클래스가 붙지 않는다.
+- 같은 옵션을 두 번 쓰거나 모르는 옵션·값을 쓰면 오류다. 폭은 탭 묶음 전체에만 걸리고 바깥 문단은 본문 폭이다.
+- `@tab` 줄에는 이름이 필요하다. `selector=numbers`만 이름을 생략할 수 있고, 이때 버튼에는 번호가 나오며 이름을 쓰면 접근성 이름이 된다. 이름은 묶음 안에서 겹치지 않는다.
 - 첫 `@tab` 줄 앞에는 본문을 둘 수 없고, `@tab`이 하나도 없거나 탭 본문이 비었거나 `:::end`가 없으면 오류다. 오류에는 줄 번호가 붙는다.
 - 코드 펜스와 4칸 이상 들여쓴 코드 안의 `@tab`, `:::end`, `:::tabs` 줄은 해석하지 않는다. 탭 본문 안의 다른 블록(`:::note` 등) 안의 `@tab`도 탭을 나누지 않는다.
 - 옵션 없는 `:::tabs`는 다음 내용 줄이 `@tab`일 때 이 형식이다. 옵션이 있으면 항상 이 형식이다.
 - 보이는 패널만 높이를 차지한다. 그림 높이가 달라도 선택 줄은 지금 보이는 내용 바로 옆에 있다. 분할 선택 줄은 내용에 맞는 폭이고 이름마다 자기 길이만큼 자리를 차지하며 긴 이름은 줄바꿈된다.
-- 선택 줄의 방향키·Home·End와 영상 정지는 기존 탭 스크립트 하나가 처리한다. 갤러리도 이 탭이다(`numbers`, `::figure`로 캡션).
-- `:::platform`도 `@tab`으로 나누고 `:::end`로 닫는다. 기본값은 상자, 위, 둥근 단추(기기 이름 동기화)다. 옛 `::::tabs`+`:::tab[이름]`과 `ui:tabs`는 선택 줄이 위에 오는 분할 모양이다.
+- 선택 줄의 방향키·Home·End와 영상 정지는 기존 탭 스크립트 하나가 처리한다. 갤러리도 이 탭이다(`selector=numbers`, `::figure`로 캡션).
+- `:::platform`도 `@tab`으로 나누고 `:::end`로 닫는다. 기본값은 상자, 위, 둥근 단추(기기 이름 동기화)다. `ui:tabs`는 선택 줄이 위에 오는 분할 모양이다.
 
 #### 블록 폭
 
@@ -257,24 +267,24 @@ items:
 | 옵션 | 폭 |
 |---|---|
 | 생략 | 본문 폭 |
-| `w-narrow` | 좁은 미디어 폭(`width-narrow`) 이하로 가운데 배치 |
-| `w-wide` | 공통 넓은 미디어 폭(`width-wide`)으로 본문 밖까지 확장. 좁은 화면은 공통 여백 유지 |
+| `width=narrow` | 좁은 미디어 폭(`width-narrow`) 이하로 가운데 배치 |
+| `width=wide` | 공통 넓은 미디어 폭(`width-wide`)으로 본문 밖까지 확장. 좁은 화면은 공통 여백 유지 |
 
 ````markdown
-::figure w-narrow rounded src=sample-a.png alt="오늘 화면"
+::figure width=narrow rounded src=sample-a.png alt="오늘 화면"
 
-::video w-wide src=sample-c.mp4 poster=sample-c.png alt="Mac 화면"
+::video width=wide src=sample-c.mp4 poster=sample-c.png alt="Mac 화면"
 
-```js w-wide filename=main.js
+```js width=wide filename=main.js
 const message = "넓은 코드블록";
 ```
 ````
 
-- 탭도 `:::tabs w-narrow`, `:::tabs w-wide`로 쓴다. 같은 규칙이 묶음 전체에 적용된다.
-- 블록 폭은 `width` 하나로 정한다. `w-narrow`와 `w-wide`는 각각 `width=narrow`와 `width=wide`로 해석하며, 기본값 `width=content`는 생략과 같다. 같은 폭을 중복 지정하거나 다른 폭을 함께 지정하면 오류다. 옛 블록 속성 `wide`와 `size=compact`는 받지 않는다. `ui:video`의 플레이어 치수·비율(`width`, `height`, `wide`), 그림 격자의 `size`, 카드의 `compact`는 블록 폭과 다른 속성으로 유지한다.
-- DiagramPlay도 `diagramplay`, `diagramplay w-wide`, `diagramplay w-narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
+- 탭도 `:::tabs width=narrow`, `:::tabs width=wide`로 쓴다. 같은 규칙이 묶음 전체에 적용된다.
+- 블록 폭은 `width` 하나로 정한다. 기본값 `width=content`는 생략과 같다. 같은 폭을 중복 지정하거나 다른 폭을 함께 지정하면 오류다. 옛 블록 속성 `wide`와 `size=compact`는 받지 않는다. `ui:video`의 플레이어 치수·비율(`width`, `height`, `wide`), 그림 격자의 `size`, 카드의 `compact`는 블록 폭과 다른 속성으로 유지한다.
+- DiagramPlay도 `diagramplay`, `diagramplay width=wide`, `diagramplay width=narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
 - 폭은 공통 구성 요소가 클래스(`app-width-narrow`, `app-width-wide`)로 정하고 값은 테마 토큰이다. CSS나 픽셀 값을 글마다 직접 넣지 않는다.
-- 기기 탭 상자 안에서 `w-wide`를 쓰면 상자 밖으로 나오므로 안쪽 요소의 폭은 보통 생략한다.
+- 기기 탭 상자 안에서 `width=wide`를 쓰면 상자 밖으로 나오므로 안쪽 요소의 폭은 보통 생략한다.
 
 #### 미디어 지원 범위
 

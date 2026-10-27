@@ -42,8 +42,8 @@ test('detail_and_feed_share_the_lead_without_prose_rules_on_the_title_or_empty_r
 
 test('engine_diagnostics_and_failed_diagrams_stop_publication', async () => {
   await assert.rejects(renderArticle({ id: 'broken', description: '', body: ':::note\n닫히지 않음\n' }), /broken 본문/);
-  const source = 'thinkflow\nbox a "A"\n';
-  await assert.rejects(renderArticle({ id: 'failed-diagram', description: '', body: '```thinkflow\n' + source + '```' }, { diagrams: new Map([[source, { error: 'invalid diagram' }]]) }), /failed-diagram/);
+  const source = 'diagramplay\nbox a "A"\n';
+  await assert.rejects(renderArticle({ id: 'failed-diagram', description: '', body: '```diagramplay\n' + source + '```' }, { diagrams: new Map([[source, { error: 'invalid diagram' }]]) }), /failed-diagram/);
 });
 
 test('separate_articles_keep_unique_footnote_targets_in_a_shared_feed', async () => {

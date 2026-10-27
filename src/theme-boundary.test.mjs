@@ -144,5 +144,5 @@ test('browser_search_view_renders_through_theme_components_and_only_converts_the
 test('component_slots_reject_untrusted_strings_from_consumer_adapters', async () => {
   const ui = await import('@woonyong-choi/design-tokens/ui/index.mjs');
   assert.throws(() => ui.Gallery({ id: 'g', slides: [{ image: '<img>' }] }), /must be trusted/);
-  await assert.rejects(renderArticle({ id: 'bad id', description: '', body: '::::tabs\n:::tab[A]\n본문\n:::\n::::\n' }), /pageId must match/);
+  await assert.rejects(renderArticle({ id: 'bad id', description: '', body: ':::tabs\n@tab A\n\n본문\n\n:::end\n' }), /pageId must match/);
 });

@@ -71,7 +71,7 @@ iPhone에서 만든 목록을 읽기만 합니다.
 
 `segmented`는 분할 선택 줄입니다. 탭마다 문단 하나로 만든 예시입니다.
 
-:::tabs segmented
+:::tabs selector=segmented
 @tab 변경 전
 
 기존 화면입니다.
@@ -85,7 +85,7 @@ iPhone에서 만든 목록을 읽기만 합니다.
 이 탭의 원문입니다.
 
 ````markdown
-:::tabs segmented
+:::tabs selector=segmented
 @tab 변경 전
 
 기존 화면입니다.
@@ -99,7 +99,7 @@ iPhone에서 만든 목록을 읽기만 합니다.
 
 이름 길이가 달라도 각 이름은 자기 길이만큼 자리를 차지하고, 긴 이름은 줄바꿈됩니다.
 
-:::tabs segmented
+:::tabs selector=segmented
 @tab 변경 전
 
 기존 화면입니다.
@@ -112,7 +112,7 @@ iPhone에서 만든 목록을 읽기만 합니다.
 
 탭이 셋일 때도 이름마다 길이가 다릅니다. 내용 높이도 달라서 선택 줄은 지금 보이는 내용 바로 아래에 있습니다.
 
-:::tabs segmented
+:::tabs selector=segmented
 @tab 요약
 
 내용이 짧은 탭입니다.
@@ -138,7 +138,7 @@ iPhone에서 만든 목록을 읽기만 합니다.
 
 번호 선택 줄(`numbers`)은 갤러리처럼 쓸 수 있습니다. 자동으로 넘어가지 않고, 단추를 누르거나 키보드 화살표·Home·End로 고릅니다. 내용 높이가 달라도 보이는 탭의 내용만 자리를 차지합니다.
 
-:::tabs numbers
+:::tabs selector=numbers
 @tab 오늘 목록
 
 오늘 할 일을 한곳에 모읍니다.
@@ -164,7 +164,7 @@ iPhone에서 만든 목록을 읽기만 합니다.
 탭 안에는 그림도 넣을 수 있습니다. `src`에는 `assets` 폴더의 그림 파일 이름을 적습니다.
 
 ````markdown
-:::tabs numbers
+:::tabs selector=numbers
 @tab 첫 화면
 
 ::figure src=screen-1.png alt="첫 화면" caption="첫 화면의 설명입니다."
@@ -185,10 +185,10 @@ iPhone에서 만든 목록을 읽기만 합니다.
 ````markdown
 ::figure src=screen-1.png alt="본문 폭 그림" caption="폭 옵션 생략: 본문 폭"
 
-::figure src=screen-1.png alt="좁은 그림" caption="w-narrow" w-narrow
+::figure src=screen-1.png alt="좁은 그림" caption="w-narrow" width=narrow
 ````
 
-:::tabs numbers w-wide
+:::tabs selector=numbers width=wide
 @tab 예정 목록
 
 w-wide 탭은 본문 밖으로 넓게 펼쳐집니다.
@@ -199,13 +199,13 @@ w-wide 탭은 본문 밖으로 넓게 펼쳐집니다.
 
 :::end
 
-```bash w-wide
+```bash width=wide
 curl --silent --show-error --location --header "Accept: application/json" "https://example.com/api/lists/today/items?include=reminders&sort=due&limit=200&cursor=ZXhhbXBsZS1jdXJzb3ItdmFsdWUtdGhhdC1pcy1jb21wbGV0ZWx5LXVubGlrZWx5LXRvLWZpdC1vbi1vbmUtbGluZS1vbi1hLXBob25l"
 ```
 
 코드는 가로 스크롤 없이 폭에 맞춰 줄바꿈하고, 공백 없는 긴 낱말도 잘리지 않습니다. 복사하면 줄바꿈 없는 원문이 그대로 들어갑니다.
 
-```text w-narrow
+```text width=narrow
 ThisIsAnUnbrokenIdentifierThatKeepsGoingAndGoingWithoutAnySpacesToProveThatLongTokensWrapInsideTheBlockInsteadOfScrolling_0123456789_0123456789_0123456789
 ```
 
@@ -242,7 +242,7 @@ ThisIsAnUnbrokenIdentifierThatKeepsGoingAndGoingWithoutAnySpacesToProveThatLongT
 
 ## 이어서 읽을 글
 
-:::cards related
+:::cards variant=related
 ::card title="Markdown 문법 전체 보기" href=/articles/markdown-guide/ icon=document
 ::card title="큐에 경계 두기" href=/articles/bounded-queue/
 ::card title="증거로 원인 좁히기" href=/articles/diagnosis-evidence/
