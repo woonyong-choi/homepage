@@ -6,6 +6,7 @@ import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { fromBase64, imageFileName, imageMarkdown, parseTags, postFileName, readPost, SLUG, toBase64, writePost } from './admin-model.mjs';
 
 const TOKEN_KEY = 'admin-github-token';
+const DATE = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 const API = 'https://api.github.com';
 const markdown = new MarkdownIt({ html: false, linkify: true, typographer: true });
 const renderToken = markdown.renderer.renderToken.bind(markdown.renderer);
@@ -25,20 +26,28 @@ export function initAdmin(root, { fetcher = (...args) => fetch(...args), storage
   const view = root.ownerDocument.defaultView;
   const config = JSON.parse(root.dataset.admin);
   const $ = selector => root.querySelector(selector);
-  const status = $('[data-admin-status]');
+  const statuses = [$('[data-admin-status]'), $('[data-admin-signin-status]')].filter(Boolean);
+  const layout = $('.app-editor');
   const signin = $('[data-admin-signin]');
   const editor = $('[data-admin-editor]');
   const form = $('[data-admin-form]');
   const list = $('[data-admin-list]');
   const preview = $('[data-admin-preview]');
   const problems = $('[data-admin-problems]');
-  const saved = $('[data-admin-saved]');
+  const slugField = $('[data-admin-slug]');
   const imageInput = $('[data-admin-image]');
   const fields = name => form.elements.namedItem(name);
   const images = new Map();
   const state = { posts: [], current: null, dirty: false, token: storage.getItem(TOKEN_KEY) ?? '' };
 
-  const say = message => { status.textContent = message; };
+  const say = message => { for (const status of statuses) status.textContent = message; };
+
+  // 세 칸이 다 보이지 않는 너비에서 보이는 칸을 고른다. 넓은 화면에서는 CSS가 모든 칸을 보인다.
+  function setView(view) {
+    layout.dataset.view = view;
+    for (const button of root.querySelectorAll('[data-action^="view-"]')) button.setAttribute('aria-pressed', String(button.dataset.action === `view-${view}`));
+    if (view === 'preview') renderPreview();
+  }
 
   async function api(path, init = {}) {
     const response = await fetcher(`${API}/repos/${config.repository}/${path}`, {
@@ -64,7 +73,7 @@ export function initAdmin(root, { fetcher = (...args) => fetch(...args), storage
   }
 
   function renderList() {
-    const items = state.posts.map(post => ({ id: post.path, title: post.title || post.name, note: `${post.state === 'public' ? '공개' : '초안'} · ${post.publishedAt || '날짜 없음'}`, selected: post.path === state.current?.path }));
+    const items = state.posts.map(post => ({ id: post.path, title: post.title || post.name, state: post.state, date: post.publishedAt, selected: post.path === state.current?.path }));
     list.replaceChildren(items.length ? nodeFrom(ui.EditorList({ label: '발행 글', items })) : Object.assign(root.ownerDocument.createElement('p'), { className: 'app-caption', textContent: '아직 글이 없습니다. 새 글을 써 보세요.' }));
   }
 
@@ -87,7 +96,7 @@ export function initAdmin(root, { fetcher = (...args) => fetch(...args), storage
   function fill(post) {
     fields('title').value = post?.title ?? '';
     fields('slug').value = post?.slug ?? '';
-    fields('slug').readOnly = Boolean(post);
+    slugField.hidden = Boolean(post);
     fields('description').value = post?.description ?? '';
     fields('tags').value = post?.tags.join(', ') ?? '';
     fields('publishedAt').value = post?.publishedAt || today();
@@ -95,7 +104,6 @@ export function initAdmin(root, { fetcher = (...args) => fetch(...args), storage
     fields('body').value = post?.body ?? '';
     state.current = post;
     state.dirty = false;
-    saved.textContent = '';
     renderList();
     renderPreview();
   }
@@ -108,7 +116,14 @@ export function initAdmin(root, { fetcher = (...args) => fetch(...args), storage
   function renderPreview() {
     const body = fields('body').value;
     const parsed = parseDocumentSync(body, { id: 'admin-preview', features: { tabs: true, diagrams: true } });
-    preview.innerHTML = markdown.renderer.render(parsed.tokens, markdown.options, parsed.env);
+    const input = values();
+    const tags = input.tags.length ? ui.TagList({ tags: input.tags.map(tag => ({ href: `/search/?tag=${encodeURIComponent(tag)}`, label: tag })), size: 'medium' }) : undefined;
+    // 글 머리와 본문 틀은 사이트 글 화면과 같은 PostArticle로 그린다.
+    preview.innerHTML = ui.PostArticle({
+      id: 'admin-preview', detail: true, href: '/', title: input.title || '제목 없음',
+      date: input.publishedAt, dateLabel: input.publishedAt ? DATE.format(new Date(input.publishedAt)) : '', lead: ui.trusted(ui.escape(input.description)), tags,
+      body: ui.trusted(markdown.renderer.render(parsed.tokens, markdown.options, parsed.env)), byline: config.author,
+    }).html;
     for (const image of preview.querySelectorAll('img[src^="../assets/"]')) showImage(image);
     const errors = parsed.diagnostics.filter(item => item.severity === 'error');
     problems.replaceChildren(...errors.map(item => Object.assign(root.ownerDocument.createElement('p'), { className: 'app-caption', textContent: `문법 오류 ${item.line ?? 1}줄: ${item.message}` })));
@@ -127,7 +142,7 @@ export function initAdmin(root, { fetcher = (...args) => fetch(...args), storage
 
   function values() {
     return {
-      title: fields('title').value.trim(), slug: fields('slug').value.trim(), description: fields('description').value.trim(),
+      title: fields('title').value.replace(/\s*\n\s*/g, ' ').trim(), slug: fields('slug').value.trim(), description: fields('description').value.trim(),
       tags: parseTags(fields('tags').value), publishedAt: fields('publishedAt').value, state: fields('state').value, body: fields('body').value,
     };
   }
@@ -153,7 +168,6 @@ export function initAdmin(root, { fetcher = (...args) => fetch(...args), storage
     const post = { ...readPost(text), path, name: path.split('/').pop(), sha: result.content.sha, text };
     state.posts = [post, ...state.posts.filter(item => item.path !== path)].sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.name.localeCompare(b.name));
     fill(post);
-    saved.textContent = '저장됨';
     say(`저장했습니다. ${post.state === 'public' ? '사이트에는 Vault 동기화와 배포 뒤에 보입니다.' : '초안이라 사이트에는 보이지 않습니다.'}`);
   }
 
@@ -189,9 +203,11 @@ export function initAdmin(root, { fetcher = (...args) => fetch(...args), storage
       openWindow(String(url), 'admin-auth', 'width=600,height=720');
       say('GitHub 로그인 창에서 허용해 주세요.');
     } else if (action === 'signout') signOut();
-    else if (action === 'new-post') { if (leaveOk()) { fill(null); fields('title').focus(); } }
+    else if (action === 'new-post') { if (leaveOk()) { fill(null); setView('edit'); fields('title').focus(); } }
     else if (action === 'insert-image') imageInput.click();
-    else if (item && leaveOk()) fill(state.posts.find(post => post.path === item) ?? null);
+    else if (action === 'save') run(save);
+    else if (action?.startsWith('view-')) setView(action.slice(5));
+    else if (item && leaveOk()) { fill(state.posts.find(post => post.path === item) ?? null); setView('edit'); }
   });
   view.addEventListener('message', event => {
     if (!config.authUrl || event.origin !== new URL(config.authUrl).origin || event.data?.type !== 'admin-auth') return;
@@ -202,12 +218,15 @@ export function initAdmin(root, { fetcher = (...args) => fetch(...args), storage
     fill(null);
     run(loadPosts);
   });
-  form.addEventListener('input', event => {
+  let pending = 0;
+  form.addEventListener('input', () => {
     state.dirty = true;
-    saved.textContent = '';
-    if (event.target === fields('body')) renderPreview();
+    view.clearTimeout(pending);
+    pending = view.setTimeout(renderPreview, 150);
   });
   form.addEventListener('submit', event => { event.preventDefault(); run(save); });
+  // 제목은 한 줄 값이다. 줄바꿈 대신 요약 칸으로 옮긴다.
+  fields('title').addEventListener('keydown', event => { if (event.key === 'Enter' && !event.isComposing) { event.preventDefault(); fields('description').focus(); } });
   imageInput.addEventListener('change', () => { const [file] = imageInput.files; imageInput.value = ''; if (file) run(() => uploadImage(file)); });
   view.addEventListener('beforeunload', event => { if (state.dirty) event.preventDefault(); });
 
