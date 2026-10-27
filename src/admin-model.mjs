@@ -92,5 +92,6 @@ export function toBase64(text) {
 
 export function fromBase64(value) {
   const binary = atob(String(value).replace(/\s/g, ''));
-  return new TextDecoder().decode(Uint8Array.from(binary, char => char.charCodeAt(0)));
+  // BOM을 떼지 않는다. 떼면 다시 인코딩한 바이트가 원본과 달라져 해시가 어긋난다.
+  return new TextDecoder('utf-8', { ignoreBOM: true }).decode(Uint8Array.from(binary, char => char.charCodeAt(0)));
 }

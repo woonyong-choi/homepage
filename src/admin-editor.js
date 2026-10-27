@@ -103,9 +103,10 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   // 목록과 개수, 글 화면의 수정·삭제 줄을 지금 글 목록에 맞춘다.
   function renderAdminUi() {
     // 사이트에 없는 글(임시·비공개, 출간했지만 사이트 반영이 끝나지 않은 공개 글)을 목록에 둔다.
-    const hidden = state.posts.filter(post => post.state !== 'public' || post.offline);
+    const waiting = post => post.state === 'public' && post.publishedAt > today();
+    const hidden = state.posts.filter(post => post.state !== 'public' || post.offline || waiting(post));
     dock.querySelector('[data-admin-count]').textContent = String(hidden.length);
-    const label = post => post.state === 'private' ? '비공개' : post.state === 'public' ? '사이트 반영 안 됨' : '임시저장';
+    const label = post => post.state === 'private' ? '비공개' : waiting(post) ? '발행일 전' : post.state === 'public' ? '사이트 반영 안 됨' : '임시저장';
     const next = nodeFrom(ui.AdminDrafts({ items: hidden.map(post => ({ id: post.path, title: post.title || post.name, date: post.publishedAt, label: label(post) })) }));
     next.hidden = panel.hidden;
     panel.replaceWith(next);
@@ -147,17 +148,20 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   }
   // 사이트와 어긋난 글은 관리 화면을 열 때 자동으로 맞춘다. 한 글이 실패해도 나머지 글은 계속 맞춘다.
   async function repairSite() {
-    const changes = [...state.posts.filter(post => post.offline).map(post => ({ post })), ...staleCopies.map(post => ({ post, remove: true }))];
+    // 같은 주소의 새 사본 올리기와 옛 사본 내리기는 한 커밋으로 묶는다. 하나만 반영되면 같은 주소가 두 개 남아 빌드가 멈춘다.
+    const groups = state.posts.filter(post => post.offline).map(post => [{ post }, ...staleCopies.filter(copy => copy.slug === post.slug).map(copy => ({ post: copy, remove: true }))]);
+    for (const copy of staleCopies) if (!groups.some(group => group.some(change => change.post === copy))) groups.push([{ post: copy, remove: true }]);
+    const changes = groups.flat();
     if (!changes.length) return;
     say(`사이트와 어긋난 글 ${changes.length}개를 맞추는 중입니다.`, { stay: true });
     const failed = [];
-    for (const change of changes) {
+    for (const group of groups) {
       try {
-        await updateSite([change]);
-        if (!change.remove) change.post.offline = false;
+        await updateSite(group);
+        for (const change of group) if (!change.remove) change.post.offline = false;
       } catch (error) {
         if (error.message === 'unauthorized') throw error;
-        failed.push({ change, message: error.message });
+        for (const change of group) failed.push({ change, message: error.message });
       }
     }
     staleCopies = staleCopies.filter(copy => failed.some(item => item.change.post === copy));
@@ -188,6 +192,8 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   }
 
   function openWrite(post) {
+    // 저장이 끝나기 전에 저장된 글을 다시 열면 저장 전 내용이 보인다. 저장이 끝난 뒤 열게 한다.
+    if (post && state.saving) { say('저장하는 중입니다. 잠시 뒤 다시 열어 주세요.'); return; }
     // 글을 열 때마다 작성 회차를 바꾼다. 앞 회차의 저장·그림 올리기가 늦게 끝나도 지금 연 글을 건드리지 않는다.
     state.session += 1;
     state.current = post;
@@ -418,7 +424,8 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
       if (!SLUG.test(input.slug)) return say('주소 이름은 영어 소문자·숫자와 - 만 쓸 수 있습니다.');
       if (RESERVED_SLUGS.includes(input.slug)) return say(`주소 이름 ${input.slug}은(는) 사이트 주소와 겹쳐 쓸 수 없습니다.`);
       if (!/^\d{4}-\d{2}-\d{2}$/.test(input.publishedAt)) return say('발행일을 입력해 주세요.');
-      if (input.publishedAt > today()) return say('발행일은 오늘이나 그 전 날짜만 고를 수 있습니다.');
+      // 사이트는 오늘 이후 날짜의 글을 싣지 않는다. 공개할 때만 막고 비공개 저장은 그대로 둔다.
+      if (nextState === 'public' && input.publishedAt > today()) return say('발행일은 오늘이나 그 전 날짜만 고를 수 있습니다.');
     } else if (!input.slug) input.slug = draftSlug();
     const current = state.current;
     const renamed = Boolean(current) && current.slug !== input.slug;
@@ -478,18 +485,27 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     } else if (!leftover) say(auto ? '자동으로 저장했습니다.' : nextState === 'private' ? '저장했습니다.' : '임시저장했습니다.');
   }
 
-  // 공개 글은 사이트에서 먼저 내린 뒤 Vault에서 지운다. 사이트에서 내리지 못하면 Vault 글도 그대로 두어 다시 시도할 수 있다.
+  // 공개 글은 세 단계로 지운다: Vault에서 비공개로 바꾸기 → 사이트에서 내리기 → Vault에서 지우기.
+  // 어느 단계에서 멈춰도 Vault와 사이트가 어긋나지 않는다. 비공개가 된 글의 사이트 사본은 관리 화면을 열 때 자동으로 내리고,
+  // 마지막 단계만 실패하면 비공개 글로 목록에 남아 다시 지울 수 있다. 삭제한 공개 글이 자동 맞춤으로 다시 올라가지 않는다.
   async function removePost(post) {
     if (!await confirm('글 삭제', `「${post.title}」을(를) 삭제할까요? Vault 저장소의 기록에는 남지만 사이트와 목록에서 사라집니다.`, '삭제')) return;
     if (state.saving) return say('저장하는 중입니다. 잠시 뒤 다시 눌러 주세요.');
     state.saving = true;
     try {
+      let target = post;
       if (post.state === 'public') {
         say('사이트에서 내리는 중입니다.', { stay: true });
-        await updateSite([{ post, remove: true }]);
+        const text = writePost(post.text, { ...post, thumbnail: undefined, state: 'private' });
+        const hidden = await api(contentPath(post.path), { method: 'PUT', body: JSON.stringify({ message: `docs(publish): ${post.title} 삭제 준비(비공개)`, content: toBase64(text), branch: settings.branch, sha: post.sha }) });
+        if (!hidden.ok) return say(hidden.status === 409 || hidden.status === 422 ? '다른 곳에서 먼저 바뀌었습니다. 새로고침한 뒤 다시 삭제해 주세요.' : `삭제하지 못했습니다(${hidden.status}).`, { stay: true });
+        target = { ...readPost(text), path: post.path, name: post.name, sha: (await hidden.json()).content.sha, text };
+        state.posts = sortPosts([target, ...state.posts.filter(item => item.path !== post.path)]);
+        renderAdminUi();
+        await updateSite([{ post: target, remove: true }]);
       }
-      const response = await api(contentPath(post.path), { method: 'DELETE', body: JSON.stringify({ message: `docs(publish): ${post.title} 삭제`, sha: post.sha, branch: settings.branch }) });
-      if (!response.ok) return say(`Vault에서 삭제하지 못했습니다(${response.status}).${post.state === 'public' ? ' 사이트에서는 내렸습니다.' : ''}`, { stay: true });
+      const response = await api(contentPath(target.path), { method: 'DELETE', body: JSON.stringify({ message: `docs(publish): ${post.title} 삭제`, sha: target.sha, branch: settings.branch }) });
+      if (!response.ok) return say(`Vault에서 삭제하지 못했습니다(${response.status}).${post.state === 'public' ? ' 사이트에서는 내렸고, 글은 비공개로 목록에 남았습니다. 목록에서 열어 다시 삭제해 주세요.' : ''}`, { stay: true });
       state.posts = state.posts.filter(item => item.path !== post.path);
       if (state.current?.path === post.path && !write.hidden) closeAll();
       renderAdminUi();
@@ -525,14 +541,20 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     const [owner, repo, workflow] = settings.deploy.split('/');
     const base = `${API}/repos/${owner}/${repo}/actions/workflows/${encodeURIComponent(workflow)}`;
     // 실행 전 마지막 배포 번호를 기억해 두고, 그보다 나중에 생긴 실행만 이번 배포로 본다.
-    const latest = async () => (await (await api(`${base}/runs?per_page=5&event=workflow_dispatch`)).json().catch(() => ({}))).workflow_runs ?? [];
-    const before = Math.max(0, ...(await latest()).map(item => item.id));
+    // 목록을 읽지 못하면 null이다. 실행 전 목록을 못 읽으면 이번 실행을 가려낼 수 없으므로 결과를 기다리지 않는다.
+    const latest = async () => {
+      const response = await api(`${base}/runs?per_page=5&event=workflow_dispatch`).catch(error => { if (error.message === 'unauthorized') throw error; return null; });
+      return response?.ok ? (await response.json()).workflow_runs ?? [] : null;
+    };
+    const previous = await latest();
+    const before = previous ? Math.max(0, ...previous.map(item => item.id)) : null;
     const response = await api(`${base}/dispatches`, { method: 'POST', body: JSON.stringify({ ref: 'main' }) });
     if (!response.ok) { say(`${done} 배포를 시작하지 못했습니다(${response.status}). GitHub에서 직접 배포해 주세요.`, { stay: true }); return; }
+    if (before === null) { say(`${done} 배포를 시작했습니다. 1~2분 뒤 새로고침하면 보입니다.`); return; }
     say(`${done} 사이트에 반영하는 중입니다(1~2분).`, { stay: true });
     for (let attempt = 0; attempt < 40; attempt++) {
       await new Promise(resolve => view.setTimeout(resolve, 6000));
-      const run = (await latest()).filter(item => item.id > before).sort((a, b) => a.id - b.id)[0];
+      const run = ((await latest()) ?? []).filter(item => item.id > before).sort((a, b) => a.id - b.id)[0];
       if (!run || run.status !== 'completed') continue;
       say(run.conclusion === 'success' ? '사이트에 반영했습니다. 새로고침하면 보입니다.' : '배포가 실패했습니다. GitHub Actions 기록을 확인해 주세요.', { stay: run.conclusion !== 'success' });
       return;

@@ -1,6 +1,7 @@
 // 관리 화면에서 출간·삭제한 공개 글을 사이트 저장소의 승인 사본에 한 커밋으로 맞춘다.
 // 바꾸는 것: 글 사본(content/blog), 글이 쓰는 그림(content/assets)과 출처 기록(config/assets.json), 승인 목록 해시.
 // 브라우저에서 GitHub API로만 동작하므로 파일 시스템을 쓰지 않는다. 요청 함수는 호출하는 쪽이 넣는다.
+import { readPost } from './admin-model.mjs';
 import { postAssets } from './post-assets.mjs';
 
 export const SITE_ATTEMPTS = 3;
@@ -78,8 +79,14 @@ export function createSiteSync(io) {
       if (!path.startsWith('content/blog/')) continue;
       const name = path.slice('content/blog/'.length);
       const post = byName.get(name);
-      const slug = name.replace(/^\d{2}-\d{2}-\d{2}-/, '').replace(/\.md$/, '');
-      if (post ? post.state !== 'public' : publicSlugs.has(slug)) remove.push({ name, title: post?.title || name });
+      if (post) {
+        if (post.state !== 'public') remove.push({ name, slug: post.slug, title: post.title || name });
+        continue;
+      }
+      // Vault에 같은 이름이 없는 사본은 글 머리의 실제 주소로 판단한다. 같은 주소의 공개 글이 다른 이름으로 있으면 옛 사본이다.
+      const text = await readText(path);
+      const copy = text === null ? null : readPost(text);
+      if (copy && publicSlugs.has(copy.slug)) remove.push({ name, slug: copy.slug, title: copy.title || name });
     }
     return { publish, remove };
   }

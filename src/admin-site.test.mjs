@@ -147,10 +147,16 @@ test('korean_and_folder_image_names_are_copied_and_a_missing_vault_image_fails_w
 
 test('site_copies_of_unpublished_or_renamed_posts_are_found_for_removal', async () => {
   const { sync } = setup();
-  await sync.apply([{ post: post('26-10-01-a.md', '가') }, { post: post('26-10-01-b.md', '나') }, { post: post('26-10-01-other.md', '다') }]);
+  await sync.apply([{ post: post('26-10-01-a.md', '가', 'public', 'a') }, { post: post('26-10-01-b.md', '나', 'public', 'b') }, { post: post('26-10-01-other.md', '다', 'public', 'keep') }]);
   // a는 Vault에서 비공개가 됐고, b는 다른 날짜 파일 이름으로 옮겨졌다. other는 Vault에 없어 다른 경로로 올린 사본일 수 있으니 둔다.
-  const vault = [post('26-10-01-a.md', '가', 'private', 'a'), post('26-10-02-b.md', '나', 'public', 'b')];
+  // 옛 사본은 파일 이름이 아니라 글 머리의 주소로 판단한다. 파일 이름이 foo여도 주소가 other면 foo 글과 무관하다.
+  await sync.apply([{ post: { ...post('26-10-01-foo.md', '라'), text: '---\nid: other\nslug: other\n---\n\n라\n' } }]);
+  const vault = [post('26-10-01-a.md', '가', 'private', 'a'), post('26-10-02-b.md', '나', 'public', 'b'), post('26-10-03-foo.md', '마', 'public', 'foo')];
   const { publish, remove } = await sync.pending(vault);
-  assert.deepEqual(publish.map(item => item.name), ['26-10-02-b.md']);
+  assert.deepEqual(publish.map(item => item.name).sort(), ['26-10-02-b.md', '26-10-03-foo.md']);
   assert.deepEqual(remove.map(item => item.name).sort(), ['26-10-01-a.md', '26-10-01-b.md']);
+  assert.deepEqual(remove.map(item => item.slug).sort(), ['a', 'b']);
+  // 이름을 바꾼 글의 새 사본과 옛 사본 내리기를 한 커밋으로 반영하면 같은 주소가 하나만 남는다.
+  await sync.apply([{ post: vault[1] }, { post: remove.find(item => item.slug === 'b'), remove: true }]);
+  assert.deepEqual((await sync.pending(vault)).remove.map(item => item.slug), ['a']);
 });
