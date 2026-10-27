@@ -4,6 +4,7 @@
 import { parseDocumentSync, renderPreview } from 'document-engine/preview';
 import { bodyWithSummary, splitLead, summaryOf } from './article-summary.mjs';
 import { publishDate } from './content-metadata.mjs';
+import { createSiteSync } from './admin-site.mjs';
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { fromBase64, imageFileName, imageMarkdown, postFileName, readPost, SLUG, toBase64, writePost } from './admin-model.mjs';
 import { TOKEN_KEY } from './admin-token.mjs';
@@ -127,25 +128,35 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     state.posts = sortPosts(posts.filter(post => post.type === 'blog'));
     await markOffline();
     renderAdminUi();
-    await checkSiteAccess();
+    if (await checkSiteAccess()) await repairSite();
   }
 
-  // 공개 글 중 사이트 지도(sitemap.xml)에 주소가 없는 글은 사이트 반영이 끝나지 않은 글이다. 지도를 못 읽으면 표시하지 않는다.
+  // 공개 글 중 사이트 저장소의 승인 사본과 내용이 다른 글은 사이트 반영이 끝나지 않은 글이다. 승인 목록을 못 읽으면 표시하지 않는다.
   async function markOffline() {
+    if (!siteSync) return;
     try {
-      const response = await fetcher(new URL('/sitemap.xml', view.location.origin), { cache: 'no-store' });
-      if (!response.ok) return;
-      const routes = new Set([...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => new URL(match[1], view.location.origin).pathname));
-      for (const post of state.posts) post.offline = post.state === 'public' && !routes.has(`/blog/${post.slug}/`);
-    } catch { /* 지도를 못 읽으면 반영 여부를 표시하지 않는다. */ }
+      const pending = new Set(await siteSync.pending(state.posts));
+      for (const post of state.posts) post.offline = pending.has(post);
+    } catch { /* 반영 여부를 모르면 표시하지 않는다. */ }
+  }
+  // 반영되지 않은 공개 글은 관리 화면을 열 때 자동으로 다시 올린다.
+  async function repairSite() {
+    const pending = state.posts.filter(post => post.offline);
+    if (!pending.length) return;
+    say(`사이트에 반영되지 않은 글 ${pending.length}개를 다시 올리는 중입니다.`, { stay: true });
+    await updateSite(pending.map(post => ({ post })));
+    for (const post of pending) post.offline = false;
+    renderAdminUi();
+    await deploy(`사이트에 반영되지 않은 글 ${pending.length}개를 다시 올렸습니다.`);
   }
 
   // 공개 글은 사이트 저장소에도 커밋한다. 토큰에 그 저장소 쓰기 권한이 없으면 출간 전에 알린다.
   async function checkSiteAccess() {
-    if (!siteRepo) return;
+    if (!siteRepo) return false;
     const response = await api(`${API}/repos/${siteRepo}`);
     const permissions = response.ok ? (await response.json()).permissions : null;
     if (!permissions?.push) say(`토큰에 ${siteRepo} 쓰기 권한이 없어 출간한 글이 사이트에 반영되지 않습니다. /admin/에서 두 저장소를 고른 토큰으로 다시 로그인해 주세요.`, { stay: true });
+    return Boolean(permissions?.push);
   }
 
   // 작성 화면
@@ -388,7 +399,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
       if (nextState === 'public' && current.offline && !auto) {
         closeAll();
         say('사이트에 올리는 중입니다.', { stay: true });
-        await updateSite(current);
+        await updateSite([{ post: current }]);
         current.offline = false;
         renderAdminUi();
         await deploy('사이트에 올렸습니다.');
@@ -415,12 +426,12 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     if (nextState === 'public') {
       closeAll();
       say('사이트에 올리는 중입니다.', { stay: true });
-      await updateSite(post);
+      await updateSite([{ post }]);
       await deploy(wasPublic ? '수정했습니다.' : '출간했습니다.');
     } else if (wasPublic) {
       closeAll();
       say('사이트에서 내리는 중입니다.', { stay: true });
-      await updateSite(post, { remove: true });
+      await updateSite([{ post, remove: true }]);
       await deploy(nextState === 'private' ? '비공개로 바꿨습니다.' : '임시 글로 바꿨습니다.');
     } else if (nextState === 'private') {
       closeAll();
@@ -434,64 +445,25 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     if (!response.ok) return say(`삭제하지 못했습니다(${response.status}).`);
     state.posts = state.posts.filter(item => item.path !== post.path);
     renderAdminUi();
-    if (post.state === 'public') { await updateSite(post, { remove: true }); await deploy('삭제했습니다.'); }
+    if (post.state === 'public') { await updateSite([{ post, remove: true }]); await deploy('삭제했습니다.'); }
     else say('삭제했습니다.');
   }
 
-  // 공개 글은 사이트 저장소의 승인 사본(content/blog)과 쓰는 그림(content/assets), 승인 목록 해시를 한 커밋으로 맞춘다.
-  // 사이트 저장소는 공개라 임시 글은 올리지 않는다. 배포는 이 사본으로 빌드한다.
+  // 공개 글은 사이트 저장소의 승인 사본으로 옮긴다(src/admin-site.mjs). 사이트 저장소는 공개라 임시·비공개 글은 올리지 않는다.
   const siteRepo = settings.deploy ? settings.deploy.split('/').slice(0, 2).join('/') : '';
-  const site = (path, init) => api(`${API}/repos/${siteRepo}/${path}`, init);
-  const json = async response => {
-    if (response.status === 403 || response.status === 404) throw new Error(`토큰에 ${siteRepo} 쓰기 권한이 없어 사이트에 반영하지 못했습니다. 글은 Vault에 저장됐습니다. /admin/에서 두 저장소를 고른 토큰으로 다시 로그인한 뒤 수정하기를 눌러 주세요.`);
-    if (!response.ok) throw new Error(`사이트 저장소에 반영하지 못했습니다(${response.status}). 글은 Vault에 저장됐습니다.`);
-    return response.json();
-  };
   const encode = bytes => { let binary = ''; for (let at = 0; at < bytes.length; at += 0x8000) binary += String.fromCharCode(...bytes.subarray(at, at + 0x8000)); return btoa(binary); };
   const digest = async bytes => [...new Uint8Array(await view.crypto.subtle.digest('SHA-256', bytes))].map(byte => byte.toString(16).padStart(2, '0')).join('');
-  async function vaultBytes(path) {
-    const response = await api(`${contentPath(path)}${ref}`, { headers: { accept: 'application/vnd.github.raw' } });
-    if (!response.ok) throw new Error(`그림을 읽지 못했습니다: ${path}`);
+  async function readVaultAsset(name) {
+    const response = await api(`${contentPath(`${settings.assets}/${name}`)}${ref}`, { headers: { accept: 'application/vnd.github.raw' } });
+    if (!response.ok) throw new Error(`그림을 읽지 못했습니다: ${name}`);
     return new Uint8Array(await response.arrayBuffer());
   }
-  function assetFiles(post) {
-    const files = new Set([...post.body.matchAll(/\]\(\.\.\/assets\/([^)\s]+)\)/g)].map(match => decodeURIComponent(match[1])));
-    if (post.thumbnail?.src.startsWith('/assets/')) files.add(post.thumbnail.src.slice('/assets/'.length));
-    return [...files];
-  }
-  async function updateSite(post, { remove = false } = {}) {
-    if (!siteRepo) return;
-    const head = await json(await site('git/ref/heads/main'));
-    const base = await json(await site(`git/commits/${head.object.sha}`));
-    const snapshotFile = await json(await site('contents/config/approved-content.json?ref=main'));
-    const snapshot = JSON.parse(fromBase64(snapshotFile.content));
-    const tree = [];
-    const put = async (path, bytes) => {
-      const blob = await json(await site('git/blobs', { method: 'POST', body: JSON.stringify({ content: encode(bytes), encoding: 'base64' }) }));
-      tree.push({ path, mode: '100644', type: 'blob', sha: blob.sha });
-    };
-    const target = `content/blog/${post.name}`;
-    if (remove) {
-      if (!Object.hasOwn(snapshot.files, target)) return;
-      delete snapshot.files[target];
-      tree.push({ path: target, mode: '100644', type: 'blob', sha: null });
-    } else {
-      const text = new TextEncoder().encode(post.text);
-      snapshot.files[target] = await digest(text);
-      await put(target, text);
-      for (const file of assetFiles(post)) {
-        const path = `content/assets/${file}`;
-        const bytes = await vaultBytes(`${settings.assets}/${file}`);
-        const hash = await digest(bytes);
-        if (snapshot.files[path] !== hash) await put(path, bytes);
-        snapshot.files[path] = hash;
-      }
-    }
-    snapshot.files = Object.fromEntries(Object.entries(snapshot.files).sort(([a], [b]) => a.localeCompare(b)));
-    await put('config/approved-content.json', new TextEncoder().encode(`${JSON.stringify(snapshot, null, 2)}\n`));
-    const nextTree = await json(await site('git/trees', { method: 'POST', body: JSON.stringify({ base_tree: base.tree.sha, tree }) }));
-    const commit = await json(await site('git/commits', { method: 'POST', body: JSON.stringify({ message: `content(blog): ${post.title} ${remove ? '삭제' : '반영'}`, tree: nextTree.sha, parents: [head.object.sha] }) }));
-    await json(await site('git/refs/heads/main', { method: 'PATCH', body: JSON.stringify({ sha: commit.sha }) }));
+  const siteSync = siteRepo ? createSiteSync({
+    repo: siteRepo, request: (path, init) => api(`${API}/repos/${siteRepo}/${path}`, init), readVaultAsset, digest, encode, decode: fromBase64,
+    wait: ms => new Promise(resolve => view.setTimeout(resolve, ms)),
+  }) : null;
+  async function updateSite(changes) {
+    if (siteSync) await siteSync.apply(changes);
   }
 
   // 배포 작업을 실행하고 끝날 때까지 상태를 알린다.
