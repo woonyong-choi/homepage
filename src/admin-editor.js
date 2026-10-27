@@ -376,6 +376,8 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   }
   function setVisibility(value) {
     state.visibility = value;
+    // 오늘 이후 날짜는 공개할 때만 막는다.
+    publishField('publishedAt').max = value === 'public' ? today() : '';
     for (const [action, name] of [['visibility-public', 'public'], ['visibility-private', 'private']]) publish.querySelector(`[data-action=${action}]`).setAttribute('aria-pressed', String(value === name));
   }
   function openPublish() {
@@ -386,8 +388,6 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     slug.readOnly = Boolean(state.current) && !state.current.slug.startsWith('draft-');
     if (slug.value.startsWith('draft-')) slug.value = '';
     publishField('publishedAt').value = state.current?.publishedAt || today();
-    // 예약 출간은 없다. 사이트는 오늘 이후 날짜의 글을 싣지 않으므로 오늘까지만 고른다.
-    publishField('publishedAt').max = today();
     renderCard();
     publish.hidden = false;
     pushView('publish');
@@ -413,7 +413,10 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   async function save(nextState, { auto = false } = {}) {
     if (state.saving) { if (!auto) say('저장하는 중입니다. 잠시 뒤 다시 눌러 주세요.'); return; }
     state.saving = true;
-    try { await store(nextState, auto); } finally { state.saving = false; }
+    // 배포 완료 기다리기(최대 몇 분)는 잠금 밖에서 한다. 그동안에도 다른 글을 열고 고칠 수 있다.
+    let next;
+    try { next = await store(nextState, auto); } finally { state.saving = false; }
+    if (next) await deploy(next.done, next.note);
   }
   async function store(nextState, auto) {
     const input = values(nextState);
@@ -442,8 +445,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
         await updateSite([{ post: current }]);
         current.offline = false;
         renderAdminUi();
-        await deploy('사이트에 올렸습니다.');
-        return;
+        return { done: '사이트에 올렸습니다.' };
       }
       if (!auto) say('바뀐 내용이 없습니다.');
       return;
@@ -473,12 +475,12 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
       if (same) closeAll();
       say('사이트에 올리는 중입니다.', { stay: true });
       await updateSite([{ post }]);
-      await deploy(wasPublic ? '수정했습니다.' : '출간했습니다.');
+      return { done: wasPublic ? '수정했습니다.' : '출간했습니다.' };
     } else if (wasPublic) {
       if (same) closeAll();
       say('사이트에서 내리는 중입니다.', { stay: true });
       await updateSite([{ post, remove: true }]);
-      await deploy(nextState === 'private' ? '비공개로 바꿨습니다.' : '임시 글로 바꿨습니다.');
+      return { done: nextState === 'private' ? '비공개로 바꿨습니다.' : '임시 글로 바꿨습니다.' };
     } else if (nextState === 'private' && !auto && same && !publish.hidden) {
       closeAll();
       say('비공개로 저장했습니다. 오른쪽 아래 목록에서 다시 열 수 있습니다.');
@@ -492,26 +494,37 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     if (!await confirm('글 삭제', `「${post.title}」을(를) 삭제할까요? Vault 저장소의 기록에는 남지만 사이트와 목록에서 사라집니다.`, '삭제')) return;
     if (state.saving) return say('저장하는 중입니다. 잠시 뒤 다시 눌러 주세요.');
     state.saving = true;
-    try {
-      let target = post;
-      if (post.state === 'public') {
-        say('사이트에서 내리는 중입니다.', { stay: true });
-        const text = writePost(post.text, { ...post, thumbnail: undefined, state: 'private' });
-        const hidden = await api(contentPath(post.path), { method: 'PUT', body: JSON.stringify({ message: `docs(publish): ${post.title} 삭제 준비(비공개)`, content: toBase64(text), branch: settings.branch, sha: post.sha }) });
-        if (!hidden.ok) return say(hidden.status === 409 || hidden.status === 422 ? '다른 곳에서 먼저 바뀌었습니다. 새로고침한 뒤 다시 삭제해 주세요.' : `삭제하지 못했습니다(${hidden.status}).`, { stay: true });
-        target = { ...readPost(text), path: post.path, name: post.name, sha: (await hidden.json()).content.sha, text };
-        state.posts = sortPosts([target, ...state.posts.filter(item => item.path !== post.path)]);
-        renderAdminUi();
-        await updateSite([{ post: target, remove: true }]);
-      }
-      const response = await api(contentPath(target.path), { method: 'DELETE', body: JSON.stringify({ message: `docs(publish): ${post.title} 삭제`, sha: target.sha, branch: settings.branch }) });
-      if (!response.ok) return say(`Vault에서 삭제하지 못했습니다(${response.status}).${post.state === 'public' ? ' 사이트에서는 내렸고, 글은 비공개로 목록에 남았습니다. 목록에서 열어 다시 삭제해 주세요.' : ''}`, { stay: true });
-      state.posts = state.posts.filter(item => item.path !== post.path);
-      if (state.current?.path === post.path && !write.hidden) closeAll();
+    let next;
+    try { next = await removeSteps(post); } finally { state.saving = false; }
+    if (next) await deploy(next.done, next.note);
+  }
+  async function removeSteps(post) {
+    let target = post;
+    let removedFromSite = false;
+    if (post.state === 'public') {
+      say('사이트에서 내리는 중입니다.', { stay: true });
+      const text = writePost(post.text, { ...post, thumbnail: undefined, state: 'private' });
+      const hidden = await api(contentPath(post.path), { method: 'PUT', body: JSON.stringify({ message: `docs(publish): ${post.title} 삭제 준비(비공개)`, content: toBase64(text), branch: settings.branch, sha: post.sha }) });
+      if (!hidden.ok) return say(hidden.status === 409 || hidden.status === 422 ? '다른 곳에서 먼저 바뀌었습니다. 새로고침한 뒤 다시 삭제해 주세요.' : `삭제하지 못했습니다(${hidden.status}).`, { stay: true });
+      target = { ...readPost(text), path: post.path, name: post.name, sha: (await hidden.json()).content.sha, text };
+      state.posts = sortPosts([target, ...state.posts.filter(item => item.path !== post.path)]);
       renderAdminUi();
-      if (post.state === 'public') await deploy('삭제했습니다.');
-      else say('삭제했습니다.');
-    } finally { state.saving = false; }
+      await updateSite([{ post: target, remove: true }]);
+      removedFromSite = true;
+    }
+    const response = await api(contentPath(target.path), { method: 'DELETE', body: JSON.stringify({ message: `docs(publish): ${post.title} 삭제`, sha: target.sha, branch: settings.branch }) });
+    if (!response.ok) {
+      // 사이트 사본은 이미 내렸으니 Vault 삭제가 실패해도 배포는 한다. 글은 비공개로 목록에 남는다.
+      const note = `Vault에서는 지우지 못해(${response.status}) 글이 비공개로 목록에 남았습니다. 목록에서 열어 다시 삭제해 주세요.`;
+      if (removedFromSite) return { done: '사이트에서 내렸습니다.', note };
+      return say(`Vault에서 삭제하지 못했습니다(${response.status}).`, { stay: true });
+    }
+    state.posts = state.posts.filter(item => item.path !== post.path);
+    if (state.current?.path === post.path && !write.hidden) closeAll();
+    renderAdminUi();
+    if (removedFromSite) return { done: '삭제했습니다.' };
+    say('삭제했습니다.');
+    return undefined;
   }
 
   // 공개 글은 사이트 저장소의 승인 사본으로 옮긴다(src/admin-site.mjs). 사이트 저장소는 공개라 임시·비공개 글은 올리지 않는다.
@@ -536,7 +549,8 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   }
 
   // 배포 작업을 실행하고 끝날 때까지 상태를 알린다.
-  async function deploy(done) {
+  // note는 배포가 끝난 뒤에도 남겨 둘 안내다.
+  async function deploy(done, note = '') {
     if (!settings.deploy) { say(`${done} 사이트에는 다음 배포 때 반영됩니다.`); return; }
     const [owner, repo, workflow] = settings.deploy.split('/');
     const base = `${API}/repos/${owner}/${repo}/actions/workflows/${encodeURIComponent(workflow)}`;
@@ -550,13 +564,13 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     const before = previous ? Math.max(0, ...previous.map(item => item.id)) : null;
     const response = await api(`${base}/dispatches`, { method: 'POST', body: JSON.stringify({ ref: 'main' }) });
     if (!response.ok) { say(`${done} 배포를 시작하지 못했습니다(${response.status}). GitHub에서 직접 배포해 주세요.`, { stay: true }); return; }
-    if (before === null) { say(`${done} 배포를 시작했습니다. 1~2분 뒤 새로고침하면 보입니다.`); return; }
+    if (before === null) { say(`${done} 배포를 시작했습니다. 1~2분 뒤 새로고침하면 보입니다.${note ? ` ${note}` : ''}`, { stay: Boolean(note) }); return; }
     say(`${done} 사이트에 반영하는 중입니다(1~2분).`, { stay: true });
     for (let attempt = 0; attempt < 40; attempt++) {
       await new Promise(resolve => view.setTimeout(resolve, 6000));
       const run = ((await latest()) ?? []).filter(item => item.id > before).sort((a, b) => a.id - b.id)[0];
       if (!run || run.status !== 'completed') continue;
-      say(run.conclusion === 'success' ? '사이트에 반영했습니다. 새로고침하면 보입니다.' : '배포가 실패했습니다. GitHub Actions 기록을 확인해 주세요.', { stay: run.conclusion !== 'success' });
+      say(run.conclusion === 'success' ? `사이트에 반영했습니다. 새로고침하면 보입니다.${note ? ` ${note}` : ''}` : `배포가 실패했습니다. GitHub Actions 기록을 확인해 주세요.${note ? ` ${note}` : ''}`, { stay: run.conclusion !== 'success' || Boolean(note) });
       return;
     }
     say('배포가 오래 걸립니다. 잠시 뒤 새로고침해 주세요.');
