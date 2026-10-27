@@ -91,6 +91,15 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
 // /blog/<slug>/·/blog/page/2/ 같은 경로에서 깨지지 않게 같은 공개 자산 주소(/assets/파일)로 맞춘다.
 export const assetLinks = html => html.replace(/(href|src)="(?:\.\.\/)?assets\/([^"?#]+)"/g, '$1="/assets/$2"');
 
+// 대표 이미지를 지정하지 않은 글은 본문의 첫 공개 그림을 목록 카드에만 쓴다. 글 머리 표지로는 쓰지 않는다.
+// 화면 캡처는 왼쪽 위에서 내용이 시작하므로 그 지점을 기준으로 자른다.
+export function firstImage(html) {
+  const tag = /<img\s[^>]*src="(\/(?:assets|media)\/[^"]+)"[^>]*>/.exec(html);
+  if (!tag) return undefined;
+  const decode = value => value.replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&#39;', "'").replaceAll('&amp;', '&');
+  return { src: decode(tag[1]), alt: decode(/\salt="([^"]*)"/.exec(tag[0])?.[1] ?? ''), position: { x: 0, y: 0 } };
+}
+
 async function renderDocuments(documents, options) {
   for (const page of documents) {
     Object.assign(page, await renderArticle(page, { ...options, document: options.parsed.get(page.id) }));
@@ -111,6 +120,7 @@ async function renderDocuments(documents, options) {
     });
     page.leadHtml = rewrite(assetLinks(page.leadHtml));
     page.html = rewrite(assetLinks(page.html));
+    page.cardImage = page.thumbnail ?? firstImage(page.html);
   }
 }
 

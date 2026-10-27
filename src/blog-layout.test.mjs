@@ -28,8 +28,9 @@ test('blog_cards_keep_post_and_tag_links_independent', () => {
     assert.equal(document.querySelector('.app-blog-card-comments').getAttribute('href'), '/articles/post-0/#comments');
     assert.equal(document.querySelector('.app-blog-card-comments').textContent, '댓글 · 2');
     assert.equal(document.querySelector('.app-blog-card-comments svg'), null);
-    assert.doesNotMatch(card, /app-blog-card-author|app-blog-card-avatar|작성자/);
-    assert.doesNotMatch(card, /href="\/author\/"/);
+    // 글쓴이는 글 자료가 아니라 사이트 설정에서 온다.
+    assert.equal(document.querySelector('.app-blog-card-author').textContent, '최우녕');
+    assert.doesNotMatch(card, /작성자|href="\/author\/"/);
     assert.doesNotMatch(card, /app-blog-card-footer/);
     assert.match(html, /app-card-summary/);
     assert.match(html, /app-blog-card-tags/);
@@ -51,7 +52,8 @@ test('blog_listing_keeps_all_static_cards_and_offers_only_used_tags_without_subj
   // 본문 제목이 보이는 카드는 같은 제목을 표지로 다시 그리지 않는다.
   assert.equal(document.querySelectorAll('.app-title-cover').length, 0);
   assert.equal(document.querySelectorAll('.app-blog-card-title').length, 14);
-  assert.equal(document.querySelectorAll('.app-blog-card-tags, .app-content-icon').length, 0);
+  assert.equal(document.querySelectorAll('.app-blog-card-tags').length, 13);
+  assert.equal(document.querySelectorAll('.app-content-icon').length, 0);
   assert.equal(document.querySelectorAll('[data-tag-filter] .app-tag.is-medium').length, 0);
   assert.equal(document.querySelector('h1.app-page-heading .app-article-icon'), null);
   assert.equal(document.querySelector('h1').textContent, 'Search');

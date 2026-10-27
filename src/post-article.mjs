@@ -16,8 +16,8 @@ export function shiftHeadings(html, levels) {
   });
 }
 
-export function postArticle(post, { detail = false, tags = '', footer = '', after = '' } = {}) {
-  return String(ui.PostArticle({ id: `post-${post.id}`, detail, href: post.route, title: post.title, date: post.publishedAt, dateLabel: dateLabel(post.publishedAt), cover: post.thumbnail ? ui.trusted(thumbnailImage(post, detail)) : undefined, lead: ui.trusted(post.leadHtml ?? escape(post.description)), tags: ui.trusted(tags), body: ui.trusted(shiftHeadings(post.html, detail ? detailLevels : feedLevels)), footer: ui.trusted(footer), after: ui.trusted(after) }));
+export function postArticle(post, { detail = false, tags = '', footer = '', after = '', byline } = {}) {
+  return String(ui.PostArticle({ id: `post-${post.id}`, detail, href: post.route, title: post.title, date: post.publishedAt, dateLabel: dateLabel(post.publishedAt), cover: post.thumbnail ? ui.trusted(thumbnailImage(post, detail)) : undefined, lead: ui.trusted(post.leadHtml ?? escape(post.description)), tags: ui.trusted(tags), body: ui.trusted(shiftHeadings(post.html, detail ? detailLevels : feedLevels)), footer: ui.trusted(footer), after: ui.trusted(after), byline }));
 }
 
 export function thumbnailImage(page, eager = false) {

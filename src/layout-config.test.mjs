@@ -71,10 +71,12 @@ test('public_blog_layout_needs_only_blog_settings_and_search_box', async () => {
   const { pathToFileURL } = await import('node:url');
   const root = mkdtempSync(join(tmpdir(), 'homepage-layout-'));
   try {
-    writeFileSync(join(root, 'blog.json'), JSON.stringify({ title: 'Blog', feedSize: 4, autoLoad: true, archiveLabel: '전체 글 보기', collection: { columns: 3, rows: 2 }, card: LAYOUT.blog.card }));
+    writeFileSync(join(root, 'blog.json'), JSON.stringify({ title: 'Blog', feedSize: 4, autoLoad: true, archiveLabel: '전체 글 보기', collection: { columns: 3, rows: 2 }, card: { ...LAYOUT.blog.card, author: true } }));
+    writeFileSync(join(root, 'site.json'), JSON.stringify({ name: '글쓴이' }));
     writeFileSync(join(root, 'search.json'), JSON.stringify({ title: 'Search', box: LAYOUT.search.box }));
     const layout = loadBlogLayout(pathToFileURL(root + '/'));
     assert.equal(layout.blog.collection.rows, 2);
+    assert.deepEqual(layout.blog.card.author, { name: '글쓴이' });
     assert.equal(Object.hasOwn(layout, 'cs'), false);
     assert.equal(Object.hasOwn(layout.search, 'sections'), false);
   } finally { rmSync(root, { recursive: true }); }

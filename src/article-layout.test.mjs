@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
+import { JSDOM } from 'jsdom';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
 import { privateWikiArticle } from './private-wiki-layout.mjs';
@@ -173,4 +174,17 @@ test('blog_body_does_not_display_the_author_while_tags_are_not_defined', async (
   assert.doesNotMatch(postArticle(base, { detail: true, footer: '<i>f</i>' }), /app-post-author/);
   assert.doesNotMatch(postArticle({ ...base, author: 'A & B' }, { detail: true, footer: '<i>f</i>' }), /app-post-author/);
   assert.doesNotMatch(postArticle(base), /app-post-footer/);
+});
+
+// 글쓴이 설정이 있으면 목록 카드와 같은 순서로 도입문 아래에 사진·이름·날짜를 둔다.
+test('blog_detail_shows_byline_below_lead_when_author_is_configured', async () => {
+  const page = await post('blog');
+  const author = { name: '글쓴이', avatar: '/assets/profile.png' };
+  const html = articlePage(page, { topics, layout: { blog: { card: { author } } } });
+  const { document } = new JSDOM(html).window;
+  assert.equal(document.querySelector('.app-post-header .app-post-date'), null);
+  assert.equal(document.querySelector('.app-post-byline .app-post-byline-name').textContent, '글쓴이');
+  assert.equal(document.querySelector('.app-post-byline .app-post-avatar').getAttribute('src'), '/assets/profile.png');
+  order(html, ['app-post-title', 'app-article-lead', 'app-post-byline']);
+  assert.match(articlePage(page, { topics }), /<header class="app-post-header"><time class="app-post-date"/);
 });

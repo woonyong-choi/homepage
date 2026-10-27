@@ -101,3 +101,10 @@ test('vault_relative_asset_links_and_images_resolve_to_public_assets', async () 
   const html = '<p><img src="../assets/a.png" alt=""><a href="../assets/png/b-light.png">밝은 화면</a><a href="assets/c.gif">c</a><a href="../assets/d.png#x">d</a><a href="/assets/e.png">e</a><a href="https://example.test/assets/f.png">f</a></p>';
   assert.equal(assetLinks(html), '<p><img src="/assets/a.png" alt=""><a href="/assets/png/b-light.png">밝은 화면</a><a href="/assets/c.gif">c</a><a href="../assets/d.png#x">d</a><a href="/assets/e.png">e</a><a href="https://example.test/assets/f.png">f</a></p>');
 });
+
+// 대표 이미지가 없는 글은 본문의 첫 공개 그림을 목록 카드 표지로 쓴다. 외부 그림은 쓰지 않는다.
+test('card_image_uses_first_public_image_in_body', async () => {
+  const { firstImage } = await import('./build-publication.mjs');
+  assert.deepEqual(firstImage('<p><img src="https://example.test/x.png" alt="외부"><img src="/assets/a&amp;b.png" alt="&quot;검색&quot; 창"></p>'), { src: '/assets/a&b.png', alt: '"검색" 창', position: { x: 0, y: 0 } });
+  assert.equal(firstImage('<p>그림 없음</p>'), undefined);
+});

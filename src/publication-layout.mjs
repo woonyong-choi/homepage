@@ -54,7 +54,7 @@ export function personalHome(context) {
 export function articlePage(page, context, comments = '') {
   const updated = page.updatedAt && page.updatedAt !== page.publishedAt ? dateLine({ updatedAt: page.updatedAt }) : '';
   const example = page.example ? '<p class="app-example-notice">화면 검증을 위한 예시 글입니다.</p>' : '';
-  return `<main id="main" class="app-shell">${postArticle({ ...page, html: page.html + relatedPostsSection(page) }, { detail: true, tags: tagLinks(page, context.tags ?? {}), footer: `${updated}${example}`, after: comments })}</main>`;
+  return `<main id="main" class="app-shell">${postArticle({ ...page, html: page.html + relatedPostsSection(page) }, { detail: true, tags: tagLinks(page, context.tags ?? {}), footer: `${updated}${example}`, after: comments, byline: context.layout?.blog.card.author })}</main>`;
 }
 
 function relatedPostsSection(page) {
