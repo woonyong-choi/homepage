@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",
-    "@woonyong-choi/design-tokens": "github:woonyong-choi/design-tokens#7472ea7d9d2a18461271722847fc8794091d1040",
+    "@woonyong-choi/design-tokens": "github:woonyong-choi/design-tokens#5a393eb29255fb2d7cfc69852a5527312c566032",
     "diagramplay": "github:woonyong-choi/diagramplay#0a44d42eef40b7ecbf3121d34d9b1b1920b053aa",
     "document-engine": "github:woonyong-choi/document-engine#c3ce65e3324eb1c408e11a85bd01ef6bd9654779",
     "esbuild": "0.28.2",
