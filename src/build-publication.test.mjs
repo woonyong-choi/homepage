@@ -67,7 +67,9 @@ test('build_with_posts_writes_feed_sitemap_pages_and_rewritten_links', { timeout
   assert.match(feed, /<link>\/blog\/first-post\/<\/link>/);
 
   const sitemap = read(output, 'sitemap.xml');
-  assert.deepEqual([...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)].map(match => match[1]), report.routes);
+  // 글 작성 화면은 만들지만 사이트맵에는 넣지 않는다.
+  assert.ok(report.routes.includes('/admin/'));
+  assert.deepEqual([...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)].map(match => match[1]), report.routes.filter(route => route !== '/admin/'));
   assert.equal(read(output, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
 
   const article = read(output, 'blog/first-post/index.html');
@@ -86,7 +88,7 @@ test('production_build_uses_site_origin_and_allows_robots', { timeout: 300000 },
   const { blog, output } = workspace(t);
   await assert.rejects(buildPublication({ blogRoot: blog, outputRoot: output, mode: 'production' }), /SITE_ORIGIN/);
   await buildPublication({ blogRoot: blog, outputRoot: output, mode: 'production', origin: ORIGIN });
-  assert.equal(read(output, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`);
+  assert.equal(read(output, 'robots.txt'), `User-agent: *\nDisallow: /admin/\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml\n`);
   const feed = read(output, 'blog/feed.xml');
   assert.match(feed, /<link>https:\/\/example\.test\/blog\/<\/link>/);
   assert.match(feed, /<link>https:\/\/example\.test\/blog\/first-post\/<\/link>/);

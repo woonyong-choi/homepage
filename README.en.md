@@ -52,7 +52,7 @@ npm run content:check
 
 | Area | Scope |
 |---|---|
-| Implemented | Personal introduction, Search list, search and tags, recent Blog feed, RSS, comments, Markdown and diagram publication |
+| Implemented | Personal introduction, Search list, search and tags, recent Blog feed, RSS, comments, Markdown and diagram publication, a GitHub sign-in writing screen (`/admin/`) |
 | Limitations | Published pages use the light theme, code execution is unavailable, and the subscription endpoint is not configured |
 | Next | [Full audit](https://github.com/woonyong-choi/homepage/issues/215), [integration checks](https://github.com/woonyong-choi/homepage/issues/28), [site mark](https://github.com/woonyong-choi/homepage/issues/303) |
 
@@ -67,6 +67,7 @@ The design documents are written in Korean.
   - [홈 원고 가이드](docs/design/home-content.md)
   - [영역 설정](docs/design/layout-settings.md)
 - [Markdown 글 작성](docs/design/markdown.md)
+  - [글 작성 화면](docs/design/admin.md)
 - [개인 사이트 발행](docs/design/publication.md)
   - [스타일 수정 지도](docs/design/styles.md)
 

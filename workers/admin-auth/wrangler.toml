@@ -1,0 +1,9 @@
+# /admin 로그인 중계. 비밀 값 GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET은 `wrangler secret put`으로 넣는다.
+name = "woonyong-admin-auth"
+main = "worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+ALLOWED_LOGINS = "woonyong-choi"
+ADMIN_ORIGINS = "https://woonyong.com"

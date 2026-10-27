@@ -27,6 +27,8 @@ import { siteOrigin, siteTitle, SITE_ICON } from './publication-metadata.mjs';
 import { siteIdentity } from './site-identity.mjs';
 import { markdownFiles } from './content-files.mjs';
 import { loadBlogLayout } from './layout-config.mjs';
+import { loadAdminConfig } from './admin-config.mjs';
+import { adminPage } from './admin-layout.mjs';
 import { verifyApprovedContent } from './approved-content.mjs';
 import { sha256 as digest } from './sha256.mjs';
 
@@ -70,8 +72,10 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   context.home = loadHomeContent(brandNames(), CONTENT, { preview });
   context.services = serviceTagCatalog(knownTags);
   const output = new Map();
+  context.hiddenRoutes = new Set();
   const add = (route, title, body, metadata = {}) => {
     if (output.has(route)) throw new Error(`duplicate publication route: ${route}`);
+    if (metadata.noindex) context.hiddenRoutes.add(route);
     output.set(route, documentShell({ route, title, ...metadata }, body, context));
   };
   add('/', context.home.find(section => section.type === 'hero')?.title ?? siteTitle(config), personalHome(context));
@@ -82,6 +86,9 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
     add(page === 1 ? '/blog/' : `/blog/page/${page}/`, layout.blog.title, blogFeed(posts, tags, page, { commentConfig, commentTheme, layout }));
   }
   for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
+  // 글 작성 화면은 설정이 있을 때만 만들고 검색 엔진과 사이트맵에서 뺀다.
+  const admin = loadAdminConfig();
+  if (admin) add('/admin/', '글 관리', adminPage(admin), { noindex: true });
   const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), context);
   await writeSite(output, posts, context, scripts, notFound, outputRoot);
   return { pages: output.size, documents: posts.length, themeHash: MANIFEST.contentHash };
@@ -146,10 +153,10 @@ async function writeSite(output, posts, context, scripts, notFound, outputRoot) 
   files.set('/search-index.json', indexJson);
   files.set('/search-index.json.gz', gzipSync(indexJson, { level: 9 }));
   files.set('/blog/feed.xml', blogFeedXml(posts, { title: siteTitle(context.config), description: context.config.description, origin: context.origin }));
-  files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
+  files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].filter(route => !context.hiddenRoutes.has(route)).map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
   files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: posts.length, examples: posts.filter(page => page.example).length, preview: context.preview, mode: context.mode, commentsStatus: context.commentsStatus, recommendations: context.recommendations, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
   files.set(NOT_FOUND_FILE, rendered.get(NOT_FOUND_FILE));
-  files.set('/robots.txt', context.preview ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\nSitemap: ${context.origin}/sitemap.xml\n`);
+  files.set('/robots.txt', context.preview ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\n${[...context.hiddenRoutes].map(route => `Disallow: ${route}\n`).join('')}Allow: /\nSitemap: ${context.origin}/sitemap.xml\n`);
   replacePublication(outputRoot, output, files);
 }
 
