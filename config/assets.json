@@ -78,5 +78,17 @@
     "file": "media/README.md",
     "origin": "project-original",
     "license": "MIT"
+  },
+  {
+    "file": "assets/261029-btree-pages.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "Markdown 렌더링 데모 글에 쓰려고 만든 그림."
+  },
+  {
+    "file": "assets/261029-query-card.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "Markdown 렌더링 데모 글에 쓰려고 만든 그림."
   }
 ]
