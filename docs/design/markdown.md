@@ -6,17 +6,17 @@
 
 ## 요약
 
-승인한 Markdown 원고를 공통 문서 엔진으로 렌더한다. 일반 Markdown과 선택 구성 블록의 문법, 메타데이터, 오류·호환 조건을 정한다.
+승인한 Markdown 원고를 내부 문서 렌더러(`src/document`)로 렌더한다. 일반 Markdown과 선택 구성 블록의 문법, 메타데이터, 오류·호환 조건을 정한다.
 
 ## 해결하는 문제
 
-글마다 HTML과 CSS를 넣으면 글 상세와 미리보기의 출력이 달라진다. 작성자는 문서 구조와 내용만 적고 공통 엔진과 디자인 구성 요소가 출력을 담당한다.
+글마다 HTML과 CSS를 넣으면 글 상세와 미리보기의 출력이 달라진다. 작성자는 문서 구조와 내용만 적고 문서 렌더러와 디자인 구성 요소가 출력을 담당한다.
 
 ## 사용 예
 
 ### 사용 장면
 
-일반 글은 Markdown으로 작성한다. 같은 도표의 단계를 비교할 때는 DiagramPlay `scene`을 쓰고, 서로 다른 글·그림·코드를 나란히 둘 때는 `:::tabs`와 `@tab`을 쓴다.
+일반 글은 Markdown으로 작성한다. 같은 도표의 단계를 비교할 때는 DiagramPlay `scene`을 쓴다. 서로 다른 글·그림·코드는 탭으로 묶지 않고 문단 한 줄로 소개한 뒤 차례로 둔다. 문서 탭 문법은 헷갈리고 Obsidian에서 쓰기 어려워 두지 않는다.
 
 ## 작동 방식
 
@@ -82,7 +82,7 @@ slug `all`, `page`, `feed`는 예약어다. 태그는 양끝 공백 제거와 Un
 | 도표 | ` ```diagramplay ` | DiagramPlay. 아래 절 |
 | 키·메뉴 | `:kbd[⌘ K]` `:menu[파일]` | |
 | 아이콘·설명 | `:icon[search]` `:tip[글]{text="설명"}` | 아래 "구성 블록" 절 |
-| 구성 블록 | `:::tabs` `:::note` `:::steps` 등 | 아래 "구성 블록" 절 |
+| 구성 블록 | `:::note` `:::steps` 등 | 아래 "구성 블록" 절 |
 | 코드 블록 | 펜스와 언어, 4칸 들여쓰기 | 아래 절. 들여쓴 블록은 plaintext로 같은 머리글·복사 |
 
 HTML은 글자로 출력하고 실행하지 않는다. `<details>`와 `<summary>`만 위 조건에서 구조로 받아들인다. `open` 외 속성이 있거나 닫히지 않은 `<details>`, 속성이나 HTML 태그가 섞인 `<summary>`는 글자로 남는다. 요약의 Markdown 강조·링크·인라인 코드는 지원한다.
@@ -118,23 +118,21 @@ items:
 
 #### 선택 기능
 
-탭 문법(`:::tabs`·`:::platform`·`ui:tabs`)과 DiagramPlay 도표(` ```diagramplay `)는 선택 기능이다. `config/features.json`에서 켜며, 파일이 없거나 값을 생략하면 꺼짐이라 일반 Markdown 블로그로 동작한다. 꺼진 기능을 글에 쓰면 해당 줄 번호와 켜는 설정 이름이 담긴 오류로 빌드가 멈춘다.
+DiagramPlay 도표(` ```diagramplay `)는 선택 기능이다. `config/features.json`에서 켜며, 파일이 없거나 값을 생략하면 꺼짐이라 일반 Markdown 블로그로 동작한다. 꺼진 기능을 글에 쓰면 해당 줄 번호와 켜는 설정 이름이 담긴 오류로 빌드가 멈춘다. 없앤 `tabs` 키를 적으면 알 수 없는 기능 오류다.
 
 ```json
-{ "tabs": true, "diagrams": true }
+{ "diagrams": true }
 ```
 
 `config/features.json`은 홈페이지가 소유하는 설정이며 Vault 동기화 대상이 아니다. 개인 미리보기도 같은 설정 폴더의 값을 읽는다.
 
 #### 도표
 
-`diagramplay` 펜스에는 첫 줄에 `diagramplay`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 DiagramPlay 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다. `ui:tabs` 안에도 같은 문법으로 넣을 수 있다.
+`diagramplay` 펜스에는 첫 줄에 `diagramplay`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 DiagramPlay 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다.
 
-카드·선은 한 번 선언하고 `scene "이름"`으로 장면을 나눈다. 빈 장면은 정지, 이동이 있는 장면은 한 번 재생이 기본이다. 반복은 `mode=loop`, 배속은 `speed=`, 연속 트래픽은 `track … every= …`로 표현한다. 장면 선택 줄은 문서 탭과 같은 공통 부품이다.
+카드·선은 한 번 선언하고 `scene "이름"`으로 장면을 나눈다. 빈 장면은 정지, 이동이 있는 장면은 한 번 재생이 기본이다. 반복은 `mode=loop`, 배속은 `speed=`, 연속 트래픽은 `track … every= …`로 표현한다. 장면 선택 줄은 갤러리 선택 줄과 같은 공통 부품이다.
 
-작성 기준은 하나다. 같은 카드와 선이 단계별로 바뀌면 DiagramPlay `scene`으로, 서로 다른 그림·글·코드를 나란히 두면 문서 `@tab`으로 쓴다. 이름 집합의 유사도로 이를 강제하거나 경고하지 않는다.
-
-장면이 둘 이상인 도표를 품은 `:::tabs` 묶음은 바깥 선택 줄과 안쪽 장면 선택 줄의 역할이 갈리도록 생략한 `position`을 `top`, 생략한 `selector`를 `segmented`로 보완한다. 장면 수는 도표 컴파일 결과의 `timeline.steps.length`이며(`compileDiagrams`가 `scenes`로 전달) 원문이나 HTML을 다시 읽어 세지 않는다. 탭 묶음은 이 값을 렌더 전에 한 번 정해 열기와 닫기가 같은 결과를 쓴다. 명시한 옵션은 그대로 두고 `box` 테두리는 더하지 않는다. 장면이 하나인 도표와 장면 없는 탭은 기본값이 바뀌지 않는다. `:::platform`(신규 `@tab`과 옛 형식 모두)은 테두리 있는 고정 모양이라 이 보완에서 제외하며 장면이 몇 개든 기존 동작 그대로다. 결정은 도표를 품은 탭 묶음 하나에만 걸리고 뒤따르는 다른 탭 묶음에는 전해지지 않는다. 문법 복사·HTML 다운로드·전체화면은 도표 프레임에서 제공한다.
+작성 기준은 하나다. 같은 카드와 선이 단계별로 바뀌면 DiagramPlay `scene`으로 쓰고, 서로 다른 그림·글·코드는 문단으로 소개해 차례로 둔다. 문법 복사·HTML 다운로드·전체화면은 도표 프레임에서 제공한다.
 
 차트의 외부 data 파일과 사용자 아이콘 폴더는 문서 삽입에서 허용하지 않는다. 오류는 문서 경로와 함께 빌드를 실패시킨다. 브라우저는 레이아웃을 계산하지 않고 시간표를 재생하며, 필요한 페이지에만 프레임 크기·테마 연결 코드를 싣는다. `mermaid`는 일반 코드 블록으로 표시한다.
 
@@ -146,48 +144,43 @@ items:
 
 ### 구성 블록
 
-기기별 탭, 단계, 영상, 질문과 답, 카드 링크는 `:::` 블록으로 쓴다. 안쪽은 일반 Markdown이라 JSON이나 이스케이프한 문자열이 필요 없다. 기존 ` ```ui:이름 ` 블록은 그대로 동작하고 둘을 섞어 쓸 수 있다. 조립한 본문은 Vault 미리보기에서 확인한다.
+단계, 영상, 안내, 질문과 답, 카드 링크는 `:::` 블록으로 쓴다. 안쪽은 일반 Markdown이라 JSON이나 이스케이프한 문자열이 필요 없다. 기존 ` ```ui:이름 ` 블록은 그대로 동작하고 둘을 섞어 쓸 수 있다. 조립한 본문은 Vault 미리보기에서 확인한다. 기기마다 다른 안내는 기기 이름을 밝힌 문단 한 줄 뒤에 차례로 쓴다.
 
 ````markdown
-:::platform
-@tab Mac
+Mac에서는 메뉴 막대에서 시작합니다.
+
 :::steps
 1. :menu[파일]을 열고 :kbd[⌘ N]을 누릅니다.
 2. 사이드바의 :icon[document] 표시를 확인합니다.
-:::end
+:::
 
 ::video src=sample-c.mp4 poster=sample-c.png alt="Mac 화면" caption="목록을 만드는 과정"
 
 :::note
 일반 Markdown **안내문**
-:::end
-@tab iPhone
-설명
-:::end
+:::
 ````
 
 #### 문법
 
 | 형태 | 의미 |
 |---|---|
-| `:::이름 옵션`과 `:::end` | 본문이 있는 블록. 안쪽에 일반 Markdown을 쓴다 |
+| `:::이름 옵션`과 `:::` | 본문이 있는 블록. 안쪽에 일반 Markdown을 쓴다 |
 | `::이름 옵션` | 본문이 없는 한 줄 블록. 이미지·영상·카드의 내용 속성을 같은 줄에 쓴다 |
 | `:이름[글]{속성}` | 문장 안 표기. 중괄호는 뒤 문장과 내용 속성을 구분한다 |
 
-- 표시 옵션은 `이름=값`을 공백으로 조합한다. 폭은 `width=narrow`, `width=wide`, 탭은 `frame=panel position=top selector=segmented`, 카드는 `variant=centered columns=2`처럼 쓴다. 값 없는 이름은 참거짓 옵션(`rounded`, `controls`)만 쓴다. 임의의 CSS 클래스나 값은 받지 않는다.
+- 표시 옵션은 `이름=값`을 공백으로 조합한다. 폭은 `width=narrow`, `width=wide`, 카드는 `variant=centered columns=2`처럼 쓴다. 값 없는 이름은 참거짓 옵션(`rounded`, `controls`)만 쓴다. 임의의 CSS 클래스나 값은 받지 않는다.
 - 기본값은 생략한다. 주소·제목·대체 글·캡션·파일 이름은 표시 옵션이 아닌 내용이므로 `src=파일`, `alt="화면 설명"`, `filename=main.ts`처럼 쓴다.
 - 표시 옵션과 내용 속성의 순서는 자유다. 같은 옵션을 여러 번 쓰거나 같은 역할에 다른 값을 지정하면 오류다. 해당 구성 요소가 지원하지 않는 옵션도 오류다.
 - 이름은 소문자 영문·숫자·`-`. 블록 줄은 줄 맨 앞에서 시작하고 들여쓰기 4칸 이상은 코드다.
 - 제목이 필요한 블록은 `:::note[제목]`처럼 라벨을 붙인다. 라벨은 한 줄 1~80자이고 `]`를 넣을 수 없다.
 - 내용 값에 공백이 있으면 큰따옴표를 쓴다. 그 안의 따옴표는 `\"`, 역슬래시는 `\\`로 쓴다. 옵션과 속성은 한 줄에 합계 12개, 값은 300자까지다.
-- `:::end`는 가장 안쪽 열린 블록을 닫는다. `::이름{속성}` 한 줄 블록은 함께 쓸 수 있다. 옛 `::::tabs`+`:::tab[이름]`, 콜론 수를 맞춘 닫는 줄, `w-wide`·`box`·`top` 같은 약칭 옵션은 문서 엔진이 더 받지 않는다.
+- `:::`는 가장 안쪽 열린 블록을 닫는다. `::이름{속성}` 한 줄 블록은 함께 쓸 수 있다. 탭 문법(`:::tabs`·`:::platform`·`@tab`·`:::end`, `ui:tabs`·`ui:platform`)은 없앴다. `:::tabs`·`:::platform`·`:::end`는 다른 알 수 없는 블록과 같은 오류이고 `@tab` 줄은 일반 문단이다. 옛 `::::tabs`+`:::tab[이름]`, 콜론 수를 맞춘 닫는 줄, `w-wide`·`box`·`top` 같은 약칭 옵션도 받지 않는다.
 - 코드 펜스와 4칸 이상 들여쓴 코드 안의 구성 문법은 해석하지 않는다. `::표시::` 강조 표기는 그대로다.
 
 | 표시 역할 | 권장 옵션 | 적용 대상 |
 |---|---|---|
-| 폭 | `width=narrow`, `width=wide` | 그림·영상·탭·기기 탭·기존 갤러리·코드블록·DiagramPlay |
-| 탭 상자와 위치 | `frame=panel`, `position=top` | 탭·기기 탭 |
-| 탭 선택 줄 | `selector=segmented`, `selector=numbers` | 탭·기기 탭 |
+| 폭 | `width=narrow`, `width=wide` | 그림·영상·갤러리·코드블록·DiagramPlay |
 | 카드 모양 | `variant=related`, `variant=centered`, `variant=grouped`, `variant=inline` | 카드 목록 |
 | 카드 열 수 | `columns=1`, `columns=2` | 기본·가운데·그룹 카드 목록 |
 | 그림 모서리 | `rounded` | 그림 |
@@ -199,70 +192,27 @@ items:
 
 | 블록 | 라벨 | 속성 | 놓는 곳 | 본문 |
 |---|---|---|---|---|
-| `tabs` | 선택(접근성 이름) | 위 표시 옵션 | 문서 바로 아래 | `:::tab`만 1개 이상(옛 형식). `@tab` 형식은 아래 "탭: `@tab` 형식" |
-| `platform` | 선택(기본 "기기별 안내") | 위 표시 옵션 | 문서 바로 아래 | `@tab` 또는 기존 `tab`. 같은 문서의 아래 `platform`이 같은 이름의 탭을 따라 고른다 |
-| `tab` | 필수, 같은 탭 안에서 중복 불가 | 없음 | `tabs`·`platform` 안 | Markdown, `note`·`steps`·`video` 등 |
-| `note`, `warning` | 선택(기본 "참고", "주의") | 없음 | 문서 바로 아래, `tab` 안 | Markdown. 다른 블록은 둘 수 없음 |
-| `fineprint` | 없음 | 없음 | 문서 바로 아래, `tab` 안 | 문단만. 작은 글씨 |
-| `steps` | 없음 | 없음 | 문서 바로 아래, `tab` 안 | 목록만. 항목 사이를 넓힌다 |
-| `qa` | 없음 | 없음 | 문서 바로 아래, `tab` 안 | 정의 목록(`질문` 다음 줄 `: 답`)만 |
-| `cards` | 없음 | `variant=related`, `variant=centered`, `variant=grouped`, `variant=inline`, `columns=1`, `columns=2` | 문서 바로 아래, `tab` 안 | `card`만 1개 이상 |
+| `note`, `warning` | 선택(기본 "참고", "주의") | 없음 | 문서 바로 아래 | Markdown. 다른 블록은 둘 수 없음 |
+| `fineprint` | 없음 | 없음 | 문서 바로 아래 | 문단만. 작은 글씨 |
+| `steps` | 없음 | 없음 | 문서 바로 아래 | 목록만. 항목 사이를 넓힌다 |
+| `qa` | 없음 | 없음 | 문서 바로 아래 | 정의 목록(`질문` 다음 줄 `: 답`)만 |
+| `cards` | 없음 | `variant=related`, `variant=centered`, `variant=grouped`, `variant=inline`, `columns=1`, `columns=2` | 문서 바로 아래 | `card`만 1개 이상 |
 | `card`(리프) | 없음 | `title`·`href` 필수, `description`, `icon` | `cards` 안 | 없음 |
-| `gallery`(옛 형식) | 없음 | `title`(접근성 이름), 폭 옵션 | 문서 바로 아래, `tab` 안 | `slide`만 1개 이상. 새 글에는 `:::tabs numbers`를 권한다. 탭 구성 요소를 그대로 쓰므로 `ui:gallery`와 같은 마크업·스크립트 |
+| `gallery` | 없음 | `title`(접근성 이름), 폭 옵션 | 문서 바로 아래 | `slide`만 1개 이상. 라벨이 없으면 번호 선택 줄이다. `ui:gallery`와 같은 마크업·스크립트 |
 | `slide`(리프) | 없음 | `src`·`alt` 필수, `caption` | `gallery` 안 | 없음 |
-| `figure`(리프) | 없음 | `src`·`alt` 필수, `caption`, `href`, `rounded`, 폭 옵션 | 문서 바로 아래, `tab` 안 | 없음 |
-| `video`(리프) | 없음 | `src`·`poster`·`alt` 필수, `caption`, `frame-iphone`, 폭 옵션 | 문서 바로 아래, `tab` 안 | 없음 |
+| `figure`(리프) | 없음 | `src`·`alt` 필수, `caption`, `href`, `rounded`, 폭 옵션 | 문서 바로 아래 | 없음 |
+| `video`(리프) | 없음 | `src`·`poster`·`alt` 필수, `caption`, `frame-iphone`, 폭 옵션 | 문서 바로 아래 | 없음 |
 
-- 블록 중첩은 3단계까지다(`tabs` > `tab` > `note` 등). 목록과 인용 안에서는 블록을 쓸 수 없다.
-- `tab`, `note`, `warning` 안에서는 제목, 각주, 코드 블록, 이미지 등 일반 Markdown을 쓸 수 있다. `fineprint`, `steps`, `qa`, `cards`는 위 표의 본문 제한을 따른다. 제목과 각주 ID는 글 전체에서 겹치지 않는다. 숨은 탭 안의 `##`도 목차에 들어간다.
+- 블록은 문서 바로 아래에만 둔다. 안에 다른 블록을 두는 것은 `cards` > `card`, `gallery` > `slide`뿐이다. 목록과 인용 안에서는 블록을 쓸 수 없다.
+- `note`, `warning` 안에서는 제목, 각주, 코드 블록, 이미지 등 일반 Markdown을 쓸 수 있다. `fineprint`, `steps`, `qa`, `cards`는 위 표의 본문 제한을 따른다. 제목과 각주 ID는 글 전체에서 겹치지 않는다.
 - `src`와 `poster`는 `content/assets/`에 있는 파일 이름만 쓴다. 경로, `..`, 없는 파일은 오류다.
 - `href`는 위 "원본 글 요소"와 같은 규칙이다(`https://`, `mailto:`, `#`, `/`로 시작하는 사이트 경로).
 - `cards`의 글 끝 "이어서 읽을 글"에는 `related`를 쓴다. 작은 아이콘, 제목 한 줄, 갈매기표로 된 한 줄 카드이고 `description`은 그려지지 않는다. 긴 제목은 말줄임으로 줄이고(전체 글은 읽기 도구가 읽는다) 좁은 화면에서는 한 열이다. 글 하단에 자동으로 붙는 "함께 읽기"와 "이 문서의 수정 제안" 링크는 없다. 나머지 변형은 다른 용도의 기존 표현이다.
 - 선택 카드의 `icon`은 공통 카탈로그 이름이다. 본문 카드 문법의 선택 기능이며 공개 글 메타데이터에 장식 아이콘을 요구하지 않는다.
 
-#### 탭: `@tab` 형식
-
-`:::tabs`와 `@tab 이름` 줄로 탭을 쓴다. 탭 본문은 일반 Markdown이고 `:::end`로 닫는다. 그림은 보통의 `![대체](경로)`와 캡션 문단으로 쓴다. 옵션 없이 쓰면 상자 없이 둥근 단추 줄이 패널 아래에 오고, 기본을 벗어나는 모양만 공백으로 구분한 옵션으로 적는다.
-
-````markdown
-:::tabs selector=segmented
-@tab 변경 전
-
-![변경 전 화면](/assets/sample-before.png)
-
-기존 화면입니다.
-
-@tab 변경 후
-
-![변경 후 화면](/assets/sample-after.png)
-
-개선한 화면입니다.
-
-:::end
-````
-
-| 역할 | 기본 | 기본을 벗어나는 옵션 |
-|---|---|---|
-| 상자 | 없음(`frame=none`) | `frame=panel` |
-| 선택 줄 위치 | 패널 아래(`position=bottom`) | `position=top` |
-| 선택 줄 모양 | 둥근 단추(`selector=buttons`) | `selector=segmented`(분할 선택 줄), `selector=numbers`(번호) |
-| 폭 | 본문 폭(`width=content`) | `width=narrow`, `width=wide`(탭 묶음 전체) |
-
-옵션은 모두 `이름=값` 형식 하나로 쓴다. 이름은 Tailwind CSS 같은 도구의 이름 짓기를 참고했지만 실제 CSS 클래스가 아니며, 정해진 값 외의 동의어는 받지 않는다.
-
-- 옵션은 서로 독립이라 순서가 없다. 기본값을 직접 쓰는 것은 생략과 같고 클래스가 붙지 않는다.
-- 같은 옵션을 두 번 쓰거나 모르는 옵션·값을 쓰면 오류다. 폭은 탭 묶음 전체에만 걸리고 바깥 문단은 본문 폭이다.
-- `@tab` 줄에는 이름이 필요하다. `selector=numbers`만 이름을 생략할 수 있고, 이때 버튼에는 번호가 나오며 이름을 쓰면 접근성 이름이 된다. 이름은 묶음 안에서 겹치지 않는다.
-- 첫 `@tab` 줄 앞에는 본문을 둘 수 없고, `@tab`이 하나도 없거나 탭 본문이 비었거나 `:::end`가 없으면 오류다. 오류에는 줄 번호가 붙는다.
-- 코드 펜스와 4칸 이상 들여쓴 코드 안의 `@tab`, `:::end`, `:::tabs` 줄은 해석하지 않는다. 탭 본문 안의 다른 블록(`:::note` 등) 안의 `@tab`도 탭을 나누지 않는다.
-- 옵션 없는 `:::tabs`는 다음 내용 줄이 `@tab`일 때 이 형식이다. 옵션이 있으면 항상 이 형식이다.
-- 보이는 패널만 높이를 차지한다. 그림 높이가 달라도 선택 줄은 지금 보이는 내용 바로 옆에 있다. 분할 선택 줄은 내용에 맞는 폭이고 이름마다 자기 길이만큼 자리를 차지하며 긴 이름은 줄바꿈된다.
-- 선택 줄의 방향키·Home·End와 영상 정지는 기존 탭 스크립트 하나가 처리한다. 갤러리도 이 탭이다(`selector=numbers`, `::figure`로 캡션).
-- `:::platform`도 `@tab`으로 나누고 `:::end`로 닫는다. 기본값은 상자, 위, 둥근 단추(기기 이름 동기화)다. `ui:tabs`는 선택 줄이 위에 오는 분할 모양이다.
-
 #### 블록 폭
 
-그림, 영상, 탭, 기기 탭, 기존 갤러리, 코드블록은 같은 폭 옵션을 쓴다. 문단은 본문 폭이다.
+그림, 영상, 갤러리, 코드블록은 같은 폭 옵션을 쓴다. 문단은 본문 폭이다.
 
 | 옵션 | 폭 |
 |---|---|
@@ -280,11 +230,10 @@ const message = "넓은 코드블록";
 ```
 ````
 
-- 탭도 `:::tabs width=narrow`, `:::tabs width=wide`로 쓴다. 같은 규칙이 묶음 전체에 적용된다.
+- 갤러리도 `:::gallery{width=wide}`로 쓴다. 같은 규칙이 갤러리 전체에 적용된다.
 - 블록 폭은 `width` 하나로 정한다. 기본값 `width=content`는 생략과 같다. 같은 폭을 중복 지정하거나 다른 폭을 함께 지정하면 오류다. 옛 블록 속성 `wide`와 `size=compact`는 받지 않는다. `ui:video`의 플레이어 치수·비율(`width`, `height`, `wide`), 그림 격자의 `size`, 카드의 `compact`는 블록 폭과 다른 속성으로 유지한다.
 - DiagramPlay도 `diagramplay`, `diagramplay width=wide`, `diagramplay width=narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
 - 폭은 공통 구성 요소가 클래스(`app-width-narrow`, `app-width-wide`)로 정하고 값은 테마 토큰이다. CSS나 픽셀 값을 글마다 직접 넣지 않는다.
-- 기기 탭 상자 안에서 `width=wide`를 쓰면 상자 밖으로 나오므로 안쪽 요소의 폭은 보통 생략한다.
 
 #### 미디어 지원 범위
 
@@ -317,25 +266,25 @@ const message = "넓은 코드블록";
 
 #### 오류
 
-잘못된 블록은 빌드를 멈추고 `문서ID 본문 N줄 :이름: 내용` 형식으로 알린다. 줄은 글 본문의 첫 줄이 1이다. 닫히지 않은 블록, 여는 줄 없는 닫는 줄, 기존 형식의 콜론 수 불일치, 알 수 없는 이름, 허용하지 않거나 겹치는 속성, 필수 속성 누락, 잘못된 주소, 없는 자산·아이콘, 놓을 수 없는 자리, 본문에 둘 수 없는 요소, 탭 이름 중복이 모두 같은 형식이다. 블록처럼 보이는 줄(`:::`로 시작)이 형식에 맞지 않아도 글자로 두지 않고 오류로 알린다.
+잘못된 블록은 빌드를 멈추고 `문서ID 본문 N줄 :이름: 내용` 형식으로 알린다. 줄은 글 본문의 첫 줄이 1이다. 닫히지 않은 블록, 여는 줄 없는 닫는 줄, 기존 형식의 콜론 수 불일치, 알 수 없는 이름, 허용하지 않거나 겹치는 속성, 필수 속성 누락, 잘못된 주소, 없는 자산·아이콘, 놓을 수 없는 자리, 본문에 둘 수 없는 요소가 모두 같은 형식이다. 없앤 `:::tabs`·`:::platform`·`:::end`도 알 수 없는 이름으로 같은 형식의 오류다. 블록처럼 보이는 줄(`:::`로 시작)이 형식에 맞지 않아도 글자로 두지 않고 오류로 알린다.
 
 #### 호환성
 
-`:::` 블록은 같은 `app-*` 클래스와 마크업을 낸다. 단계 목록과 인라인 아이콘은 공통 테마의 `.app-steps`, `.app-inline-icon`을 사용한다. 동작은 기존 `document.js`(탭 화살표·Home·End, 팝오버 설명)와 `video.js`를 그대로 쓴다. `ui:` 블록은 변경이 없고 `:::` 블록 안에서도, 반대로도 쓸 수 있다.
+`:::` 블록은 같은 `app-*` 클래스와 마크업을 낸다. 단계 목록과 인라인 아이콘은 공통 테마의 `.app-steps`, `.app-inline-icon`을 사용한다. 동작은 기존 `document.js`(갤러리 선택 줄의 화살표·Home·End, 팝오버 설명)와 `video.js`를 그대로 쓴다. `ui:` 블록은 변경이 없고 `:::` 블록 안에서도, 반대로도 쓸 수 있다.
 
-탭, 강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`@woonyong-choi/design-tokens/ui/index.mjs`, 정의는 design-tokens `docs/styles.md`의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 본문의 문법 해석과 구성 요소 조립은 공통 문서 엔진이 맡고, `article-renderer.mjs`는 프로젝트 문서 정리와 소개 문단 분리를 연결한다. 페이지 조립은 `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `document-navigation.mjs`가 맡는다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
+강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`@woonyong-choi/design-tokens/ui/index.mjs`, 정의는 design-tokens `docs/styles.md`의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 본문의 문법 해석과 구성 요소 조립은 문서 렌더러(`src/document`)가 맡고, `article-renderer.mjs`는 프로젝트 문서 정리와 소개 문단 분리를 연결한다. 페이지 조립은 `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `document-navigation.mjs`가 맡는다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
 
-블록·인라인 규칙, 속성 검사, 블록 정의표는 document-engine이 소유한다. 홈페이지에는 별도 Markdown 해석기를 두지 않는다. 새 블록은 document-engine의 정의표에 허용 속성, 놓을 자리, 본문 규칙, 출력을 한 항목으로 추가한 뒤 고정 commit을 올려 가져온다.
+블록·인라인 규칙, 속성 검사, 블록 정의표는 문서 렌더러(`src/document/parser/directive-blocks.js`)가 소유한다. 다른 Markdown 해석기를 두지 않는다. 새 블록은 정의표에 허용 속성, 놓을 자리, 본문 규칙을, 출력 표(`src/document/renderer/directive-render.js`)에 출력을 한 항목씩 추가한다. 계약은 [문서 렌더러](document-renderer.md)에 있다.
 
 ### 코드 블록
 
-펜스 첫 낱말이 언어이며 대소문자를 구분하지 않는다. 문서 엔진이 등록한 highlight.js 언어와 별칭을 지원한다. TextMate 문법이 있는 언어는 빌드 때 Shiki로 분석하고, 나머지는 highlight.js로 분석한다. 정적 빌드에서는 한 줄 분석 시간 제한을 해제해 scope와 토큰이 서로 다른 위치에서 잘리는 것을 방지한다. 대표 언어는 JavaScript(`js`), TypeScript(`ts`), Python(`py`), C, C++(`cpp`, `c++`), C#(`cs`, `c#`), Java, Kotlin(`kt`), Rust(`rs`), Go(`golang`), Swift, Bash(`sh`, `zsh`), SQL, JSON, YAML(`yml`), HTML(`xml`), CSS, Dockerfile(`docker`), Markdown(`md`)이다. 등록되지 않은 언어, 언어 없는 블록, `text`는 `plaintext`로 원문을 이스케이프해 보여 준다.
+펜스 첫 낱말이 언어이며 대소문자를 구분하지 않는다. 문서 렌더러가 등록한 highlight.js 언어와 별칭을 지원한다. TextMate 문법이 있는 언어는 빌드 때 Shiki로 분석하고, 나머지는 highlight.js로 분석한다. 정적 빌드에서는 한 줄 분석 시간 제한을 해제해 scope와 토큰이 서로 다른 위치에서 잘리는 것을 방지한다. 대표 언어는 JavaScript(`js`), TypeScript(`ts`), Python(`py`), C, C++(`cpp`, `c++`), C#(`cs`, `c#`), Java, Kotlin(`kt`), Rust(`rs`), Go(`golang`), Swift, Bash(`sh`, `zsh`), SQL, JSON, YAML(`yml`), HTML(`xml`), CSS, Dockerfile(`docker`), Markdown(`md`)이다. 등록되지 않은 언어, 언어 없는 블록, `text`는 `plaintext`로 원문을 이스케이프해 보여 준다.
 
 승인 원문에서 가져온 `run-python`, `run-c`, `run-javascript`, `run-sql`, `run-shell`, `run-web` 펜스는 각각 Python, C, JavaScript, SQL, Bash, HTML 코드로 표시한다. 언어 이름 뒤에 `실행 미지원`을 붙여 원문의 Run·Preview 설명과 이 사이트의 기능을 구분한다. 실행 버튼이나 결과 영역은 만들지 않으며 코드 본문과 복사 원문은 바꾸지 않는다. 등록되지 않은 `run-*`도 다른 알 수 없는 언어처럼 Plain text로 표시한다.
 
 #### 구문 역할과 색
 
-[IntelliJ Language Defaults](https://plugins.jetbrains.com/docs/intellij/color-scheme-management.html)의 공통 역할을 참고한다. IntelliJ 테마의 색·글꼴을 가져오지 않는다. 문서 엔진의 코드 강조는 문법 분석 결과의 scope를 역할에 연결하고, 테마의 `SyntaxToken`이 `app-syntax-*` 클래스를 출력한다. 색·굵기는 공통 테마의 `color.syntax-*`와 기존 글꼴 토큰이 정한다. 분석기의 인라인 색과 외부 테마 CSS는 출력하지 않는다. 브라우저는 분석기를 내려받지 않는다.
+[IntelliJ Language Defaults](https://plugins.jetbrains.com/docs/intellij/color-scheme-management.html)의 공통 역할을 참고한다. IntelliJ 테마의 색·글꼴을 가져오지 않는다. 문서 렌더러의 코드 강조는 문법 분석 결과의 scope를 역할에 연결하고, 테마의 `SyntaxToken`이 `app-syntax-*` 클래스를 출력한다. 색·굵기는 공통 테마의 `color.syntax-*`와 기존 글꼴 토큰이 정한다. 분석기의 인라인 색과 외부 테마 CSS는 출력하지 않는다. 브라우저는 분석기를 내려받지 않는다.
 
 | 역할 | 연결 대상 | 테마 토큰 |
 |---|---|---|
@@ -363,7 +312,7 @@ IntelliJ의 PSI·심볼 해석을 실행하는 것은 아니다. 외부 타입, 
 
 ### 검증
 
-문법 해석과 HTML 출력(CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 등록 언어와 별칭, 구성 블록의 중첩·속성 검사·오류 위치, 각주·제목 ID)은 document-engine의 `npm test`가 확인한다. 홈페이지의 `npm run check:product`는 그 출력을 쓰는 쪽을 확인한다. 소개 문단 분리와 목차, 복사 원문과 동적 본문의 초기화, 탭·갤러리 동작, 글 상세 구조, 예시 글의 코드 블록 원문 왕복과 ID 중복(`article-rendering.test.mjs`, `article-renderer.test.mjs`), 테마 토큰이 만드는 본문 치수, 수식 오류 복구와 자산의 페이지별 선택, 도표 원문 보존과 ID, 도표 렌더러의 보안 설정과 로더 상태 전환이 대상이다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
+문법 해석과 HTML 출력(CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 등록 언어와 별칭, 구성 블록의 중첩·속성 검사·오류 위치, 각주·제목 ID)은 `src/document/test`가 확인한다. `npm run check:product`가 이 시험과 그 출력을 쓰는 쪽의 시험을 함께 실행한다. 소개 문단 분리와 목차, 복사 원문과 동적 본문의 초기화, 갤러리 동작, 글 상세 구조, 예시 글의 코드 블록 원문 왕복과 ID 중복(`article-rendering.test.mjs`, `article-renderer.test.mjs`), 테마 토큰이 만드는 본문 치수, 수식 오류 복구와 자산의 페이지별 선택, 도표 원문 보존과 ID, 도표 렌더러의 보안 설정과 로더 상태 전환이 대상이다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
 
 코드와 도표는 공통 `ToolHeader`·`Toolbar`·`ToolButton`의 크기·아이콘·호버·초점·상태 알림을 사용한다. 복사 성공·실패·재시도는 공통 디자인의 `bindToolbar`와 그 시험이 소유한다. 도표의 대체 전체화면은 공통 `bindDiagramHost`가 송신자와 출처를 확인해 처리하고 전체화면 중 높이 알림은 무시한다. 소비자에서 별도 보정 CSS를 추가하지 않는다.
 
@@ -374,4 +323,4 @@ IntelliJ의 PSI·심볼 해석을 실행하는 것은 아니다. 외부 타입, 
 | 요구사항 | 검증 계획 |
 |---|---|
 | 소개 문단은 전체 첫 문단이 일치할 때만 한 번 이동한다. | [`article-renderer.test.mjs`](../../src/article-renderer.test.mjs)의 `only_the_complete_first_paragraph_can_be_promoted` |
-| 엔진 오류와 실패한 도표는 발행을 중단한다. | [`article-renderer.test.mjs`](../../src/article-renderer.test.mjs)의 `engine_diagnostics_and_failed_diagrams_stop_publication` |
+| 문서 렌더러 오류와 실패한 도표는 발행을 중단한다. | [`article-renderer.test.mjs`](../../src/article-renderer.test.mjs)의 `engine_diagnostics_and_failed_diagrams_stop_publication` |

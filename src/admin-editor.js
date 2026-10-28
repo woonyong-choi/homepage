@@ -1,7 +1,7 @@
 // 관리자에게만 불러오는 글 관리 기능. 사이트 화면은 그대로 두고 오른쪽 아래 단추, 임시·비공개 글 목록,
 // 글 화면의 수정·삭제, 벨로그식 작성·출간 화면을 얹는다. 글은 Vault 저장소에 커밋하고 공개 글이 바뀌면 배포를 실행한다.
 // 썸네일과 요약은 따로 고르지 않는다. 사이트와 같은 규칙으로 본문의 첫 그림과 첫 문단에서 정한다.
-import { parseDocumentSync, renderPreview } from 'document-engine/preview';
+import { parseDocumentSync, renderPreview } from './document/preview/index.js';
 import { splitLead, summaryOf } from './article-summary.mjs';
 import { publishDate } from './content-metadata.mjs';
 import { createSiteSync } from './admin-site.mjs';
@@ -266,7 +266,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     return current.description === before ? auto : current.description;
   }
   const html = (parsed, tokens) => renderPreview({ ...parsed, tokens }, { ui }).html;
-  // 미리보기는 사이트 글 화면과 같은 PostArticle과 같은 문서 엔진 규칙으로 그린다. 요약·글 머리도 사이트와 같은 규칙이다.
+  // 미리보기는 사이트 글 화면과 같은 PostArticle과 같은 문서 렌더러 규칙으로 그린다. 요약·글 머리도 사이트와 같은 규칙이다.
   // 코드 강조와 도표 그림은 배포 뒤 사이트에서 보인다.
   function drawPreview() {
     const parsed = parseBody();

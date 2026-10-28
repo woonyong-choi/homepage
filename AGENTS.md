@@ -8,16 +8,17 @@
 
 - homepage와 DiagramPlay는 design-tokens의 같은 토큰·CSS·아이콘·공통 구성 요소·동작을 상속한다. 화면 표현값의 하드코딩과 요소별 마크업·CSS·상태 처리의 재구현은 금지다. 같은 토큰을 읽는 복사 구현도 허용하지 않는다.
 - 새 공통 표현은 design-tokens의 소유 구성 요소에서 구현한 뒤 가져와 조립한다. 제품 차이는 그 구성 요소의 속성·변형으로 필요한 부분만 재정의한다. 페이지별 보정이나 검사 예외로 결함을 숨기지 않는다.
-- 문서 탭과 DiagramPlay 장면 탭의 선택·호버·초점·키보드·전환·움직임 줄이기는 같은 계약을 사용한다. 도표의 문법을 홈페이지에서 다시 해석하지 않고 DiagramPlay의 정본 렌더러를 사용한다.
+- 갤러리 선택 줄과 DiagramPlay 장면 탭의 선택·호버·초점·키보드·전환·움직임 줄이기는 같은 계약을 사용한다. 문서 본문의 탭 문법은 두지 않는다. 도표의 문법을 홈페이지에서 다시 해석하지 않고 DiagramPlay의 정본 렌더러를 사용한다.
 - DiagramPlay의 애니메이션과 트래픽 효과는 기술 문서의 필수 표현이다. 문서 안에서도 장면·동시 이동·반복·값 변화·강조의 공통 동작을 유지하고 실제 화면에서 검수한다.
 - Things의 대응 요소, 홈페이지와 삽입한 DiagramPlay를 실제 크기로 비교해 글자·아이콘·정렬·간격·애니메이션이 자연스럽게 이어지는지 검수한다. 의도된 제품 차이 외의 불일치는 공통 소유 지점에서 수정한다. 자동 검사만으로 디자인 완료를 선언하지 않는다.
 
 ## 구성
 
 - `content/home.md`, `content/interviews/index.md`, `content/pages/tech.md`: Vault에서 승인받아 가져오는 홈 원고
-- `config/`: 승인된 작성 설정과 빌드가 관리하는 승인·자산 목록. `features.json`(탭·DiagramPlay 선택 기능, 기본 꺼짐)은 홈페이지 소유 설정
+- `config/`: 승인된 작성 설정과 빌드가 관리하는 승인·자산 목록. `features.json`(DiagramPlay 선택 기능, 기본 꺼짐)은 홈페이지 소유 설정
 - `src/`: 콘텐츠 해석, 검색·댓글, 경로와 페이지 조립
-- `package.json`: 디자인(`@woonyong-choi/design-tokens`)·DiagramPlay·문서 엔진의 고정 commit Git 의존성. 사본을 두지 않는다
+- `src/document/`: 내부 문서 렌더러. `parser/`(HTML·테마·DOM을 모르는 해석), `renderer/`(HTML·자산·runtime 출력), `theme/`(설치한 디자인 패키지 연결), `preview/`(관리 화면 브라우저 번들 진입점), `test/`(합성 입력 시험)
+- `package.json`: 디자인(`@woonyong-choi/design-tokens`)·DiagramPlay의 고정 commit Git 의존성. 사본을 두지 않는다
 - `content/blog/`: 공개 Blog의 승인 사본. 직접 수정 금지
 - `content/docs/`: 개인 미리보기·동기화 호환 입력. 공개 빌드는 발행하지 않으며 승인된 문서가 있으면 중단
 - `content/assets/`, `content/media/`: 사용 중인 콘텐츠 자산과 고지
@@ -26,7 +27,7 @@
 
 ## 명령
 
-Validate와 Deploy는 `ubuntu-24.04`의 Node 22에서 실행한다. 소비하는 문서 엔진의 최소 Node 조건 `>=22.12.0`과 기존 `site (22)` 검사 이름을 유지한다. 별도로 측정한 Node 20 호환 실행을 설치 지원 선언으로 바꾸지 않는다. Action 자체는 Node 24 기반 공식 release의 SHA로 고정한다(2026-10-19 확인). 배포 실행 조건과 권한은 바꾸지 않는다.
+Validate와 Deploy는 `ubuntu-24.04`의 Node 22에서 실행한다. 문서 렌더러(`src/document`)의 최소 Node 조건 `>=22.12.0`과 기존 `site (22)` 검사 이름을 유지한다. 별도로 측정한 Node 20 호환 실행을 설치 지원 선언으로 바꾸지 않는다. Action 자체는 Node 24 기반 공식 release의 SHA로 고정한다(2026-10-19 확인). 배포 실행 조건과 권한은 바꾸지 않는다.
 
 ```sh
 npm run build:site

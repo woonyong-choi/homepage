@@ -6,7 +6,7 @@
   한국어 | <a href="README.en.md">English</a>
 </p>
 
-[woonyong.com](https://woonyong.com)의 소스입니다. 개인 소개와 Blog 글을 Markdown으로 작성하고 정적 HTML로 발행합니다. 공개를 승인한 원고만 가져오며, 디자인·도표·Markdown 해석은 각각 공통 패키지를 사용합니다.
+[woonyong.com](https://woonyong.com)의 소스입니다. 개인 소개와 Blog 글을 Markdown으로 작성하고 정적 HTML로 발행합니다. 공개를 승인한 원고만 가져오며, 디자인·도표는 공통 패키지를 쓰고 Markdown 해석은 내부 문서 렌더러(`src/document`)가 맡습니다.
 
 > [!NOTE]
 > 개발 중입니다. 배포판은 없고 소스에서 빌드해 실행합니다.
@@ -35,7 +35,7 @@ Search 카드는 대표 이미지가 없으면 제목 표지를 자동으로 표
 ## 작동 방식
 
 1. 승인된 Blog Markdown·작성 설정·자산을 읽고 발행 목록과 대조합니다.
-2. 문서 엔진이 본문을 해석하고 DiagramPlay가 도표를 컴파일합니다.
+2. 내부 문서 렌더러(`src/document`)가 본문을 해석하고 DiagramPlay가 도표를 컴파일합니다.
 3. 홈페이지가 페이지를 조립하고 내부 링크·앵커·자산을 검사합니다.
 4. 검사를 통과하면 `dist/site/`의 발행 결과를 교체합니다.
 
@@ -81,7 +81,7 @@ npm run check:product
 npm run check:tokens
 ```
 
-CI는 Node.js 22에서 설치·토큰 검사·제품 검사·빌드를 실행합니다. 디자인·DiagramPlay·문서 엔진은 고정 커밋으로 설치합니다. 공통 구성 요소를 고치려면 원본 저장소를 수정한 뒤 [스타일 수정 지도](docs/design/styles.md#갱신)에 따라 의존성을 갱신합니다.
+CI는 Node.js 22에서 설치·토큰 검사·제품 검사·빌드를 실행합니다. 디자인·DiagramPlay는 고정 커밋으로 설치합니다. 문서 렌더러는 이 저장소의 `src/document`에 있습니다. 공통 구성 요소를 고치려면 원본 저장소를 수정한 뒤 [스타일 수정 지도](docs/design/styles.md#갱신)에 따라 의존성을 갱신합니다.
 
 발행 흐름 그림은 설치한 DiagramPlay로 다시 만듭니다.
 

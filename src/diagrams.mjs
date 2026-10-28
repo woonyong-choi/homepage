@@ -1,5 +1,5 @@
-// 디자인 일치는 문서 엔진이 확인한다: 엔진과 DiagramPlay가 홈페이지가 설치한 같은 디자인 패키지를 읽어야 도표를 만든다.
-import { compileDiagram } from 'document-engine';
+// 디자인 일치는 문서 렌더러(src/document)가 확인한다: 렌더러와 DiagramPlay가 홈페이지가 설치한 같은 디자인 패키지를 읽어야 도표를 만든다.
+import { compileDiagram } from './document/index.js';
 
 export async function compileDiagrams(sources) {
   const diagrams = new Map();

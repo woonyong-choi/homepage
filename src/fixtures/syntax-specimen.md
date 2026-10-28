@@ -132,31 +132,15 @@ npm run build:site
 }
 ```
 
-## Platform tabs
+## Keys
 
-```ui:platform
+Mac에서는 목록을 열고 단축키로 작업을 추가합니다.
+
+```ui:keys
 {
-  "items": [
-    {
-      "label": "Mac",
-      "body": "### Mac instructions\n\n1. 목록을 엽니다.\n2. 작업을 추가합니다.\n\n```ui:keys\n{\n  \"keys\": [\n    \"⌘\",\n    \"N\"\n  ]\n}\n```\n"
-    },
-    {
-      "label": "iPhone & iPad",
-      "body": "### Mobile instructions\n\n1. 추가 버튼을 누릅니다.\n2. 제목을 입력합니다."
-    }
-  ]
-}
-```
-
-위에서 선택한 기기는 아래 안내에도 반영됩니다. 아래 블록만 전환하면 위쪽 선택은 유지됩니다.
-
-```ui:platform
-{
-  "title": "이어서 확인할 기기별 안내",
-  "items": [
-    {"label": "Mac", "body": "**Mac 후속 안내**입니다. 메뉴에서 다음 단계를 선택합니다."},
-    {"label": "iPhone & iPad", "body": "**모바일 후속 안내**입니다. 화면에서 다음 단계를 선택합니다."}
+  "keys": [
+    "⌘",
+    "N"
   ]
 }
 ```

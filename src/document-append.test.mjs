@@ -6,7 +6,7 @@ import { JSDOM } from 'jsdom';
 import { renderArticle } from './article-renderer.mjs';
 import { values } from '@woonyong-choi/design-tokens/tokens.js';
 
-test('appended_code_and_tabs_initialize_without_duplicate_handlers_on_existing_elements', async () => {
+test('appended_code_and_galleries_initialize_without_duplicate_handlers_on_existing_elements', async () => {
   const dom = new JSDOM('<main></main>', { url: 'https://example.com/blog/', runScripts: 'outside-only' });
   const { window } = dom;
   const writes = [];
@@ -14,7 +14,7 @@ test('appended_code_and_tabs_initialize_without_duplicate_handlers_on_existing_e
   Object.defineProperty(window.navigator, 'clipboard', { value: { writeText: async value => writes.push(value) } });
   window.eval(browserScripts(fileURLToPath(new URL('./', import.meta.url))).get('document.js'));
   const main = window.document.querySelector('main');
-  main.innerHTML = (await renderArticle({ id: 'appended', description: '', body: '```js\nconst appended = true;\n```\n\n:::tabs\n@tab 첫째\n하나\n@tab 둘째\n둘\n:::end' })).html;
+  main.innerHTML = (await renderArticle({ id: 'appended', description: '', body: '```js\nconst appended = true;\n```\n\n:::gallery\n::slide{src=who-knows.svg alt=첫째}\n::slide{src=who-knows.svg alt=둘째}\n:::\n' })).html;
   main.querySelector('.app-code').style.setProperty('--duration-notice', `${values.duration.notice}ms`);
   for (let i = 0; i < 2; i++) window.document.dispatchEvent(new window.CustomEvent('content-added', { detail: main }));
   const copy = main.querySelector('[data-tool="copy"]');

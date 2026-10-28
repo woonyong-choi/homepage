@@ -98,7 +98,7 @@ async function prepareContent(page, doc, url, loadModule) {
     const source = new URL(script.getAttribute('src'), url);
     if (source.origin === doc.location.origin && CONTENT_SCRIPTS.has(source.pathname)) await loadModule(source.href);
   }
-  // 수식 스타일 주소는 페이지 조립이 document-engine의 MATH_STYLESHEET로 표시한 link에서 읽는다.
+  // 수식 스타일 주소는 페이지 조립이 문서 렌더러(src/document)의 MATH_STYLESHEET로 표시한 link에서 읽는다.
   const math = page.querySelector('link[data-math-stylesheet]');
   if (math && !doc.querySelector('link[data-math-stylesheet]')) doc.head.append(math.cloneNode(true));
 }

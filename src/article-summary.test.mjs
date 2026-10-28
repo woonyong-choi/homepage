@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { parseDocumentSync } from 'document-engine/parser';
+import { parseDocumentSync } from './document/parser/index.js';
 import { SUMMARY_LIMIT, splitLead, summaryOf } from './article-summary.mjs';
 
 const tokens = body => parseDocumentSync(body, { id: 'a' }).tokens;

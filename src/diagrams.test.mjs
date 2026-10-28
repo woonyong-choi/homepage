@@ -8,8 +8,8 @@ import { bindTabs } from '@woonyong-choi/design-tokens/ui/runtime/tabs.js';
 
 const source = 'diagramplay\nbox a "서버" badge="APP"\nbox b "저장소" badge="DATA"\na -> b\nscene "구조"\nscene "트래픽" mode=loop for=3s\n  track a -> b every=1s time=500ms\n';
 
-test('nested_diagrams_are_built_once_and_embed_static_html_with_original_source', async () => {
-  const input = `:::tabs\n@tab 도표\n\n\`\`\`diagramplay\n${source}\`\`\`\n@tab 같은 도표\n\n\`\`\`diagramplay\n${source}\`\`\`\n:::end\n`;
+test('repeated_diagrams_are_built_once_and_embed_static_html_with_original_source', async () => {
+  const input = `\`\`\`diagramplay\n${source}\`\`\`\n\n:::note\n같은 도표를 다시 넣어도 한 번만 만든다.\n:::\n\n\`\`\`diagramplay name=again\n${source}\`\`\`\n`;
   const sources = new Map();
   await renderMarkup(input, { pageId: 'diagrams', diagramSources: sources });
   assert.equal(sources.size, 1);
@@ -45,47 +45,6 @@ test('embedded_sources_reject_external_files_with_the_page_location', async () =
     'diagramplay\nicons local "private"\nbox a "A" icon=local:secret\n',
     'diagramplay\nchart c "C" bar {\n  x "count"\n  data "private.json"\n  series n "N"\n}\n',
   ]) await assert.rejects(compileDiagrams(new Map([[text, 'private-page']])), /private-page:.*file-based/);
-});
-
-const single = 'diagramplay\nbox a "서버" badge="APP"\nbox b "저장소" badge="DATA"\na -> b\n';
-const tabsOf = (diagram, options = '') => `:::tabs${options}\n@tab 도표\n\n\`\`\`diagramplay\n${diagram}\`\`\`\n@tab 글\n\n본문\n:::end\n`;
-
-test('multi_scene_diagram_tabs_fill_only_omitted_position_and_selector', async () => {
-  const sources = new Map();
-  for (const text of [source, single]) await renderMarkup(tabsOf(text), { pageId: 'scenes', diagramSources: sources });
-  const { diagrams } = await compileDiagrams(sources);
-  assert.equal(diagrams.get(source).scenes, 2);
-  assert.ok(diagrams.get(single).scenes < 2);
-  const render = async (text, options = '', known = diagrams) => await renderMarkup(tabsOf(text, options), { pageId: 'scenes', diagrams: known });
-  assert.equal(await render(source), await render(source, ' position=top selector=segmented'));
-  assert.notEqual(await render(source), await render(single));
-  const unscened = new Map([...diagrams].map(([text, diagram]) => [text, { ...diagram, scenes: undefined }]));
-  assert.equal(await render(single), await render(single, '', unscened));
-  assert.notEqual(await render(source, '', unscened), await render(source));
-  assert.equal(await render(source, ' selector=numbers'), await render(source, ' position=top selector=numbers'));
-  assert.equal(await render(source, ' frame=panel'), await render(source, ' frame=panel position=top selector=segmented'));
-  assert.equal(await render(source, ' selector=buttons'), await render(source, ' position=top selector=buttons'));
-  assert.equal(await render(source, ' position=bottom'), await render(source, ' position=bottom selector=segmented'));
-  assert.notEqual(await render(source, ' frame=panel'), await render(source));
-});
-
-test('platform_tabs_keep_their_behavior_with_multi_scene_diagrams_and_decisions_do_not_leak', async () => {
-  const sources = new Map([[source, 'p']]);
-  const { diagrams } = await compileDiagrams(sources);
-  const fence = `\`\`\`diagramplay\n${source}\`\`\`\n`;
-  const platformNew = `:::platform\n@tab Mac\n\n${fence}@tab Win\n\n본문\n:::end\n`;
-  const platformLegacy = `:::platform\n@tab Mac\n\n${fence}\n@tab Win\n\n본문\n:::end\n`;
-  const plain = tabsOf(single);
-  for (const input of [platformNew, platformLegacy]) {
-    const html = await renderMarkup(input, { pageId: 'p', diagrams });
-    assert.match(html, /^<section class="app-tabs is-platform" data-tabs data-platform>/);
-    assert.equal(html, await renderMarkup(input, { pageId: 'p', diagrams: new Map([[source, { ...diagrams.get(source), scenes: undefined }]]) }));
-  }
-  const first = await renderMarkup(tabsOf(source) + plain, { pageId: 'p', diagrams });
-  const sections = first.split('<section').slice(1);
-  assert.equal(sections.length, 2);
-  const alone = await renderMarkup(plain, { pageId: 'p', diagrams });
-  assert.equal(`<section${sections[1]}`.replace(/component-p-\d+/g, 'X'), alone.replace(/component-p-\d+/g, 'X'));
 });
 
 test('shared_tabs_wrap_keyboard_navigation_and_leave_one_tab_stop', () => {

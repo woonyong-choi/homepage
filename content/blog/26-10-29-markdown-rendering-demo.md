@@ -82,10 +82,9 @@ static int leaf_find(const LeafPage *leaf, uint32_t key) {
 }
 ```
 
-### TypeScript와 Rust를 탭으로
+### TypeScript와 Rust
 
-:::tabs
-@tab TypeScript
+TypeScript로 행 참조가 가리키는 바이트를 읽어 한 줄로 풀어냅니다.
 
 ```ts
 type RowRef = { page: number; slot: number };
@@ -96,7 +95,7 @@ export function decodeRow(bytes: Uint8Array, ref: RowRef): string {
 }
 ```
 
-@tab Rust
+Rust로 같은 행 참조의 바이트 위치를 계산합니다.
 
 ```rust
 pub struct RowRef { pub page: u32, pub slot: u16 }
@@ -105,8 +104,6 @@ pub fn offset(r: &RowRef) -> usize {
     r.page as usize * 4096 + r.slot as usize * 44
 }
 ```
-
-:::end
 
 ### 셸, diff, JSON
 

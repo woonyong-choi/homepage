@@ -59,7 +59,7 @@
 
 없는 주소는 공통 사이트 껍데기의 `404.html`로 안내한다. 홈·Blog로 돌아가는 루트 기준 링크를 제공하고 검색엔진 색인과 사이트맵에서 제외한다. GitHub Pages와 로컬 `src/serve.mjs`는 없는 경로에 404 상태를 반환한다.
 
-본문 탭·갤러리·복사·영상·도표·댓글은 실제 요소가 있는 페이지에 필요한 공통 런타임만 연결한다. 코드와 DiagramPlay 원문 복사는 공통 피드백을 사용하며 실패 시 원문 선택과 재시도를 유지한다. 클라이언트 모듈 URL은 내용 해시를 포함한다. Blog 피드가 이어 불러온 글은 design-tokens의 `RUNTIMES`와 댓글 런타임에서 해당 모듈만 불러오고, 수식 스타일은 페이지 조립이 `MATH_STYLESHEET`로 표시한 `data-math-stylesheet` link를 한 번만 복사한다.
+본문 갤러리·복사·영상·도표·댓글은 실제 요소가 있는 페이지에 필요한 공통 런타임만 연결한다. 코드와 DiagramPlay 원문 복사는 공통 피드백을 사용하며 실패 시 원문 선택과 재시도를 유지한다. 클라이언트 모듈 URL은 내용 해시를 포함한다. Blog 피드가 이어 불러온 글은 design-tokens의 `RUNTIMES`와 댓글 런타임에서 해당 모듈만 불러오고, 수식 스타일은 페이지 조립이 `MATH_STYLESHEET`로 표시한 `data-math-stylesheet` link를 한 번만 복사한다.
 
 댓글은 설정한 저장소의 Comments 분류에 `specific`·strict 방식으로 고정 글 ID를 연결한다. 댓글 표시 여부는 글의 `comments`로 정한다. URL이나 제목 변경으로 댓글 ID를 바꾸지 않는다. giscus iframe은 공식 widget URL·세션·메시지 형식을 사용하고 message의 origin과 source를 모두 확인한다. 높이·오류·토론 URL은 해당 iframe에만 적용한다. 문서마다 message 리스너 하나가 event.source로 해당 iframe을 찾는다. iframe은 댓글 영역이 화면 근처에 오거나 펼치거나 주소의 댓글 앵커로 들어올 때 만들어 연속 읽기의 요청 수를 보이는 글로 제한한다. 로그인 반환값은 주소에서 제거하고 저장소가 차단되면 현재 화면에서만 유지한다. 로그아웃·세션 만료를 로드된 댓글에 반영한다. 실패 시 재시도와 GitHub 링크를 제공하며 댓글이 없는 상태는 오류가 아니다.
 
@@ -87,7 +87,7 @@ HTML의 이미지·링크·poster, CSS의 상대 URL·import와 실제 런타임
 
 ### 의존성 갱신
 
-디자인·DiagramPlay·문서 엔진의 고정 commit은 `package.json`이 정한다. 원본을 수정한 뒤 [스타일 수정 지도](styles.md#갱신)의 설치·검사를 거쳐 갱신한다. 설치 사본을 직접 고치거나 다른 저장소의 변경을 자동 수신하지 않는다.
+디자인·DiagramPlay의 고정 commit은 `package.json`이 정한다. 원본을 수정한 뒤 [스타일 수정 지도](styles.md#갱신)의 설치·검사를 거쳐 갱신한다. 설치 사본을 직접 고치거나 다른 저장소의 변경을 자동 수신하지 않는다.
 
 ### 문서와 블로그 탐색
 
@@ -123,13 +123,13 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 미리보기의 CSS 주소를 직접 정하려면 `config/site.json`의 `comments.themeUrl`에 같은 공통 CSS를 제공하는 공개 HTTPS 주소를 지정한다. 설치한 디자인 패키지의 공개 커밋을 해석할 수 없으면 명시한 주소가 필요하다. 외부 주소는 [giscus 사용자 테마 계약](https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md#data-theme)에 따라 익명 CORS로 CSS를 제공해야 한다. 확인할 때는 공개 응답과 현재 CSS의 SHA-256, HTTP 상태·MIME·CORS 및 실제 iframe의 계산 스타일을 대조한다.
 
-### 공통 문서 엔진 연결
+### 문서 렌더러 연결
 
-본문 발행은 `parseArticle`에서 공통 엔진의 `parseDocument`를 호출한 뒤 프로젝트 제목·생성 장면·상대 경로를 정리한다. 해석 결과는 페이지별로 보관하며, 모은 도표를 컴파일한 다음 `renderArticle`이 같은 결과를 `renderDocument`에 전달한다. 소개 문단은 원래 inline 토큰으로 렌더하고 각주 환경을 본문과 공유한다. 소개와 본문의 자산·런타임 목록은 합치고 수식 여부는 어느 한쪽에 있어도 유지한다.
+본문 발행은 `parseArticle`에서 문서 렌더러의 `parseDocument`를 호출한 뒤 프로젝트 제목·생성 장면·상대 경로를 정리한다. 해석 결과는 페이지별로 보관하며, 모은 도표를 컴파일한 다음 `renderArticle`이 같은 결과를 `renderDocument`에 전달한다. 소개 문단은 원래 inline 토큰으로 렌더하고 각주 환경을 본문과 공유한다. 소개와 본문의 자산·런타임 목록은 합치고 수식 여부는 어느 한쪽에 있어도 유지한다.
 
-문법·출력 오류 진단과 실패한 도표는 파일을 발행하기 전에 예외로 바꾼다. 승인 원고 확인, front matter, 검색·댓글, 경로와 출력 저장은 홈페이지가 소유한다. 공통 엔진의 오류 HTML을 정상 발행 결과로 받아들이지 않는다. 수식 감지와 KaTeX 자산도 엔진의 공개 API를 사용해 렌더러와 같은 버전을 싣는다. 홈페이지 자산의 존재와 이미지 크기 조회는 `document-assets.mjs`가 제공한다.
+문법·출력 오류 진단과 실패한 도표는 파일을 발행하기 전에 예외로 바꾼다. 승인 원고 확인, front matter, 검색·댓글, 경로와 출력 저장은 홈페이지가 소유한다. 문서 렌더러의 오류 HTML을 정상 발행 결과로 받아들이지 않는다. 수식 감지와 KaTeX 자산도 렌더러의 공개 함수를 사용해 렌더러와 같은 버전을 싣는다. 홈페이지 자산의 존재와 이미지 크기 조회는 `document-assets.mjs`가 제공한다.
 
-문서 엔진은 공개 저장소의 고정 commit(`github:woonyong-choi/document-engine#<commit>`)을 Git 의존성으로 설치하고 `package-lock.json`이 commit을 고정한다. 엔진은 디자인과 DiagramPlay를 peer 의존성으로 받아 홈페이지가 설치한 같은 패키지를 읽는다. `article-renderer.mjs`는 엔진의 `DEFAULT_THEME_FILES.root`가 홈페이지의 디자인 패키지 위치와 같은지 확인하고, 엔진은 DiagramPlay가 같은 디자인을 읽는지 확인한다. 검증과 배포 워크플로는 `npm ci`만으로 설치하며 비공개 저장소나 배포 키를 쓰지 않는다. 배포에는 `dist/site`만 업로드한다.
+문서 렌더러는 이 저장소의 `src/document`에 있다. 계약은 [문서 렌더러](document-renderer.md)에 있다. 렌더러는 홈페이지가 설치한 디자인과 DiagramPlay를 읽는다. `article-renderer.mjs`는 렌더러의 `DEFAULT_THEME_FILES.root`가 홈페이지의 디자인 패키지 위치와 같은지 확인하고, 렌더러는 DiagramPlay가 같은 디자인을 읽는지 확인한다. 검증과 배포 워크플로는 `npm ci`만으로 설치하며 비공개 저장소나 배포 키를 쓰지 않는다. 배포에는 `dist/site`만 업로드한다.
 
 ### 저장 전 페이지 미리보기
 
@@ -137,7 +137,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 `siteRoot/config`에서 사이트·태그·표시 설정과 이미지 크기를 읽는다. `contentRoot`에서는 명시된 `home.md`, `tech.md`와 홈이 참조한 섹션 원고만 읽으며 문서 폴더를 순회하지 않는다. 선택한 파일에는 디스크 대신 `source`를 사용한다. 같은 홈 입력 로더, `parseArticle`·`renderArticle`, `personalHome`·`articlePage`·`documentShell`을 재사용한다. 인접 문서 목록을 읽지 않으므로 전체 문서 트리와 검색 색인은 만들지 않는다.
 
-`assets`의 `exists`·`url`·`size`는 공통 엔진 계약을 따른다. 선택적인 `read(path)`는 신뢰할 수 있는 호출자가 제공하며 공개 자산 URL을 받아 바이트를 반환한다. 생략하면 자산을 입력 루트 안에서만 읽고 심볼릭 링크를 통한 외부 접근도 차단한다. 예약 경로 `/assets/site-icon.svg`는 홈페이지 정본의 아이콘 바이트를 반환하며 호스트의 `read`나 콘텐츠 루트를 사용하지 않는다. 파비콘은 승인된 `who-knows.svg`의 첫 W 도형을 그대로 재사용하고 원본 경계에서 정사각 viewBox를 계산한다. 독립된 브라우저 UI 자산은 제품 CSS를 상속하지 않으므로 `CanvasText`와 native `color-scheme`으로 시스템 대비를 따른다. 메타데이터의 주소에는 실제 SVG 바이트의 SHA-256을 붙여 이전 투명 아이콘 캐시를 구분한다. 테마와 runtime은 홈페이지가 소비하는 동일 배포물이다.
+`assets`의 `exists`·`url`·`size`는 문서 렌더러 계약을 따른다. 선택적인 `read(path)`는 신뢰할 수 있는 호출자가 제공하며 공개 자산 URL을 받아 바이트를 반환한다. 생략하면 자산을 입력 루트 안에서만 읽고 심볼릭 링크를 통한 외부 접근도 차단한다. 예약 경로 `/assets/site-icon.svg`는 홈페이지 정본의 아이콘 바이트를 반환하며 호스트의 `read`나 콘텐츠 루트를 사용하지 않는다. 파비콘은 승인된 `who-knows.svg`의 첫 W 도형을 그대로 재사용하고 원본 경계에서 정사각 viewBox를 계산한다. 독립된 브라우저 UI 자산은 제품 CSS를 상속하지 않으므로 `CanvasText`와 native `color-scheme`으로 시스템 대비를 따른다. 메타데이터의 주소에는 실제 SVG 바이트의 SHA-256을 붙여 이전 투명 아이콘 캐시를 구분한다. 테마와 runtime은 홈페이지가 소비하는 동일 배포물이다.
 
 성공 결과는 `{ html, assets: Map, links, origin, diagnostics, route, id }`이다. `assets`에는 스타일·글꼴·runtime·도표 HTML 등 참조 자산을 담는다. 실패하면 빈 HTML·자산과 파일·ID가 포함된 오류 진단을 반환한다. 파일·발행 결과를 쓰지 않으며 배포를 실행하지 않는다. 호스트는 반환된 자산만 격리된 미리보기 주소로 제공하고 내부 문서 이동·요청 순서·자원 해제를 관리한다. 미리보기 성공은 발행 승인이나 배포 완료를 뜻하지 않는다.
 

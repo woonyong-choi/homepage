@@ -10,7 +10,7 @@
 
 ## 해결하는 문제
 
-같은 구성 요소를 제품마다 다시 만들면 색·간격·상태 동작이 달라진다. 홈페이지와 DiagramPlay·문서 엔진은 홈페이지가 고정한 디자인 패키지 한 벌을 사용한다.
+같은 구성 요소를 제품마다 다시 만들면 색·간격·상태 동작이 달라진다. 홈페이지(내부 문서 렌더러 포함)와 DiagramPlay는 홈페이지가 고정한 디자인 패키지 한 벌을 사용한다.
 
 ## 사용 예
 
@@ -29,11 +29,11 @@
 | 색·간격·글자 크기·시간 | `tokens/tokens.json` |
 | 공통 CSS | `styles/` |
 | 카드·검색·본문·홈 구성 요소 | `ui/` |
-| 복사·탭·영상·흐름 동작 | `ui/runtime/` |
+| 복사·선택 줄(갤러리·장면)·영상·흐름 동작 | `ui/runtime/` |
 | 아이콘·조작 도형 | `assets/`, `ui/icons.mjs` |
 | CSS 축소와 토큰 검사 | `ui/build/` |
 | 콘텐츠·문구·노출 순서 | Vault 원문. 홈페이지는 `content/home.md`, `content/pages/tech.md`, `content/interviews/index.md`의 승인 사본을 사용 |
-| Markdown·검색·댓글·문서 식별자 | 홈페이지의 `src/` |
+| Markdown·검색·댓글·문서 식별자 | 홈페이지의 `src/`(문서 렌더러는 `src/document/`) |
 
 공통 디자인은 고정 commit의 Git 의존성으로 설치한 `@woonyong-choi/design-tokens`다(`src/design-package.mjs`가 설치 위치를 찾는다). 설치본을 직접 수정하지 않고 정본에서 고친다. 공통 UI는 이름 있는 구성 요소와 검증된 HTML 슬롯으로 조립한다. 값은 Tailwind의 color·text·spacing·radius·font·duration 이름 계열로 정의한다. 구체적인 값과 반응형 조건은 공통 디자인 정본을 따른다.
 
@@ -48,7 +48,6 @@
 ```sh
 npm install --save-dev github:woonyong-choi/design-tokens#<commit>
 npm install --save-dev github:woonyong-choi/diagramplay#<commit>
-npm install --save-dev github:woonyong-choi/document-engine#<commit>
 npm run check:tokens
 npm run check:product
 npm run build:site
@@ -56,7 +55,7 @@ npm run build:site
 
 `<commit>`은 선택한 전체 커밋 해시다. 바꾸는 패키지의 설치 명령만 실행한다.
 
-디자인 커밋은 홈페이지의 `package.json`이 정한다. DiagramPlay와 문서 엔진은 디자인을 peer 의존성으로 받으므로 홈페이지가 설치한 한 벌을 함께 읽고, 서로 다른 디자인 패키지를 읽으면 빌드가 실패한다. 의존성 갱신은 홈페이지의 PR로 반영한다. 미리보기 댓글 테마는 고정 commit의 `dist/assets/giscus.css`를 jsDelivr에서 읽고, 운영 빌드는 사이트의 `/theme/assets/giscus.css`를 쓴다.
+디자인 커밋은 홈페이지의 `package.json`이 정한다. DiagramPlay와 내부 문서 렌더러는 홈페이지가 설치한 디자인 한 벌을 함께 읽고, 서로 다른 디자인 패키지를 읽으면 빌드가 실패한다. 의존성 갱신은 홈페이지의 PR로 반영한다. 미리보기 댓글 테마는 고정 commit의 `dist/assets/giscus.css`를 jsDelivr에서 읽고, 운영 빌드는 사이트의 `/theme/assets/giscus.css`를 쓴다.
 
 공개 글의 제목·본문·카드는 공통 구성 요소의 배치를 사용하며 장식 글 아이콘은 넣지 않는다. 개인 위키 미리보기의 제목 아이콘은 해당 호스트 계약으로 유지한다. 홈 제목의 SVG는 `ContentIconImage`로, PNG는 원본 그림으로 공통 `SectionIntro` 자리에 조립한다. 코드와 도표의 블록 배경은 유지하며 도구 모음은 별도 흰색 면·테두리·그림자를 만들지 않는다. 버튼의 hover·키보드 초점·복사 상태는 두 제품이 같은 공통 동작을 사용한다.
 

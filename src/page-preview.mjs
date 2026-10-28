@@ -3,7 +3,7 @@ import { readFileSync, realpathSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { mathAssets } from 'document-engine';
+import { mathAssets } from './document/index.js';
 
 import { privateWikiArticle, privateWikiSearch } from './private-wiki-layout.mjs';
 import { readPost } from './blog-model.mjs';

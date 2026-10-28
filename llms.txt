@@ -2,7 +2,7 @@
 
 > A Markdown-based personal blog and website
 
-This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content and uses shared packages for design, diagrams, and Markdown parsing.
+This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content, uses shared packages for design and diagrams, and parses Markdown with its internal document renderer in `src/document`.
 
 ## Docs
 
@@ -11,6 +11,7 @@ This repository contains the source for [woonyong.com](https://woonyong.com). It
 - [홈 원고 가이드](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/home-content.md)
 - [영역 설정](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/layout-settings.md)
 - [Markdown 글 작성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/markdown.md)
+- [문서 렌더러](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/document-renderer.md)
 - [글 관리](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/admin.md)
 - [개인 사이트 발행](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/publication.md)
 - [스타일 수정 지도](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/styles.md)

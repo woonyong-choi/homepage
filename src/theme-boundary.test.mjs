@@ -20,9 +20,11 @@ const PAINT = /\s(?:color|fill|stroke|stop-color|flood-color)=["']([^"']*)["']/g
 
 test('design_is_an_installed_package_pinned_to_a_commit_without_a_copy', () => {
   const pkg = JSON.parse(readFileSync(join(product, '../package.json'), 'utf8'));
-  for (const name of ['@woonyong-choi/design-tokens', 'diagramplay', 'document-engine']) {
+  for (const name of ['@woonyong-choi/design-tokens', 'diagramplay']) {
     assert.match(pkg.devDependencies[name], /^github:woonyong-choi\/[\w.-]+#[a-f0-9]{40}$/, name);
   }
+  assert.equal(pkg.devDependencies['document-engine'], undefined, '문서 렌더러는 src/document에 둔다');
+  assert.ok(existsSync(join(product, 'document/index.js')));
   assert.equal(pkg.devDependencies.thinkflow, undefined);
   assert.equal(pkg.devDependencies.torso, undefined);
   assert.equal(existsSync(join(product, 'vendor/theme')), false, '디자인 사본을 두지 않고 설치한 패키지를 읽는다');

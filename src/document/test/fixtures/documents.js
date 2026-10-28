@@ -1,0 +1,466 @@
+// 합성 시험 문서. 개인 문서가 아니며 블록 문법, ui: 구성 요소, 코드·표·수식·각주를 고루 담는다.
+const fence = (name, data) => `\`\`\`ui:${name}\n${JSON.stringify(data)}\n\`\`\``;
+
+const NOTE_WITH_LIST = [
+  ':::note',
+  '1. :menu[설정]을 엽니다.',
+  '2. :kbd[⌘ K]를 누릅니다.',
+  '',
+  '일반 Markdown **안내문**',
+  ':::',
+  '',
+].join('\n');
+
+const NOTE_BODIES = [
+  ':::note',
+  '```bash',
+  'echo ":::note[가짜]"',
+  ':::',
+  '```',
+  '',
+  '~~~md',
+  '::::',
+  '~~~',
+  '',
+  '    :::note',
+  '',
+  '![스크린샷](/assets/2-today-mac.png "제목")',
+  '',
+  '각주[^a]',
+  '',
+  '```ui:callout',
+  'title: 안내',
+  'body: ui 블록도 그대로',
+  '```',
+  ':::',
+  '',
+  ':::warning',
+  '둘째 각주[^b]',
+  ':::',
+  '',
+  '[^a]: 첫째',
+  '[^b]: 둘째',
+  '',
+].join('\n');
+
+const WIDTHS = [
+  '::figure{src=2-today-mac.png alt=a width=narrow}',
+  '::figure{src=2-today-mac.png alt=b width=wide}',
+  '::figure width=narrow src=2-today-mac.png alt=c',
+  '::figure{src=2-today-mac.png alt=d}',
+  '::video{src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt=v width=wide}',
+  ':::gallery{width=wide}',
+  '::slide{src=2-today-mac.png alt=s}',
+  ':::',
+  '',
+  '```js width=narrow',
+  'const a = 1;',
+  '```',
+  '',
+  '```js',
+  'const b = 2;',
+  '```',
+  '',
+  '```ui:figure',
+  'src: 2-today-mac.png',
+  'alt: ui',
+  'width: wide',
+  '```',
+  '',
+  '```ui:video',
+  'src: 3-upcoming-mac-2.mp4',
+  'poster: 3-upcoming-mac-2.png',
+  'width: 720',
+  'height: 400',
+  'wide: true',
+  '```',
+  '',
+].join('\n');
+
+const SLIDES = ['2-today-mac.png', '3-upcoming-mac-2.png', '4-headings-mac.png'];
+
+/** 이름과 원문. 해석·출력 시험이 같은 입력을 함께 쓴다. */
+export const DOCUMENTS = Object.freeze({
+  note_with_list: NOTE_WITH_LIST,
+  warning_with_label: ':::warning[조심]\n내용\n:::\n',
+  note_bodies_with_code_images_footnotes_and_ui: NOTE_BODIES,
+  heading_ids_across_blocks:
+    '## 설정\n\n:::note\n## 설정\n\n### 설정\n:::\n\n:::warning\n## 설정\n:::\n',
+  steps_fineprint_qa: [
+    ':::steps',
+    '1. 하나',
+    '2. 둘',
+    ':::',
+    '',
+    ':::fineprint',
+    '첫 문단',
+    '',
+    '둘째 *문단*',
+    ':::',
+    '',
+    ':::qa',
+    '질문 하나',
+    ': 답 하나',
+    '',
+    '질문 둘',
+    ': 답 둘',
+    ':::',
+    '',
+  ].join('\n'),
+  figure_video_and_cards: [
+    '::figure{src=2-today-mac.png alt="오늘 화면" caption="캡션 \\"인용\\"" href=/articles/markdown-guide/ rounded}',
+    '::video{src=3-upcoming-iphone.mp4 poster=3-upcoming-iphone.png alt="아이폰" caption=설명 frame=iphone controls}',
+    '::video{src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt="맥"}',
+    ':::cards{variant=centered columns=2}',
+    '::card{title="제목" description="설명" href=/articles/bounded-queue/ icon=document}',
+    '::card{title="둘째" href=https://example.com/}',
+    ':::',
+    ':::cards{variant=inline}',
+    '::card{title="링크" href=#top}',
+    ':::',
+    '',
+  ].join('\n'),
+  inline_directives:
+    '열기 :icon[document] 누르기 :kbd[⌘ K] 메뉴 :menu[파일] 설명 :tip[단어 <b>]{text="뜻 \\"하나\\" <script>x</script> & 둘"}를 읽습니다. ::표시:: :nope[x]',
+  image_alternative_text_keeps_directive_labels:
+    '![**키** :kbd[Ctrl] :menu[파일] :icon[document] :tip[단어 <b>]{text="설명"} `code` ![안쪽 :kbd[Enter]](/inner.png)](/outer.png)',
+  tooltip_ids_inside_ui_components:
+    '가 :tip[하나]{text=a} 나 :tip[둘]{text=b}\n\n```ui:callout\ntitle: x\nbody: ":tip[셋]{text=c} :tip[넷]{text=d}"\n```\n',
+  markers_inside_code_stay_literal:
+    '`:tip[x]{text=y}` 와 `:::note`\n\n```md\n:::note\n:tip[a]{}\n```\n',
+  indented_fence_inside_list_item: ':::note\n1. 항목\n\n    ```text\n    :::note\n    ```\n:::\n',
+  many_sibling_notes: Array.from({ length: 200 }, (_, index) => `:::note\n${index}\n:::\n`).join(
+    '\n',
+  ),
+  gallery_directive: `:::gallery{title="둘러보기"}\n${SLIDES.map((src, index) => `::slide{src=${src} alt="화면 ${index + 1}"${index ? '' : ' caption=첫째'}}`).join('\n')}\n:::\n`,
+  gallery_ui: `\`\`\`ui:gallery\ntitle: 둘러보기\nslides:\n${SLIDES.map((src, index) => `  - { src: ${src}, alt: 화면 ${index + 1}${index ? '' : ', caption: 첫째'} }`).join('\n')}\n\`\`\`\n`,
+  gallery_ui_labeled:
+    '```ui:gallery\nslides:\n  - { src: 2-today-mac.png, alt: a, label: 전 }\n  - { src: 3-upcoming-mac-2.png, alt: b, label: 후 }\n```\n',
+  cancelled_open_and_done_tasks: '- [ ] 열림\n- [x] 완료\n- [~] 취소\n',
+  nested_tasks_with_inline_content:
+    '- [ ] **상위** [링크](#target) `<code>`\n  - [x] 하위 & <script>\n- [~] 취소\n',
+  mixed_width_options: WIDTHS,
+  long_unbroken_code: `\`\`\`text width=wide\nToken_${'0123456789'.repeat(40)}\n\t끝  \n\`\`\`\n`,
+  related_and_centered_card_variants:
+    ':::cards{variant=related}\n::card{title=가 href=/a/ icon=document description=요약}\n::card{title=나 href=/b/}\n:::\n\n:::cards{variant=centered}\n::card{title=다 href=/c/ icon=document}\n:::\n',
+  ui_callout_with_nested_fence_and_footnote: [
+    '## Repeated',
+    '',
+    'Note[^1]',
+    '',
+    '[^1]: Explanation',
+    '',
+    fence('group', {
+      title: 'Mac',
+      body: `## Repeated\n${fence('callout', { title: 'Note', body: 'Body[^x]\n\n[^x]: nested' })}`,
+    }),
+  ].join('\n'),
+  fineprint_null_and_empty_bodies: `${fence('fineprint', { body: null })}\n\n${fence('fineprint', {})}\n\n${fence('fineprint', { body: '' })}`,
+  fineprint_and_figure_grid: [
+    fence('fineprint', { body: '작은 *글씨* [링크](https://example.com/) :tip[팁]{text=설명}' }),
+    fence('figure-grid', {
+      columns: 2,
+      items: [
+        {
+          src: '2-today-mac.png',
+          alt: 'a',
+          caption: 'one',
+          rounded: true,
+          href: 'https://example.com/',
+        },
+        { src: '10-reminders-mac.png', alt: 'b', caption: 'two' },
+      ],
+    }),
+    fence('figure-grid', { size: 'large', items: [{ src: '2-today-mac.png', alt: 'a' }] }),
+  ].join('\n\n'),
+  highlight_and_nested_formatting:
+    '::**focus**:: and `::literal::`\n\n- [~] **cancelled**\n- [x] complete\n\n::unsafe <script>alert(1)</script>:: \\::escaped::',
+  standalone_images_and_figures: [
+    '![알림](/assets/2-today-mac.png)',
+    '[![알림](/a.png)](https://example.com/)',
+    '앞 글 ![알림](/a.png)',
+    '![하나](/a.png)![둘](/b.png)',
+    '> ![알림](/a.png)',
+    '- ![알림](/a.png)\n\n  본문',
+    '- ![알림](/a.png)\n\n- 둘째',
+    '```ui:callout\ntitle: 알림\nbody: "![알림](/a.png)"\n```',
+  ].join('\n\n'),
+  commonmark_and_gfm: [
+    '# 제목 1',
+    '## 제목 2',
+    '###### 제목 6',
+    '',
+    '*기울임* **굵게** ~~취소~~ `코드`  ',
+    '줄바꿈',
+    '',
+    '> 인용\n>\n> > 중첩',
+    '',
+    '1. 하나\n   - 중첩\n2. 둘',
+    '',
+    '- [x] 완료\n- [ ] 남음',
+    '',
+    '| 가 | 나 | 다 |\n|:--|:-:|--:|\n| 1 | **2** | `3` |',
+    '',
+    '---',
+    '',
+    '<https://example.com/> 와 https://example.org/path',
+    '',
+    '![대체](/media/a.png "제목")',
+    '',
+    '각주[^a]\n\n[^a]: 본문',
+  ].join('\n'),
+  heading_ids_collide_and_titles:
+    '## **안내** `clue diagnose` [설치](/install/)\n\n## **안내** `clue diagnose` [설치](/install/)\n\n# 제목\n\n## 제목\n\n### 제목 2\n\n#### 제목',
+  heading_titles_with_math_images_and_labels:
+    '## 수식 $x^2$ 키 :kbd[Ctrl] :tip[단어 <b>]{text="설명"} 이미지 ![**대체** `x`](/a.png) \\`문자\\` &amp; `<svg onload=bad>`\n\n## ![](/image.png)',
+  extended_inline_and_block_syntax:
+    'H~2~O, mc^2^, ==mark==, ::mark::, ~~del~~, a === b, ~5분~ ~ 10, \\~escaped\\~ ^[inline]\n\n용어\n: 설명 **굵게**\n  이어짐\n: 둘째\n\n둘째 용어\n: 설명\n\n약 ~5분, ~10분 걸림, 3~5개\n\n코드 `a ^b^ c`',
+  safe_details_and_unsafe_variants: [
+    '<details open>\n<summary>**요약** 글자</summary>\n\n본문 `코드`\n\n<details>\n<summary>안쪽</summary>\n\n중첩\n</details>\n\n</details>\n\n끝',
+    '<details onclick="x()">\n본문\n</details>',
+    '<details>\n<summary onclick="x()">x</summary>\n</details>',
+    '<details>\n본문 닫히지 않음',
+    '<div>\n본문\n</div>',
+    '    <details>\n    코드',
+  ].join('\n\n'),
+  raw_html_and_unsafe_urls: [
+    '<script>alert(1)</script>',
+    '<img src=x onerror=alert(1)>',
+    '[js](javascript:alert(1)) [data](data:text/html,x) [vb](vbscript:x) [file](file:///etc/passwd) ![x](javascript:alert(1))',
+    '[ok](https://example.com/?a=1&b="2"&c=<x>) [사이트](/search/) [앵커](#a) <hello@example.com>',
+    '[quote](https://example.com/" onmouseover="alert(1))',
+    '`<b>`',
+    '| <script> |\n|---|\n| <img src=x onerror=1> |',
+  ].join('\n\n'),
+  code_languages_and_aliases: [
+    '```javascript\nconst task = { title: "Read", done: false }; // 주석\n```',
+    '```JS\nlet a = 1;\n```',
+    '```python\ndef f(x):\n    return [i for i in x]\n```',
+    '```java\nclass Greeter { String name; String greet(String input) { return input.trim(); } }\n```',
+    '```typescript\nclass G { name: string; greet(input: string) { return input.trim().length; } }\n```',
+    '```json\n{"list":"greet()","count":3,"enabled":true}\n```',
+    '```yaml\ntitle: my-first-post\nenabled: true\n```',
+    '```bash\ncurl --header "Accept: application/json" "$URL"\n```',
+    '```sql\nSELECT 1;\n```',
+    '```html\n<a href="/">x</a>\n```',
+    '```c++\nauto x = 1;\n```',
+    '```c#\nvar x = 1;\n```',
+    '```run-python\nprint("<script>")\n```',
+    '```RUN-WEB\n<script>document.body.textContent = "hello";</script>\n```',
+    '```text\n<b>x</b>\n```',
+    '```unknown-language\n<script>alert(1)</script> & "quote"\n```',
+    '```x"onload="alert(1)\nbody\n```',
+    '```mermaid\ngraph TD\n```',
+    '```\nplain\n```',
+    '    indented code',
+    '```js filename=example.js width=narrow\nconst x = 1;\n```',
+  ].join('\n\n'),
+  math_inline_and_block:
+    '분수 $\\frac{1}{2}$ 와\n\n$$\n\\begin{pmatrix}1&2\\\\3&4\\end{pmatrix}\n$$\n\n커피 $5, 케이크 $12 입니다. 변수 $HOME 과 $USER.\n\n`$x$` 와 \\$a\\$ 끝\n\n틀림 $\\frac{1$ 끝\n\n$\\href{javascript:alert(1)}{x}$ $\\includegraphics{http://evil.test/a.png}$ $x<y$\n\n## 식 $a$\n\n| 식 | 값 |\n|---|---|\n| $x^2$ | 4 |\n\n각주[^1]\n\n[^1]: $y$ 설명\n\n```latex\n$$ \\frac{a}{b} $$ $x^2$\n```',
+  math_next_to_directives: ':kbd[Ctrl] $x^2$\n\n## :menu[파일] 수식 $x^2$\n\n$x^2$ :icon[document]',
+  footnotes_nested_and_repeated:
+    '본문[^a] 다시[^a] 또[^b]\n\n[^a]: 첫째 **굵게**\n[^b]: 둘째\n\n```ui:details\ntitle: 안\nbody: "각주[^a]\\n\\n[^a]: 안쪽"\n```\n',
+  diagramplay_without_compiled_diagram:
+    '```diagramplay width=wide\nstart\n```\n\n```diagramplay\nother\n```\n',
+});
+
+/** 오류가 나야 하는 입력. pattern은 진단의 기대 문구다. */
+export const ERROR_CASES = Object.freeze([
+  ['닫히지 않음', '문단\n\n:::note\n본문\n', /3줄 :note: 닫는 ::: 줄이 없습니다/],
+  ['여는 줄 없음', '문단\n\n:::\n', /3줄: 여는 줄 없이/],
+  ['형식', ':::  note\n본문\n:::\n', /1줄: 블록 줄 형식/],
+  ['알 수 없는 이름', ':::danger\n본문\n:::\n', /1줄 :danger: 알 수 없는 블록/],
+  ['프로토타입 이름', ':::constructor\n본문\n:::\n', /알 수 없는 블록/],
+  ['__proto__ 속성', '::figure{__proto__=x src=2-today-mac.png alt=a}\n', /속성 이름이 잘못/],
+  [
+    '허용 안 하는 속성',
+    '::figure{src=2-today-mac.png alt=a onclick=x}\n',
+    /허용하지 않는 속성입니다: onclick/,
+  ],
+  [
+    '겹치는 속성',
+    '::figure{src=2-today-mac.png src=2-today-mac.png alt=a}\n',
+    /속성이 겹칩니다: src/,
+  ],
+  ['따옴표', '::figure{src=2-today-mac.png alt="열림}\n', /따옴표가 닫히지/],
+  ['필수 속성', '::figure{src=2-today-mac.png}\n', /필수 속성이 없습니다: alt/],
+  [
+    '위험한 주소',
+    '::figure{src=2-today-mac.png alt=a href="javascript:alert(1)"}\n',
+    /href: https/,
+  ],
+  [
+    '프로토콜 상대 주소',
+    '::figure{src=2-today-mac.png alt=a href=//evil.example/}\n',
+    /href: https/,
+  ],
+  ['경로 이탈 자산', '::figure{src=../secret.png alt=a}\n', /src: 파일 이름만/],
+  ['없는 자산', '::figure{src=missing.png alt=a}\n', /src: 없는 자산입니다: missing.png/],
+  ['없는 아이콘', ':::cards\n::card{title=a href=/x/ icon=nope}\n:::\n', /icon: 없는 아이콘/],
+  [
+    '열거형',
+    ':::cards{variant=huge}\n::card{title=a href=/x/}\n:::\n',
+    /variant는 centered, grouped, inline, related, summary 중/,
+  ],
+  [
+    '불리언',
+    '::video{src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt=a controls=maybe}\n',
+    /controls는 true 또는 false/,
+  ],
+  ['라벨 불가', ':::steps[제목]\n1. a\n:::\n', /라벨을 받지 않는 블록/],
+  [
+    '리프를 컨테이너로',
+    ':::figure{src=2-today-mac.png alt=a}\n본문\n:::\n',
+    /본문이 없는 블록입니다/,
+  ],
+  ['컨테이너를 리프로', '::note{x=1}\n', /본문이 있는 블록입니다/],
+  [
+    '메모 안의 블록',
+    ':::note\n:::fineprint\n글\n:::\n:::\n',
+    /2줄 :fineprint: :::note 안에서는 쓸 수 없습니다/,
+  ],
+  ['steps 본문', ':::steps\n문단\n:::\n', /목록, 순서 목록만 둘 수 있습니다/],
+  ['qa 본문', ':::qa\n- 목록\n:::\n', /정의 목록만/],
+  ['카드 밖의 카드', '::card{title=a href=/x/}\n', /문서 바로 아래에서는 쓸 수 없습니다/],
+  [
+    '목록 안',
+    '- 항목\n\n  :::note\n  본문\n  :::\n',
+    /목록이나 인용 안에서는 블록을 쓸 수 없습니다/,
+  ],
+  ['인용 안', '> :::note\n> 본문\n> :::\n', /목록이나 인용 안에서는 블록을 쓸 수 없습니다/],
+  ['인라인 속성 누락', '문단\n\n줄 :tip[단어]를 읽습니다.', /3줄 :tip: 필수 속성이 없습니다: text/],
+  ['인라인 알 수 없는 속성', ':tip[단어]{text=a style=x}', /허용하지 않는 속성입니다: style/],
+  ['인라인 아이콘', ':icon[nope]', /없는 아이콘입니다: nope/],
+  ['인라인 열림', ':tip[단어]{text="열림', /\{ 속성이 닫히지 않았습니다/],
+  ['빈 갤러리', ':::gallery\n:::\n', /본문이 비었습니다/],
+  ['슬라이드 밖', '::slide{src=2-today-mac.png alt=a}\n', /문서 바로 아래에서는 쓸 수 없습니다/],
+  ['갤러리 안의 문단', ':::gallery\n문단\n:::\n', /:::slide만 둘 수 있습니다/],
+  ['없는 슬라이드 자산', ':::gallery\n::slide{src=nope.png alt=a}\n:::\n', /없는 자산입니다/],
+  [
+    'alt 없는 슬라이드',
+    ':::gallery\n::slide{src=2-today-mac.png}\n:::\n',
+    /필수 속성이 없습니다: alt/,
+  ],
+  [
+    '폭 값',
+    '::figure{src=2-today-mac.png alt=a width=huge}\n',
+    /width는 content, narrow, wide 중 하나/,
+  ],
+  [
+    'figure wide 속성',
+    '문단\n\n::figure{src=2-today-mac.png alt=a wide=false}\n',
+    /3줄 :figure: 허용하지 않는 속성입니다: wide/,
+  ],
+  [
+    'video height 속성',
+    '::video{src=3-upcoming-mac-2.mp4 poster=3-upcoming-mac-2.png alt=a height=10}\n',
+    /허용하지 않는 속성입니다: height/,
+  ],
+  [
+    '코드 폭',
+    '문단\n\n```js width=huge\nx\n```\n',
+    /3줄 :code: width는 content, narrow, wide 중 하나/,
+  ],
+]);
+
+/** 없앤 문법과 옛 문법의 오류 입력. pattern은 진단의 기대 문구다. */
+export const ENGINE_ERROR_CASES = Object.freeze([
+  ['네 콜론 블록', '::::note\n본문\n:::\n', /1줄: 블록 줄 형식이 잘못되었습니다/],
+  ['탭 블록 이름', ':::tab[A]\n본문\n:::\n', /1줄 :tab: 알 수 없는 블록입니다/],
+  ['탭 묶음', '문단\n\n:::tabs\n@tab A\n\n가\n\n:::end\n', /3줄 :tabs: 알 수 없는 블록입니다/],
+  ['기기 묶음', ':::platform[기기]\n@tab Mac\n\n가\n:::\n', /1줄 :platform: 알 수 없는 블록입니다/],
+  ['끝 줄', '문단\n\n:::end\n', /3줄 :end: 알 수 없는 블록입니다/],
+]);
+
+/** ui: 구성 요소의 오류 입력. pattern은 진단의 기대 문구다. */
+export const UI_ERROR_CASES = Object.freeze(
+  [
+    ['unknown', fence('unknown', { body: 'text' }), /^Unknown document component: unknown$/],
+    ['keyboard', fence('keyboard', { body: 'text' }), /^Unknown document component: keyboard$/],
+    ['gallery_empty_slides', fence('gallery', { slides: [] }), /^Gallery requires slides$/],
+    [
+      'cards_unknown_variant',
+      fence('cards', { variant: 'unknown', items: [] }),
+      /^Unknown card variant: unknown$/,
+    ],
+    [
+      'card_unknown_variant',
+      fence('cards', { items: [{ variant: 'unknown', title: 'Invalid', href: '/things/' }] }),
+      /^Unknown card variant: unknown$/,
+    ],
+    [
+      'figure_wide_alias',
+      fence('figure', { src: '2-today-mac.png', alt: '화면', wide: false }),
+      /^Use width instead of wide$/,
+    ],
+    [
+      'figure_size_alias',
+      fence('figure', { src: '2-today-mac.png', alt: '화면', size: 'compact' }),
+      /^Use width instead of size$/,
+    ],
+    [
+      'gallery_wide_alias',
+      fence('gallery', { slides: [{ src: '2-today-mac.png', label: '화면' }], wide: false }),
+      /^Use width instead of wide$/,
+    ],
+    ['figure_grid_empty', fence('figure-grid', { items: [] }), /^ui:figure-grid needs items$/],
+    [
+      'figure_grid_columns',
+      fence('figure-grid', { columns: 7, items: [{ src: '2-today-mac.png', alt: 'a' }] }),
+      /^Invalid columns: 7$/,
+    ],
+    [
+      'figure_grid_columns_proto',
+      fence('figure-grid', {
+        columns: 'constructor',
+        items: [{ src: '2-today-mac.png', alt: 'a' }],
+      }),
+      /^Invalid columns: constructor$/,
+    ],
+    [
+      'gallery_selected_range',
+      fence('gallery', {
+        selected: 2,
+        slides: [{ src: '2-today-mac.png' }, { src: '3-upcoming-mac-2.png' }],
+      }),
+      /^Gallery selected index is out of range$/,
+    ],
+    [
+      'asset_traversal',
+      fence('figure', { src: '../outside.png', alt: 'x' }),
+      /^Invalid asset: \.\.\/outside\.png$/,
+    ],
+    [
+      'figure_unsafe_href',
+      fence('figure', { src: '2-today-mac.png', alt: 'x', href: 'javascript:alert(1)' }),
+      /^Unsupported URL: javascript:alert\(1\)$/,
+    ],
+    [
+      'card_unsafe_href',
+      fence('cards', { items: [{ title: 'x', href: '//evil.test', icon: false }] }),
+      /^Unsupported URL: \/\/evil\.test$/,
+    ],
+    [
+      'card_unknown_article_icon',
+      fence('cards', { items: [{ title: 'x', href: '/a/', icon: 'no-such-icon' }] }),
+      /^unknown articles icon: no-such-icon$/,
+    ],
+  ].map(([name, source, pattern]) => [name, `${source}\n`, pattern]),
+);
+
+/** 문법 오류로 진단이 나야 하는 ui: 입력. pattern은 진단의 기대 문구다. */
+export const UI_SYNTAX_ERRORS = Object.freeze([
+  ['yaml_unclosed', '```ui:cards\nitems: [\n```\n', /^ui:cards 데이터를 읽을 수 없습니다: /],
+  ['ui_tabs_unknown', '```ui:tabs\nitems: []\n```\n', /^Unknown document component: tabs$/],
+  [
+    'ui_platform_unknown',
+    '```ui:platform\nitems: []\n```\n',
+    /^Unknown document component: platform$/,
+  ],
+  ['yaml_scalar', '```ui:callout\njust text\n```\n', /^Invalid ui:callout data$/],
+  [
+    'diagramplay_unknown_option',
+    '```diagramplay filename=x\nflow\n```\n',
+    /^허용하지 않는 속성입니다: filename/,
+  ],
+]);

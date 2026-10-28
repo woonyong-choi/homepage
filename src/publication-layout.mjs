@@ -10,7 +10,7 @@ import { clientEntrypoints } from './publication-assets.mjs';
 import { heroSection, projectsSection, technologySection, interviewsSection, contactSection } from './home-sections.mjs';
 import { postArticle } from './post-article.mjs';
 import { publicationMetadata, siteTitle } from './publication-metadata.mjs';
-import { usesMath, MATH_STYLESHEET } from 'document-engine';
+import { usesMath, MATH_STYLESHEET } from './document/index.js';
 
 const NAVIGATION = Object.freeze([{ href: '/search/', label: 'Search', match: ['/search/'] }, { href: '/blog/', label: 'Blog', match: ['/blog/'] }]);
 

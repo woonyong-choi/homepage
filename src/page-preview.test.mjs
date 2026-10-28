@@ -34,12 +34,12 @@ test('renderPagePreview_uses_unsaved_home_without_writing_source_or_publication'
   assert.deepEqual(stamp(), before);
 });
 
-test('renderPagePreview_renders_article_tabs_math_and_runtime_with_shared_page_shell', async () => {
-  const source = articleSource + '\n\n## 저장 전 문단\n\n수식 $x^2$.\n\n:::tabs\n@tab 첫째\n하나\n@tab 둘째\n둘\n:::end\n';
+test('renderPagePreview_renders_article_code_math_and_runtime_with_shared_page_shell', async () => {
+  const source = articleSource + '\n\n## 저장 전 문단\n\n수식 $x^2$.\n\n```js\nconst preview = true;\n```\n';
   const result = await renderPagePreview({ ...input, file: 'blog/preview-article.md', source });
   assert.deepEqual(result.diagnostics, []);
   assert.match(result.html, /저장 전 문단/);
-  assert.match(result.html, /role="tablist"/);
+  assert.match(result.html, /data-tool="copy"/);
   assert.match(result.html, /katex/);
   assert.ok(result.assets.has('/katex/katex.css'));
   assert.ok(result.assets.has('/document.js'));

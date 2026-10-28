@@ -1,5 +1,5 @@
-// 문서 엔진의 출력을 홈페이지의 글 렌더러·레이아웃·목차·브라우저 동작과 함께 확인한다.
-// Markdown 문법 자체의 해석과 HTML 모양은 document-engine이 시험한다.
+// 문서 렌더러의 출력을 홈페이지의 글 렌더러·레이아웃·목차·브라우저 동작과 함께 확인한다.
+// Markdown 문법 자체의 해석과 HTML 모양은 src/document/test가 시험한다.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
@@ -19,7 +19,7 @@ const ids = html => [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1])
 const text = html => html.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#(?:39|x27);/g, "'").replace(/&amp;/g, '&');
 
 test('headings_and_ids_stay_unique_across_blocks_and_documents', async () => {
-  const source = '## 설정\n\n:::tabs\n@tab A\n\n## 설정\n\n### 설정\n\n@tab B\n\n## 설정\n\n:::end\n';
+  const source = '## 설정\n\n:::note\n## 설정\n\n### 설정\n:::\n\n:::warning\n## 설정\n:::\n';
   const html = await render(source);
   const all = ids(html);
   assert.equal(new Set(all).size, all.length);
@@ -48,13 +48,13 @@ test('document_composition_example_renders_every_block_with_unique_ids', async (
   const { html, leadHtml, headings } = (await renderArticle({ ...meta, body }));
   assert.equal(leadHtml, meta.description);
   const document = dom(html);
-  assert.equal(document.querySelectorAll('.app-tabs.is-platform [role=tab]').length, 3);
+  assert.equal(document.querySelectorAll('[data-tabs], [role=tab], [data-platform]').length, 0, '문서 탭 없음');
+  assert.equal(document.querySelectorAll('.app-steps').length, 2);
   assert.ok(document.querySelector('.app-steps li .app-inline-icon'));
   assert.ok(document.querySelector('.app-steps li kbd') && document.querySelector('.app-steps li .app-menu-label'));
   assert.equal(document.querySelectorAll('[data-player], .app-device').length, 0);
-  assert.equal(document.querySelectorAll('.app-tabpanel [data-remote], .app-tabpanel figure:has(video) > figcaption').length, 0);
   assert.ok(document.querySelector('p.app-fineprint'));
-  assert.ok(document.querySelector('.app-callout.is-warning') && document.querySelector('.app-tabpanel .app-callout'));
+  assert.ok(document.querySelector('.app-callout.is-warning') && document.querySelector('.app-callout:not(.is-warning)'));
   assert.ok(document.querySelector('p button.app-tooltip + .app-tooltip-bubble'));
   assert.ok(document.querySelector('.app-code [data-tool="copy"]'));
   assert.ok(document.querySelector('dl.app-definitions'));
@@ -65,15 +65,7 @@ test('document_composition_example_renders_every_block_with_unique_ids', async (
   assert.ok(related.slice(1).every(card => !card.querySelector('.app-content-icon')));
   assert.deepEqual(related.map(card => card.textContent.trim()), ['Markdown 문법 전체 보기', '큐에 경계 두기', '증거로 원인 좁히기']);
   assert.equal(document.querySelectorAll('.is-centered, .app-inline-links').length, 0);
-  assert.equal(headings.length, 7);
-  const groups = [...document.querySelectorAll('.app-tabs.is-selector-numbers')];
-  assert.deepEqual(groups.map(group => group.querySelectorAll('[role=tab]').length), [5, 2]);
-  assert.ok(groups[1].classList.contains('app-width-wide'));
-  assert.equal(document.querySelectorAll('.app-gallery, [data-gallery]').length, 0);
-  assert.ok(document.querySelector('.app-tabs:not([class*=is-]) > [role=tablist]'), '옵션 없는 기본 탭');
-  const labels = [...document.querySelectorAll('.app-tabs.is-selector-segmented')].map(group => [...group.querySelectorAll('[role=tab]')].map(button => button.textContent));
-  assert.deepEqual(labels.map(group => group.length), [2, 2, 3]);
-  assert.ok(labels.some(group => group.includes('변경 변경 변경 후')) && labels.some(group => group.includes('문제가 생겼을 때 되돌리는 방법')));
+  assert.equal(headings.length, 5);
   const all = ids(html);
   assert.equal(new Set(all).size, all.length);
 });
@@ -95,48 +87,40 @@ test('article_pages_have_no_automatic_related_section_or_edit_suggestion_but_kee
   }
 });
 
-test('bottom_selector_tabs_use_the_same_runtime_for_click_arrows_home_and_end', async () => {
-  const window = new JSDOM(`<body>${await render(':::tabs position=bottom\n@tab A\n\n가\n\n@tab B\n\n나\n\n@tab C\n\n다\n\n:::end\n')}</body>`, { runScripts: 'outside-only', url: 'https://example.com/' }).window;
-  window.eval(browserScripts(fileURLToPath(new URL('./', import.meta.url))).get('document.js'));
-  const buttons = [...window.document.querySelectorAll('[role=tab]')];
-  const visible = () => [...window.document.querySelectorAll('[role=tabpanel]')].findIndex(panel => !panel.hidden);
-  const press = (button, key) => button.dispatchEvent(new window.KeyboardEvent('keydown', { key, bubbles: true }));
-  assert.equal(visible(), 0);
-  buttons[1].click();
-  assert.equal(visible(), 1);
-  assert.equal(buttons[1].getAttribute('aria-selected'), 'true');
-  assert.equal(buttons[1].tabIndex, 0);
-  press(buttons[1], 'ArrowRight');
-  assert.equal(visible(), 2);
-  press(buttons[2], 'ArrowRight');
-  assert.equal(visible(), 0);
-  press(buttons[0], 'End');
-  assert.equal(visible(), 2);
-  press(buttons[2], 'Home');
-  assert.equal(visible(), 0);
-  assert.equal(window.document.activeElement, buttons[0]);
-});
-
-test('gallery_tabs_show_only_the_selected_panel_pause_hidden_videos_and_use_the_one_runtime', async () => {
-  const source = ':::tabs selector=numbers\n@tab 영상\n\n::video{src=who-knows.svg poster=who-knows.svg alt=영상 controls}\n\n@tab 그림\n\n::figure{src=who-knows.svg alt=그림 caption=캡션}\n\n@tab 셋째\n\n짧은 글\n\n:::end\n';
+test('gallery_shows_only_the_selected_slide_and_uses_the_one_runtime_for_click_arrows_home_and_end', async () => {
+  const source = ':::gallery{title=둘러보기}\n::slide{src=who-knows.svg alt=첫째 caption=캡션}\n::slide{src=who-knows.svg alt=둘째}\n::slide{src=who-knows.svg alt=셋째}\n:::\n';
   const window = new JSDOM(`<body>${await render(source)}</body>`, { runScripts: 'outside-only', url: 'https://example.com/' }).window;
-  const paused = [];
-  window.HTMLMediaElement.prototype.pause = function pause() { paused.push(this); };
   window.eval(browserScripts(fileURLToPath(new URL('./', import.meta.url))).get('document.js'));
   const panels = [...window.document.querySelectorAll('[role=tabpanel]')];
   const buttons = [...window.document.querySelectorAll('[role=tab]')];
-  // 한 번에 한 패널만 보이고 나머지는 hidden이라 높이를 차지하지 않는다(예약 높이 없음).
+  const press = (button, key) => button.dispatchEvent(new window.KeyboardEvent('keydown', { key, bubbles: true }));
+  // 한 번에 한 장만 보이고 나머지는 hidden이라 높이를 차지하지 않는다(예약 높이 없음).
   const visible = () => panels.map(panel => !panel.hidden);
   assert.deepEqual(visible(), [true, false, false]);
   assert.deepEqual(buttons.map(button => button.textContent), ['1', '2', '3']);
+  assert.ok(window.document.querySelector('.app-tabs > .app-tablist.is-after-panel.is-numbers'));
   buttons[1].click();
   assert.deepEqual(visible(), [false, true, false]);
-  assert.equal(paused.length, 1, '숨겨진 패널의 영상은 멈춘다');
-  assert.equal(paused[0].closest('[role=tabpanel]'), panels[0]);
-  buttons[1].dispatchEvent(new window.KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+  assert.equal(buttons[1].getAttribute('aria-selected'), 'true');
+  assert.equal(buttons[1].tabIndex, 0);
+  press(buttons[1], 'ArrowRight');
   assert.deepEqual(visible(), [false, false, true]);
-  assert.equal(buttons[2].getAttribute('aria-selected'), 'true');
-  assert.equal(buttons[1].tabIndex, -1);
+  press(buttons[2], 'ArrowRight');
+  assert.deepEqual(visible(), [true, false, false]);
+  press(buttons[0], 'End');
+  assert.deepEqual(visible(), [false, false, true]);
+  press(buttons[2], 'Home');
+  assert.deepEqual(visible(), [true, false, false]);
+  assert.equal(window.document.activeElement, buttons[0]);
+});
+
+// 문서 탭 문법은 없앴다. 남은 탭 모양의 원문은 다른 알 수 없는 블록처럼 줄 번호가 있는 오류로 빌드를 멈춘다.
+test('removed_tab_syntax_stops_the_build_with_a_located_error', async () => {
+  const { parseArticle } = await import('./article-renderer.mjs');
+  const page = body => ({ id: 'tab-check', body });
+  await assert.rejects(parseArticle(page('문단\n\n:::tabs\n@tab A\n\n가\n\n:::end\n')), /tab-check 본문 3줄 :tabs 알 수 없는 블록입니다/);
+  await assert.rejects(parseArticle(page(':::platform\n@tab Mac\n\n가\n:::\n')), /본문 1줄 :platform 알 수 없는 블록입니다/);
+  await assert.rejects(parseArticle(page('```ui:tabs\nitems: []\n```\n')), /Unknown document component: tabs/);
 });
 
 test('heading_outline_uses_readable_text_and_keeps_existing_fragment_ids', async () => {
@@ -203,17 +187,16 @@ test('the_markdown_guide_example_renders_every_supported_construct_and_round_tri
 });
 
 
-// 템플릿 기본값은 일반 Markdown만 허용하고, config/features.json에서 탭·도표를 켠다.
+// 템플릿 기본값은 일반 Markdown만 허용하고, config/features.json에서 도표를 켠다.
 test('optional_features_default_off_and_reject_disabled_syntax_with_the_setting_name', async () => {
   const { parseFeatures } = await import('./site-features.mjs');
-  assert.deepEqual({ ...parseFeatures() }, { tabs: false, diagrams: false });
-  assert.deepEqual({ ...parseFeatures({ tabs: true }) }, { tabs: true, diagrams: false });
-  assert.throws(() => parseFeatures({ tab: true }), /알 수 없는 기능/);
-  assert.throws(() => parseFeatures({ tabs: 'yes' }), /true 또는 false/);
+  assert.deepEqual({ ...parseFeatures() }, { diagrams: false });
+  assert.deepEqual({ ...parseFeatures({ diagrams: true }) }, { diagrams: true });
+  assert.throws(() => parseFeatures({ tabs: true }), /알 수 없는 기능/);
+  assert.throws(() => parseFeatures({ diagrams: 'yes' }), /true 또는 false/);
   const { parseArticle } = await import('./article-renderer.mjs');
   const page = body => ({ id: 'feature-check', body });
-  const tabs = ':::tabs\n@tab A\n\n가\n\n@tab B\n\n나\n\n:::end\n';
-  await assert.rejects(parseArticle(page(tabs), { features: parseFeatures() }), /features\.tabs/);
-  await assert.rejects(parseArticle(page('```diagramplay\nA\n```\n'), { features: parseFeatures() }), /features\.diagrams/);
-  await parseArticle(page(tabs), { features: parseFeatures({ tabs: true }) });
+  const diagram = '```diagramplay\nA\n```\n';
+  await assert.rejects(parseArticle(page(diagram), { features: parseFeatures() }), /features\.diagrams/);
+  await parseArticle(page(diagram), { features: parseFeatures({ diagrams: true }) });
 });

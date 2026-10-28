@@ -19,7 +19,7 @@ import { publicationAssets } from './publication-assets.mjs';
 import { replacePublication, NOT_FOUND_FILE } from './publication-output.mjs';
 import { loadHomeContent } from './home-content.mjs';
 import { browserScripts } from './browser-scripts.mjs';
-import { mathAssets } from 'document-engine';
+import { mathAssets } from './document/index.js';
 import { compileDiagrams } from './diagrams.mjs';
 import { compileStyles as publicationStyles } from '@woonyong-choi/design-tokens/ui/build/styles.mjs';
 import { THEME_ROOT as THEME, THEME_MANIFEST as MANIFEST } from './design-package.mjs';
@@ -97,7 +97,7 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   return { pages: output.size, documents: posts.length, themeHash: MANIFEST.contentHash };
 }
 
-// Vault 원고는 publish/ 기준 상대 주소(../assets/파일)로 그림과 첨부를 가리킨다. 문서 엔진은 이 주소를 그대로 두므로
+// Vault 원고는 publish/ 기준 상대 주소(../assets/파일)로 그림과 첨부를 가리킨다. 문서 렌더러는 이 주소를 그대로 두므로
 // /blog/<slug>/·/blog/page/2/ 같은 경로에서 깨지지 않게 같은 공개 자산 주소(/assets/파일)로 맞춘다.
 export const assetLinks = html => html.replace(/(href|src)="(?:\.\.\/)?assets\/([^"?#]+)"/g, '$1="/assets/$2"');
 
