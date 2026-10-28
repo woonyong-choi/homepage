@@ -46,13 +46,3 @@ export function splitLead(tokens, description, title) {
   if (!summary || summary === normalize(title ?? '') || [...paragraphTexts(tokens)].some(text => text.startsWith(prefix))) return { kind: 'empty', tokens };
   return { kind: 'summary', tokens };
 }
-
-/**
- * 요약을 본문 첫 문단으로 옮긴 본문. 따로 써 둔 요약이 본문에 없으면 본문 맨 앞 문단으로 넣어,
- * 요약을 본문 첫 문단에서 만드는 규칙으로 다시 저장해도 같은 요약과 글 머리가 유지되게 한다.
- */
-export function bodyWithSummary(body, tokens, description, title) {
-  const summary = normalize(description ?? '');
-  if (!summary || splitLead(tokens, summary, title).kind !== 'summary') return body;
-  return `${summary}\n\n${body.replace(/^\s*\n/, '')}`;
-}

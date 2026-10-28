@@ -2,7 +2,7 @@
 // 글 화면의 수정·삭제, 벨로그식 작성·출간 화면을 얹는다. 글은 Vault 저장소에 커밋하고 공개 글이 바뀌면 배포를 실행한다.
 // 썸네일과 요약은 따로 고르지 않는다. 사이트와 같은 규칙으로 본문의 첫 그림과 첫 문단에서 정한다.
 import { parseDocumentSync, renderPreview } from 'document-engine/preview';
-import { bodyWithSummary, splitLead, summaryOf } from './article-summary.mjs';
+import { splitLead, summaryOf } from './article-summary.mjs';
 import { publishDate } from './content-metadata.mjs';
 import { createSiteSync } from './admin-site.mjs';
 import { RESERVED_SLUGS } from './blog-model.mjs';
@@ -199,8 +199,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     state.current = post;
     state.tags = [...(post?.tags ?? [])];
     title.value = post?.title ?? '';
-    // 요약을 따로 써 둔 기존 글은 그 요약을 본문 첫 문단으로 넣어 연다. 저장하면 요약이 그대로 유지된다.
-    body.value = post ? bodyWithSummary(post.body, parseDocumentSync(post.body, { id: 'admin-open', features: settings.features ?? {} }).tokens, post.description, post.title) : '';
+    body.value = post?.body ?? '';
     tagInput.value = '';
     renderTags();
     drawPreview();
@@ -256,12 +255,22 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   const schedulePreview = () => { view.clearTimeout(previewTimer); previewTimer = view.setTimeout(drawPreview, 150); };
   const heading = () => title.value.replace(/\s*\n\s*/g, ' ').trim();
   const parseBody = () => parseDocumentSync(body.value, { id: 'admin-preview', features: settings.features ?? {} });
+  // 카드와 글 머리에 보일 요약(글 머리 description). 출간 화면의 요약 칸에 쓴 글이 우선이고, 비우면 본문 첫 문단으로 채운다.
+  // 출간 화면을 열지 않고 저장할 때는 글에 적힌 요약을 지킨다. 다만 그 요약이 예전 본문 첫 문단에서 자동으로 만든 것이면 지금 본문으로 다시 만든다.
+  function summary(tokens) {
+    const auto = summaryOf(tokens, heading());
+    if (!publish.hidden) return publishField('description').value.trim() || auto;
+    const current = state.current;
+    if (!current?.description) return auto;
+    const before = summaryOf(parseDocumentSync(current.body, { id: 'admin-before', features: settings.features ?? {} }).tokens, current.title);
+    return current.description === before ? auto : current.description;
+  }
   const html = (parsed, tokens) => renderPreview({ ...parsed, tokens }, { ui }).html;
   // 미리보기는 사이트 글 화면과 같은 PostArticle과 같은 문서 엔진 규칙으로 그린다. 요약·글 머리도 사이트와 같은 규칙이다.
   // 코드 강조와 도표 그림은 배포 뒤 사이트에서 보인다.
   function drawPreview() {
     const parsed = parseBody();
-    const description = summaryOf(parsed.tokens, heading());
+    const description = summary(parsed.tokens);
     const split = splitLead(parsed.tokens, description, heading());
     const lead = split.kind === 'lead' ? html(parsed, split.lead) : split.kind === 'summary' ? ui.escape(description) : '';
     const date = state.current?.publishedAt || today();
@@ -365,7 +374,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     const card = ui.BlogCard({
       href: `/blog/${slug}/`, title: heading() || '제목 없음', level: 3, automaticCover: true,
       cover: file || external ? ui.trusted('<img data-card-image alt="">') : undefined,
-      description: summaryOf(parseBody().tokens, heading()), tagItems: state.tags.map(tag => ({ href: `/search/?tag=${encodeURIComponent(tag)}`, label: tag })),
+      description: summary(parseBody().tokens), tagItems: state.tags.map(tag => ({ href: `/search/?tag=${encodeURIComponent(tag)}`, label: tag })),
       author: settings.author, publishedAt: date, dateLabel: DATE.format(new Date(date)),
     });
     const box = publish.querySelector('[data-publish-card]');
@@ -383,6 +392,11 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   function openPublish() {
     if (!heading()) { say('제목을 입력해 주세요.'); title.focus(); return; }
     setVisibility(state.current?.state === 'private' ? 'private' : 'public');
+    // 요약 칸에는 글에 적힌 요약을 넣는다. 본문 첫 문단에서 자동으로 만든 요약이면 비워 두고 자리 글로 안내한다.
+    const description = publishField('description');
+    const before = state.current ? summaryOf(parseDocumentSync(state.current.body, { id: 'admin-before', features: settings.features ?? {} }).tokens, state.current.title) : '';
+    description.value = state.current?.description && state.current.description !== before ? state.current.description : '';
+    publish.querySelector('[data-publish-count]').textContent = String(description.value.length);
     const slug = publishField('slug');
     slug.value = state.current?.slug ?? '';
     slug.readOnly = Boolean(state.current) && !state.current.slug.startsWith('draft-');
@@ -398,7 +412,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     return {
       title: heading(),
       slug: publish.hidden ? state.current?.slug ?? '' : publishField('slug').value.trim(),
-      description: summaryOf(parseBody().tokens, heading()),
+      description: summary(parseBody().tokens),
       tags: state.tags, publishedAt: publish.hidden ? state.current?.publishedAt || today() : publishField('publishedAt').value,
       state: nextState, body: body.value,
     };
@@ -614,7 +628,8 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   });
   writeForm.addEventListener('submit', event => event.preventDefault());
   publishForm.addEventListener('submit', event => event.preventDefault());
-  publishForm.addEventListener('input', () => {
+  publishForm.addEventListener('input', event => {
+    if (event.target === publishField('description')) publish.querySelector('[data-publish-count]').textContent = String(event.target.value.length);
     markDirty();
     renderCard();
   });
