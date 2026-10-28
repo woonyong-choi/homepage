@@ -6,7 +6,7 @@
   <a href="README.md">한국어</a> | English
 </p>
 
-This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content and uses shared packages for design, diagrams, and Markdown parsing.
+This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content, uses shared packages for design and diagrams, and parses Markdown with its internal document renderer in `src/document`.
 
 > [!NOTE]
 > In development. There are no releases; build from source.
@@ -33,7 +33,7 @@ For a blog with public content only, a static site tool without a separate appro
 ## How it works
 
 1. Read approved Blog Markdown, author settings, and assets, then check them against the publication manifest.
-2. Parse the content with the document engine and compile diagrams with DiagramPlay.
+2. Parse the content with the internal document renderer (`src/document`) and compile diagrams with DiagramPlay.
 3. Assemble pages and check internal links, anchors, and assets.
 4. Replace the publication output in `dist/site/` after the checks pass.
 
@@ -81,7 +81,7 @@ npm run check:product
 npm run check:tokens
 ```
 
-CI runs installation, token checks, product checks, and the build on Node.js 22. The design package, DiagramPlay, and document engine use pinned Git commits. To change shared components, update their source repository and follow [스타일 수정 지도](docs/design/styles.md#갱신) to update the dependency.
+CI runs installation, token checks, product checks, and the build on Node.js 22. The design package and DiagramPlay use pinned Git commits. The document renderer lives in this repository under `src/document`. To change shared components, update their source repository and follow [스타일 수정 지도](docs/design/styles.md#갱신) to update the dependency.
 
 Regenerate the publication diagram with the installed DiagramPlay version.
 

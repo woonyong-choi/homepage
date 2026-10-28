@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { parseArticle, renderArticle } from './article-renderer.mjs';
-import { mathAssets, usesMath, MATH_STYLESHEET } from 'document-engine';
+import { mathAssets, usesMath, MATH_STYLESHEET } from './document/index.js';
 import { publicationAssets } from './publication-assets.mjs';
 import { documentShell } from './publication-layout.mjs';
 

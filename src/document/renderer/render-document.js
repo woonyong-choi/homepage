@@ -1,0 +1,80 @@
+// 해석한 문서를 테마로 HTML과 출력 정보로 바꾼다. 파일 저장·탐색 UI와 해석기 내부를 알지 못한다.
+import { loadDefaultTheme } from '../theme/default-theme.js';
+import { resolveComponents } from '../theme/resolve-theme.js';
+
+import { loadHighlighter, resolveCodeAlias } from './code-highlight.js';
+import { usesMath } from './math-assets.js';
+import { renderTokens } from './render-state.js';
+
+/**
+ * @typedef {object} RenderContext
+ * @property {string} [id] 진단에 붙일 문서 식별자. 생략하면 해석한 문서의 식별자
+ * @property {{ name?: string, components?: object }} [theme] 구성 요소를 교체할 테마. 생략하면 기본 테마, 이름이 없으면 결과의 theme은 custom
+ * @property {{ url?(name: string): string, size?(name: string): [number, number] | undefined }} [assets] 자산 주소와 크기 조회
+ * @property {Map<string, object>} [diagrams] 도표 원문에서 만든 삽입 정보. 없는 원문은 코드로 표시한다
+ * @property {Record<string, { language: string, label?: string }>} [codeAliases] 펜스 언어 별칭과 표시 이름
+ * @property {string} [deviceOverlay] 기기 틀 위에 겹칠 그림의 자산 이름. 없으면 겹치지 않는다
+ */
+
+/**
+ * 해석한 문서를 HTML로 그린다. 문서는 바꾸지 않으므로 같은 문서를 다른 테마로 다시 그릴 수 있다.
+ * @param {object} document parseDocument의 결과
+ * @param {RenderContext} [context]
+ * @returns {Promise<{
+ *   html: string, headings: object[], diagnostics: object[],
+ *   assets: { name: string, url: string }[], runtime: string[], math: boolean,
+ *   diagrams: { source: string, line: number, status: 'embedded' | 'pending' | 'failed' }[],
+ *   theme: string,
+ * }>}
+ * @throws {TypeError} 해석 결과가 아닌 값
+ * @throws {ThemeError} 지원하지 않는 구성 요소 교체
+ */
+export async function renderDocument(document, context = {}) {
+  if (document?.version !== 1 || !Array.isArray(document.tokens)) {
+    throw new TypeError('document must be the result of parseDocument');
+  }
+  const theme = await loadDefaultTheme();
+  const components = resolveComponents(theme.components, context.theme);
+  const highlighter = await loadHighlighter();
+  await highlighter.prepare(
+    [...codeInfos(document.tokens)].map((info) => resolveCodeAlias(info, context.codeAliases).info),
+  );
+  const usedAssets = new Map();
+  const { html, diagnostics } = renderTokens(document, context, {
+    theme,
+    components,
+    highlighter,
+    usedAssets,
+  });
+  return {
+    html,
+    headings: document.metadata.headings,
+    diagnostics: [...document.diagnostics, ...diagnostics],
+    assets: [...usedAssets].map(([name, url]) => ({ name, url })),
+    runtime: theme.runtimeFor(html),
+    math: usesMath(html),
+    diagrams: document.metadata.diagrams.map(({ source, line }) => ({
+      source,
+      line,
+      status: diagramStatus(context.diagrams?.get(source)),
+    })),
+    theme: context.theme === undefined ? theme.name : (context.theme.name ?? 'custom'),
+  };
+}
+
+// 문서와 ui: 구성 요소의 안쪽 필드에 있는 코드 펜스의 언어 정보. 이 언어들의 문법만 불러온다.
+function* codeInfos(tokens) {
+  for (const token of tokens) {
+    if (token.type !== 'fence') continue;
+    if (token.meta?.role === 'ui') {
+      for (const unit of token.meta.units) yield* codeInfos(unit.tokens);
+    } else {
+      yield token.info;
+    }
+  }
+}
+
+function diagramStatus(diagram) {
+  if (diagram === undefined) return 'pending';
+  return diagram.error ? 'failed' : 'embedded';
+}

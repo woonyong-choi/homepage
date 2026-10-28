@@ -1,7 +1,7 @@
-// 선택 문법 스위치. 템플릿 기본값은 일반 Markdown만 쓰도록 모두 꺼짐이고, config/features.json에서 켠다.
+// 선택 문법 스위치. 템플릿 기본값은 일반 Markdown만 쓰도록 꺼짐이고, config/features.json에서 켠다. 선택 문법은 DiagramPlay 도표 하나다.
 import { existsSync, readFileSync } from 'node:fs';
 
-export const FEATURE_NAMES = Object.freeze(['tabs', 'diagrams']);
+export const FEATURE_NAMES = Object.freeze(['diagrams']);
 
 export function parseFeatures(value = {}) {
   if (value === null || typeof value !== 'object' || Array.isArray(value)) throw new Error('config/features.json: 객체여야 합니다');
