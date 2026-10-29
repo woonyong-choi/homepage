@@ -112,9 +112,8 @@ test('document_column_keeps_reading_width_and_soft_wrapping_between_navigation_c
   assert.match(css, /container-type: inline-size/);
   assert.match(css, /--component-width-wide: min\(var\(--container-page\), 100cqw\)/);
   assert.match(rule('.app-document'), /max-width: var\(--container-body-width\);[^}]*margin: var\(--spacing-article-search-bottom\) auto 0/);
-  // 코드는 가로 스크롤 없이 폭에 맞춰 줄바꿈한다.
-  assert.match(rule('.app-code pre'), /white-space: pre-wrap;[^}]*overflow-wrap: anywhere;/);
-  assert.doesNotMatch(rule('.app-code pre'), /overflow-x|overflow: (?:auto|scroll)/);
+  // 코드는 줄을 바꾸지 않고 블록 안에서 가로로 넘긴다.
+  assert.match(rule('.app-code pre'), /overflow-x: auto;[^}]*white-space: pre;[^}]*overflow-wrap: normal;/);
   assert.match(rule('.app-code'), /grid-template-columns: minmax\(0, 1fr\);[^}]*overflow: hidden/);
   assert.match(rule('.app-tool-header'), /justify-content: space-between/);
   assert.match(rule('.app-tool-button[hidden]'), /display: none/);
@@ -160,10 +159,13 @@ test('heading_levels_one_to_six_have_one_rule_each_for_their_written_level', () 
   near(px(token('--component-prose-h1-margin').split(' ')[2], 36), 37.1628);
 });
 
-test('support_body_headings_have_no_rule_or_padding_and_containers_share_the_body_line_height', () => {
+test('support_body_headings_have_no_rule_or_padding_and_containers_keep_their_line_height', () => {
   assert.doesNotMatch(css, /\.app-document-body h2, \.app-related|\.app-related >|\.app-related \{/);
   assert.doesNotMatch(css.match(/\.app-document-body h2 \{[^}]*\}/g)?.join('') ?? '', /border|padding/);
-  for (const selector of ['.app-blog-post', '.app-document-shell']) assert.match([...css.matchAll(new RegExp(`\\n${selector.replace('.', '\\.')} \\{[^}]*\\}`, 'g'))].join(''), /line-height: var\(--leading-feature-body-line\)/, selector);
+  const block = selector => [...css.matchAll(new RegExp(`\\n${selector.replace('.', '\\.')} \\{[^}]*\\}`, 'g'))].join('');
+  // 블로그 글은 본문 단계의 줄 높이, 지원 문서는 기존 본문 줄 높이를 쓴다.
+  assert.match(block('.app-blog-post'), /line-height: var\(--leading-body\)/);
+  assert.match(block('.app-document-shell'), /line-height: var\(--leading-feature-body-line\)/);
   const header = css.match(/\n\.app-post-header \{[^}]*\}/)[0];
   assert.doesNotMatch(header, /line-height/);
 });

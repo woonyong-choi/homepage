@@ -186,7 +186,7 @@ test('device_overlay_and_code_aliases_come_from_the_host_render_context', async 
   );
   const plain = await render(document);
   assert.doesNotMatch(plain.html, /app-device-overlay/);
-  assert.match(plain.html, /<span class="app-tool-label">Plain text<\/span>/);
+  assert.match(plain.html, /<div class="app-code app-tool-surface" data-language="Plain text">/);
   const hosted = await render(document, {
     deviceOverlay: 'frame.svg',
     codeAliases: { 'run-python': { language: 'python', label: 'Python · 실행 미지원' } },
