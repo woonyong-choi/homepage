@@ -110,7 +110,7 @@ items:
 ```
 ````
 
-- `ui:figure`도 `href`와 `rounded`를 받는다. `rounded` 이미지는 공통 그림의 곡률을 사용한다.
+- `ui:figure`도 `href`와 `rounded`를 받는다. 본문 그림은 기본 모서리가 없고, `rounded`를 지정한 그림만 코드 블록과 같은 곡률로 깎인다.
 
 #### 수식
 
@@ -185,7 +185,7 @@ Mac에서는 메뉴 막대에서 시작합니다.
 | 폭 | `width=narrow`, `width=wide` | 그림·영상·갤러리·코드블록·DiagramPlay |
 | 카드 모양 | `variant=related`, `variant=centered`, `variant=grouped`, `variant=inline` | 카드 목록 |
 | 카드 열 수 | `columns=1`, `columns=2` | 기본·가운데·그룹 카드 목록 |
-| 그림 모서리 | `rounded` | 그림 |
+| 그림 모서리 | `rounded` | 그림. 기본은 모서리 없음, 지정하면 코드 블록과 같은 곡률 |
 | 기기 프레임 | `frame-iphone` | 영상. 틀은 공통 CSS가 그리며 별도 그림을 쓰지 않는다 |
 
 내용 속성과 표시 옵션은 `parseOptions` 하나에서 읽고 각 블록의 속성 명세로 검사한다. 폭 값은 테마의 `WIDTHS`를 공유한다. 스타일 값을 글마다 직접 지정하지 않는다.
