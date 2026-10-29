@@ -9,10 +9,10 @@ publishedAt: "2026-10-19"
 visibility: public
 status: published
 publish: true
-comments: false
+comments: true
 thumbnail:
-  src: "/assets/sql-million-row-execution-time-throughput-comparison.png"
-  alt: "100만 행을 기준으로 SQL 엔진과 PostgreSQL의 삽입·단건·범위·전체 조회 실행 시간과 처리량을 비교한 실측 그래프"
+  src: "/assets/sql-million-row-execution-time.png"
+  alt: "100만 행을 기준으로 MiniDB와 PostgreSQL(fsync on·off)의 삽입·단건·범위·전체 조회 실행 시간을 비교한 실측 그래프"
 ---
 
 메모리 할당을 직접 구현해 봤고, SQL도 배웠는데, 파일에 저장된 데이터를 메모리로 가져와 처리할 때 이 둘이 어떻게 연결되는지 궁금해 SQL을 해석하고 B+트리로 데이터를 찾아 읽고 쓰는 작은 SQL 엔진을 만들었습니다.
