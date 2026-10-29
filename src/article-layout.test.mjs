@@ -20,7 +20,11 @@ const order = (html, markers) => markers.map(marker => { const at = html.indexOf
 test('blog_detail_follows_the_single_post_structure_without_search_or_title_icon', async () => {
   const page = (await post('blog'));
   const html = articlePage(page, { topics, repositoryUrl: 'https://github.com/example/repo' }, '<section class="app-comments" id="comments"></section>');
-  assert.doesNotMatch(html, /data-public-search|app-search|app-article-title|app-document-layout|app-toc/);
+  assert.doesNotMatch(html, /data-public-search|app-search|app-article-title|app-toc/);
+  // 본문 목차: 공통 DocumentLayout의 목차 칸에 h2·h3 제목으로 가는 링크를 둔다(넓은 화면 오른쪽 고정, 좁은 화면 본문 위 접기).
+  assert.match(html, /<div class="app-document-layout" data-document-layout><aside class="app-document-outline">/);
+  assert.match(html, /<a href="#sample-절-하나" data-heading-level="2">절 하나<\/a>/);
+  assert.match(html, /<li class="is-subsection"><a href="#sample-하위" data-heading-level="3">하위<\/a><\/li>/);
   assert.doesNotMatch(html.slice(0, html.indexOf('app-article-lead')), /app-content-icon/);
   assert.match(html, /<h1 class="app-post-title" id="post-sample">샘플 글<\/h1>/);
   assert.match(html, /<time class="app-post-date" datetime="2026-01-02">2026년 1월 2일<\/time>/);
@@ -38,7 +42,7 @@ test('blog_thumbnail_follows_the_lead_as_a_wide_image_in_detail_and_feed', async
   const page = { ...(await post('blog')), thumbnail: { src: 'https://example.com/cover.jpg', alt: '글 표지', position: { x: 25, y: 50 } } };
   const detail = articlePage(page, { topics });
   for (const html of [detail]) {
-    const positions = order(html, ['app-post-title', 'app-article-lead', 'app-post-cover', 'sample-절-하나']);
+    const positions = order(html, ['app-post-title', 'app-article-lead', 'app-post-cover', '<h2 id="sample-절-하나"']);
     assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
     assert.match(html, /class="app-post-cover app-width-wide"/);
     assert.match(html, /alt="글 표지"/);

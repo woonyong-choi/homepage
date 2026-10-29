@@ -174,5 +174,11 @@
     "origin": "project-original",
     "license": "MIT",
     "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-million-row-execution-time.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 썸네일. 100만 행 실행 시간 실측 그래프."
   }
 ]
