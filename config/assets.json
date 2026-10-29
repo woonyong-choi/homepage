@@ -80,15 +80,99 @@
     "license": "MIT"
   },
   {
-    "file": "assets/261029-btree-pages.png",
+    "file": "assets/sql-select-user-by-id-light.png",
     "origin": "project-original",
     "license": "MIT",
-    "note": "Markdown 렌더링 데모 글에 쓰려고 만든 그림."
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
   },
   {
-    "file": "assets/261029-query-card.png",
+    "file": "assets/sql-create-insert-select-users-light.png",
     "origin": "project-original",
     "license": "MIT",
-    "note": "Markdown 렌더링 데모 글에 쓰려고 만든 그림."
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-fixed-row-layout-id-name-age.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-virtual-memory-page-frame-mapping.gif",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-bplus-page-search.gif",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-bplus-page-changes.gif",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-bplus-leaf-row-separation.gif",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-row-ref-leaf-entry-layout.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-bplus-node-page-structures-light.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-pager-page-file-io-code-light.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-page-buffer-miss-hit-comparison-light.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-page-buffer-measurements-and-reuse-traces.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-heap-row-bytes-light.jpg",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-lookup-debugger-annotated.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-reopen-console-light.jpg",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
+    "file": "assets/sql-million-row-execution-time-throughput-comparison.png",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
   }
 ]
