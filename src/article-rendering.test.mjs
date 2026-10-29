@@ -177,7 +177,7 @@ test('the_markdown_guide_example_renders_every_supported_construct_and_round_tri
   const blocks = [...rendered.html.matchAll(/<pre><code class="language-[^"]*">([\s\S]*?)<\/code><\/pre>/g)].map(match => text(match[1]));
   assert.equal(blocks.length, fences.length);
   fences.forEach((match, index) => assert.equal(blocks[index], match[3], `fence ${index}: ${match[2]}`));
-  const labels = new Set([...rendered.html.matchAll(/class="app-tool-label">([^<]*)</g)].map(match => match[1].split(' · ')[0]));
+  const labels = new Set([...rendered.html.matchAll(/class="app-code[^"]*" data-language="([^"]*)"/g)].map(match => match[1].split(' · ')[0]));
   for (const label of ['JavaScript', 'TypeScript', 'Python', 'C', 'C++', 'C#', 'Java', 'Kotlin', 'Rust', 'Go', 'Swift', 'Bash', 'SQL', 'JSON', 'YAML', 'HTML, XML', 'CSS', 'Dockerfile', 'Markdown', 'Plain text']) assert.ok(labels.has(label), label);
   for (const marker of ['app-heading-1', 'app-heading-6', '<s>', '<mark>', '<sub>', '<sup>', '<kbd>', '<dl>', '<details', 'class="footnotes"', 'is-center', 'is-right', 'contains-task-list', 'is-cancelled', '<hr>', '<blockquote>', '<img ']) assert.ok(rendered.html.includes(marker), marker);
   assert.doesNotMatch(rendered.html, /<script|href="javascript|onerror=alert\(1\)>/);

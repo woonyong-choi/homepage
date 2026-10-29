@@ -5,7 +5,7 @@ import { attemptComponent } from './call.js';
 export const CALLOUT_TITLE = '참고';
 
 const CALLOUTS = Object.freeze({
-  note: { tone: '', title: CALLOUT_TITLE },
+  note: { title: CALLOUT_TITLE },
   warning: { tone: 'warning', title: '주의' },
 });
 

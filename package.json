@@ -14,8 +14,8 @@
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",
     "@vscode/markdown-it-katex": "1.1.2",
-    "@woonyong-choi/design-tokens": "github:woonyong-choi/design-tokens#df9a29ee02b86e949f713594f156a2b031455fdd",
-    "diagramplay": "github:woonyong-choi/diagramplay#0a44d42eef40b7ecbf3121d34d9b1b1920b053aa",
+    "@woonyong-choi/design-tokens": "github:woonyong-choi/design-tokens#a3ad6f785854065e1983d544e0fe4d1d0d9adad4",
+    "diagramplay": "github:woonyong-choi/diagramplay#dc2a6d9afe5e002d1cc53f1782bbd9729f616b4e",
     "esbuild": "0.28.2",
     "highlight.js": "11.12.0",
     "jsdom": "29.1.1",

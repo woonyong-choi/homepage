@@ -101,7 +101,7 @@ function paired(rc, name, props, inner, closeProps = {}) {
 function callout(data, rc) {
   const props = {
     title: data.title ?? CALLOUT_TITLE,
-    tone: data.tone,
+    tone: data.tone || undefined,
     fineprint: data.fineprint,
   };
   return paired(rc, 'callout', props, () => rc.html('body'));
