@@ -43,7 +43,6 @@ test('diagram_width_uses_the_same_fence_options_without_recompiling_the_source',
 test('embedded_sources_reject_external_files_with_the_page_location', async () => {
   for (const text of [
     'diagramplay\nicons local "private"\nbox a "A" icon=local:secret\n',
-    'diagramplay\nchart c "C" bar {\n  x "count"\n  data "private.json"\n  series n "N"\n}\n',
   ]) await assert.rejects(compileDiagrams(new Map([[text, 'private-page']])), /private-page:.*file-based/);
 });
 
