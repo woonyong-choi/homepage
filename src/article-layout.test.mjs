@@ -167,8 +167,8 @@ test('support_body_headings_have_no_rule_or_padding_and_containers_keep_their_li
   assert.doesNotMatch(css, /\.app-document-body h2, \.app-related|\.app-related >|\.app-related \{/);
   assert.doesNotMatch(css.match(/\.app-document-body h2 \{[^}]*\}/g)?.join('') ?? '', /border|padding/);
   const block = selector => [...css.matchAll(new RegExp(`\\n${selector.replace('.', '\\.')} \\{[^}]*\\}`, 'g'))].join('');
-  // 블로그 글은 본문 단계의 줄 높이, 지원 문서는 기존 본문 줄 높이를 쓴다.
-  assert.match(block('.app-blog-post'), /line-height: var\(--leading-body\)/);
+  // 블로그 글과 지원 문서는 같은 본문 줄 높이(Things 본문 1.4)를 쓴다.
+  assert.match(block('.app-blog-post'), /line-height: var\(--leading-feature-body-line\)/);
   assert.match(block('.app-document-shell'), /line-height: var\(--leading-feature-body-line\)/);
   const header = css.match(/\n\.app-post-header \{[^}]*\}/)[0];
   assert.doesNotMatch(header, /line-height/);
