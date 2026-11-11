@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
+import { Button, escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { repositoryUrl } from './repository-links.mjs';
 import { DESIGN_PACKAGE } from './design-package.mjs';
 
@@ -35,6 +35,7 @@ export function commentsSection(page, config = {}, themeUrl, { preview = false, 
   const id = preview ? `comments-${page.id}` : 'comments';
   const contentId = `${id}-content`;
   const heading = preview ? '<h3 class="app-sr">댓글</h3>' : '<h2>댓글</h2>';
-  const expand = preview ? `<button class="app-comments-expand" type="button" data-comments-expand aria-expanded="false" aria-controls="${escape(contentId)}" hidden><span class="app-sr">${escape(page.title)} 댓글 전체 펼치기</span></button>` : '';
-  return `<section class="app-comments" id="${escape(id)}" data-comments ${data} data-comments-route="${escape(page.route ?? '')}" data-comments-return="${escape(returnRoute)}" data-comments-description="${escape(page.description ?? '')}">${heading}<p class="app-comments-status" role="status" data-comments-status>GitHub 계정으로 로그인하면 댓글을 작성할 수 있습니다.</p><div class="app-comments-viewport"><div id="${escape(contentId)}" data-comments-content></div>${expand}</div><button class="app-inline-button" type="button" data-comments-retry hidden>댓글 다시 불러오기</button><p class="app-caption" data-comments-fallback hidden><a data-discussion-link href="${discussionSearch}" target="_blank" rel="noopener noreferrer">GitHub에서 열기</a></p><noscript><p>댓글을 쓰려면 JavaScript를 켜거나 <a href="${discussionSearch}" target="_blank" rel="noopener noreferrer">GitHub에서 열어 주세요.</a></p></noscript></section>`;
+  // 블로그 피드에서는 댓글 창을 바로 불러오지 않고 '댓글 보기' 단추만 둔다. 누르면 그 자리에서 댓글 창을 펼친다.
+  const expand = preview ? String(Button({ label: '댓글 보기', action: 'comments-expand', controls: contentId, context: page.title, hidden: true })) : '';
+  return `<section class="app-comments" id="${escape(id)}" data-comments ${data} data-comments-route="${escape(page.route ?? '')}" data-comments-return="${escape(returnRoute)}" data-comments-description="${escape(page.description ?? '')}">${heading}<p class="app-comments-status" role="status" data-comments-status>GitHub 계정으로 로그인하면 댓글을 작성할 수 있습니다.</p>${expand}<div class="app-comments-viewport"><div id="${escape(contentId)}" data-comments-content></div></div><button class="app-inline-button" type="button" data-comments-retry hidden>댓글 다시 불러오기</button><p class="app-caption" data-comments-fallback hidden><a data-discussion-link href="${discussionSearch}" target="_blank" rel="noopener noreferrer">GitHub에서 열기</a></p><noscript><p>댓글을 쓰려면 JavaScript를 켜거나 <a href="${discussionSearch}" target="_blank" rel="noopener noreferrer">GitHub에서 열어 주세요.</a></p></noscript></section>`;
 }
