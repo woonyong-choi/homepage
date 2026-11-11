@@ -1,4 +1,4 @@
-// 개인 위키 미리보기의 본문 목차를 공통 구성 요소에 연결한다.
+// 글 본문 목차를 공통 구성 요소에 연결한다.
 import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
 
 export function documentOutline(headings) {

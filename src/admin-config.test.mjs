@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom';
 import { parseAdminConfig } from './admin-config.mjs';
 import { adminPage } from './admin-layout.mjs';
 import { initAdminLogin } from './admin.js';
-import { documentShell } from './publication-layout.mjs';
+import { documentShell, ADMIN_STYLES_VERSION } from './publication-layout.mjs';
 import { loadBlogLayout } from './layout-config.mjs';
 
 const base = { repository: 'woonyong-choi/vault', branch: 'main', posts: 'publish', assets: 'assets' };
@@ -74,6 +74,8 @@ test('every_page_gets_small_admin_loader_with_settings_only_when_admin_is_config
   const { document } = new JSDOM(html).window;
   const settings = JSON.parse(document.querySelector('meta[name="admin-settings"]').content);
   assert.equal(settings.editor, '/admin-editor.js?v=e');
+  // 관리 CSS는 공개 CSS와 따로 싣고, 빌드가 내용 해시를 채울 자리 표시를 둔다.
+  assert.equal(settings.styles, `/theme/admin.css?v=${ADMIN_STYLES_VERSION}`);
   assert.equal(settings.repository, 'woonyong-choi/vault');
   assert.ok(document.querySelector('script[src^="/admin.js?v="]'));
   assert.equal(document.querySelector('script[src^="/admin-editor.js"]'), null);

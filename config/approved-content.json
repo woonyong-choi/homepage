@@ -2,7 +2,7 @@
   "version": 1,
   "origin": "vault",
   "files": {
-    "config/blog.json": "b93a0f385994510b4751a9897886e8daddc09dde2e53553047158b3cc1b004bd",
+    "config/blog.json": "0d43dfeab02eb98e343adf93b65b2d56d77d10610e60413d2ab490043a2cfeca",
     "config/cs.json": "92b7985b7a80160fb2213cb8c51fb4320ce765dbb338ef2896facb5534237bc4",
     "config/search.json": "7ba80047f536ddf895038d1d36aea8d806afee19aad657f017f0213ba0cff77a",
     "config/site.json": "39c657c5567f3606f330fb98af4c89b8e7a7d8f3c48929356f55a63d7bda6a25",

@@ -3,7 +3,6 @@ import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
 import { relatedPosts } from './blog-model.mjs';
 import { articlePage } from './publication-layout.mjs';
-import { privateWikiArticle } from './private-wiki-layout.mjs';
 
 // 합성 원고. 발행된 블로그 글이 없어도 선정 규칙과 표시를 확인한다.
 const post = (id, publishedAt, { category = 'design', tags = [], type = 'blog' } = {}) => ({
@@ -52,9 +51,3 @@ test('blog_detail_shows_related_cards_after_the_body_and_hides_the_section_witho
   }
 });
 
-test('feed_and_wiki_pages_do_not_show_related_posts', () => {
-  const current = post('current', '2026-05-01');
-  current.related = [post('first', '2026-04-01')];
-  const wiki = privateWikiArticle({ ...current, type: 'wiki', headings: [] }, { topics });
-  assert.doesNotMatch(wiki, /관련 글|related-posts/);
-});

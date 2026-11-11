@@ -2,7 +2,7 @@
 
 > A Markdown-based personal blog and website
 
-This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content, uses shared packages for design and diagrams, and parses Markdown with its internal document renderer in `src/document`.
+This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content, uses the shared design package, and parses Markdown with its internal document renderer in `src/document`.
 
 ## Docs
 

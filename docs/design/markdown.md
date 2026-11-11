@@ -16,7 +16,7 @@
 
 ### 사용 장면
 
-일반 글은 Markdown으로 작성한다. 같은 도표의 단계를 비교할 때는 DiagramPlay `scene`을 쓴다. 서로 다른 글·그림·코드는 탭으로 묶지 않고 문단 한 줄로 소개한 뒤 차례로 둔다. 문서 탭 문법은 헷갈리고 Obsidian에서 쓰기 어려워 두지 않는다.
+일반 글은 Markdown으로 작성한다. 도표는 이미지로 만들어 넣는다. 서로 다른 글·그림·코드는 탭으로 묶지 않고 문단 한 줄로 소개한 뒤 차례로 둔다. 문서 탭 문법은 헷갈리고 Obsidian에서 쓰기 어려워 두지 않는다.
 
 ## 작동 방식
 
@@ -26,7 +26,7 @@
 
 ### 파일과 메타데이터
 
-비공개 Vault의 원문을 수정·승인한 뒤 `content:sync-vault`로 `content/blog/`에 가져온다. 승인 사본은 직접 수정하지 않는다. 폴더는 작성 편의용이며 공개 주소는 `/blog/<slug>/`다. 공개 글에 `type`, `field`, `category`, `parent`, `contentIcon`을 요구하지 않는다. 개인 위키 미리보기의 기존 메타데이터는 [별도 API 계약](publication.md#저장-전-페이지-미리보기)으로 유지한다.
+비공개 Vault의 원문을 수정·승인한 뒤 `content:sync-vault`로 `content/blog/`에 가져온다. 승인 사본은 직접 수정하지 않는다. 폴더는 작성 편의용이며 공개 주소는 `/blog/<slug>/`다. 공개 글에 `type`, `field`, `category`, `parent`, `contentIcon`을 요구하지 않는다.
 
 맨 위에 `---`로 감싼 YAML 또는 JSON을 쓰고 아래에 본문을 쓴다.
 
@@ -53,11 +53,11 @@ slug `all`, `page`, `feed`는 예약어다. 태그는 양끝 공백 제거와 Un
 
 글 상세는 날짜, 제목, 도입문, 태그, 선택 대표 이미지, 본문 순서로 조립하고 댓글은 본문 뒤에 둔다. 글의 장식 아이콘이나 필수 썸네일은 없다. 이미지가 없으면 상세와 피드에 빈 영역을 만들지 않는다. Search 카드는 제목 표지를 자동으로 표시하며 별도 이미지를 준비하지 않아도 된다. 카드 태그는 숨기고 본문 태그와 검색 필터는 유지한다. 태그와 글 링크는 독립적으로 동작한다. 카드·본문·조작의 표현과 반응형 배치는 [공통 디자인](styles.md)이 소유한다.
 
-본문의 제목은 페이지 제목과 충돌하지 않도록 조정한다. 쓴 단계는 `app-heading-N` 클래스로 남아 공통 크기와 여백을 사용한다. 개인 위키 미리보기의 본문 목차는 공개 Blog와 분리한다. 작성자가 넣는 관련 글 카드는 `cards related`를 사용한다. Blog 상세의 자동 관련 글은 [선정 기준](publication.md#문서와-블로그-탐색)을 따른다.
+본문의 제목은 페이지 제목과 충돌하지 않도록 조정한다. 쓴 단계는 `app-heading-N` 클래스로 남아 공통 크기와 여백을 사용한다. 작성자가 넣는 관련 글 카드는 `cards related`를 사용한다. Blog 상세의 자동 관련 글은 [선정 기준](publication.md#문서와-블로그-탐색)을 따른다.
 
-목차를 사용하는 개인 미리보기에서 목차는 제목의 읽을 글자만 표시한다. 인라인 코드·강조·링크의 문법 표식과 링크 주소는 제외하고 이미지 대체 글자·키와 메뉴의 이름·수식 원문은 남긴다. 이스케이프한 문자와 코드 안의 기호는 그대로 표시하며 HTML로 실행하지 않는다. 대체 글자가 없는 이미지만 쓴 제목은 빈 링크가 되지 않게 원문을 유지한다. 제목 ID는 원문 기준을 유지하므로 기존 앵커 주소는 바뀌지 않는다.
+글 목차는 제목의 읽을 글자만 표시한다. 인라인 코드·강조·링크의 문법 표식과 링크 주소는 제외하고 이미지 대체 글자·키와 메뉴의 이름·수식 원문은 남긴다. 이스케이프한 문자와 코드 안의 기호는 그대로 표시하며 HTML로 실행하지 않는다. 대체 글자가 없는 이미지만 쓴 제목은 빈 링크가 되지 않게 원문을 유지한다. 제목 ID는 원문 기준을 유지하므로 기존 앵커 주소는 바뀌지 않는다.
 
-블로그 글 화면과 개인 미리보기는 같은 공통 `DocumentLayout`·`DocumentOutline`으로 h2·h3 목차를 만든다. 넓은 화면에서는 본문 오른쪽에 고정하고, 좁은 화면에서는 본문 위의 접기 목차로 둔다. h2·h3가 없는 글은 목차 없이 본문만 둔다.
+블로그 글 화면은 공통 `DocumentLayout`·`DocumentOutline`으로 h2·h3 목차를 만든다. 넓은 화면에서는 본문 오른쪽에 고정하고, 좁은 화면에서는 본문 위의 접기 목차로 둔다. h2·h3가 없는 글은 목차 없이 본문만 둔다.
 
 ### 지원 문법
 
@@ -81,7 +81,6 @@ slug `all`, `page`, `feed`는 예약어다. 태그는 양끝 공백 제거와 Un
 | 정의 목록 | 용어 줄 다음 `: 설명` | `markdown-it-deflist`의 의미를 따른다. 여러 문단과 블록 포함 가능 |
 | 접기 | `<details>`(`open` 선택), `<summary>글자</summary>` | `details`는 `open`만, `summary`는 속성 없이 사용한다. 요약의 인라인 서식과 본문은 Markdown이며 펜스 코드 안의 `</details>`는 짝이 아니다 |
 | 수식 | `$...$`, `$$...$$` | KaTeX. 아래 절 |
-| 도표 | ` ```diagramplay ` | DiagramPlay. 아래 절 |
 | 키·메뉴 | `:kbd[⌘ K]` `:menu[파일]` | |
 | 아이콘·설명 | `:icon[search]` `:tip[글]{text="설명"}` | 아래 "구성 블록" 절 |
 | 구성 블록 | `:::note` `:::steps` 등 | 아래 "구성 블록" 절 |
@@ -118,31 +117,15 @@ items:
 
 `$...$`(한 줄)와 `$$...$$`(블록)를 쓴다. 빌드할 때 `@vscode/markdown-it-katex`와 KaTeX가 HTML과 MathML로 만들어 두므로 읽는 쪽에서 스크립트를 실행하지 않는다. 숫자 앞의 `$5`, 공백으로 끝나는 `$` 쌍, 코드 범위와 코드 블록 안의 `$`, `\$`는 수식이 아니다. 틀린 수식은 빌드를 멈추지 않고 원문을 흐린 점선 밑줄(`katex-error`)로 보여 준다. `trust`를 끄고 있어 `\href`, `\includegraphics`, `\htmlClass` 등은 링크나 요소를 만들지 못하고 글자로 남는다. 긴 수식은 `.katex-block` 안에서 가로로 스크롤한다. 수식이 있는 페이지만 `/katex/katex.css`(font-display swap)와 필요한 woff2 글꼴을 싣는다. 글꼴은 모두 로컬이고 woff·ttf는 배포하지 않는다.
 
-#### 선택 기능
-
-DiagramPlay 도표(` ```diagramplay `)는 선택 기능이다. `config/features.json`에서 켜며, 파일이 없거나 값을 생략하면 꺼짐이라 일반 Markdown 블로그로 동작한다. 꺼진 기능을 글에 쓰면 해당 줄 번호와 켜는 설정 이름이 담긴 오류로 빌드가 멈춘다. 없앤 `tabs` 키를 적으면 알 수 없는 기능 오류다.
-
-```json
-{ "diagrams": true }
-```
-
-`config/features.json`은 홈페이지가 소유하는 설정이며 Vault 동기화 대상이 아니다. 개인 미리보기도 같은 설정 폴더의 값을 읽는다.
-
 #### 도표
 
-`diagramplay` 펜스에는 첫 줄에 `diagramplay`만 적은 원본을 넣는다. 버전 숫자는 붙이지 않는다. 문서 빌드가 DiagramPlay 공개 API로 도표 HTML을 미리 만들고 `DiagramEmbed`로 삽입한다. 같은 결과는 내용 해시로 한 파일만 배포한다.
-
-카드·선은 한 번 선언하고 `scene "이름"`으로 장면을 나눈다. 빈 장면은 정지, 이동이 있는 장면은 한 번 재생이 기본이다. 반복은 `mode=loop`, 배속은 `speed=`, 연속 트래픽은 `track … every= …`로 표현한다. 장면 선택 줄은 갤러리 선택 줄과 같은 공통 부품이다.
-
-작성 기준은 하나다. 같은 카드와 선이 단계별로 바뀌면 DiagramPlay `scene`으로 쓰고, 서로 다른 그림·글·코드는 문단으로 소개해 차례로 둔다. 문법 복사·HTML 다운로드·전체화면은 도표 프레임에서 제공한다.
-
-사용자 아이콘 폴더 같은 외부 파일은 문서 삽입에서 허용하지 않는다. 오류는 문서 경로와 함께 빌드를 실패시킨다. 브라우저는 레이아웃을 계산하지 않고 시간표를 재생하며, 필요한 페이지에만 프레임 크기·테마 연결 코드를 싣는다. `mermaid`는 일반 코드 블록으로 표시한다.
+도표 문법은 없다. 그림 도구로 만든 이미지를 일반 이미지 문법으로 넣는다. ` ```diagramplay `·` ```mermaid `는 일반 코드 블록으로 표시한다.
 
 #### 지원하지 않는 것
 
 - 임의 HTML, 인라인 스타일, 스크립트, iframe.
 - KaTeX가 신뢰하지 않는 명령과 임의의 실행 코드.
-- ` ```math ` 펜스(수식은 `$$`로 쓴다), 도표의 외부 데이터·아이콘 파일 로딩.
+- ` ```math ` 펜스(수식은 `$$`로 쓴다).
 
 ### 구성 블록
 
@@ -182,7 +165,7 @@ Mac에서는 메뉴 막대에서 시작합니다.
 
 | 표시 역할 | 권장 옵션 | 적용 대상 |
 |---|---|---|
-| 폭 | `width=narrow`, `width=wide` | 그림·영상·갤러리·코드블록·DiagramPlay |
+| 폭 | `width=narrow`, `width=wide` | 그림·영상·갤러리·코드블록 |
 | 카드 모양 | `variant=related`, `variant=centered`, `variant=grouped`, `variant=inline` | 카드 목록 |
 | 카드 열 수 | `columns=1`, `columns=2` | 기본·가운데·그룹 카드 목록 |
 | 그림 모서리 | `rounded` | 그림. 기본은 모서리 없음, 지정하면 코드 블록과 같은 곡률 |
@@ -234,7 +217,6 @@ const message = "넓은 코드블록";
 
 - 갤러리도 `:::gallery{width=wide}`로 쓴다. 같은 규칙이 갤러리 전체에 적용된다.
 - 블록 폭은 `width` 하나로 정한다. 기본값 `width=content`는 생략과 같다. 같은 폭을 중복 지정하거나 다른 폭을 함께 지정하면 오류다. 옛 블록 속성 `wide`와 `size=compact`는 받지 않는다. `ui:video`의 플레이어 치수·비율(`width`, `height`, `wide`), 그림 격자의 `size`, 카드의 `compact`는 블록 폭과 다른 속성으로 유지한다.
-- DiagramPlay도 `diagramplay`, `diagramplay width=wide`, `diagramplay width=narrow`로 같은 폭 규칙을 사용한다. 도표의 측정 크기는 초기 iframe 크기에만 쓰며 최종 표시 폭은 본문 블록이 정한다. 높이는 내용에 맞춰 갱신해 본문 도표에 별도 세로 스크롤을 만들지 않는다. 전체화면으로 확대했을 때는 그림 안에서 이동할 수 있다.
 - 폭은 공통 구성 요소가 클래스(`app-width-narrow`, `app-width-wide`)로 정하고 값은 테마 토큰이다. CSS나 픽셀 값을 글마다 직접 넣지 않는다.
 
 #### 미디어 지원 범위
@@ -314,9 +296,9 @@ IntelliJ의 PSI·심볼 해석을 실행하는 것은 아니다. 외부 타입, 
 
 ### 검증
 
-문법 해석과 HTML 출력(CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 등록 언어와 별칭, 구성 블록의 중첩·속성 검사·오류 위치, 각주·제목 ID)은 `src/document/test`가 확인한다. `npm run check:product`가 이 시험과 그 출력을 쓰는 쪽의 시험을 함께 실행한다. 소개 문단 분리와 목차, 복사 원문과 동적 본문의 초기화, 갤러리 동작, 글 상세 구조, 예시 글의 코드 블록 원문 왕복과 ID 중복(`article-rendering.test.mjs`, `article-renderer.test.mjs`), 테마 토큰이 만드는 본문 치수, 수식 오류 복구와 자산의 페이지별 선택, 도표 원문 보존과 ID, 도표 렌더러의 보안 설정과 로더 상태 전환이 대상이다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
+문법 해석과 HTML 출력(CommonMark·GFM 구성 요소, 확장 문법, URL·HTML 이스케이프, plaintext 대체, 등록 언어와 별칭, 구성 블록의 중첩·속성 검사·오류 위치, 각주·제목 ID)은 `src/document/test`가 확인한다. `npm run check:product`가 이 시험과 그 출력을 쓰는 쪽의 시험을 함께 실행한다. 소개 문단 분리와 목차, 복사 원문과 동적 본문의 초기화, 갤러리 동작, 글 상세 구조, 예시 글의 코드 블록 원문 왕복과 ID 중복(`article-rendering.test.mjs`, `article-renderer.test.mjs`), 테마 토큰이 만드는 본문 치수, 수식 오류 복구와 자산의 페이지별 선택 로더 상태 전환이 대상이다. 브라우저에서 보이는 모양은 이 시험이 보장하지 않으며 해당 URL에서 직접 확인한다.
 
-코드와 도표는 공통 `ToolHeader`·`Toolbar`·`ToolButton`의 크기·아이콘·호버·초점·상태 알림을 사용한다. 복사 성공·실패·재시도는 공통 디자인의 `bindToolbar`와 그 시험이 소유한다. 도표의 대체 전체화면은 공통 `bindDiagramHost`가 송신자와 출처를 확인해 처리하고 전체화면 중 높이 알림은 무시한다. 소비자에서 별도 보정 CSS를 추가하지 않는다.
+코드는 공통 `ToolHeader`·`Toolbar`·`ToolButton`의 크기·아이콘·호버·초점·상태 알림을 사용한다. 복사 성공·실패·재시도는 공통 디자인의 `bindToolbar`와 그 시험이 소유한다. 소비자에서 별도 보정 CSS를 추가하지 않는다.
 
 본문의 Markdown 표는 공통 `Table.open`·`Table.close`를 사용한다. 공통 디자인의 면·구분선·글자색·안쪽 여백을 상속하고 열 정렬은 문서의 지정값을 유지한다.
 
@@ -325,4 +307,4 @@ IntelliJ의 PSI·심볼 해석을 실행하는 것은 아니다. 외부 타입, 
 | 요구사항 | 검증 계획 |
 |---|---|
 | 소개 문단은 전체 첫 문단이 일치할 때만 한 번 이동한다. | [`article-renderer.test.mjs`](../../src/article-renderer.test.mjs)의 `only_the_complete_first_paragraph_can_be_promoted` |
-| 문서 렌더러 오류와 실패한 도표는 발행을 중단한다. | [`article-renderer.test.mjs`](../../src/article-renderer.test.mjs)의 `engine_diagnostics_and_failed_diagrams_stop_publication` |
+| 문서 렌더러 오류는 발행을 중단한다. | [`article-renderer.test.mjs`](../../src/article-renderer.test.mjs)의 `engine_diagnostics_stop_publication` |

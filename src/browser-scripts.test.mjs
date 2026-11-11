@@ -30,7 +30,7 @@ test('bundled_worker_searches_body_and_retries_without_module_requests', async (
   assert.equal(messages[1].result.entries[0].text, undefined);
   await listener({ data: { id: 3, action: 'suggest', state: { ...state, query: 'JS' } } });
   assert.equal(messages[2].result.tags[0][0], 'js');
-  assert.ok(scripts.has('diagram.js'));
+  assert.ok(!scripts.has('diagram.js'), '도표 동작은 만들지 않는다');
   assert.ok(!scripts.has('tabs.js'), 'shared tab helper is bundled into its entrypoint');
   assert.equal(scripts.has('blog-list.js'), true);
 });

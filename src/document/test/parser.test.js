@@ -1,11 +1,8 @@
 // 해석기: HTML·테마 없이 구조·원문 위치·진단을 만든다.
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { test } from 'node:test';
-import { fileURLToPath } from 'node:url';
 
 import katex from 'katex';
 
@@ -137,53 +134,6 @@ test('ui_fences_keep_yaml_data_and_pre_parsed_nested_markdown_without_reparsing_
   assert.ok(fence.meta.units[1].env.footnotes.list.length === 1);
   assert.match(fence.meta.id, /^component-p-\d+$/);
   assert.equal(fence.meta.units[0].env.docId, `${fence.meta.id}-1`);
-});
-
-test('diagramplay_sources_are_collected_at_parse_time_with_lines_and_options', () => {
-  const source =
-    '문단\n\n```diagramplay width=wide\nA\n```\n\n```diagramplay width=wide\nA\n```\n\n```ui:callout\ntitle: x\nbody: "```diagramplay\\nB\\n```"\n```\n';
-  const { metadata } = parse(source);
-  assert.deepEqual(
-    metadata.diagrams.map(({ source: text, line, width }) => [text, line, width]),
-    [
-      ['A\n', 3, 'wide'],
-      ['B\n', 11, undefined],
-    ],
-  );
-});
-
-test('diagramplay_name_is_accepted_validated_and_kept_only_in_the_fence_options', () => {
-  const fenceOf = (info) => {
-    const document = parse(`\`\`\`${info}\nA\n\`\`\`\n`);
-    return { fence: allTokens(document.tokens).find((token) => token.type === 'fence'), document };
-  };
-  assert.deepEqual(
-    { ...fenceOf('diagramplay name=arch-v1').fence.meta.options },
-    { name: 'arch-v1' },
-  );
-  assert.deepEqual(
-    { ...fenceOf('diagramplay width=wide name=flow').fence.meta.options },
-    { width: 'wide', name: 'flow' },
-  );
-  assert.equal(fenceOf('diagramplay name=flow').fence.info.trim(), 'diagramplay name=flow');
-  for (const info of [
-    'diagramplay name=a/b',
-    'diagramplay name=../x',
-    'diagramplay name=',
-    'diagramplay name',
-  ]) {
-    const { fence, document } = fenceOf(info);
-    assert.equal(fence.meta.role, 'error', info);
-    assert.ok(document.diagnostics.length > 0, info);
-  }
-  const unknown = fenceOf('diagramplay name=ok title=x');
-  assert.equal(unknown.fence.meta.role, 'error');
-  assert.match(unknown.document.diagnostics[0].message, /허용하지 않는 속성/);
-  // 이름이 달라도 같은 원문은 한 번만 모으고, 이름은 도표 원문과 모은 정보에 섞지 않는다.
-  const { metadata } = parse(
-    '```diagramplay name=one\nA\n```\n\n```diagramplay name=two\nA\n```\n',
-  );
-  assert.deepEqual(metadata.diagrams, [{ source: 'A\n', line: 1, width: undefined }]);
 });
 
 test('headings_keep_source_lines_ids_and_nested_titles', () => {
@@ -331,57 +281,6 @@ test('details_summary_inline_errors_report_the_summary_line', () => {
   assert.equal(document.diagnostics[0].directive, 'tip');
   const first = parse('<details>\n<summary>:tip[설명]</summary>\n본문\n</details>\n');
   assert.equal(first.diagnostics[0].line, 2);
-});
-
-// DiagramPlay의 이름 규칙은 공개 진입점인 CLI(`diagramplay md --check --json`)로 확인한다. 내부 파일은 읽지 않는다.
-test('diagramplay_name_validity_matches_the_pinned_diagramplay_markdown_check', () => {
-  const names = [
-    'flow',
-    'a-b',
-    'a1',
-    'a-1-b',
-    'A',
-    'a_b',
-    '-a',
-    'a-',
-    'a--b',
-    'a.b',
-    '한글',
-    'a/b',
-    '../x',
-  ];
-  const blocks = names.map(
-    (name) => `\`\`\`diagramplay name=${name}\ndiagramplay\nbox a "A"\n\`\`\``,
-  );
-  const markdown = `${blocks.join('\n\n')}\n`;
-  const pkg = createRequire(import.meta.url).resolve('diagramplay/package.json');
-  const cli = join(dirname(pkg), JSON.parse(readFileSync(pkg, 'utf8')).bin.diagramplay);
-  // 검사 입력은 Git 밖 산출물 폴더(dist/) 아래에 두고 끝나면 지운다.
-  const dir = new URL('../../../dist/document-test/', import.meta.url);
-  mkdirSync(dir, { recursive: true });
-  const file = fileURLToPath(new URL('diagramplay-names.md', dir));
-  writeFileSync(file, markdown);
-  let output = '';
-  try {
-    execFileSync(process.execPath, [cli, 'md', file, '--check', '--json'], { encoding: 'utf8' });
-  } catch (error) {
-    output = error.stdout;
-  } finally {
-    rmSync(file, { force: true });
-  }
-  const rejectedLines = new Set(
-    output
-      .split('\n')
-      .filter(Boolean)
-      .map((line) => JSON.parse(line).line),
-  );
-  const fences = allTokens(parse(markdown).tokens).filter((token) => token.type === 'fence');
-  assert.equal(fences.length, names.length);
-  names.forEach((name, index) => {
-    const upstreamValid = !rejectedLines.has(fences[index].map[0] + 1);
-    assert.equal(fences[index].meta.role === 'diagram', upstreamValid, `name=${name}`);
-  });
-  assert.ok(rejectedLines.size > 0 && rejectedLines.size < names.length);
 });
 
 test('links_and_images_are_collected_with_lines_including_component_fields_and_footnotes', () => {
@@ -598,18 +497,3 @@ test('ui_field_types_are_checked_at_parse_time_with_the_field_line', () => {
   }
 });
 
-// 호스트가 끈 선택 문법은 진단으로 알리고, 생략하면 켜져 있다. 선택 문법은 도표 하나다.
-test('optional_diagrams_report_when_disabled_and_default_to_enabled', () => {
-  const diagram = '```diagramplay\nA\n```\n';
-  assert.deepEqual(parse(diagram).diagnostics, []);
-  const off = { features: { diagrams: false } };
-  const result = parse(diagram, off);
-  assert.ok(
-    result.diagnostics.some((item) => /features\.diagrams/.test(item.message)),
-    diagram,
-  );
-  assert.deepEqual(result.metadata.diagrams, []);
-  assert.throws(() => parse('', { features: { tabs: true } }), /unknown feature: tabs/);
-  assert.throws(() => parse('', { features: { diagrams: 'no' } }), /must be a boolean/);
-  assert.throws(() => parse('', { features: [] }), /must be an object/);
-});

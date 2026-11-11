@@ -5,7 +5,8 @@ import { commentsSection } from './comments.mjs';
 import { initComments } from './comments.js';
 
 const config = { repo: 'owner/blog', repoId: 'repo-id', category: 'Comments', categoryId: 'category-id' };
-const markup = (id, preview = true) => commentsSection({ id, title: `글 ${id}`, route: `/articles/${id}/`, description: '설명', comments: true }, config, 'light', { preview });
+const markup = (id, preview = false) => commentsSection({ id, title: `글 ${id}`, route: `/articles/${id}/`, description: '설명', comments: true }, config, 'light', { preview });
+const feed = id => markup(id, true);
 function setup(html = markup('first') + markup('second'), url = 'https://example.com/blog/') {
   const dom = new JSDOM(html, { url });
   const doc = dom.window.document;
@@ -16,29 +17,36 @@ function setup(html = markup('first') + markup('second'), url = 'https://example
   return { dom, doc, sections, emit };
 }
 
-test('each_preview_keeps_its_own_discussion_height_and_expansion', () => {
-  const { dom, doc, sections, emit } = setup();
+test('feed_comments_load_only_from_their_own_button_and_keep_their_own_height', () => {
+  const { dom, doc, sections, emit } = setup(feed('first') + feed('second'));
   initComments(doc);
   const [first, second] = sections;
+  const button = section => section.querySelector('button[data-action="comments-expand"]');
+  assert.equal(doc.querySelectorAll('iframe').length, 0);
+  assert.equal(button(first).hidden, false);
+  assert.equal(button(first).textContent.startsWith('댓글 보기'), true);
+  assert.equal(first.dataset.expanded, 'false');
+  assert.equal(first.querySelector('[data-comments-content]').inert, true);
+  button(first).click();
   const firstFrame = first.querySelector('iframe');
+  assert.equal(first.dataset.expanded, 'true');
+  assert.equal(first.querySelector('[data-comments-content]').inert, false);
+  assert.equal(first.querySelector('[data-comments-content]').hasAttribute('aria-hidden'), false);
+  assert.equal(doc.activeElement, firstFrame);
+  assert.equal(second.querySelector('iframe'), null);
+  assert.equal(second.dataset.expanded, 'false');
   const params = new URL(firstFrame.src).searchParams;
   assert.equal(params.get('term'), 'first');
   assert.equal(params.get('backLink'), 'https://example.com/articles/first/');
   assert.equal(params.get('inputPosition'), 'bottom');
   assert.equal(params.get('origin'), 'https://example.com/blog/#comments-first');
+  button(second).click();
   emit(0, { resizeHeight: 750, discussion: { totalCommentCount: 3, url: 'https://github.com/owner/blog/discussions/42' } });
   emit(1, { resizeHeight: 420 });
   assert.equal(Number.parseFloat(firstFrame.style.height), 750);
   assert.equal(Number.parseFloat(second.querySelector('iframe').style.height), 420);
   assert.equal(first.querySelector('[data-discussion-link]').href, 'https://github.com/owner/blog/discussions/42');
   assert.match(second.querySelector('[data-discussion-link]').href, /discussions\?/);
-  first.querySelector('button[data-comments-expand]').click();
-  assert.equal(first.dataset.expanded, 'true');
-  assert.equal(first.querySelector('[data-comments-content]').inert, false);
-  assert.equal(first.querySelector('[data-comments-content]').hasAttribute('aria-hidden'), false);
-  assert.equal(doc.activeElement, firstFrame);
-  assert.equal(second.dataset.expanded, 'false');
-  assert.equal(second.querySelector('[data-comments-content]').inert, true);
   initComments(doc);
   assert.equal(first.querySelector('iframe'), firstFrame);
   assert.equal(first.dataset.expanded, 'true');
@@ -77,24 +85,25 @@ test('comments_preload_without_scrolling_and_appended_threads_initialize_once', 
   assert.equal(doc.querySelectorAll('iframe').length, 1);
   const frame = sections[0].querySelector('iframe');
   const added = doc.createElement('div');
-  added.innerHTML = markup('third');
+  added.innerHTML = feed('third');
   added.querySelector('[data-comments]').dataset.commentsReturn = '/blog/page/2/';
   doc.body.append(added);
   initComments(added);
   initComments(doc);
+  added.querySelector('button[data-action="comments-expand"]').click();
   assert.equal(doc.querySelectorAll('iframe').length, 2);
   assert.equal(new URL(added.querySelector('iframe').src).searchParams.get('origin'), 'https://example.com/blog/page/2/#comments-third');
   assert.equal(sections[0].querySelector('iframe'), frame);
   const detail = setup(markup('detail', false), 'https://example.com/articles/detail/#comments');
   initComments(detail.doc);
-  assert.equal(detail.doc.querySelector('[data-comments-expand]'), null);
+  assert.equal(detail.doc.querySelector('[data-action="comments-expand"]'), null);
   assert.equal(detail.doc.querySelector('[data-comments-content]').hasAttribute('aria-hidden'), false);
   assert.equal(new URL(detail.doc.querySelector('iframe').src).searchParams.get('inputPosition'), 'top');
   dom.window.close(); detail.dom.window.close();
 });
 
 test('login_callback_keeps_the_comment_anchor_and_logout_updates_all_loaded_threads', () => {
-  const { dom, doc, sections, emit } = setup(undefined, 'https://example.com/blog/?giscus=test-session#comments-first');
+  const { dom, doc, sections, emit } = setup(feed('first') + markup('second'), 'https://example.com/blog/?giscus=test-session#comments-first');
   initComments(doc);
   assert.equal(dom.window.location.search, '');
   assert.equal(dom.window.location.hash, '#comments-first');
@@ -118,20 +127,20 @@ function observeVisibility(window) {
   return observers;
 }
 
-test('offscreen_threads_load_only_when_visible_or_expanded', () => {
-  const { dom, doc, sections, emit } = setup(markup('first') + markup('second') + markup('third'));
+test('detail_threads_load_when_visible_and_feed_threads_wait_for_their_button', () => {
+  const { dom, doc, sections, emit } = setup(markup('first') + markup('second') + feed('third'));
   const observers = observeVisibility(dom.window);
   initComments(doc);
   assert.equal(observers.length, 1);
   assert.equal(observers[0].options.rootMargin, '100% 0px');
+  assert.equal(observers[0].targets.has(sections[2]), false);
   assert.equal(doc.querySelectorAll('iframe').length, 0);
   observers[0].show(sections[1]);
   assert.equal(doc.querySelectorAll('iframe').length, 1);
   assert.ok(sections[1].querySelector('iframe'));
   assert.equal(observers[0].targets.has(sections[1]), false);
-  sections[2].querySelector('button[data-comments-expand]').click();
+  sections[2].querySelector('button[data-action="comments-expand"]').click();
   assert.equal(doc.activeElement, sections[2].querySelector('iframe'));
-  assert.equal(observers[0].targets.has(sections[2]), false);
   assert.equal(sections[0].querySelector('iframe'), null);
   emit(1, { resizeHeight: 300 });
   assert.equal(Number.parseFloat(sections[1].querySelector('iframe').style.height), 300);
@@ -141,7 +150,7 @@ test('offscreen_threads_load_only_when_visible_or_expanded', () => {
 });
 
 test('linked_thread_loads_immediately_even_when_offscreen', () => {
-  const { dom, doc, sections } = setup(markup('first') + markup('second'), 'https://example.com/blog/#comments-second');
+  const { dom, doc, sections } = setup(feed('first') + feed('second'), 'https://example.com/blog/#comments-second');
   observeVisibility(dom.window);
   initComments(doc);
   assert.equal(sections[0].querySelector('iframe'), null);

@@ -6,7 +6,7 @@
   한국어 | <a href="README.en.md">English</a>
 </p>
 
-[woonyong.com](https://woonyong.com)의 소스입니다. 개인 소개와 Blog 글을 Markdown으로 작성하고 정적 HTML로 발행합니다. 공개를 승인한 원고만 가져오며, 디자인·도표는 공통 패키지를 쓰고 Markdown 해석은 내부 문서 렌더러(`src/document`)가 맡습니다.
+[woonyong.com](https://woonyong.com)의 소스입니다. 개인 소개와 Blog 글을 Markdown으로 작성하고 정적 HTML로 발행합니다. 공개를 승인한 원고만 가져오며, 디자인은 공통 패키지를 쓰고 Markdown 해석은 내부 문서 렌더러(`src/document`)가 맡습니다.
 
 > [!NOTE]
 > 개발 중입니다. 배포판은 없고 소스에서 빌드해 실행합니다.
@@ -35,7 +35,7 @@ Search 카드는 대표 이미지가 없으면 제목 표지를 자동으로 표
 ## 작동 방식
 
 1. 승인된 Blog Markdown·작성 설정·자산을 읽고 발행 목록과 대조합니다.
-2. 내부 문서 렌더러(`src/document`)가 본문을 해석하고 DiagramPlay가 도표를 컴파일합니다.
+2. 내부 문서 렌더러(`src/document`)가 본문을 해석합니다. 도표는 이미지로 넣습니다.
 3. 홈페이지가 페이지를 조립하고 내부 링크·앵커·자산을 검사합니다.
 4. 검사를 통과하면 `dist/site/`의 발행 결과를 교체합니다.
 
@@ -54,7 +54,7 @@ npm run content:check
 
 | 구분 | 범위 |
 |---|---|
-| 구현 | 개인 소개, Search 목록·검색·태그, Blog 최근 본문 피드, RSS, 댓글, Markdown·도표 발행, 관리자에게만 보이는 글 작성·출간·수정(`/admin/`) |
+| 구현 | 개인 소개, Search 목록·검색·태그, Blog 최근 본문 피드, RSS, 댓글, Markdown 발행, 관리자에게만 보이는 글 작성·출간·수정(`/admin/`) |
 | 제한 | 발행 화면은 라이트 테마 고정, 코드 실행 환경 없음, 구독 전송 주소 미설정 |
 | 다음 | [전체 검수](https://github.com/woonyong-choi/homepage/issues/215), [통합 검증](https://github.com/woonyong-choi/homepage/issues/28), [사이트 표식](https://github.com/woonyong-choi/homepage/issues/303) |
 
@@ -81,12 +81,6 @@ npm run check:product
 npm run check:tokens
 ```
 
-CI는 Node.js 22에서 설치·토큰 검사·제품 검사·빌드를 실행합니다. 디자인·DiagramPlay는 고정 커밋으로 설치합니다. 문서 렌더러는 이 저장소의 `src/document`에 있습니다. 공통 구성 요소를 고치려면 원본 저장소를 수정한 뒤 [스타일 수정 지도](docs/design/styles.md#갱신)에 따라 의존성을 갱신합니다.
-
-발행 흐름 그림은 설치한 DiagramPlay로 다시 만듭니다.
-
-```sh
-node node_modules/diagramplay/src/cli.js render docs/assets/publication-flow.diagramplay --strict --static
-```
+CI는 Node.js 22에서 설치·토큰 검사·제품 검사·빌드를 실행합니다. 디자인은 고정 커밋으로 설치합니다. 문서 렌더러는 이 저장소의 `src/document`에 있습니다. 공통 구성 요소를 고치려면 원본 저장소를 수정한 뒤 [스타일 수정 지도](docs/design/styles.md#갱신)에 따라 의존성을 갱신합니다.
 
 운영용 빌드는 `SITE_ORIGIN=https://woonyong.com npm run build:site -- --production`으로 만듭니다. GitHub Actions의 `Deploy woonyong.com`을 `main`에서 수동 실행하면 검사 후 GitHub Pages에 배포합니다.

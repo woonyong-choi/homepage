@@ -60,7 +60,7 @@ export function initComments(root) {
     const fallback = section.querySelector('[data-comments-fallback]');
     const viewport = section.querySelector('.app-comments-viewport');
     const content = section.querySelector('[data-comments-content]');
-    const expand = section.querySelector('[data-comments-expand]');
+    const expand = section.querySelector('[data-action="comments-expand"]');
     let frame;
     let timeout;
     let failed = false;
@@ -161,6 +161,8 @@ export function initComments(root) {
     if (view.location.hash === `#${section.id}`) {
       if (expand) showFull();
       else load();
+    } else if (expand) {
+      // 피드의 댓글은 '댓글 보기'를 누를 때만 불러온다.
     } else if (state.observer) {
       // 화면 근처에 오기 전까지 iframe을 만들지 않아 연속 읽기의 요청 수를 보이는 글로 제한한다.
       state.pending.set(section, () => load());

@@ -270,12 +270,6 @@ export function loadHomeContent(technologies, root = ROOT, { preview = false, re
   return parseHomeSections({ sections: sections.map(section => section === interviews[0] ? replacement : section) }, options);
 }
 
-export function loadHomeNavigation(root = ROOT, readContent = readContentFile) {
-  const { metadata } = readContent(join(root, HOME_CONTENT));
-  record(metadata, '(최상위)', ['navigation', 'sections']);
-  return parseHomeNavigation(metadata.navigation ?? []);
-}
-
 export function parseHomeNavigation(value) {
   const seen = new Set();
   return list(value, 'navigation').map((entry, index) => {

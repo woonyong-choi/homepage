@@ -5,8 +5,6 @@ import { WIDTH_OPTION, parseOptions } from './directive-syntax.js';
 import { createEnv } from './units.js';
 
 const CODE_ATTRIBUTES = Object.freeze({ width: WIDTH_OPTION, filename: { type: 'text' } });
-const BLOCK_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const DIAGRAM_ATTRIBUTES = Object.freeze({ width: WIDTH_OPTION, name: { type: 'text' } });
 
 // 항목 목록 안의 Markdown 필드. 필드 순서는 구성 요소가 본문을 그리는 순서이며 구성 요소 번호와 각주 ID가 이 순서를 따른다.
 const itemBodies = (data, field = 'body') =>
@@ -137,32 +135,11 @@ function classifyFence(state, token) {
     throw new DirectiveError(message, { page: env.pageId, line, name });
   };
   const optionSource = kind.replace(/^\S+\s*/, '');
-  if (/^diagramplay(?:\s|$)/.test(kind)) {
-    if (env.context.features?.diagrams === false) {
-      fail(
-        'DiagramPlay 도표가 꺼져 있습니다. 호스트 설정의 features.diagrams를 켜야 쓸 수 있습니다',
-        'diagramplay',
-      );
-    }
-    const checks = { vocabulary: env.context.vocabulary };
-    const options = parseOptions(optionSource, DIAGRAM_ATTRIBUTES, fail, checks);
-    if (options.name !== undefined && !BLOCK_NAME.test(options.name)) {
-      fail('name은 영문 소문자·숫자와 가운데 하이픈(-)만 쓸 수 있습니다 (예: name=flow-1)');
-    }
-    recordDiagram(env, token, options);
-    return { role: 'diagram', options };
-  }
   if (kind.startsWith('ui:')) return classifyComponent(state, token, kind, fail);
   const options = parseOptions(optionSource, CODE_ATTRIBUTES, fail, {
     vocabulary: env.context.vocabulary,
   });
   return { role: 'code', options };
-}
-
-// 같은 원문은 한 번만 만든다. 도표 생성은 렌더러 밖의 worker가 맡으므로 원문과 줄만 모은다.
-function recordDiagram(env, token, options) {
-  if (env.diagrams.some((diagram) => diagram.source === token.content)) return;
-  env.diagrams.push({ source: token.content, line: fenceLine(env, token), width: options.width });
 }
 
 function classifyComponent(state, token, kind, fail) {

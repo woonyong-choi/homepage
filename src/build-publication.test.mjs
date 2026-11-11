@@ -70,6 +70,7 @@ test('build_with_posts_writes_feed_sitemap_pages_and_rewritten_links', { timeout
   // 글 작성 화면은 만들지만 사이트맵에는 넣지 않는다.
   assert.ok(report.routes.includes('/admin/'));
   assert.deepEqual([...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)].map(match => match[1]), report.routes.filter(route => route !== '/admin/'));
+  assert.match(sitemap, /<loc>[^<]*\/blog\/[^<]+\/<\/loc><lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/, "글 주소는 수정일을 적는다");
   assert.equal(read(output, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
 
   const article = read(output, 'blog/first-post/index.html');
@@ -82,6 +83,23 @@ test('build_with_posts_writes_feed_sitemap_pages_and_rewritten_links', { timeout
 
   const second = read(output, `blog/page/2/index.html`);
   assert.match(second, /\/blog\/first-post\//);
+
+  // 공개 페이지는 관리 화면 스타일이 빠진 CSS를, 로그인 화면은 관리 CSS를 싣는다. 관리 로더는 내용 해시가 채워진 관리 CSS 주소를 받는다.
+  const sheet = html => /<link rel="stylesheet" href="(\/theme\/(?:publication|admin)\.css)\?v=([0-9a-f]+)"/.exec(html);
+  assert.equal(sheet(article)[1], '/theme/publication.css');
+  const adminHtml = read(output, 'admin/index.html');
+  assert.equal(sheet(adminHtml)[1], '/theme/admin.css');
+  assert.match(article, new RegExp(`/theme/admin\\.css\\?v=${sheet(adminHtml)[2]}`));
+  const publicCss = read(output, 'theme/publication.css');
+  const adminCss = read(output, 'theme/admin.css');
+  assert.ok(publicCss.length < adminCss.length);
+  assert.doesNotMatch(publicCss, /\.app-publish\b/);
+  assert.match(adminCss, /\.app-publish\b/);
+  // 토큰은 스타일 파일 하나에 합쳐 싣고, 라이트로 고정한 사이트라 다크 블록이 없다.
+  assert.equal(existsSync(join(output, 'theme/tokens.css')), false);
+  assert.doesNotMatch(article, /\/theme\/tokens\.css/);
+  assert.match(publicCss, /^:root\{--/);
+  assert.doesNotMatch(publicCss, /prefers-color-scheme|data-theme=/);
 });
 
 test('production_build_uses_site_origin_and_allows_robots', { timeout: 300000 }, async t => {

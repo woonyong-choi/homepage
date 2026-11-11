@@ -6,7 +6,7 @@
   <a href="README.md">한국어</a> | English
 </p>
 
-This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content, uses shared packages for design and diagrams, and parses Markdown with its internal document renderer in `src/document`.
+This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content, uses the shared design package, and parses Markdown with its internal document renderer in `src/document`.
 
 > [!NOTE]
 > In development. There are no releases; build from source.
@@ -33,7 +33,7 @@ For a blog with public content only, a static site tool without a separate appro
 ## How it works
 
 1. Read approved Blog Markdown, author settings, and assets, then check them against the publication manifest.
-2. Parse the content with the internal document renderer (`src/document`) and compile diagrams with DiagramPlay.
+2. Parse the content with the internal document renderer (`src/document`). Diagrams are added as images.
 3. Assemble pages and check internal links, anchors, and assets.
 4. Replace the publication output in `dist/site/` after the checks pass.
 
@@ -52,7 +52,7 @@ npm run content:check
 
 | Area | Scope |
 |---|---|
-| Implemented | Personal introduction, Search list, search and tags, recent Blog feed, RSS, comments, Markdown and diagram publication, admin-only writing, publishing and editing on the site (`/admin/`) |
+| Implemented | Personal introduction, Search list, search and tags, recent Blog feed, RSS, comments, Markdown publication, admin-only writing, publishing and editing on the site (`/admin/`) |
 | Limitations | Published pages use the light theme, code execution is unavailable, and the subscription endpoint is not configured |
 | Next | [Full audit](https://github.com/woonyong-choi/homepage/issues/215), [integration checks](https://github.com/woonyong-choi/homepage/issues/28), [site mark](https://github.com/woonyong-choi/homepage/issues/303) |
 
@@ -81,12 +81,6 @@ npm run check:product
 npm run check:tokens
 ```
 
-CI runs installation, token checks, product checks, and the build on Node.js 22. The design package and DiagramPlay use pinned Git commits. The document renderer lives in this repository under `src/document`. To change shared components, update their source repository and follow [스타일 수정 지도](docs/design/styles.md#갱신) to update the dependency.
-
-Regenerate the publication diagram with the installed DiagramPlay version.
-
-```sh
-node node_modules/diagramplay/src/cli.js render docs/assets/publication-flow.diagramplay --strict --static
-```
+CI runs installation, token checks, product checks, and the build on Node.js 22. The design package uses a pinned Git commit. The document renderer lives in this repository under `src/document`. To change shared components, update their source repository and follow [스타일 수정 지도](docs/design/styles.md#갱신) to update the dependency.
 
 Create a production build with `SITE_ORIGIN=https://woonyong.com npm run build:site -- --production`. Run the `Deploy woonyong.com` GitHub Actions workflow manually on `main` to check the site and deploy it to GitHub Pages.

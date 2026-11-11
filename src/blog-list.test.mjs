@@ -56,7 +56,7 @@ test('appended_page_loads_every_shared_runtime_and_math_stylesheet_once', async 
   const dom = new JSDOM(blogFeed(entries, {}, 1), { url: 'https://example.com/blog/' });
   const root = dom.window.document.querySelector('[data-blog-list]');
   const runtimes = [...Object.keys(RUNTIMES), 'comments.js'];
-  const head = [...runtimes, 'publication.js', 'footer-year.js'].map(file => `<script type="module" src="/${file}?v=1"></script>`).join('')
+  const head = [...runtimes, 'publication.js'].map(file => `<script type="module" src="/${file}?v=1"></script>`).join('')
     + `<script type="module" src="https://other.example/flows.js"></script><link rel="stylesheet" href="${MATH_STYLESHEET}?v=2" data-math-stylesheet>`;
   const loaded = [];
   initBlogList(root, { Observer: null, loadModule: async url => { loaded.push(url); }, fetchPage: async () => response(`<html><head>${head}</head><body>${blogFeed(entries, {}, 2)}</body></html>`) });

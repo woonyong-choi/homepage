@@ -9,8 +9,6 @@ import {
   DEFAULT_THEME_FILES,
   MATH_STYLESHEET,
   ThemeError,
-  compileDiagram,
-  compileDiagrams,
   documentEngine,
   mathAssets,
 } from '../index.js';
@@ -240,48 +238,6 @@ test('math_assets_are_local_woff2_only', () => {
   assert.doesNotMatch(css, /https?:|\.woff\b|\.ttf|@import/);
   assert.ok(files.has('/katex/LICENSE'));
 });
-
-test('diagramplay_compiles_to_data_and_embeds_without_blocking_the_document', async () => {
-  const flow =
-    'diagramplay\ntitle "Mini"\nbox a "A"\nbox b "B"\na -> b "go"\n\nscene "S"\n  a -> b "x"\n';
-  const first = await compileDiagram(flow);
-  assert.match(first.src, /^\/diagrams\/[0-9a-f]{64}\.html$/);
-  assert.equal(first.title, 'Mini');
-  assert.ok(first.dimensions.width > 0 && first.html.length > 1000);
-  assert.equal(
-    (await compileDiagram(flow)).src,
-    first.src,
-    'the same source maps to the same asset',
-  );
-
-  const source = `\`\`\`diagramplay width=wide\n${flow}\`\`\`\n\n\`\`\`diagramplay\nnot a figure\n\`\`\`\n\n\`\`\`diagramplay\nnever compiled\n\`\`\`\n`;
-  const document = await parse(source);
-  const { diagrams, assets: files } = await compileDiagrams(
-    document.metadata.diagrams.map((item) => item.source).slice(0, 2),
-  );
-  assert.deepEqual([...files.keys()], [first.src]);
-  const output = await render(document, { diagrams });
-  assert.deepEqual(
-    output.diagrams.map((item) => [item.line, item.status]),
-    [
-      [1, 'embedded'],
-      [12, 'failed'],
-      [16, 'pending'],
-    ],
-  );
-  assert.match(
-    output.html,
-    /<figure class="app-diagram app-width-wide"><iframe data-diagram src="\/diagrams\//,
-  );
-  assert.match(output.html, /language-text|Plain text/, 'a pending diagram stays readable source');
-  assert.deepEqual(
-    output.diagnostics.map((item) => [item.stage, item.component, item.line]),
-    [['render', 'diagramplay', 12]],
-  );
-  // 도표 틀(diagram.js)과, 코드로 남은 도표 원문의 복사 도구(document.js).
-  assert.deepEqual(output.runtime.toSorted(), ['diagram.js', 'document.js']);
-});
-
 // 검토 보완: props 분리, 열기 실패 뒤 닫기 억제, 모든 throw 값 정규화, 성공한 자산 주소만 기록.
 const broken = (calls) => ({
   open: () => {
@@ -544,20 +500,6 @@ test('image_attributes_escape_asset_urls_and_reject_unsafe_urls_and_sizes', asyn
     assert.doesNotMatch(bad.html, /onerror=/);
   }
 });
-
-test('diagramplay_name_never_reaches_the_rendered_html_or_the_diagram_path', async () => {
-  const flow = 'diagramplay\nsame\n';
-  const embed = { src: '/diagrams/abc.html', title: 't', dimensions: { width: 10, height: 10 } };
-  const diagrams = new Map([[flow, embed]]);
-  const html = async (info) =>
-    (await render(await parse(`\`\`\`${info}\n${flow}\`\`\`\n`), { diagrams })).html;
-  const plain = await html('diagramplay');
-  assert.match(plain, /<iframe data-diagram src="\/diagrams\/abc\.html"/);
-  assert.equal(await html('diagramplay name=secret-name'), plain);
-  assert.doesNotMatch(await html('diagramplay width=wide name=secret-name'), /secret-name/);
-  assert.match(await html('diagramplay width=wide name=secret-name'), /app-width-wide/);
-});
-
 test('footnote_ids_carry_the_page_id_so_documents_in_one_feed_do_not_collide', async () => {
   const note = (label) => `본문[^1]\n\n[^1]: ${label}\n`;
   const [first, second] = await Promise.all(

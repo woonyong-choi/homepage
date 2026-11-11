@@ -49,9 +49,9 @@ npm run check:product     # 계약 테스트
 
 ### 상단 메뉴
 
-공개 페이지의 오른쪽 위 메뉴는 Search `/search/`와 Blog `/blog/`다. 두 화면은 같은 공개 글을 사용한다. 기존 `content/home.md`의 `navigation`은 개인 미리보기 호환 입력으로 보존한다. 공개 탐색을 바꾸려고 승인 사본을 직접 수정하지 않는다.
+공개 페이지의 오른쪽 위 메뉴는 Search `/search/`와 Blog `/blog/`다. 두 화면은 같은 공개 글을 사용한다. 기존 `content/home.md`의 `navigation`은 Vault 원고 호환 입력으로 형식만 검사한다. 공개 탐색을 바꾸려고 승인 사본을 직접 수정하지 않는다.
 
-개인 미리보기의 `navigation`은 목록 순서가 표시 순서이며 각 항목의 `label`은 문구, `href`는 주소다. `match`는 선택 상태로 표시할 URL 접두사 목록이고 생략하면 `href`를 사용한다. 여러 항목에 맞으면 가장 긴 접두사가 우선하며 `/`는 홈에서만 선택된다. 중복 `href`와 안전하지 않은 주소는 오류다. 빈 목록은 해당 호스트의 오른쪽 메뉴를 숨긴다.
+홈 원고의 `navigation`은 Vault 원고와의 호환 입력이다. 공개 빌드는 이 값을 화면에 쓰지 않고 형식만 검사한다(`label`, `href`, `match`, 중복·안전하지 않은 주소 오류).
 
 Blog 목록·검색·태그 조건은 [기록 탐색과 화면 구성](knowledge-navigation.md)을 따른다.
 
@@ -99,7 +99,7 @@ sections:
 소개 문장입니다.
 ```
 
-`content/pages/tech.md`의 YAML에는 `id`, `type: technologies`, `icon`, 기술 이름 목록인 `items`를 둔다. 홈의 기술 흐름은 `items` 순서를 사용하며 각 로고는 `/search/?tag=python`처럼 Blog의 해당 태그로 연결한다. 첫 제목과 문단은 기술 구간의 소개다. 기존 `topics`는 개인 위키 미리보기·동기화 호환 입력이며 공개 주제 목록이나 글 분류로 사용하지 않는다.
+`content/pages/tech.md`의 YAML에는 `id`, `type: technologies`, `icon`, 기술 이름 목록인 `items`를 둔다. 홈의 기술 흐름은 `items` 순서를 사용하며 각 로고는 `/search/?tag=python`처럼 Blog의 해당 태그로 연결한다. 첫 제목과 문단은 기술 구간의 소개다. 기존 `topics`는 Vault 동기화 호환 입력이며 공개 주제 목록이나 글 분류로 사용하지 않는다.
 
 `content/interviews/index.md`도 YAML의 `id`, `type: interviews`, `icon`, `links`, `items`와 첫 제목·소개 문단으로 구성한다. `example: true`인 카드는 미리보기에서만 보인다. 빈 `items`에는 자동으로 예시를 추가하지 않는다.
 
@@ -165,7 +165,7 @@ items:
 
 기술 이름을 가리키는 로고는 design-tokens의 `brands` 카탈로그가 소유한다. 홈페이지는 `/theme/assets/icons/`로 발행하는 정본 파일과 출처·라이선스 고지를 소비한다. `content/assets/brands/`나 `config/assets.json`에 로고 사본과 중복 출처 기록을 추가하지 않는다.
 
-`src/brand-icons.mjs`는 공통 카탈로그의 `brands`에서만 이름과 표시 이름을 찾는다. 홈의 기술 줄은 이 조회를 사용하고 로고를 공통 `LogoItem`으로 싣는다. 새 로고와 출처·고지는 design-tokens 정본에 추가한 뒤 고정 의존성을 갱신해 가져온다. 발행과 개인 미리보기는 같은 카탈로그와 정본 고지를 사용한다. `src/brand-icons.test.mjs`가 카탈로그 조회·발행 경로·고지·미등록 이름 처리를 검사한다. 공개 글·카드·검색 결과에는 장식 글 아이콘을 넣지 않는다. 개인 위키 미리보기의 기존 `contentIcon` 조회는 유지한다.
+`src/brand-icons.mjs`는 공통 카탈로그의 `brands`에서만 이름과 표시 이름을 찾는다. 홈의 기술 줄은 이 조회를 사용하고 로고를 공통 `LogoItem`으로 싣는다. 새 로고와 출처·고지는 design-tokens 정본에 추가한 뒤 고정 의존성을 갱신해 가져온다. 발행은 같은 카탈로그와 정본 고지를 사용한다. `src/brand-icons.test.mjs`가 카탈로그 조회·발행 경로·고지·미등록 이름 처리를 검사한다. 공개 글·카드·검색 결과에는 장식 글 아이콘을 넣지 않는다.
 
 기술 구간 제목의 장식 PNG는 표시하지 않는다. 기술 로고 목록과 활성·비활성 규칙은 제목 장식의 표시 여부와 별개로 유지한다. 홈페이지 전용 크기나 스타일을 추가하지 않는다.
 

@@ -4,7 +4,6 @@ import { readFileSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
-import { privateWikiArticle } from './private-wiki-layout.mjs';
 import { thumbnailImage } from './post-article.mjs';
 import { THEME_ROOT } from './design-package.mjs';
 
@@ -67,21 +66,12 @@ test('thumbnail_without_registered_dimensions_does_not_guess_an_aspect_ratio', (
   assert.doesNotMatch(html, /\s(?:width|height)=/);
 });
 
-test('wiki_detail_places_the_heading_outline_beside_the_reading_column', async () => {
-  const page = { ...(await post('wiki')), sourceUrl: 'https://example.com/source' };
-  const html = privateWikiArticle(page, { topics }, '<section id="comments">댓글</section>');
-  assert.match(html, /^<main id="main" class="app-shell app-document-shell"><section class="app-search/);
-  assert.doesNotMatch(html, /class="app-tag is-medium"/);
-  assert.match(html, /class="app-document-layout" data-document-layout/);
-  assert.match(html, /<h1 class="app-article-title"><span class="app-content-icon is-medium">/);
-  const positions = order(html, ['data-public-search', 'app-document-outline', 'app-document-content', 'app-article-title', 'app-document-lead', 'app-document-metadata', 'app-document-body', 'app-source-link', 'id="comments"']);
-  assert.doesNotMatch(html, /app-document-sidebar|app-document-pager/);
-  assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
-  assert.match(html.match(/<details class="app-document-nav"[^>]*>/)[0], /\sopen/);
-  assert.doesNotMatch(html, />문서 목록<|>이 글의 목차</);
-  // 목차도 좁은 화면에서 접히는 패널이며 넓은 화면에서는 요약 줄을 숨긴 채 펼친다.
-  assert.match(html, /<aside class="app-document-outline"><details class="app-document-nav" data-document-panel open><summary aria-label="본문 목차"><span>목차<\/span><\/summary><nav aria-label="본문 목차">/);
-  assert.match(html, /<h2 id="sample-큰-제목" class="app-heading-1">/);
+test('blog_detail_outline_is_closed_by_default_and_opens_on_wide_screens_by_css', async () => {
+  const page = await post('blog');
+  const html = articlePage(page, { topics });
+  // 목차는 닫힌 채 내려보내고 넓은 화면은 CSS·스크립트가 펼친다. 좁은 화면에서 본문이 밀리지 않게 하기 위함.
+  assert.doesNotMatch(html.match(/<details class="app-document-nav"[^>]*>/)[0], /\sopen/);
+  assert.match(html, /<aside class="app-document-outline"><details class="app-document-nav" data-document-panel><summary aria-label="본문 목차"><span>목차<\/span><\/summary><nav aria-label="본문 목차">/);
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
 });
 

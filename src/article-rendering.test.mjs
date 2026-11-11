@@ -187,16 +187,3 @@ test('the_markdown_guide_example_renders_every_supported_construct_and_round_tri
 });
 
 
-// 템플릿 기본값은 일반 Markdown만 허용하고, config/features.json에서 도표를 켠다.
-test('optional_features_default_off_and_reject_disabled_syntax_with_the_setting_name', async () => {
-  const { parseFeatures } = await import('./site-features.mjs');
-  assert.deepEqual({ ...parseFeatures() }, { diagrams: false });
-  assert.deepEqual({ ...parseFeatures({ diagrams: true }) }, { diagrams: true });
-  assert.throws(() => parseFeatures({ tabs: true }), /알 수 없는 기능/);
-  assert.throws(() => parseFeatures({ diagrams: 'yes' }), /true 또는 false/);
-  const { parseArticle } = await import('./article-renderer.mjs');
-  const page = body => ({ id: 'feature-check', body });
-  const diagram = '```diagramplay\nA\n```\n';
-  await assert.rejects(parseArticle(page(diagram), { features: parseFeatures() }), /features\.diagrams/);
-  await parseArticle(page(diagram), { features: parseFeatures({ diagrams: true }) });
-});
