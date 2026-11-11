@@ -81,16 +81,17 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
     output.set(route, documentShell({ route, title, ...metadata }, body, context));
   };
   add('/', context.home.find(section => section.type === 'hero')?.title ?? siteTitle(config), personalHome(context));
-  add('/search/', layout.search.title, searchListing(posts, tags, { layout }));
+  // 목록 페이지도 검색 결과와 공유 카드에 페이지 성격에 맞는 설명을 쓴다. 쪽 번호가 있는 피드는 제목에 쪽을 붙여 제목이 겹치지 않게 한다.
+  add('/search/', layout.search.title, searchListing(posts, tags, { layout }), { description: `${config.name}의 글을 검색어와 태그로 찾습니다.` });
   const commentTheme = commentThemeUrl(config, { origin, themeHash: MANIFEST.contentHash });
   const commentConfig = { ...config.comments, repo: config.repository };
   for (let page = 1; page <= Math.max(1, Math.ceil(posts.length / layout.blog.feedSize)); page++) {
-    add(page === 1 ? '/blog/' : `/blog/page/${page}/`, layout.blog.title, blogFeed(posts, tags, page, { commentConfig, commentTheme, layout }));
+    add(page === 1 ? '/blog/' : `/blog/page/${page}/`, page === 1 ? layout.blog.title : `${layout.blog.title} ${page}쪽`, blogFeed(posts, tags, page, { commentConfig, commentTheme, layout }), { description: `${config.name}의 글을 최신순으로 이어 읽습니다.` });
   }
   for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
   // 관리자 로그인 화면은 설정이 있을 때만 만들고 검색 엔진과 사이트맵에서 뺀다.
   if (context.admin) add('/admin/', '로그인', adminPage(config, context, context.admin), { noindex: true, bare: true });
-  const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', noindex: true }, notFoundPage(), context);
+  const notFound = documentShell({ route: NOT_FOUND_FILE, title: '페이지를 찾을 수 없습니다', description: '요청한 주소의 페이지가 없습니다. 홈, 블로그, 검색으로 이동할 수 있습니다.', noindex: true }, notFoundPage(), context);
   await writeSite(output, posts, context, scripts, notFound, outputRoot);
   return { pages: output.size, documents: posts.length, themeHash: MANIFEST.contentHash };
 }
@@ -184,7 +185,9 @@ async function writeSite(output, posts, context, scripts, notFound, outputRoot) 
 
 export function blogFeedXml(posts, { title, description, origin }) {
   const items = posts.map(page => `<item><title>${escape(page.title)}</title><link>${escape(origin + page.route)}</link><guid isPermaLink="false">${page.id}</guid><pubDate>${new Date(page.publishedAt).toUTCString()}</pubDate><description>${escape(page.description)}</description></item>`).join('');
-  return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>${escape(title)}</title><link>${escape(origin + '/blog/')}</link><description>${escape(description)}</description>${items}</channel></rss>`;
+  // 구독기가 피드 주소와 갱신 시각을 알 수 있게 자기 주소(atom:link)와 마지막 글 날짜를 적는다.
+  const updated = posts.map(page => page.updatedAt ?? page.publishedAt).sort().at(-1);
+  return `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>${escape(title)}</title><link>${escape(origin + '/blog/')}</link><atom:link href="${escape(origin + '/blog/feed.xml')}" rel="self" type="application/rss+xml"/><description>${escape(description)}</description><language>ko</language>${updated ? `<lastBuildDate>${new Date(updated).toUTCString()}</lastBuildDate>` : ''}${items}</channel></rss>`;
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

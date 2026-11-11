@@ -40,7 +40,8 @@ test('blog_feed_xml_escapes_and_orders_items', () => {
     { id: 'b', route: '/blog/b/', title: 'B & <C>', description: '"설명"', publishedAt: '2026-01-02' },
     { id: 'a', route: '/blog/a/', title: 'A', description: 'a', publishedAt: '2026-01-01' },
   ], { title: '사이트 & 기록', description: '소개', origin: ORIGIN });
-  assert.match(xml, /^<\?xml version="1.0" encoding="UTF-8"\?><rss version="2.0"><channel><title>사이트 &amp; 기록<\/title><link>https:\/\/example.test\/blog\/<\/link>/);
+  assert.match(xml, /^<\?xml version="1.0" encoding="UTF-8"\?><rss version="2.0" xmlns:atom="http:\/\/www.w3.org\/2005\/Atom"><channel><title>사이트 &amp; 기록<\/title><link>https:\/\/example.test\/blog\/<\/link><atom:link href="https:\/\/example.test\/blog\/feed.xml" rel="self" type="application\/rss\+xml"\/>/);
+  assert.match(xml, /<language>ko<\/language><lastBuildDate>Fri, 02 Jan 2026 00:00:00 GMT<\/lastBuildDate>/);
   assert.match(xml, /<item><title>B &amp; &lt;C&gt;<\/title><link>https:\/\/example.test\/blog\/b\/<\/link><guid isPermaLink="false">b<\/guid><pubDate>Fri, 02 Jan 2026 00:00:00 GMT<\/pubDate>/);
   assert.ok(xml.indexOf('/blog/b/') < xml.indexOf('/blog/a/'));
   assert.ok(xml.endsWith('</channel></rss>'));
