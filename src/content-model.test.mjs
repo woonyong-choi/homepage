@@ -1,7 +1,7 @@
 import { collectPosts, comparePosts, readPost } from './blog-model.mjs';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { readDocument, paginate } from './content-model.mjs';
+import { paginate } from './content-model.mjs';
 
 const TAGS = { javascript: { label: 'JavaScript', aliases: ['JS'] } };
 function source(changes = {}) {
@@ -19,13 +19,9 @@ test('publication_contract_excludes_drafts_and_future_posts', () => {
   assert.deepEqual(collectPosts([example], { includeExamples: true }).map(page => page.id), ['a']);
 });
 
-test('document_type_controls_the_public_route_without_changing_the_comment_identity', () => {
-  const blog = readPost(source());
-  const wiki = readDocument(source({ type: 'wiki' }), TAGS);
-  assert.deepEqual([blog.route, wiki.route], ['/blog/a/', '/docs/a/']);
-  assert.equal(blog.id, wiki.id);
+test('blog_posts_use_the_blog_route_and_reserve_list_slugs', () => {
+  assert.equal(readPost(source()).route, '/blog/a/');
   for (const slug of ['all', 'page', 'feed']) assert.throws(() => readPost(source({ slug })), /reserved post slug/);
-  assert.throws(() => readDocument(source({ type: 'wiki', slug: 'topics' }), TAGS), /reserved document slug/);
 });
 
 test('publication_contract_rejects_missing_comments_invalid_dates_and_tags', () => {
@@ -38,15 +34,6 @@ test('publication_contract_rejects_missing_comments_invalid_dates_and_tags', () 
 test('publication_contract_rejects_numeric_document_identity', () => {
   for (const key of ['id', 'slug']) {
     assert.throws(() => readPost(source({ [key]: 123 })), new RegExp(`invalid post ${key}`));
-  }
-});
-
-test('publication_contract_accepts_only_optional_slug_parents', () => {
-  for (const parent of [undefined, null, 'public-parent']) {
-    assert.equal(readDocument(source({ type: 'wiki', parent }), TAGS).parent, parent);
-  }
-  for (const parent of ['', 12, {}, [], '../private', 'invalid parent']) {
-    assert.throws(() => readDocument(source({ type: 'wiki', parent }), TAGS), /invalid parent: a/);
   }
 });
 
@@ -89,24 +76,8 @@ test('thumbnail_accepts_https_without_credentials_and_rejects_unsafe_urls', () =
 // #141: 내부 분류와 공유 태그의 어휘가 서로 독립적이며 태그가 없는 글도 읽는다.
 test('category_is_independent_from_optional_shared_tags', () => {
   const now = new Date('2026-10-10');
-  const categories = { os: { label: 'OS' } };
-  const wiki = readDocument(source({ type: 'wiki', category: 'os', tags: [] }), TAGS, now, categories);
-  assert.deepEqual(wiki.tags, []);
-  assert.equal(wiki.category, 'os');
+  assert.deepEqual(readPost(source({ category: 'os', tags: [] }), { now }).tags, []);
   const tagged = readPost(source({ category: 'os' }), { now });
   assert.deepEqual(tagged.tags, ['javascript']);
-  assert.throws(() => readDocument(source({ type: 'wiki', category: 'missing' }), TAGS, now, categories), /invalid category/);
 });
 
-// Vault 발행 검사(publishedPage)는 Blog 글도 readDocument로 판정한다. 초안은 읽되 published=false로 구분한다.
-test('read_document_accepts_blog_posts_for_the_vault_publish_check', () => {
-  const now = new Date('2026-10-08');
-  const page = readDocument(source(), TAGS, now);
-  assert.equal(page.type, 'blog');
-  assert.equal(page.route, '/blog/a/');
-  assert.equal(page.visibility, 'public');
-  assert.equal(page.published, true);
-  const draft = readDocument(source({ visibility: 'draft' }), TAGS, now);
-  assert.equal(draft.published, false);
-  assert.equal(draft.visibility, 'draft');
-});

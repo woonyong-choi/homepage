@@ -2,17 +2,14 @@
 publish: true
 id: example-document-composition
 slug: document-composition
-type: wiki
+type: blog
 title: 기기마다 다른 안내를 한 문서로 쓰는 법
 description: 단계 목록, 작은 글씨, 안내문, 질문과 답, 관련 글 카드를 Markdown 블록만으로 한 문서에 구성하는 예시입니다.
 tags: []
-field: cs
-contentIcon:
-  name: document
 visibility: public
 comments: false
 example: true
-category: software-design
+publishedAt: 2026-01-01
 ---
 
 단계 목록, 작은 글씨, 안내문, 질문과 답, 관련 글 카드를 Markdown 블록만으로 한 문서에 구성하는 예시입니다.

@@ -57,7 +57,7 @@ npm run build:site
 
 디자인 커밋은 홈페이지의 `package.json`이 정한다. DiagramPlay와 내부 문서 렌더러는 홈페이지가 설치한 디자인 한 벌을 함께 읽고, 서로 다른 디자인 패키지를 읽으면 빌드가 실패한다. 의존성 갱신은 홈페이지의 PR로 반영한다. 미리보기 댓글 테마는 고정 commit의 `dist/assets/giscus.css`를 jsDelivr에서 읽고, 운영 빌드는 사이트의 `/theme/assets/giscus.css`를 쓴다.
 
-공개 글의 제목·본문·카드는 공통 구성 요소의 배치를 사용하며 장식 글 아이콘은 넣지 않는다. 개인 위키 미리보기의 제목 아이콘은 해당 호스트 계약으로 유지한다. 홈 제목의 SVG는 `ContentIconImage`로, PNG는 원본 그림으로 공통 `SectionIntro` 자리에 조립한다. 코드와 도표의 블록 배경은 유지하며 도구 모음은 별도 흰색 면·테두리·그림자를 만들지 않는다. 버튼의 hover·키보드 초점·복사 상태는 두 제품이 같은 공통 동작을 사용한다.
+공개 글의 제목·본문·카드는 공통 구성 요소의 배치를 사용하며 장식 글 아이콘은 넣지 않는다. 홈 제목의 SVG는 `ContentIconImage`로, PNG는 원본 그림으로 공통 `SectionIntro` 자리에 조립한다. 코드와 도표의 블록 배경은 유지하며 도구 모음은 별도 흰색 면·테두리·그림자를 만들지 않는다. 버튼의 hover·키보드 초점·복사 상태는 두 제품이 같은 공통 동작을 사용한다.
 
 CI의 Node.js 검사 행렬은 `.github/workflows/validate.yml`이 정한다. DOM 검사와 수식 렌더러의 버전·전이 의존성은 `package.json`과 `package-lock.json`에서 관리한다.
 

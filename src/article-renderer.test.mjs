@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { renderArticle } from './article-renderer.mjs';
 import { articlePage } from './publication-layout.mjs';
-import { privateWikiArticle } from './private-wiki-layout.mjs';
 
 test('duplicate_introduction_moves_once_with_links_formatting_and_footnote_backlinks', async () => {
   const page = { id: 'a', description: 'Python 이름과 값.', body: '[Python](/wiki/python/) **이름**과 `값`.[^note]\n\n## 본문\n설명\n\n## 본문\n다음\n\n[^note]: 출처' };
@@ -27,17 +26,13 @@ test('only_the_complete_first_paragraph_can_be_promoted', async () => {
   assert.equal((await renderArticle({ id: 'a', description: '설명 내용', body: '설명\n내용\n\n다음 문단' })).html, '<p>다음 문단</p>\n');
 });
 
-test('detail_and_feed_share_the_lead_without_prose_rules_on_the_title_or_empty_related_sections', async () => {
+test('blog_detail_promotes_the_first_paragraph_to_the_lead', async () => {
   const page = { id: 'a', slug: 'a', route: '/articles/a/', title: '제목', description: '설명', body: '**설명**\n\n## 본문\n내용', type: 'wiki', tags: ['python'], contentIcon: { name: 'python' }, comments: true, publishedAt: '2026-01-01' };
   Object.assign(page, (await renderArticle(page)));
   const topics = { python: { label: 'Python' } };
-  const detail = privateWikiArticle(page, { topics });
-  assert.doesNotMatch(detail, /class="app-document app-prose"|함께 읽기/);
-  assert.match(detail, /app-document-lead"><strong>설명<\/strong>/);
   const post = { ...page, type: 'blog' };
   const blog = articlePage(post, { topics });
   assert.match(blog, /app-article-lead"><strong>설명<\/strong>/);
-  assert.doesNotMatch(detail, /app-related|app-search-entry/);
 });
 
 test('engine_diagnostics_and_failed_diagrams_stop_publication', async () => {

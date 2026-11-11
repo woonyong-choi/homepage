@@ -26,7 +26,7 @@
 
 초안과 미래 발행 글은 HTML·검색 색인·RSS·사이트맵에서 제외한다. 운영 빌드는 `example: true`인 글도 제외한다. 중복 ID·slug, 잘못된 날짜와 경로는 오류다. 태그는 임의의 문자열이며 등록되지 않은 태그라는 이유로 거부하지 않는다.
 
-공개 빌드는 위키를 Blog로 자동 변환하지 않는다. 승인된 `content/docs/` 입력이 있으면 결과를 쓰기 전에 중단한다. 기존 `cs`, `tech`, `topics` 설정과 위키의 `category`, `parent`는 개인 미리보기·동기화 호환 계약으로 보존한다. 공개 발행을 위해 승인 사본을 직접 수정하지 않는다.
+공개 빌드는 위키를 Blog로 자동 변환하지 않는다. 승인된 `content/docs/` 입력이 있으면 결과를 쓰기 전에 중단한다. 기존 `cs`, `tech`, `topics` 설정과 위키의 `category`, `parent`는 Vault 동기화 호환 입력으로만 남는다. 공개 발행을 위해 승인 사본을 직접 수정하지 않는다.
 
 ### 화면
 
@@ -93,7 +93,7 @@ HTML의 이미지·링크·poster, CSS의 상대 URL·import와 실제 런타임
 
 ### 문서와 블로그 탐색
 
-공개 경로는 `/search/`, `/blog/`, `/blog/page/<번호>/`, `/blog/<slug>/`, `/blog/feed.xml`이다. `/docs/`, `/projects/`, `/tags/`, `/blog/all/`, 옛 위키·분야 경로를 생성하지 않는다. 개인 미리보기의 옛 주소 해석 API는 유지한다.
+공개 경로는 `/search/`, `/blog/`, `/blog/page/<번호>/`, `/blog/<slug>/`, `/blog/feed.xml`이다. `/docs/`, `/projects/`, `/tags/`, `/blog/all/`, 옛 위키·분야 경로를 생성하지 않는다.
 
 검색어의 각 낱말과 선택 태그는 AND다. 검색 토글을 누르면 현재 검색어·다른 태그를 유지하며 해당 태그를 선택하거나 해제하고 첫 페이지로 이동한다. 마지막 조건을 지우면 `/search/` 전체 목록이다. 한글 조합 중에는 제출하지 않는다. 뒤로가기에서는 URL 조건과 검색 입력·결과·위치를 복원한다.
 
@@ -133,29 +133,9 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 문서 렌더러는 이 저장소의 `src/document`에 있다. 계약은 [문서 렌더러](document-renderer.md)에 있다. 렌더러는 홈페이지가 설치한 디자인과 DiagramPlay를 읽는다. `article-renderer.mjs`는 렌더러의 `DEFAULT_THEME_FILES.root`가 홈페이지의 디자인 패키지 위치와 같은지 확인하고, 렌더러는 DiagramPlay가 같은 디자인을 읽는지 확인한다. 검증과 배포 워크플로는 `npm ci`만으로 설치하며 비공개 저장소나 배포 키를 쓰지 않는다. 배포에는 `dist/site`만 업로드한다.
 
-### 저장 전 페이지 미리보기
+### 발행 링크 검사
 
-`src/page-preview.mjs`의 `renderPagePreview({ source, file, id, kind, siteRoot, contentRoot, assets, colorScheme, topicsFile, readContent, origin })`는 전체 Markdown 문자열을 기존 페이지 조립 함수에 전달한다. `file`은 `contentRoot` 상대 경로이며 아직 저장하지 않은 파일도 허용한다. `kind`는 `article`(기본값), `home`, `search`다. `search`는 개인 호스트의 검색 페이지를 `/search/` 경로로 반환한다. 호스트는 쿼리를 유지해 이 경로를 제공하고 기존 `/docs/` 입구로 돌아가는 이동도 처리한다. 호스트가 이 결과 페이지를 `/docs/`에도 제공하면 빈 검색 조건으로 전체 색인을 조회하고 쪽 이동의 `page` 값을 같은 `/docs/` 경로에 보존한다. 이 `/docs/`·`/search/` 동작은 개인 호스트의 호환 계약이다. 공개 빌드는 Search `/search/`를 생성하며 개인 `/docs/`는 생성하지 않는다. 검색 색인은 호스트가 제공하며 이 함수는 비공개 문서를 수집하지 않는다. 기사 원고에는 개인 위키·블로그 미리보기의 기존 frontmatter가 필요하다. 공개 Blog의 최소 메타데이터와 구분한다. `id`를 전달하면 원고의 ID와 일치해야 한다.
-
-`siteRoot/config`에서 사이트·태그·표시 설정과 이미지 크기를 읽는다. `contentRoot`에서는 명시된 `home.md`, `tech.md`와 홈이 참조한 섹션 원고만 읽으며 문서 폴더를 순회하지 않는다. 선택한 파일에는 디스크 대신 `source`를 사용한다. 같은 홈 입력 로더, `parseArticle`·`renderArticle`, `personalHome`·`articlePage`·`documentShell`을 재사용한다. 인접 문서 목록을 읽지 않으므로 전체 문서 트리와 검색 색인은 만들지 않는다.
-
-`assets`의 `exists`·`url`·`size`는 문서 렌더러 계약을 따른다. 선택적인 `read(path)`는 신뢰할 수 있는 호출자가 제공하며 공개 자산 URL을 받아 바이트를 반환한다. 생략하면 자산을 입력 루트 안에서만 읽고 심볼릭 링크를 통한 외부 접근도 차단한다. 예약 경로 `/assets/site-icon.svg`는 홈페이지 정본의 아이콘 바이트를 반환하며 호스트의 `read`나 콘텐츠 루트를 사용하지 않는다. 파비콘은 승인된 `who-knows.svg`의 첫 W 도형을 그대로 재사용하고 원본 경계에서 정사각 viewBox를 계산한다. 독립된 브라우저 UI 자산은 제품 CSS를 상속하지 않으므로 `CanvasText`와 native `color-scheme`으로 시스템 대비를 따른다. 메타데이터의 주소에는 실제 SVG 바이트의 SHA-256을 붙여 이전 투명 아이콘 캐시를 구분한다. 테마와 runtime은 홈페이지가 소비하는 동일 배포물이다.
-
-성공 결과는 `{ html, assets: Map, links, origin, diagnostics, route, id }`이다. `assets`에는 스타일·글꼴·runtime·도표 HTML 등 참조 자산을 담는다. 실패하면 빈 HTML·자산과 파일·ID가 포함된 오류 진단을 반환한다. 파일·발행 결과를 쓰지 않으며 배포를 실행하지 않는다. 호스트는 반환된 자산만 격리된 미리보기 주소로 제공하고 내부 문서 이동·요청 순서·자원 해제를 관리한다. 미리보기 성공은 발행 승인이나 배포 완료를 뜻하지 않는다.
-
-미리보기의 `colorScheme`은 `light`(기본값) 또는 `dark`다. 기존 테마의 `data-theme`과 `color-scheme` 계약을 사용하고 도표는 공통 host runtime의 테마 메시지를 받는다. 스타일 사본은 만들지 않는다. 운영 빌드는 값을 지정하지 않으므로 기존 밝은 기본값을 유지한다.
-
-홈의 `sections[].source`는 `pages/intro.md`, `interviews/index.md`처럼 콘텐츠 루트 안의 상대 Markdown 경로를 허용한다. 절대 경로·상위 이동·역슬래시는 거부한다. 미리보기 호스트는 `topicsFile`(기본 `tech.md`)로 이동한 주제 설정 원고의 상대 경로를 지정한다. 선택 파일의 `file`과 참조 경로가 일치하면 저장 전 `source`를 사용한다. 현재 승인 사본을 미리 볼 때는 `topicsFile: "pages/tech.md"`를 전달한다. 실제 원고 이동과 설정 변경은 이 API가 수행하지 않는다.
-
-호스트가 공개 입력 범위를 제한할 때는 `readContent(relativePath, editedSource?)`를 제공한다. 선택 원고와 홈·주제·참조 섹션 원고가 모두 이 함수를 통과한다. 경로는 콘텐츠 루트 기준이며 선택한 원고에는 저장 전 문자열이 두 번째 인자로 전달된다. 호스트는 허용 목록·공개 상태·실제 경로를 확인하고, 검사한 동일 문자열을 동기 반환하거나 거절 시 예외를 던진다. 어댑터는 반환 문자열을 다시 파일에서 읽지 않으며 콜백 거절 시 기본 읽기로 우회하지 않는다. 콜백 제공 시 파일 열기와 심볼릭 링크 검증의 책임은 호스트에 있다. 콜백을 생략한 기존 소비자는 입력 루트 안의 파일 읽기를 유지한다. 자산 접근은 별도의 `assets.read` 경계를 따른다.
-
-`src/page-preview.mjs`가 내보내는 `normalizePublicationAssets(value)`는 기존 호스트가 가져오는 이름을 유지하는 호환 함수다. 현재 승인 원고와 의존성은 옛 `/things/` 자산 경로를 만들지 않으므로 받은 문자열을 그대로 반환하고, 문자열이 아니면 오류를 낸다. 정식 빌드와 미리보기는 이 변환을 거치지 않는다.
-
-미리보기 성공 결과의 `links`는 최종 HTML의 `a[href]`, `area[href]`에서 수집한 문자열 배열이다. frontmatter와 설정에서 출력된 메뉴도 포함한다. `publicationLinks(html, route, origin)`는 상대 링크를 페이지 경로 기준으로 해석해 같은 출처는 경로·쿼리·앵커, 외부는 전체 URL로 반환한다. 기본 origin은 검사 전용 `https://publication.invalid`다. 실제 사이트의 절대 주소까지 내부로 검사하려면 해당 origin을 전달한다. 잘못된 URL은 오류로 발행을 막으며 미리보기 API에서는 diagnostics로 반환한다. JavaScript 실행 후 추가되는 링크는 정적 수집 범위 밖이다.
-
-`documentRoute(value, baseRoute, origin)`는 `docs`, `blog`, `wiki`, `articles`의 단일 문서 주소를 `{ kind, slug, fragment }`로 판정한다. 끝 `/`는 선택이며 fragment는 `#`를 제외한 인코딩 값이다. 외부·목록·중첩 주제 주소와 잘못된 URL·인코딩은 `null`을 반환한다. Wiki 주제 목록은 개인 호스트의 기존 `TOPIC_GROUPS`, `FIELDS` 규칙으로 제외한다. 공용 옛 주소인 `articles`에는 blog 전용 예약어를 적용하지 않는다. 문서의 존재와 공개 여부는 호스트가 승인 목록으로 판정한다. 두 함수는 `src/page-preview.mjs`에서도 내보낸다. 최종 발행 검사도 같은 링크 수집기로 상대 문서 링크를 검사한다.
-
-`renderPagePreview`의 `origin` 입력은 정식 빌드와 같은 `siteOrigin`으로 검증하며 생략하면 `SITE_ORIGIN`을 사용한다. 검증된 origin을 결과에 돌려주고 최종 링크 수집에도 전달한다. 둘 다 없으면 반환 origin은 빈 문자열이며, 실제 사이트의 절대 주소를 내부 링크로 식별하는 것은 보장하지 않는다. 발행 호스트는 공개 링크 검사 전에 실제 배포 origin을 지정해야 한다.
+`publicationLinks(html, route, origin)`는 최종 HTML의 `a[href]`, `area[href]`를 페이지 경로 기준으로 해석해 같은 출처는 경로·쿼리·앵커, 외부는 전체 URL로 반환한다. 기본 origin은 검사 전용 `https://publication.invalid`다. 실제 사이트의 절대 주소까지 내부로 검사하려면 해당 origin을 전달한다. 잘못된 URL은 오류로 발행을 막는다. JavaScript 실행 후 추가되는 링크는 정적 수집 범위 밖이다.
 
 ### Vault 발행 입력
 
