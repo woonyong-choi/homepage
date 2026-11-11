@@ -115,13 +115,12 @@ async function renderDocuments(documents, options) {
   }
   const bySlug = new Map(documents.map(page => [page.slug, page]));
   for (const page of documents) {
-    const rewrite = html => html.replace(/href="\/(wiki|articles)\/([^/]+)\/(?:#([^"?]+))?"/g, (original, kind, slug, fragment) => {
+    // 다른 글의 절로 가는 링크는 렌더러가 글 ID를 붙인 제목 ID로 맞춘다.
+    const rewrite = html => html.replace(/href="\/blog\/([^/"]+)\/#([^"?]+)"/g, (original, slug, fragment) => {
       const target = bySlug.get(slug);
-      if (!target) return kind === 'wiki' ? `href="https://docs.woonyong.com/wiki/${slug}/${fragment ? '#' + fragment : ''}"` : original;
-      if (!fragment) return `href="${target.route}"`;
-      if ((target.leadHtml + target.html).includes(`id="${decodeURIComponent(fragment)}"`)) return `href="${target.route}#${fragment}"`;
+      if (!target || (target.leadHtml + target.html).includes(`id="${decodeURIComponent(fragment)}"`)) return original;
       const id = `${target.id}-${decodeURIComponent(fragment)}`;
-      return (target.leadHtml + target.html).includes(`id="${id}"`) ? `href="${target.route}#${id}"` : `href="https://docs.woonyong.com/wiki/${slug}/#${fragment}"`;
+      return (target.leadHtml + target.html).includes(`id="${id}"`) ? `href="${target.route}#${id}"` : original;
     }).replace(/href="#([^" ]+)"/g, (original, fragment) => {
       if ((page.leadHtml + page.html).includes(`id="${fragment}"`)) return original;
       const prefixed = `${page.id}-${decodeURIComponent(fragment)}`;

@@ -21,7 +21,7 @@ function workspace(t) {
   mkdirSync(blog, { recursive: true });
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const posts = [
-    post({ id: 'first-post', title: '첫 글', date: '2026-01-01', body: '## 첫 절\n\n[두 번째 글](/articles/second-post/)과 [절 이동](/articles/second-post/#second-heading), [위키](/wiki/outside-note/), [첫 절로](#첫-절).' }),
+    post({ id: 'first-post', title: '첫 글', date: '2026-01-01', body: '## 첫 절\n\n[두 번째 글](/blog/second-post/)과 [절 이동](/blog/second-post/#second-heading), [첫 절로](#첫-절).' }),
     post({ id: 'second-post', title: '두 번째 글', date: '2026-01-02', body: '## Second heading\n\n두 번째 본문.' }),
     post({ id: 'third-post', title: '세 번째 글', date: '2026-01-03' }),
     post({ id: 'fourth-post', title: '네 번째 글', date: '2026-01-04' }),
@@ -77,7 +77,6 @@ test('build_with_posts_writes_feed_sitemap_pages_and_rewritten_links', { timeout
   const article = read(output, 'blog/first-post/index.html');
   assert.match(article, /href="\/blog\/second-post\/"/);
   assert.match(article, /href="\/blog\/second-post\/#second-post-second-heading"/);
-  assert.match(article, /href="https:\/\/docs\.woonyong\.com\/wiki\/outside-note\/"/);
   assert.doesNotMatch(article, /href="\/(articles|wiki)\//);
   assert.match(article, /href="#first-post-첫-절"/);
   assert.match(article, /id="first-post-첫-절"/);

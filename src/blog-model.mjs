@@ -91,7 +91,7 @@ function withoutElements(html, open, tag) {
   return result + html.slice(index);
 }
 
-export function searchText(html) {
+function searchText(html) {
   let text = html.replace(/<(script|style|svg|button|template)\b[\s\S]*?<\/\1>/g, ' ');
   text = withoutElements(text, /<span class="katex-html"/, 'span');
   text = text.replace(/<annotation\b[\s\S]*?<\/annotation>/g, ' ').replace(/<a [^>]*class="[^"]*footnote-backref[^"]*"[^>]*>[\s\S]*?<\/a>/g, ' ');
