@@ -24,7 +24,8 @@ test('feed_comments_load_only_from_their_own_button_and_keep_their_own_height', 
   const button = section => section.querySelector('button[data-action="comments-expand"]');
   assert.equal(doc.querySelectorAll('iframe').length, 0);
   assert.equal(button(first).hidden, false);
-  assert.equal(button(first).textContent.startsWith('댓글 보기'), true);
+  assert.match(button(first).textContent, /^댓글( \d+개)?/);
+  assert.match(button(first).className, /is-link/);
   assert.equal(first.dataset.expanded, 'false');
   assert.equal(first.querySelector('[data-comments-content]').inert, true);
   button(first).click();
