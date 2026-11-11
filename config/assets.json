@@ -86,6 +86,12 @@
     "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
   },
   {
+    "file": "assets/sql-postgresql-execution-flow.gif",
+    "origin": "project-original",
+    "license": "MIT",
+    "note": "디스크 기반 B+트리로 SQL 엔진을 구현 글의 그림."
+  },
+  {
     "file": "assets/sql-create-insert-select-users-light.png",
     "origin": "project-original",
     "license": "MIT",
