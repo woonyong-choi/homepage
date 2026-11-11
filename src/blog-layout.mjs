@@ -16,7 +16,7 @@ export function blogCard(post, tags = {}, level = 2, card = loadBlogLayout().blo
 export function searchListing(posts, tags, { layout = loadBlogLayout() } = {}) {
   const cards = ui.CardGroup({ columns: layout.blog.collection.columns, cards: posts.map(post => ui.trusted(blogCard(post, tags, 2, layout.blog.card))) });
   const filters = ui.TagFilter({ tags: Object.entries(tags).map(([id, value]) => ({ id, label: value.label, selected: false })) });
-  return `<main id="main" class="app-shell" data-search-page data-columns="${layout.blog.collection.columns}" data-page-size="${layout.blog.collection.rows === null ? 'all' : layout.blog.collection.columns * layout.blog.collection.rows}" data-card="${ui.escape(JSON.stringify(layout.blog.card))}">${searchBox({ large: true, combobox: false, filters, config: layout.search.box })}${ui.PageHeading({ title: layout.search.title })}<div data-full-results>${posts.length ? cards : '<p class="app-empty">아직 발행한 글이 없습니다.</p>'}</div>${ui.PageLinks({ label: '블로그 페이지', resultPages: true })}</main>`;
+  return `<main id="main" class="app-shell" data-search-page data-columns="${layout.blog.collection.columns}" data-page-size="${layout.blog.collection.rows === null ? 'all' : layout.blog.collection.columns * layout.blog.collection.rows}" data-card="${ui.escape(JSON.stringify(layout.blog.card))}">${ui.PageHeading({ title: layout.search.title })}${searchBox({ large: true, combobox: false, filters, config: layout.search.box })}<div data-full-results>${posts.length ? cards : '<p class="app-empty">아직 발행한 글이 없습니다.</p>'}</div>${ui.PageLinks({ label: '블로그 페이지', resultPages: true })}</main>`;
 }
 
 export function blogFeed(posts, tags, page, { commentConfig, commentTheme, layout = loadBlogLayout() } = {}) {

@@ -16,6 +16,7 @@ import { readCommentCounts } from './comment-counts.mjs';
 import { brandNames } from './brand-icons.mjs';
 import { serviceTagCatalog, serviceTagInventory } from './service-tags.mjs';
 import { publicationAssets } from './publication-assets.mjs';
+import { responsiveImages } from './responsive-images.mjs';
 import { replacePublication, NOT_FOUND_FILE } from './publication-output.mjs';
 import { loadHomeContent } from './home-content.mjs';
 import { browserScripts } from './browser-scripts.mjs';
@@ -89,6 +90,8 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   for (let page = 1; page <= Math.max(1, Math.ceil(posts.length / layout.blog.feedSize)); page++) {
     add(page === 1 ? '/blog/' : `/blog/page/${page}/`, layout.blog.title, blogFeed(posts, tags, page, { commentConfig, commentTheme, layout }));
   }
+  const dated = posts.filter(page => !page.example && !context.hiddenRoutes?.has(page.route)).sort((a, b) => String(b.publishedAt).localeCompare(String(a.publishedAt)));
+  dated.forEach((page, at) => { page.newer = dated[at - 1]; page.older = dated[at + 1]; });
   for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
   // 관리자 로그인 화면은 설정이 있을 때만 만들고 검색 엔진과 사이트맵에서 뺀다.
   if (context.admin) add('/admin/', '로그인', adminPage(config, context, context.admin), { noindex: true, bare: true });
@@ -152,6 +155,8 @@ async function writeSite(output, posts, context, scripts, notFound, outputRoot) 
   // 글 관리의 미리보기는 글이 없어도 글쓴이 사진을 쓴다.
   const avatar = context.admin?.author?.avatar;
   if (avatar?.startsWith('/assets/') && !assets.has(avatar)) assets.set(avatar, readFileSync(join(CONTENT, avatar)));
+  await responsiveImages(rendered, assets, index.entries);
+  for (const route of output.keys()) output.set(route, rendered.get(route));
   for (const [path, content] of assets) files.set(path, content);
   const indexJson = JSON.stringify(index);
   files.set('/service-tags.json', JSON.stringify({ version: 1, services: serviceTagInventory(context.services, context.tags, context.home) }, null, 2));

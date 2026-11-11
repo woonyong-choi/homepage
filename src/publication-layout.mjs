@@ -59,11 +59,17 @@ export function personalHome(context) {
 export function articlePage(page, context, comments = '') {
   const updated = page.updatedAt && page.updatedAt !== page.publishedAt ? dateLine({ updatedAt: page.updatedAt }) : '';
   const example = page.example ? '<p class="app-example-notice">화면 검증을 위한 예시 글입니다.</p>' : '';
-  const article = postArticle({ ...page, html: page.html + relatedPostsSection(page) }, { detail: true, tags: tagLinks(page, context.tags ?? {}), footer: `${updated}${example}`, after: comments, byline: context.layout?.blog.card.author });
+  const article = postArticle({ ...page, html: page.html + relatedPostsSection(page) }, { detail: true, tags: tagLinks(page, context.tags ?? {}), footer: `${updated}${example}${postLinks(page)}`, after: comments, byline: context.layout?.blog.card.author });
   // 넓은 화면에서는 본문 오른쪽에 목차를 고정하고, 좁은 화면에서는 본문 위 접기 목차로 둔다(공통 DocumentLayout·DocumentOutline).
   const outline = documentOutline(page.headings ?? []);
   if (!outline) return `<main id="main" class="app-shell">${article}</main>`;
   return `<main id="main" class="app-shell app-document-shell">${ui.DocumentLayout({ outline, content: ui.trusted(article) })}</main>`;
+}
+
+// 글 끝: 앞뒤 글과 전체 글 목록으로 가는 길.
+function postLinks(page) {
+  const link = post => post ? { href: post.route, title: post.title } : undefined;
+  return `${ui.DocumentPager({ label: '블로그', before: link(page.older), after: link(page.newer) })}${ui.ListLink({ href: '/search/', text: '전체 글 보기' })}`;
 }
 
 function relatedPostsSection(page) {

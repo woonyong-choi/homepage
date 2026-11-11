@@ -49,6 +49,9 @@ export function publicationMetadata(page, context) {
     if (page.publishedAt) html += meta('article:published_time', page.publishedAt);
     if (page.updatedAt) html += meta('article:modified_time', page.updatedAt);
     for (const tag of page.tags ?? []) html += meta('article:tag', tags[tag]?.label ?? tag);
+    // 검색 엔진용 글 정보. 화면에 보이는 제목·요약·날짜·글쓴이와 같은 값만 적는다.
+    const posting = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: pageTitle, description, url: canonical, mainEntityOfPage: canonical, inLanguage: 'ko', ...(page.publishedAt ? { datePublished: page.publishedAt } : {}), ...(page.updatedAt ? { dateModified: page.updatedAt } : {}), ...(page.thumbnail?.src?.startsWith('/') ? { image: origin + page.thumbnail.src } : {}), ...(config.name ? { author: { '@type': 'Person', name: config.name, url: origin + '/' } } : {}) };
+    html += `<script type="application/ld+json">${JSON.stringify(posting).replaceAll('<', '\\u003c')}</script>`;
   }
   return html;
 }
