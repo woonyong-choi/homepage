@@ -23,18 +23,10 @@ function link(text, href, className) {
   return node;
 }
 
-export function showResultsLoading(root, message = '검색 결과를 불러오는 중입니다.') {
-  root.setAttribute('aria-busy', 'true');
-  for (const node of root.querySelectorAll('[data-filter-summary], [data-result-pages]')) node.replaceChildren();
-  const output = root.querySelector('[data-full-results]');
-  output.classList.add('app-search-panel');
-  output.replaceChildren(element('p', message, 'app-search-message'));
-}
-
 export function renderResults(root, result, state, tags) {
   const summary = root.querySelector('[data-filter-summary]');
   if (summary) summary.replaceChildren(...state.tags.map(tag => nodeFrom(ui.Tag({ href: searchUrl({ ...state, tags: state.tags.filter(value => value !== tag), page: 1 }), label: `${tags[tag]?.label ?? tag} ×` }))));
-  if (summary && (state.query || state.tags.length)) summary.append(link('조건 초기화', searchUrl({ baseRoute: state.baseRoute, homeRoute: state.homeRoute })));
+  if (summary && (state.query || state.tags.length)) summary.append(link('조건 초기화', searchUrl()));
   const output = root.querySelector('[data-full-results]');
   output.classList.remove('app-search-panel');
   const cards = result.entries.map(entry => resultCard(entry, tags, state, root.dataset.card ? JSON.parse(root.dataset.card) : undefined));
@@ -47,7 +39,7 @@ export function renderResults(root, result, state, tags) {
     const resetFocused = choices.contains(document.activeElement) && document.activeElement.hasAttribute('data-tag-reset');
     const available = new Set([...(result.tagIds ?? []), ...state.tags]);
     const ids = [...new Set([...Object.keys(tags), ...state.tags])].filter(tag => available.has(tag));
-    const next = nodeFrom(ui.TagFilter({ tags: ids.map(id => ({ id, label: tags[id]?.label ?? id, selected: state.tags.includes(id) })), reset: state.tags.length ? { href: searchUrl({ baseRoute: state.baseRoute, homeRoute: state.homeRoute }), label: '초기화' } : undefined }));
+    const next = nodeFrom(ui.TagFilter({ tags: ids.map(id => ({ id, label: tags[id]?.label ?? id, selected: state.tags.includes(id) })), reset: state.tags.length ? { href: searchUrl(), label: '초기화' } : undefined }));
     choices.replaceWith(next);
     if (resetFocused) root.querySelector('[data-public-search] input')?.focus({ preventScroll: true });
     if (focusedTag !== undefined) {
@@ -74,8 +66,6 @@ export function renderResults(root, result, state, tags) {
   const previous = root.querySelector('[data-result-pages]');
   if (previous) previous.replaceWith(pages); else output.after(pages);
   root.setAttribute('aria-busy', 'false');
-  const fallback = root.querySelector('[data-search-fallback]');
-  if (fallback) fallback.hidden = !fallback.querySelector('details').open && !fallback.contains(document.activeElement);
 }
 
 function resultLink(entry, query) {

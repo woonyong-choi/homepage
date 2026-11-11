@@ -1,4 +1,6 @@
 const PAGE_SIZE = 12;
+// 추천 목록에 싣는 글 수. 목록은 정해진 높이까지만 보이고 나머지는 목록 안에서 스크롤한다.
+const SUGGESTION_LIMIT = 20;
 
 export function normalizeQuery(value) {
   return String(value ?? '').normalize('NFC').toLocaleLowerCase('ko').trim().replace(/\s+/g, ' ');
@@ -12,14 +14,12 @@ export function readSearchState(query, defaultTag = '') {
     page: Number.isSafeInteger(page) && page > 0 ? page : 1 };
 }
 
-export function searchUrl({ query = '', tags = [], page = 1, baseRoute = '/search/', homeRoute } = {}) {
+export function searchUrl({ query = '', tags = [], page = 1 } = {}) {
   const params = new URLSearchParams();
   if (query) params.set('q', query);
   for (const tag of [...new Set(tags.map(tag => tag.trim().normalize('NFC')).filter(Boolean))]) params.append('tag', tag);
   if (page > 1) params.set('page', page);
-  const route = baseRoute === '/docs/' ? '/docs/' : '/search/';
-  if (homeRoute === '/docs/' && !normalizeQuery(query) && !tags.length) return '/docs/';
-  return `${route}${params.size ? '?' + params : ''}`;
+  return `/search/${params.size ? '?' + params : ''}`;
 }
 
 export function prepareIndex(entries) {
@@ -56,7 +56,7 @@ export function suggestions(entries, tags, state) {
   const queries = [...new Set(result.all.flatMap(entry => [entry.title, ...entry.keywords]))].filter(value => normalizeQuery(value).includes(query) && normalizeQuery(value) !== query).slice(0, 5);
   const available = searchDocuments(entries, { ...state, query: '', page: 1 }).all;
   const matchingTags = Object.entries(tags).filter(([id, tag]) => !state.tags.includes(id) && [tag.label, ...(tag.aliases ?? [])].some(value => normalizeQuery(value).includes(query)) && available.some(entry => entry.tags.includes(id))).slice(0, 5);
-  return { queries, tags: matchingTags, entries: result.entries.slice(0, 6), count: result.all.length };
+  return { queries, tags: matchingTags, entries: result.all.slice(0, SUGGESTION_LIMIT).map(entry => ({ ...entry, excerpt: searchExcerpt(entry, query.split(' ')) })), count: result.all.length };
 }
 
 function scoreEntry(entry, terms, query) {

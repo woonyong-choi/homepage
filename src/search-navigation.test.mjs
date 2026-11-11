@@ -74,10 +74,12 @@ test('typing_with_tags_keeps_the_intersection_and_resets_pagination', () => {
       browser.requests.length = 0;
       browser.input.value = '주문';
       browser.input.dispatchEvent(new browser.dom.window.Event('input', { bubbles: true }));
-      assert.equal(browser.requests.length, 1);
-      assert.equal(browser.requests[0].state.query, '주문');
-      assert.deepEqual([...browser.requests[0].state.tags].sort(), ['concurrency', 'testing']);
-      assert.equal(browser.requests[0].state.page, 1);
+      assert.deepEqual(browser.requests.map(request => request.action), ['results', 'suggest']);
+      for (const request of browser.requests) {
+        assert.equal(request.state.query, '주문');
+        assert.deepEqual([...request.state.tags].sort(), ['concurrency', 'testing']);
+        assert.equal(request.state.page, 1);
+      }
       browser.input.form.reset();
       assert.equal(browser.input.value, '주문');
     } finally { browser.dom.window.close(); }
@@ -132,7 +134,7 @@ function searchBrowser(route, page = true, tag = '', options = {}) {
     requestAnimationFrame() {},
     readSearchState, searchUrl,
     queryIndex(action, state) { requests.push({ action, state }); return options.queryIndex ? options.queryIndex(action, state) : new Promise(() => {}); },
-    showResultsLoading() {}, renderResults() {}, renderSuggestions() {}, showSearchError() {},
+    renderResults() {}, renderSuggestions() {}, showSearchError() {},
   });
   return { dom, visits, requests, history, input: dom.window.document.querySelector('input'), clear: dom.window.document.querySelector('button') };
 }
@@ -174,7 +176,7 @@ test('search_submit_opens_full_results_and_preserves_composition', () => {
   }
 });
 
-// #275: 호스트가 전체 로컬 검색을 /blog/에 연결해도 빈 검색 재로드를 반복하지 않는다.
+// #275: 빈 검색어로 돌아가도 페이지를 다시 불러오지 않고 결과만 갱신한다.
 test('docs_results_page_empty_query_lists_entries_without_reloading', () => {
   const browser = searchBrowser('/search/', true);
   try {
@@ -187,30 +189,6 @@ test('docs_results_page_empty_query_lists_entries_without_reloading', () => {
     assert.equal(browser.requests.length, 2);
     assert.equal(browser.requests[1].state.query, '');
   } finally { browser.dom.window.close(); }
-});
-
-// #275: 로컬 전체목록의 빈 조건 쪽 이동만 /blog/의 page 값을 보존한다.
-
-test('private_search_keeps_host_routes_and_returns_to_docs_for_empty_conditions', () => {
-  for (const item of [
-    { route: '/search/?q=copy&tag=독서&page=2', query: '책', expected: '/search/?q=%EC%B1%85&tag=%EB%8F%85%EC%84%9C', baseRoute: '/search/' },
-    { route: '/docs/?q=copy&tag=독서&page=2', query: '책', expected: '/docs/?q=%EC%B1%85&tag=%EB%8F%85%EC%84%9C', baseRoute: '/docs/' },
-  ]) {
-    const browser = searchBrowser(item.route, true, '', { html: '<section data-public-search><form action="/search/"><input><button type="button" data-clear-query></button></form><div role="listbox" hidden></div><p data-search-status></p></section><div data-search-page data-search-home="/docs/"></div>' });
-    try {
-      browser.input.value = item.query;
-      browser.input.dispatchEvent(new browser.dom.window.Event('input', { bubbles: true }));
-      assert.equal(browser.requests.at(-1).state.baseRoute, item.baseRoute);
-      assert.equal(searchUrl(browser.requests.at(-1).state), item.expected);
-    } finally { browser.dom.window.close(); }
-  }
-  const browser = searchBrowser('/search/?q=copy', true, '', { html: '<section data-public-search><form action="/search/"><input><button type="button" data-clear-query></button></form><div role="listbox" hidden></div><p data-search-status></p></section><div data-search-page data-search-home="/docs/"></div>' });
-  try {
-    browser.clear.click();
-    assert.deepEqual(browser.visits, [{ method: 'assign', href: '/docs/' }]);
-  } finally { browser.dom.window.close(); }
-  assert.equal(searchUrl({ query: '', tags: [], page: 3, baseRoute: '/docs/' }), '/docs/?page=3');
-  assert.equal(searchUrl({ query: '', tags: [], page: 3, baseRoute: '/search/', homeRoute: '/docs/' }), '/docs/');
 });
 
 test('all_rows_reaches_the_search_model_without_falling_back_to_twelve', () => {
