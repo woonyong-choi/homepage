@@ -79,6 +79,22 @@ test('article_metadata_shares_identity_and_escapes_content_without_exposing_logi
   assert.doesNotMatch(wiki, /noindex|content="wiki"|content="blog"/);
 });
 
+// 글은 대표 그림을 큰 공유 카드로 쓰고, 첫 화면은 사이트·사람 정보를 구조화 데이터로 알린다.
+test('article_shares_its_cover_and_home_describes_the_site_and_person', () => {
+  const page = { id: 'cover', title: '글', description: '설명', route: '/blog/cover/', publishedAt: '2026-01-01', cardImage: { src: '/assets/cover.png', alt: '표지' } };
+  const html = publicationMetadata(page, context);
+  assert.match(html, /name="twitter:card" content="summary_large_image"/);
+  assert.match(html, /property="og:image" content="https:\/\/example\.invalid\/assets\/cover\.png"/);
+  assert.match(html, /"image":"https:\/\/example\.invalid\/assets\/cover\.png"/);
+  assert.doesNotMatch(html, /icon-512/);
+  const gif = publicationMetadata({ ...page, cardImage: { src: '/assets/move.gif', alt: '' } }, context);
+  assert.match(gif, /name="twitter:card" content="summary"/);
+  const home = publicationMetadata({ title: '이름', route: '/' }, { ...context, config: { ...context.config, github: 'https://github.com/example' } });
+  const data = JSON.parse(/<script type="application\/ld\+json">([^<]+)<\/script>/.exec(home)[1]);
+  assert.equal(data['@type'], 'WebSite');
+  assert.deepEqual(data.author.sameAs, ['https://github.com/example']);
+});
+
 test('archive_metadata_is_a_website_and_does_not_invent_article_dates', () => {
   const html = publicationMetadata({ title: 'Blog', route: '/blog/', type: 'blog' }, context);
   assert.match(html, /property="og:type" content="website"/);

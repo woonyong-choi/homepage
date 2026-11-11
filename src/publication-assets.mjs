@@ -18,7 +18,6 @@ export function clientEntrypoints(body) {
   if (/<[^>]+\sdata-public-search(?:[\s=>])/.test(body)) scripts.push('publication.js');
   scripts.push(...runtimeEntrypoints(body));
   if (/<[^>]+\sdata-comments(?:[\s=>])/.test(body)) scripts.push('comments.js');
-  if (/<[^>]+\sdata-current-year(?:[\s=>])/.test(body)) scripts.push('footer-year.js');
   if (/<[^>]+\sdata-blog-list(?:[\s=>])/.test(body)) scripts.push('blog-list.js');
   return scripts;
 }

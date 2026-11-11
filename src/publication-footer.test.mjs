@@ -14,13 +14,8 @@ test('footer_is_one_line_with_year_owner_and_two_icon_links', () => {
   assert.doesNotMatch(html, /app-footer-grid|<h3|@bywoonyong/);
 });
 
-test('footer_year_defaults_to_build_year_and_a_module_refreshes_it_on_load', async () => {
+// 연도는 빌드할 때 적는다. 연도만 바꾸는 스크립트를 따로 싣지 않는다.
+test('footer_year_is_the_build_year_without_a_script', () => {
   assert.ok(personalFooter(CONFIG).includes(`<span data-current-year>${new Date().getFullYear()}</span>`));
-  assert.deepEqual(clientEntrypoints(personalFooter(CONFIG)), ['footer-year.js']);
-  const target = { textContent: '2020' };
-  globalThis.document = { querySelectorAll: () => [target] };
-  const RealDate = Date;
-  globalThis.Date = class extends RealDate { getFullYear() { return 2031; } };
-  try { await import('./footer-year.js'); } finally { globalThis.Date = RealDate; delete globalThis.document; }
-  assert.equal(target.textContent, 2031);
+  assert.deepEqual(clientEntrypoints(personalFooter(CONFIG)), []);
 });

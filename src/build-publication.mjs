@@ -143,20 +143,24 @@ async function writeSite(output, posts, context, scripts, notFound, outputRoot) 
   // 관리 CSS는 전체 페이지와 스크립트 기준이라 공개 CSS를 모두 포함하고, 관리 로더가 로그인한 뒤에만 불러온다.
   const full = await publicationStyles(sourceStyles, rendered, scripts, theme, fixed);
   const styles = context.admin
-    ? { ...await publicationStyles(sourceStyles, new Map([...rendered].filter(([route]) => route !== ADMIN_ROUTE)), new Map([...scripts].filter(([file]) => file !== ADMIN_EDITOR)), theme, fixed), theme: full.theme }
+    ? await publicationStyles(sourceStyles, new Map([...rendered].filter(([route]) => route !== ADMIN_ROUTE)), new Map([...scripts].filter(([file]) => file !== ADMIN_EDITOR)), theme, fixed)
     : full;
+  // 토큰과 스타일을 한 파일로 합쳐 첫 화면을 막는 CSS 요청을 하나로 줄인다. 공개 CSS는 공개 페이지가 쓰는 토큰만 담는다.
+  const publicSheet = styles.theme + styles.css;
+  const adminSheet = full.theme + full.css;
   const stylePath = '/theme/publication.css';
-  const styleHash = digest(styles.css);
+  const styleHash = digest(publicSheet);
   const adminStylePath = '/theme/admin.css';
-  const adminStyleHash = digest(full.css);
+  const adminStyleHash = digest(adminSheet);
+  const tokensLink = `<link rel="stylesheet" href="/theme/tokens.css?v=${context.themeHash}">`;
   for (const [route, html] of rendered) {
     const sheet = route === ADMIN_ROUTE ? `${adminStylePath}?v=${adminStyleHash}` : `${stylePath}?v=${styleHash}`;
-    rendered.set(route, html.replace(`/theme/styles.css?v=${context.themeHash}`, sheet).replaceAll(ADMIN_STYLES_VERSION, adminStyleHash));
+    rendered.set(route, html.replace(tokensLink, '').replace(`/theme/styles.css?v=${context.themeHash}`, sheet).replaceAll(ADMIN_STYLES_VERSION, adminStyleHash));
   }
   for (const route of output.keys()) output.set(route, rendered.get(route));
   const files = new Map([...scripts].map(([file, source]) => [`/${file}`, source]));
   const index = { entries: posts.map(page => searchEntry(page, context.knownTags)), tags: context.tags };
-  const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : path === adminStylePath ? Buffer.from(full.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
+  const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === stylePath ? Buffer.from(publicSheet) : path === adminStylePath ? Buffer.from(adminSheet) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
   // 글 관리의 미리보기는 글이 없어도 글쓴이 사진을 쓴다.
   const avatar = context.admin?.author?.avatar;
   if (avatar?.startsWith('/assets/') && !assets.has(avatar)) assets.set(avatar, readFileSync(join(CONTENT, avatar)));
@@ -169,8 +173,10 @@ async function writeSite(output, posts, context, scripts, notFound, outputRoot) 
   files.set('/search-index.json', indexJson);
   files.set('/search-index.json.gz', gzipSync(indexJson, { level: 9 }));
   files.set('/blog/feed.xml', blogFeedXml(posts, { title: siteTitle(context.config), description: context.config.description, origin: context.origin }));
-  files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].filter(route => !context.hiddenRoutes.has(route)).map(route => `<url><loc>${escape(context.origin + route)}</loc></url>`).join('')}</urlset>`);
-  files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: posts.length, examples: posts.filter(page => page.example).length, preview: context.preview, mode: context.mode, commentsStatus: context.commentsStatus, recommendations: context.recommendations, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(styles.css), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
+  // 글 주소에는 마지막 수정일(없으면 발행일)을 적어 검색 엔진이 바뀐 글만 다시 읽게 한다.
+  const modified = new Map(posts.map(page => [page.route, page.updatedAt ?? page.publishedAt]));
+  files.set('/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...output.keys()].filter(route => !context.hiddenRoutes.has(route)).map(route => `<url><loc>${escape(context.origin + route)}</loc>${modified.get(route) ? `<lastmod>${modified.get(route)}</lastmod>` : ''}</url>`).join('')}</urlset>`);
+  files.set('/build-report.json', JSON.stringify({ pages: output.size, documents: posts.length, examples: posts.filter(page => page.example).length, preview: context.preview, mode: context.mode, commentsStatus: context.commentsStatus, recommendations: context.recommendations, themeHash: context.themeHash, styles: { sourceBytes: Buffer.byteLength(sourceStyles), bytes: Buffer.byteLength(publicSheet), removedSelectors: styles.removed, hash: styleHash }, assets: { files: assets.size, bytes: [...assets.values()].reduce((sum, content) => sum + content.length, 0) }, routes: [...output.keys()] }, null, 2));
   files.set(NOT_FOUND_FILE, rendered.get(NOT_FOUND_FILE));
   files.set('/robots.txt', context.preview ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\n${[...context.hiddenRoutes].map(route => `Disallow: ${route}\n`).join('')}Allow: /\nSitemap: ${context.origin}/sitemap.xml\n`);
   replacePublication(outputRoot, output, files);

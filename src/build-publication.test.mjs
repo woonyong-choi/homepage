@@ -70,6 +70,7 @@ test('build_with_posts_writes_feed_sitemap_pages_and_rewritten_links', { timeout
   // 글 작성 화면은 만들지만 사이트맵에는 넣지 않는다.
   assert.ok(report.routes.includes('/admin/'));
   assert.deepEqual([...sitemap.matchAll(/<loc>([^<]*)<\/loc>/g)].map(match => match[1]), report.routes.filter(route => route !== '/admin/'));
+  assert.match(sitemap, /<loc>[^<]*\/blog\/[^<]+\/<\/loc><lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/, "글 주소는 수정일을 적는다");
   assert.equal(read(output, 'robots.txt'), 'User-agent: *\nDisallow: /\n');
 
   const article = read(output, 'blog/first-post/index.html');
@@ -94,8 +95,11 @@ test('build_with_posts_writes_feed_sitemap_pages_and_rewritten_links', { timeout
   assert.ok(publicCss.length < adminCss.length);
   assert.doesNotMatch(publicCss, /\.app-publish\b/);
   assert.match(adminCss, /\.app-publish\b/);
-  // 라이트로 고정한 사이트의 토큰 CSS에는 다크 블록이 없다.
-  assert.doesNotMatch(read(output, 'theme/tokens.css'), /prefers-color-scheme|data-theme=/);
+  // 토큰은 스타일 파일 하나에 합쳐 싣고, 라이트로 고정한 사이트라 다크 블록이 없다.
+  assert.equal(existsSync(join(output, 'theme/tokens.css')), false);
+  assert.doesNotMatch(article, /\/theme\/tokens\.css/);
+  assert.match(publicCss, /^:root\{--/);
+  assert.doesNotMatch(publicCss, /prefers-color-scheme|data-theme=/);
 });
 
 test('production_build_uses_site_origin_and_allows_robots', { timeout: 300000 }, async t => {
