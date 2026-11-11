@@ -230,11 +230,10 @@ test('removed_tab_syntax_and_old_options_are_ordinary_syntax_errors', async () =
   }
 });
 
-test('old_diagram_fence_names_are_plain_code_and_their_options_are_code_options', async () => {
-  for (const name of ['thinkflow', 'torso']) {
+test('diagram_fence_names_are_plain_code_and_their_options_are_code_options', async () => {
+  for (const name of ['diagramplay', 'thinkflow', 'torso']) {
     const plain = await parse(`\`\`\`${name}\nA\n\`\`\`\n`);
     assert.deepEqual(plain.diagnostics, [], name);
-    assert.deepEqual(plain.metadata.diagrams, [], name);
     assert.equal(plain.tokens[0].meta.role, 'code', name);
     const named = await parse(`\`\`\`${name} name=flow\nA\n\`\`\`\n`);
     assert.match(named.diagnostics[0].message, /^허용하지 않는 속성입니다: name/, name);

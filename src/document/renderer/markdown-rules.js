@@ -246,19 +246,6 @@ function renderFence(token, env, line) {
   const { render } = env;
   const meta = token.meta ?? { role: 'code', options: {} };
   if (meta.role === 'error') return errorBlock(render, meta.message);
-  if (meta.role === 'diagram') {
-    const diagram = render.context.diagrams?.get(token.content);
-    if (diagram?.error) {
-      return reportRenderFailure(render, new Error(diagram.error), {
-        component: token.info.trim().split(/\s/)[0],
-        line,
-      });
-    }
-    if (diagram) {
-      const { width } = meta.options;
-      return String(render.kit.ui.DiagramEmbed({ ...diagram, ...(width ? { width } : {}) }));
-    }
-  }
   if (meta.role === 'ui') return renderComponent(token, env, line);
   const alias = resolveCodeAlias(token.info, render.context.codeAliases);
   const language = render.highlighter.codeLanguage(alias.info);

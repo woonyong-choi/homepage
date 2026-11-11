@@ -5,7 +5,7 @@
 | 상태 | 구현 |
 | 위치 | `src/document` |
 
-홈페이지 내부의 Markdown 해석기·렌더러·기본 테마 연결이다. 별도 저장소(document-engine)에서 관리하던 코드를 이 저장소로 옮겼다. 디자인 패키지와 DiagramPlay는 홈페이지가 `package.json`에 고정한 commit을 읽는다.
+홈페이지 내부의 Markdown 해석기·렌더러·기본 테마 연결이다. 별도 저장소(document-engine)에서 관리하던 코드를 이 저장소로 옮겼다. 디자인 패키지는 홈페이지가 `package.json`에 고정한 commit을 읽는다.
 
 ## 요약
 
@@ -45,15 +45,15 @@ console.log(output.diagnostics);
 
 | 진입점 | 내용 |
 |---|---|
-| `src/document/index.js` | `parseDocument`(비동기), `renderDocument`, `documentEngine`, `compileDiagram`, `compileDiagrams`, `mathAssets`, `MATH_STYLESHEET`, `usesMath`, `ThemeError`, `DEFAULT_THEME_FILES` |
+| `src/document/index.js` | `parseDocument`(비동기), `renderDocument`, `documentEngine`, `mathAssets`, `MATH_STYLESHEET`, `usesMath`, `ThemeError`, `DEFAULT_THEME_FILES` |
 | `src/document/parser/index.js` | `parseDocumentSync`(동기) |
 | `src/document/preview/index.js` | `parseDocumentSync`, `renderPreview`(동기, 관리 화면 브라우저 번들 `admin-editor.js`용) |
 
 `documentEngine`은 호출자가 `parseDocument(source, { id })`와 `renderDocument(document, { id })`로 부르는 객체다. 루트 `parseDocument`는 문법 확인 함수와 값 목록의 기본값(아이콘 카탈로그, 주소 정책, 폭·카드 모양 목록)을 기본 테마에서 채운 뒤 `parseDocumentSync`를 부르는 비동기 함수다.
 
-`parseDocumentSync`는 테마 없이 동기로 해석한다. 검증 함수와 값 목록은 호출자가 제공하고, 주지 않은 항목은 해석 단계에서 확인하지 않는다. 해석기 폴더는 디자인 패키지·DiagramPlay·렌더러·테마를 import하지 않는다. [parser.test.js](../../src/document/test/parser.test.js)의 경계 시험이 여러 줄 import, `export ... from`, 동적 `import()`까지 검사한다.
+`parseDocumentSync`는 테마 없이 동기로 해석한다. 검증 함수와 값 목록은 호출자가 제공하고, 주지 않은 항목은 해석 단계에서 확인하지 않는다. 해석기 폴더는 디자인 패키지·렌더러·테마를 import하지 않는다. [parser.test.js](../../src/document/test/parser.test.js)의 경계 시험이 여러 줄 import, `export ... from`, 동적 `import()`까지 검사한다.
 
-`renderPreview(document, { ui, icons?, svg?, assets?, codeAliases? })`는 작성 화면 미리보기용 동기 출력이다. `renderDocument`와 같은 Markdown 규칙·기본 테마 구성 요소·출력 상태(`renderer/render-state.js`)를 쓰므로 그림 문단·코드 블록·인용·각주가 사이트와 같은 HTML이 된다. 디자인 모듈은 호출자가 이미 불러온 것을 넘긴다. 코드 강조(shiki·highlight.js), 도표 컴파일, 수학 자산 파일은 다루지 않아 Node 모듈 없이 브라우저 번들에 들어간다. 코드는 강조 없이 같은 코드 블록에, 도표는 원문 코드로 보인다. [preview.test.js](../../src/document/test/preview.test.js)가 사이트 출력과의 일치와 Node 모듈·강조기를 불러오지 않는 의존 경로를 검사한다.
+`renderPreview(document, { ui, icons?, svg?, assets?, codeAliases? })`는 작성 화면 미리보기용 동기 출력이다. `renderDocument`와 같은 Markdown 규칙·기본 테마 구성 요소·출력 상태(`renderer/render-state.js`)를 쓰므로 그림 문단·코드 블록·인용·각주가 사이트와 같은 HTML이 된다. 디자인 모듈은 호출자가 이미 불러온 것을 넘긴다. 코드 강조(shiki·highlight.js)와 수학 자산 파일은 다루지 않아 Node 모듈 없이 브라우저 번들에 들어간다. 코드는 강조 없이 같은 코드 블록에 보인다. [preview.test.js](../../src/document/test/preview.test.js)가 사이트 출력과의 일치와 Node 모듈·강조기를 불러오지 않는 의존 경로를 검사한다.
 
 ### 해석 문맥
 
@@ -66,7 +66,6 @@ console.log(output.diagnostics);
 | urls.isSafe(url) | 문서에 쓸 수 있는 주소인지 |
 | vocabulary.widths | 폭 옵션 `width`의 값 목록. 루트 `parseDocument`는 디자인 정본 `WIDTHS` |
 | vocabulary.cardVariants | `:::cards`의 `variant` 값 목록. 루트 `parseDocument`는 디자인 정본 `CARD_VARIANTS` |
-| features.diagrams | 선택 문법 사용 여부. `false`면 `diagramplay` 펜스를 오류 진단으로 알리고 도표를 수집하지 않는다. 생략하면 켜짐이다. 다른 키(없앤 `tabs` 포함)나 불리언이 아닌 값은 `TypeError` |
 
 호스트의 파일 시스템 객체는 전달하지 않는다. 원문 문자열은 바꾸지 않는다.
 
@@ -80,9 +79,9 @@ console.log(output.diagnostics);
 | 리프 | `::이름{속성}` 또는 `::이름 속성` | 없음 |
 | 탭 | 없음. 탭 문법은 없앴다 | `:::tabs`·`:::platform`·`:::tab[이름]`·`:::end`는 다른 이름 없는 블록과 같이 위치가 있는 `알 수 없는 블록입니다`, `@tab` 줄은 일반 문단, `ui:tabs`·`ui:platform`은 `Unknown document component` |
 | 옵션 | `key=값`, 값 없는 참거짓 이름(`rounded`, `controls`) | `box`, `top`, `w-narrow`, `selector-segmented`, `centered` 같은 약칭·붙임 옵션은 `허용하지 않는 속성입니다` |
-| 도표 펜스 | ` ```diagramplay width=… name=… ` | ` ```thinkflow `·` ```torso `는 일반 코드 펜스 |
+| 도표 펜스 | 없음. 도표는 이미지로 넣는다 | ` ```diagramplay `·` ```thinkflow `·` ```torso `는 일반 코드 펜스 |
 
-[output.test.js](../../src/document/test/output.test.js)의 `removed_tab_syntax_and_old_options_are_ordinary_syntax_errors`, `old_diagram_fence_names_are_plain_code_and_their_options_are_code_options`와 [diagram.test.js](../../src/document/test/diagram.test.js)의 `compileDiagram_does_not_rewrite_old_thinkflow_or_torso_headers`가 검사한다.
+[output.test.js](../../src/document/test/output.test.js)의 `removed_tab_syntax_and_old_options_are_ordinary_syntax_errors`, `diagram_fence_names_are_plain_code_and_their_options_are_code_options`가 검사한다.
 
 ### 해석 결과
 
@@ -91,7 +90,6 @@ console.log(output.diagnostics);
 | 필드 | 뜻 |
 |---|---|
 | metadata.headings | `{ id, title, level, line }` 목록. 중첩 구성 요소 안의 제목은 구성 요소 줄을 가리킨다 |
-| metadata.diagrams | 도표 원문과 줄·폭. 도표 생성은 렌더러 밖에서 한다 |
 | metadata.links | `{ kind, target, line }` 목록. `kind`는 `link` 또는 `image`, `target`은 원문 대상 |
 | diagnostics | 해석 진단. `{ document, severity, stage, message, line, directive, nestedLine? }` |
 
@@ -117,7 +115,6 @@ console.log(output.diagnostics);
 | assets | 구성 요소가 자산 조회로 사용한 `{ name, url }` 목록 |
 | runtime | 필요한 정본 runtime 파일 이름(`document.js`, `video.js` 등) |
 | math | 수식이 있으면 true. KaTeX 스타일·글꼴은 `mathAssets()` |
-| diagrams | `{ source, line, status: embedded, pending, failed }` |
 | theme | 적용한 테마 이름. 테마를 주지 않으면 `default`, 이름 없는 교체 테마는 `custom` |
 
 출력 문맥에서 호스트 전용 값을 받는다. 렌더러에는 특정 사이트의 자산 이름이나 언어 별칭을 두지 않는다.
@@ -130,14 +127,6 @@ console.log(output.diagnostics);
 구성 요소의 자산 주소는 출력 문맥의 `assets.url(name)`으로 조회하고, 함수가 없으면 `/assets/<name>`을 쓴다. 디자인 패키지의 URL 정책(https·mailto·`/` 경로·`#`)을 통과한 주소만 기록하며 출력할 때 속성에 맞게 한 번만 이스케이프한다. 선택적으로 전달하는 `assets.size(name)`은 양의 정수 한 쌍 또는 크기를 모를 때 `undefined`를 반환한다. 결과를 조립할 때 주소를 다시 조회하지 않는다.
 
 일반 Markdown 이미지의 주소는 원문을 사용하므로 `assets.url`로 바꾸거나 반환값 `assets`에 모으지 않는다. 해당 이미지에도 `assets.size`로 크기를 제공할 수 있다. 일반 Markdown의 링크·이미지 대상은 해석 결과의 `metadata.links`에서 확인한다. `::figure`의 `src` 같은 구성 요소 이미지 필드는 이 목록에 없으므로 해석된 토큰의 속성과 출력의 `assets`도 따로 확인한다. `assets`는 사용한 주소 목록이지 파일 존재 확인 결과가 아니며, 실제 존재 여부는 호스트가 해석 문맥의 `assets.exists` 등으로 검사한다. 이 구분은 [자산 조회 도구](../../src/document/renderer/kit.js)와 [이미지 출력 규칙](../../src/document/renderer/markdown-rules.js)에 있다.
-
-도표는 `diagramplay` 펜스 하나로 쓴다. 다른 이름(`thinkflow`, `torso` 등)의 펜스는 도표가 아니라 일반 코드이며 코드 옵션(`width`, `filename`)만 받는다. `diagramplay` 펜스는 `width`와 `name=<이름>`을 받는다. 이름은 영문 소문자·숫자와 가운데 하이픈으로 쓰며, 유효성은 시험에 고정한 DiagramPlay의 공개 CLI `diagramplay md --check --json` 결과와 대조한다. 다른 속성과 잘못된 이름은 위치가 있는 진단으로 돌려준다.
-
-`compileDiagram`은 원문을 바꾸지 않고 DiagramPlay에 그대로 넘긴다. 첫 의미 줄이 `diagramplay`가 아니면 DiagramPlay가 `missing-preamble` 오류로 거절한다. token.content, metadata, 중복 제거 기준과 결과 Map key는 원문을 유지한다. 공개 `toHtml`의 `source` 옵션으로 입력 원문을 전달하므로 문법 복사와 canonical HTML 다운로드도 같은 원문을 담는다. 컴파일 모형과 시간표는 수정하지 않는다.
-
-지원 아이콘은 호스트의 전체 디자인 카탈로그가 정한다. 지원하지 않는 이름은 원문을 보존한 채 실패 진단으로 남긴다. 렌더 진단의 component는 입력 펜스 이름을 유지하며, 컴파일하지 않은 도표는 읽을 수 있는 코드로 남는다.
-
-검증한 `name`은 펜스 토큰의 `meta.options`에 보존한다. 도표 원문·수집 정보·출력·경로에는 쓰지 않는다. 이름이 달라도 원문이 같으면 도표를 한 번만 만든다. 이름을 이용한 생성 SVG와 장면 표식의 전처리는 홈페이지 어댑터가 맡는다.
 
 각주 ID는 `pageId`를 접두사로 해(`fn-<pageId>-1`, `fnref-<pageId>-1`) 한 피드의 여러 문서가 겹치지 않으며, `pageId`가 없으면 접두사가 없다. 구성 요소 안 각주는 구성 요소 번호를 따른다.
 
@@ -200,21 +189,18 @@ props의 값은 두 종류다. 원문 글은 escape하지 않은 문자열이라
 
 ### 호스트의 책임
 
-자산 조회·파일 저장·화면 연결은 호스트가 맡는다. 홈페이지 어댑터는 `assets`로 조회·주소·크기를 넘기고, 도표 컴파일 결과를 원문별 Map인 `diagrams`로 전달한다. 컴파일한 도표의 HTML 파일을 저장하고 제공하는 일도 호스트의 책임이다.
+자산 조회·파일 저장·화면 연결은 호스트가 맡는다. 홈페이지 어댑터는 `assets`로 조회·주소·크기를 넘긴다.
 
-소개 문단 중복 제거, 프로젝트 첫 H1 처리, 태그·공개 여부·날짜·발행 경로, 개인 도메인, `image-sizes.json`과 `content` 폴더 읽기, 출력 파일 배치, 검색·댓글·footer는 렌더러에 없다. 프로젝트 도표 SVG·장면 표식 줄의 전처리도 홈페이지 어댑터가 소유한다.
+소개 문단 중복 제거, 프로젝트 첫 H1 처리, 태그·공개 여부·날짜·발행 경로, 개인 도메인, `image-sizes.json`과 `content` 폴더 읽기, 출력 파일 배치, 검색·댓글·footer는 렌더러에 없다.
 
 ### 의존성
 
-렌더러가 쓰는 Markdown·수식·코드 강조 라이브러리(`markdown-it`, `markdown-it-deflist`, `markdown-it-footnote`, `@vscode/markdown-it-katex`, `katex`, `highlight.js`, `shiki`, `yaml`)는 홈페이지 `package.json`의 `devDependencies`에 정확한 판으로 둔다. 디자인과 DiagramPlay는 홈페이지가 고정한 commit 하나를 함께 읽는다.
+렌더러가 쓰는 Markdown·수식·코드 강조 라이브러리(`markdown-it`, `markdown-it-deflist`, `markdown-it-footnote`, `@vscode/markdown-it-katex`, `katex`, `highlight.js`, `shiki`, `yaml`)는 홈페이지 `package.json`의 `devDependencies`에 정확한 판으로 둔다. 디자인은 홈페이지가 고정한 commit 하나를 읽는다.
 
 | 의존성 | 선언 | 이유 |
 |---|---|---|
 | `@woonyong-choi/design-tokens` | 고정 commit | 기본 테마는 홈페이지가 설치한 디자인을 쓴다 |
-| `diagramplay` | 고정 commit | 도표는 홈페이지가 고른 렌더러로 만든다. 설치하지 않은 환경에서도 문서 해석·출력은 쓸 수 있고, `compileDiagram`은 설치할 패키지를 알려 주는 오류를 던진다 |
 | `katex` | `overrides`로 한 판 강제 | `@vscode/markdown-it-katex` 1.1.2는 `katex ^0.16.4`를 선언한다. 강제가 없으면 0.16 판이 따로 설치되어 수식 출력과 스타일·글꼴(`mathAssets`)의 KaTeX 판이 갈리고, 0.16 판의 보안 권고(GHSA-238p-pmpm-9mq7)가 남는다 |
-
-`compileDiagram`은 렌더러와 DiagramPlay가 같은 디자인 패키지 위치를 읽는지 확인하고 다르면 도표를 거절한다.
 
 ### 검증
 

@@ -3,7 +3,6 @@ import { parseDocumentSync } from './parser/parse-document.js';
 import { renderDocument as render } from './renderer/render-document.js';
 import { loadDefaultTheme } from './theme/default-theme.js';
 
-export { compileDiagram, compileDiagrams } from './renderer/diagram.js';
 export { MATH_STYLESHEET, mathAssets, usesMath } from './renderer/math-assets.js';
 export { ThemeError } from './theme/resolve-theme.js';
 export { DEFAULT_THEME_FILES } from './theme/default-theme.js';

@@ -462,45 +462,6 @@ $$
 f(x) = a_0 + a_1 x + a_2 x^2 + a_3 x^3 + a_4 x^4 + a_5 x^5 + a_6 x^6 + a_7 x^7 + a_8 x^8 + a_9 x^9 + a_{10} x^{10} + a_{11} x^{11} + a_{12} x^{12}
 $$
 
-## 도표
-
-` ```diagramplay ` 블록에 DiagramPlay 문법을 씁니다. 첫 줄은 `diagramplay`입니다. 도표는 사이트를 빌드할 때 미리 만들며, 브라우저는 완성된 도표와 재생기만 읽습니다. 색·글꼴·아이콘·조작부는 사이트와 같은 공통 디자인을 사용합니다.
-
-```diagramplay
-diagramplay
-title "글이 발행되는 흐름"
-box write "글 작성" icon=document
-box review "검토" icon=code-review
-box publish "발행" icon=server
-store index "검색 색인" icon=search
-write -> review "초안"
-review -> publish "승인"
-publish -> index "색인 갱신"
-view graph down
-scene "구조"
-scene "발행"
-  write -> review "초안"
-  review -> publish "승인"
-  publish -> index "색인 갱신"
-scene "반복 발행" mode=loop for=6s
-  track write -> review -> publish -> index every=2s time=3s
-```
-
-```diagramplay
-diagramplay
-title "페이지 요청과 응답"
-box reader "독자" icon=person
-box site "사이트" icon=server
-view sequence {
-  reader site
-}
-scene "글 읽기"
-  reader -> site "글 요청"
-  site -> reader "정적 HTML"
-```
-
-장면 탭으로 구조, 한 번 발행, 반복 트래픽을 바꿉니다. `scene`의 `mode`와 `speed`로 반복과 배속을 정하고, `track`의 `every`와 `time`으로 유입 간격과 이동 시간을 정합니다. 도표 오른쪽 위에서 원문 복사, HTML 다운로드, 전체화면을 사용할 수 있습니다. 문서 안의 도표는 로컬 파일을 읽는 사용자 아이콘 모음과 외부 데이터 파일을 허용하지 않습니다. 내장 아이콘과 문법 안에 적은 데이터만 사용합니다.
-
 ## 원본 글 요소 (선택 문법)
 
 Things 블로그 글에 있는 작은 글씨 문단과 두 열 이미지 묶음은 `ui:` 구성 요소로 씁니다. 임의 HTML은 쓰지 않습니다.

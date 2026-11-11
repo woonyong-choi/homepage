@@ -21,7 +21,6 @@ import { replacePublication, NOT_FOUND_FILE } from './publication-output.mjs';
 import { loadHomeContent } from './home-content.mjs';
 import { browserScripts } from './browser-scripts.mjs';
 import { mathAssets } from './document/index.js';
-import { compileDiagrams } from './diagrams.mjs';
 import { compileStyles as publicationStyles } from '@woonyong-choi/design-tokens/ui/build/styles.mjs';
 import { THEME_ROOT as THEME, THEME_MANIFEST as MANIFEST } from './design-package.mjs';
 import { siteOrigin, siteTitle, SITE_ICON } from './publication-metadata.mjs';
@@ -29,7 +28,6 @@ import { siteIdentity } from './site-identity.mjs';
 import { markdownFiles } from './content-files.mjs';
 import { loadBlogLayout } from './layout-config.mjs';
 import { loadAdminConfig } from './admin-config.mjs';
-import { SITE_FEATURES } from './site-features.mjs';
 import { adminPage } from './admin-layout.mjs';
 import { ADMIN_STYLES_VERSION } from './publication-layout.mjs';
 
@@ -62,22 +60,17 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
     post.commentCount = comments.counts.get(post.id);
     post.related = relatedPosts(post, posts);
   }
-  const diagramSources = new Map();
   const parsed = new Map();
   for (const page of posts) {
     const document = await parseArticle(page);
     parsed.set(page.id, document);
-    for (const diagram of document.metadata.diagrams) diagramSources.set(diagram.source, page.id);
   }
-  const diagrams = await compileDiagrams(diagramSources);
-  await renderDocuments(posts, { diagrams: diagrams.diagrams, parsed });
+  await renderDocuments(posts, { parsed });
   const scripts = browserScripts(ROOT);
   const identity = siteIdentity(readFileSync(join(THEME, SITE_ICON.slice('/theme/'.length))));
   const context = { config, layout, tags, knownTags, recommendations, origin, preview, mode, identity, commentsStatus: comments.status, themeHash: MANIFEST.contentHash, scriptHash: digest([...scripts.values()].join('\n')), math: mathAssets() };
-  context.diagrams = diagrams.assets;
   const admin = loadAdminConfig();
-  // 작성 화면 미리보기는 사이트와 같은 선택 문법 스위치로 해석한다.
-  if (admin) context.admin = { ...admin, author: layout.blog.card.author, features: SITE_FEATURES };
+  if (admin) context.admin = { ...admin, author: layout.blog.card.author };
   context.home = loadHomeContent(brandNames(), CONTENT, { preview });
   context.services = serviceTagCatalog(knownTags);
   const output = new Map();
@@ -164,7 +157,6 @@ async function writeSite(output, posts, context, scripts, notFound, outputRoot) 
   const files = new Map([...scripts].map(([file, source]) => [`/${file}`, source]));
   const index = { entries: posts.map(page => searchEntry(page, context.knownTags)), tags: context.tags };
   const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : path === adminStylePath ? Buffer.from(full.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
-  for (const [path, content] of context.diagrams) assets.set(path, content);
   // 글 관리의 미리보기는 글이 없어도 글쓴이 사진을 쓴다.
   const avatar = context.admin?.author?.avatar;
   if (avatar?.startsWith('/assets/') && !assets.has(avatar)) assets.set(avatar, readFileSync(join(CONTENT, avatar)));

@@ -33,7 +33,7 @@ export function renderPreview(document, context) {
   if (!context?.ui) throw new TypeError('renderPreview needs the design ui module');
   const { html, diagnostics } = renderTokens(
     document,
-    { ...context, diagrams: undefined },
+    context,
     {
       theme: { ui: context.ui, icons: context.icons, svg: context.svg },
       components: resolveComponents(createDefaultComponents(), undefined),

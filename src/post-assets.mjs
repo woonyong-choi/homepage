@@ -28,7 +28,7 @@ function collect(tokens, names) {
 export function postAssets(text) {
   const post = readPost(String(text));
   const names = new Set();
-  collect(parseDocumentSync(post.body, { id: 'post-assets', features: { diagrams: true } }).tokens, names);
+  collect(parseDocumentSync(post.body, { id: 'post-assets' }).tokens, names);
   const thumbnail = assetName(post.thumbnail?.src);
   if (thumbnail) names.add(thumbnail);
   return [...names];

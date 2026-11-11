@@ -35,10 +35,8 @@ test('blog_detail_promotes_the_first_paragraph_to_the_lead', async () => {
   assert.match(blog, /app-article-lead"><strong>설명<\/strong>/);
 });
 
-test('engine_diagnostics_and_failed_diagrams_stop_publication', async () => {
+test('engine_diagnostics_stop_publication', async () => {
   await assert.rejects(renderArticle({ id: 'broken', description: '', body: ':::note\n닫히지 않음\n' }), /broken 본문/);
-  const source = 'diagramplay\nbox a "A"\n';
-  await assert.rejects(renderArticle({ id: 'failed-diagram', description: '', body: '```diagramplay\n' + source + '```' }, { diagrams: new Map([[source, { error: 'invalid diagram' }]]) }), /failed-diagram/);
 });
 
 test('separate_articles_keep_unique_footnote_targets_in_a_shared_feed', async () => {

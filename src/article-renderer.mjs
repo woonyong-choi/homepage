@@ -5,7 +5,6 @@ import { DEFAULT_THEME_FILES, parseDocument, renderDocument } from './document/i
 import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
 import { documentAssets as assets } from './document-assets.mjs';
 import { THEME_ROOT } from './design-package.mjs';
-import { SITE_FEATURES } from './site-features.mjs';
 import { splitLead } from './article-summary.mjs';
 
 // 문서 렌더러(src/document)의 기본 테마가 홈페이지가 설치한 같은 디자인 패키지를 읽는지 확인한다.
@@ -13,26 +12,24 @@ if (realpathSync(fileURLToPath(DEFAULT_THEME_FILES.root)) !== realpathSync(THEME
 function rejectErrors(output, page) {
   const errors = output.diagnostics.filter(item => item.severity === 'error');
   if (errors.length) throw new Error(errors.map(item => `${page.id} 본문 ${item.line ?? 1}줄 :${item.directive ?? 'document'} ${item.message}`).join('\n'));
-  if (output.diagrams?.some(item => item.status === 'failed')) throw new Error(`${page.id}: DiagramPlay 도표를 만들 수 없습니다.`);
 }
 
 export async function parseArticle(page, options = {}) {
-  const document = await parseDocument(page.body, { id: page.id, pageId: page.id, assets: options.assets ?? assets, features: options.features ?? SITE_FEATURES });
+  const document = await parseDocument(page.body, { id: page.id, pageId: page.id, assets: options.assets ?? assets });
   rejectErrors(document, page);
   return document;
 }
 
 export async function renderArticle(page, options = {}) {
   const document = options.document ?? await parseArticle(page, options);
-  for (const diagram of document.metadata.diagrams) options.diagramSources?.set(diagram.source, page.id);
-  const context = { assets: options.assets ?? assets, diagrams: options.diagrams };
+  const context = { assets: options.assets ?? assets };
   // 요약과 같은 첫 문단은 글 머리로 옮기고, 요약이 제목이거나 본문에 이미 있으면 머리를 비운다.
   const split = splitLead([...document.tokens], page.description, page.title);
   const tokens = split.tokens;
   let leadHtml = split.kind === 'summary' ? escape(page.description) : '';
   let lead;
   if (split.kind === 'lead') {
-    lead = await renderDocument({ ...document, tokens: split.lead, metadata: { headings: [], diagrams: [] }, diagnostics: [] }, context);
+    lead = await renderDocument({ ...document, tokens: split.lead, metadata: { headings: [] }, diagnostics: [] }, context);
     rejectErrors(lead, page);
     leadHtml = lead.html;
   }

@@ -72,7 +72,12 @@ export function relatedPosts(post, posts, limit = 4) {
 export function searchEntry(post, tags) {
   const aliases = keywordAliases(tags);
   const keywords = [...new Set([...post.tags, ...(post.keywords ?? [])].flatMap(word => [word, ...(aliases.get(keywordKey(word))?.terms ?? [])]))];
-  return { id: post.id, route: post.route, title: post.title, description: post.description, tags: post.tags, date: post.publishedAt, thumbnail: post.cardImage ?? post.thumbnail, comments: post.comments, commentCount: post.commentCount, example: post.example, keywords, text: post.body.replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]*>/g, ' ').replace(/[#*_`>|]/g, ' ') };
+  return { id: post.id, route: post.route, title: post.title, description: post.description, tags: post.tags, date: post.publishedAt, thumbnail: post.cardImage ?? post.thumbnail, comments: post.comments, commentCount: post.commentCount, example: post.example, keywords, text: searchText(post.body) };
+}
+
+// 검색 본문은 읽는 글만 담는다. 수식 블록과 `:::` 표식은 결과 요약에 원문 문법이 드러나므로 뺀다.
+function searchText(body) {
+  return body.replace(/^\$\$[\s\S]*?^\$\$[ \t]*$/gm, ' ').replace(/^:::[^\n]*$/gm, ' ').replace(/!\[[^\]]*\]\([^)]*\)/g, '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/<[^>]*>/g, ' ').replace(/[#*_`>|]/g, ' ');
 }
 
 const keywordKey = word => word.trim().normalize('NFC').toLocaleLowerCase('ko').replace(/\s+/g, ' ');

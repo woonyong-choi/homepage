@@ -13,7 +13,6 @@ export function createEnv(context, parent, nested) {
     // 각주 ID의 접두사다. 문서 본문은 pageId에서 오고(없으면 접두사 없음), 중첩 필드는 구성 요소 번호로 나중에 정해진다.
     docId: nested === undefined ? context.pageId : undefined,
     diagnostics: parent?.diagnostics ?? [],
-    diagrams: parent?.diagrams ?? [],
     idSlots: [],
     nested: nested !== undefined,
     fenceLine: nested?.fenceLine,

@@ -260,8 +260,6 @@ export const DOCUMENTS = Object.freeze({
   math_next_to_directives: ':kbd[Ctrl] $x^2$\n\n## :menu[파일] 수식 $x^2$\n\n$x^2$ :icon[document]',
   footnotes_nested_and_repeated:
     '본문[^a] 다시[^a] 또[^b]\n\n[^a]: 첫째 **굵게**\n[^b]: 둘째\n\n```ui:details\ntitle: 안\nbody: "각주[^a]\\n\\n[^a]: 안쪽"\n```\n',
-  diagramplay_without_compiled_diagram:
-    '```diagramplay width=wide\nstart\n```\n\n```diagramplay\nother\n```\n',
 });
 
 /** 오류가 나야 하는 입력. pattern은 진단의 기대 문구다. */
@@ -458,9 +456,4 @@ export const UI_SYNTAX_ERRORS = Object.freeze([
     /^Unknown document component: platform$/,
   ],
   ['yaml_scalar', '```ui:callout\njust text\n```\n', /^Invalid ui:callout data$/],
-  [
-    'diagramplay_unknown_option',
-    '```diagramplay filename=x\nflow\n```\n',
-    /^허용하지 않는 속성입니다: filename/,
-  ],
 ]);

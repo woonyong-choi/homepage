@@ -254,7 +254,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
   let previewTimer = 0;
   const schedulePreview = () => { view.clearTimeout(previewTimer); previewTimer = view.setTimeout(drawPreview, 150); };
   const heading = () => title.value.replace(/\s*\n\s*/g, ' ').trim();
-  const parseBody = () => parseDocumentSync(body.value, { id: 'admin-preview', features: settings.features ?? {} });
+  const parseBody = () => parseDocumentSync(body.value, { id: 'admin-preview' });
   // 카드와 글 머리에 보일 요약(글 머리 description). 출간 화면의 요약 칸에 쓴 글이 우선이고, 비우면 본문 첫 문단으로 채운다.
   // 출간 화면을 열지 않고 저장할 때는 글에 적힌 요약을 지킨다. 다만 그 요약이 예전 본문 첫 문단에서 자동으로 만든 것이면 지금 본문으로 다시 만든다.
   function summary(tokens) {
@@ -262,7 +262,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     if (!publish.hidden) return publishField('description').value.trim() || auto;
     const current = state.current;
     if (!current?.description) return auto;
-    const before = summaryOf(parseDocumentSync(current.body, { id: 'admin-before', features: settings.features ?? {} }).tokens, current.title);
+    const before = summaryOf(parseDocumentSync(current.body, { id: 'admin-before' }).tokens, current.title);
     return current.description === before ? auto : current.description;
   }
   const html = (parsed, tokens) => renderPreview({ ...parsed, tokens }, { ui }).html;
@@ -394,7 +394,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     setVisibility(state.current?.state === 'private' ? 'private' : 'public');
     // 요약 칸에는 글에 적힌 요약을 넣는다. 본문 첫 문단에서 자동으로 만든 요약이면 비워 두고 자리 글로 안내한다.
     const description = publishField('description');
-    const before = state.current ? summaryOf(parseDocumentSync(state.current.body, { id: 'admin-before', features: settings.features ?? {} }).tokens, state.current.title) : '';
+    const before = state.current ? summaryOf(parseDocumentSync(state.current.body, { id: 'admin-before' }).tokens, state.current.title) : '';
     description.value = state.current?.description && state.current.description !== before ? state.current.description : '';
     publish.querySelector('[data-publish-count]').textContent = String(description.value.length);
     const slug = publishField('slug');
