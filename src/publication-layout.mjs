@@ -13,6 +13,9 @@ import { postArticle } from './post-article.mjs';
 import { publicationMetadata, siteTitle } from './publication-metadata.mjs';
 import { usesMath, MATH_STYLESHEET } from './document/index.js';
 
+// 관리 CSS의 내용 해시는 모든 페이지를 그린 뒤 정해지므로 빌드가 이 자리 표시를 바꿔 넣는다.
+export const ADMIN_STYLES_VERSION = 'admin-styles-version';
+
 const NAVIGATION = Object.freeze([{ href: '/search/', label: 'Search', match: ['/search/'] }, { href: '/blog/', label: 'Blog', match: ['/blog/'] }]);
 
 export function documentShell(page, body, context) {
@@ -26,7 +29,7 @@ export function documentShell(page, body, context) {
   const entries = clientEntrypoints(body + footer);
   const searchScript = entries.includes('publication.js') ? `<script type="module" async src="/publication.js?v=${hashOf('publication.js')}"></script>` : '';
   // 글 관리 설정이 있으면 모든 페이지에 작은 로더를 붙인다. 로그인한 관리자에게만 작성 기능을 불러온다.
-  const admin = context.admin ? `<meta name="admin-settings" content="${ui.escape(JSON.stringify({ ...context.admin, editor: `/admin-editor.js?v=${hashOf('admin-editor.js')}` }))}">` : '';
+  const admin = context.admin ? `<meta name="admin-settings" content="${ui.escape(JSON.stringify({ ...context.admin, editor: `/admin-editor.js?v=${hashOf('admin-editor.js')}`, styles: `/theme/admin.css?v=${ADMIN_STYLES_VERSION}` }))}">` : '';
   if (context.admin && !entries.includes('admin.js')) entries.push('admin.js');
   const scripts = admin + entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
   const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : undefined;

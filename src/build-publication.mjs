@@ -31,6 +31,10 @@ import { loadBlogLayout } from './layout-config.mjs';
 import { loadAdminConfig } from './admin-config.mjs';
 import { SITE_FEATURES } from './site-features.mjs';
 import { adminPage } from './admin-layout.mjs';
+import { ADMIN_STYLES_VERSION } from './publication-layout.mjs';
+
+const ADMIN_ROUTE = '/admin/';
+const ADMIN_EDITOR = 'admin-editor.js';
 import { verifyApprovedContent } from './approved-content.mjs';
 import { sha256 as digest } from './sha256.mjs';
 
@@ -139,16 +143,27 @@ async function writeSite(output, posts, context, scripts, notFound, outputRoot) 
   // 404 문서는 경로가 아닌 파일로 싣지만 스타일 선별과 자산 수집에는 다른 페이지처럼 포함한다.
   const rendered = new Map([...output, [NOT_FOUND_FILE, notFound]]);
   const sourceStyles = readFileSync(join(THEME, 'styles.css'), 'utf8');
-  const styles = await publicationStyles(sourceStyles, rendered, scripts, readFileSync(join(THEME, 'tokens.css'), 'utf8'));
+  // 공개 사이트는 라이트로 고정(documentShell의 data-theme="light")이라 다크 토큰 블록을 싣지 않는다.
+  const theme = readFileSync(join(THEME, 'tokens.css'), 'utf8');
+  const fixed = { scheme: 'light' };
+  // 관리 화면 스타일(작성·출간 화면)은 관리자만 쓰므로 공개 CSS에서 빼고 관리 CSS로 따로 싣는다.
+  // 관리 CSS는 전체 페이지와 스크립트 기준이라 공개 CSS를 모두 포함하고, 관리 로더가 로그인한 뒤에만 불러온다.
+  const full = await publicationStyles(sourceStyles, rendered, scripts, theme, fixed);
+  const styles = context.admin
+    ? { ...await publicationStyles(sourceStyles, new Map([...rendered].filter(([route]) => route !== ADMIN_ROUTE)), new Map([...scripts].filter(([file]) => file !== ADMIN_EDITOR)), theme, fixed), theme: full.theme }
+    : full;
   const stylePath = '/theme/publication.css';
   const styleHash = digest(styles.css);
+  const adminStylePath = '/theme/admin.css';
+  const adminStyleHash = digest(full.css);
   for (const [route, html] of rendered) {
-    rendered.set(route, html.replace(`/theme/styles.css?v=${context.themeHash}`, `${stylePath}?v=${styleHash}`));
+    const sheet = route === ADMIN_ROUTE ? `${adminStylePath}?v=${adminStyleHash}` : `${stylePath}?v=${styleHash}`;
+    rendered.set(route, html.replace(`/theme/styles.css?v=${context.themeHash}`, sheet).replaceAll(ADMIN_STYLES_VERSION, adminStyleHash));
   }
   for (const route of output.keys()) output.set(route, rendered.get(route));
   const files = new Map([...scripts].map(([file, source]) => [`/${file}`, source]));
   const index = { entries: posts.map(page => searchEntry(page, context.knownTags)), tags: context.tags };
-  const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
+  const assets = new Map([...context.identity.assets, ...publicationAssets(rendered, index.entries, path => context.identity.assets.get(path) ?? context.math.assets.get(path) ?? (path === '/theme/tokens.css' ? Buffer.from(styles.theme) : path === stylePath ? Buffer.from(styles.css) : path === adminStylePath ? Buffer.from(full.css) : readFileSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(CONTENT, path))))]);
   for (const [path, content] of context.diagrams) assets.set(path, content);
   // 글 관리의 미리보기는 글이 없어도 글쓴이 사진을 쓴다.
   const avatar = context.admin?.author?.avatar;

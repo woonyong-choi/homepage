@@ -72,10 +72,21 @@ export function initAdminLogin(root, settings, { storage = localStorage, openWin
   show();
 }
 
+// 관리 화면 CSS는 공개 CSS와 따로 싣는다. 편집 기능을 그리기 전에 불러와 모양이 바뀌며 깜빡이지 않게 한다.
+function loadStyles(href) {
+  return new Promise(resolve => {
+    if (!href || document.querySelector(`link[href="${href}"]`)) { resolve(); return; }
+    const link = Object.assign(document.createElement('link'), { rel: 'stylesheet', href });
+    link.addEventListener('load', resolve);
+    link.addEventListener('error', resolve);
+    document.head.append(link);
+  });
+}
+
 const meta = typeof document === 'undefined' ? null : document.querySelector('meta[name="admin-settings"]');
 if (meta) {
   const settings = JSON.parse(meta.content);
   const login = document.querySelector('[data-admin-login]');
   if (login) initAdminLogin(login, settings);
-  else if (read(localStorage)) import(settings.editor).then(module => module.startAdmin(settings, read(localStorage)));
+  else if (read(localStorage)) loadStyles(settings.styles).then(() => import(settings.editor)).then(module => module.startAdmin(settings, read(localStorage)));
 }

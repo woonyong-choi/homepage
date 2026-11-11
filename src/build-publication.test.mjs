@@ -82,6 +82,20 @@ test('build_with_posts_writes_feed_sitemap_pages_and_rewritten_links', { timeout
 
   const second = read(output, `blog/page/2/index.html`);
   assert.match(second, /\/blog\/first-post\//);
+
+  // 공개 페이지는 관리 화면 스타일이 빠진 CSS를, 로그인 화면은 관리 CSS를 싣는다. 관리 로더는 내용 해시가 채워진 관리 CSS 주소를 받는다.
+  const sheet = html => /<link rel="stylesheet" href="(\/theme\/(?:publication|admin)\.css)\?v=([0-9a-f]+)"/.exec(html);
+  assert.equal(sheet(article)[1], '/theme/publication.css');
+  const adminHtml = read(output, 'admin/index.html');
+  assert.equal(sheet(adminHtml)[1], '/theme/admin.css');
+  assert.match(article, new RegExp(`/theme/admin\\.css\\?v=${sheet(adminHtml)[2]}`));
+  const publicCss = read(output, 'theme/publication.css');
+  const adminCss = read(output, 'theme/admin.css');
+  assert.ok(publicCss.length < adminCss.length);
+  assert.doesNotMatch(publicCss, /\.app-publish\b/);
+  assert.match(adminCss, /\.app-publish\b/);
+  // 라이트로 고정한 사이트의 토큰 CSS에는 다크 블록이 없다.
+  assert.doesNotMatch(read(output, 'theme/tokens.css'), /prefers-color-scheme|data-theme=/);
 });
 
 test('production_build_uses_site_origin_and_allows_robots', { timeout: 300000 }, async t => {
