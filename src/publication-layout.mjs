@@ -19,8 +19,7 @@ export const ADMIN_STYLES_VERSION = 'admin-styles-version';
 const NAVIGATION = Object.freeze([{ href: '/search/', label: 'Search', match: ['/search/'] }, { href: '/blog/', label: 'Blog', match: ['/blog/'] }]);
 
 export function documentShell(page, body, context) {
-  const { config, themeHash, scriptHash, scriptHashes = {}, math, colorScheme = 'light' } = context;
-  if (!['light', 'dark'].includes(colorScheme)) throw new Error('invalid page color scheme');
+  const { config, themeHash, scriptHash, scriptHashes = {}, math } = context;
   const hashOf = file => scriptHashes[file] ?? scriptHash;
   const navigation = context.navigation ?? NAVIGATION;
   const active = navigation.flatMap(item => item.match.filter(prefix => prefix === '/' ? page.route === '/' : page.route.startsWith(prefix)).map(prefix => ({ href: item.href, length: prefix.length }))).sort((a, b) => b.length - a.length)[0]?.href;
@@ -33,7 +32,7 @@ export function documentShell(page, body, context) {
   if (context.admin && !entries.includes('admin.js')) entries.push('admin.js');
   const scripts = admin + entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
   const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : undefined;
-  return `<!doctype html><html lang="ko" data-theme="${colorScheme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="${colorScheme}">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}" data-math-stylesheet>` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}">${page.bare ? '' : '<a class="app-skip" href="#main">본문으로 이동</a>'}${page.bare ? '' : ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
+  return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}" data-math-stylesheet>` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}">${page.bare ? '' : '<a class="app-skip" href="#main">본문으로 이동</a>'}${page.bare ? '' : ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
 }
 
 export function searchBox({ large = false, query = '', combobox = true, action = '/search/', filters, config = loadBlogLayout().search.box } = {}) {
