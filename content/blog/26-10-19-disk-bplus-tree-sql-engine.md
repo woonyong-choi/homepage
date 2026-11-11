@@ -21,9 +21,7 @@ thumbnail:
 
 SQL을 입력하면 데이터베이스는 문법을 분석하고 테이블과 컬럼을 확인한 뒤, 데이터를 찾을 방법을 정합니다. 실행기는 그렇게 만들어진 계획에 따라 데이터를 읽고 조건을 검사해 결과를 반환합니다.
 
-```sql
-SELECT * FROM users WHERE id = 1
-```
+![users 테이블에서 id가 1인 행을 조회하는 SQL](../assets/sql-select-user-by-id-light.png)
 
 위 SQL로 `users`에서 `id`가 `1`인 행을 읽으려면, 테이블이 저장된 위치와 그 안에서 행을 찾을 방법을 알아야 합니다. SQL에는 원하는 데이터의 조건만 적혀 있는데, `id = 1`만으로 행이 저장된 위치를 어떻게 찾을까요?
 
@@ -35,11 +33,7 @@ SQL의 조건으로 파일의 행을 찾고 바이트를 값으로 해석하는 
 
 ## SQL을 실행할 정보로 바꾸기
 
-```sql
-CREATE TABLE users (name VARCHAR(32), age INT)
-INSERT INTO users VALUES ('Alice', 25)
-SELECT * FROM users WHERE id = 1
-```
+![users 테이블을 만들고 Alice를 저장한 뒤 id 1로 조회하는 SQL](../assets/sql-create-insert-select-users-light.png)
 
 이름과 나이를 저장하고 다시 조회하는 SQL을 따라가 보겠습니다.
 
@@ -111,20 +105,7 @@ B트리는 정렬된 키를 여러 노드로 나누고, 노드 안의 경계값�
 
 같은 페이지를 요청할 때마다 파일을 읽지 않도록, 읽어 온 페이지를 버퍼에 남겨 트리와 힙이 함께 사용하게 했습니다. 버퍼의 조회·교체와 파일 입출력을 맡는 부분을 코드에서는 `Pager`라고 부릅니다.
 
-```c
-/* 디스크에서 page_id 위치의 페이지를 buf로 직접 읽는다 (캐시 우회) */
-static ssize_t pager_raw_read(pager_t* p, uint32_t page_id, uint8_t* buf) {
-  off_t off = (off_t)page_id * p->page_size;
-  return pread(p->fd, buf, p->page_size, off);
-}
-
-/* buf의 내용을 디스크의 page_id 위치에 직접 쓴다 (캐시 우회) */
-static ssize_t pager_raw_write(pager_t* p, uint32_t page_id,
-                               const uint8_t* buf) {
-  off_t off = (off_t)page_id * p->page_size;
-  return pwrite(p->fd, buf, p->page_size, off);
-}
-```
+![페이지 번호와 페이지 크기로 파일 위치를 계산해 pread와 pwrite를 호출하는 실제 코드](../assets/sql-pager-page-file-io-code-light.png)
 
 버퍼에 없는 페이지는 파일의 `페이지 번호 × 페이지 크기` 위치에서 읽고, 같은 페이지를 다시 요청하면 보관한 버퍼를 반환합니다. 공간이 차면 pin으로 보호한 사용 중인 페이지를 제외하고 교체합니다. 수정한 페이지에는 dirty 표시를 남겨 교체하거나 변경 내용을 반영할 때 파일에 씁니다. 주석의 ‘캐시 우회’는 DB 버퍼를 뜻하며, `pread`와 `pwrite`는 운영체제의 파일 캐시를 거칩니다.
 

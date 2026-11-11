@@ -61,7 +61,7 @@ test('blog_listing_keeps_all_static_cards_and_offers_only_used_tags_without_subj
   assert.equal(document.querySelector('[data-tag-filter] button').dataset.tagToggle, '산책');
   assert.equal(document.querySelector('[data-filter-summary]'), null);
   assert.ok(document.querySelector('[data-public-search] [data-tag-filter]'));
-  assert.ok(document.querySelector('h1').compareDocumentPosition(document.querySelector('[data-public-search]')) & 4);
+  assert.ok(document.querySelector('[data-public-search]').compareDocumentPosition(document.querySelector('h1')) & 4);
   assert.ok(!document.body.textContent.includes('화면을 확인하기 위한 합성 예시 글입니다.'));
   assert.equal(document.querySelectorAll('[data-blog-list]').length, 0);
   dom.window.close();

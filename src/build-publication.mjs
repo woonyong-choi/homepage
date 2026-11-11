@@ -90,8 +90,6 @@ export async function buildPublication({ origin = '', mode = 'approved-preview',
   for (let page = 1; page <= Math.max(1, Math.ceil(posts.length / layout.blog.feedSize)); page++) {
     add(page === 1 ? '/blog/' : `/blog/page/${page}/`, layout.blog.title, blogFeed(posts, tags, page, { commentConfig, commentTheme, layout }));
   }
-  const dated = posts.filter(page => !page.example && !context.hiddenRoutes?.has(page.route)).sort((a, b) => String(b.publishedAt).localeCompare(String(a.publishedAt)));
-  dated.forEach((page, at) => { page.newer = dated[at - 1]; page.older = dated[at + 1]; });
   for (const page of posts) add(page.route, page.title, articlePage(page, context, commentsSection(page, commentConfig, commentTheme)), page);
   // 관리자 로그인 화면은 설정이 있을 때만 만들고 검색 엔진과 사이트맵에서 뺀다.
   if (context.admin) add('/admin/', '로그인', adminPage(config, context, context.admin), { noindex: true, bare: true });
