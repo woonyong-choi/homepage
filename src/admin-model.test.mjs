@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { fromBase64, imageFileName, imageMarkdown, parseTags, postFileName, readPost, toBase64, writePost } from './admin-model.mjs';
+import { fromBase64, imageFileName, imageMarkdown, postFileName, readPost, toBase64, writePost } from './admin-model.mjs';
 
 const source = `---
 id: sample
@@ -50,6 +50,5 @@ test('admin_names_and_encoding_reject_unsafe_values', () => {
   assert.equal(imageFileName('그림.png', 'image/png', '2026-10-27'), '261027-image.png');
   assert.throws(() => imageFileName('a.svg', 'image/svg+xml', '2026-10-27'), /그림만/);
   assert.equal(imageMarkdown('결과 [화면]', 'a.png'), '![결과  화면](../assets/a.png)');
-  assert.deepEqual(parseTags(' SQL, , C,SQL '), ['SQL', 'C']);
   assert.equal(fromBase64(toBase64('한글 ✓')), '한글 ✓');
 });

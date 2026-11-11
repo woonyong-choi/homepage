@@ -64,8 +64,6 @@ export function writePost(original, values) {
   return `---\n${head}\n---\n\n${values.body.replace(/^\s*\n/, '')}${values.body.endsWith('\n') ? '' : '\n'}`;
 }
 
-export const parseTags = text => [...new Set(String(text).split(',').map(tag => tag.trim()).filter(Boolean))];
-
 /** Vault 발행 글 이름: 발행일(YY-MM-DD)과 주소 이름. */
 export function postFileName(slug, date) {
   if (!SLUG.test(slug)) throw new Error('주소 이름은 영어 소문자·숫자와 - 만 쓸 수 있습니다.');
