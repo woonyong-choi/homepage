@@ -179,13 +179,13 @@ props의 값은 두 종류다. 원문 글은 escape하지 않은 문자열이라
 
 ### 기본 테마
 
-기본 테마는 홈페이지가 설치한 `@woonyong-choi/design-tokens` 패키지다. 렌더러는 디자인 파일을 가져오거나 복사하지 않고 빌드 단계도 없다. 어느 디자인 commit을 쓸지는 홈페이지 `package.json`이 정한다.
+기본 테마는 홈페이지의 디자인 정본 `src/design/`에서 생성한 `src/design/dist/`다. 렌더러는 디자인 파일을 복사하지 않고 자체 빌드 단계도 없다.
 
-- 구성 요소·아이콘·SVG는 디자인 패키지의 이름 있는 export `@woonyong-choi/design-tokens/components`, `/icons`, `/svg`에서 불러온다. runtime 목록은 이름 있는 export가 없어 `ui/manifest.mjs`를 `./*` 경로로 읽는다.
+- 구성 요소·아이콘·SVG·runtime 목록은 `#design/ui/index.mjs`, `#design/ui/build/icons.mjs`, `#design/ui/svg.mjs`, `#design/ui/manifest.mjs`에서 불러온다.
 - 폭과 카드 모양 값 목록은 정본 구성 요소의 `WIDTHS`, `CARD_VARIANTS` 하나다. 루트 `parseDocument`가 이 값을 해석 문맥 `vocabulary`로 넘기고, 출력 단계의 검사도 같은 정본 구성 요소가 한다. 해석기는 디자인 모듈을 import하지 않는다.
 - 제목을 생략한 `:::note`와 `ui:callout`의 제목은 같은 `참고`다.
-- 다크 모드는 문서 루트의 `data-theme` 또는 시스템 설정으로 정본 CSS가 처리한다. HTML은 모드와 무관하다.
-- 호스트는 `DEFAULT_THEME_FILES`로 tokens.css, styles.css, ui/runtime을 문서 화면에 연결한다. `root`는 설치된 디자인 패키지의 `dist/` 폴더다.
+- 홈페이지 발행은 밝은 테마로 고정한다. HTML은 모드와 무관하다.
+- 호스트는 `DEFAULT_THEME_FILES`로 tokens.css, styles.css, ui/runtime을 문서 화면에 연결한다. `root`는 `src/design/dist/` 폴더다.
 
 ### 호스트의 책임
 
@@ -195,11 +195,10 @@ props의 값은 두 종류다. 원문 글은 escape하지 않은 문자열이라
 
 ### 의존성
 
-렌더러가 쓰는 Markdown·수식·코드 강조 라이브러리(`markdown-it`, `markdown-it-deflist`, `markdown-it-footnote`, `@vscode/markdown-it-katex`, `katex`, `highlight.js`, `shiki`, `yaml`)는 홈페이지 `package.json`의 `devDependencies`에 정확한 판으로 둔다. 디자인은 홈페이지가 고정한 commit 하나를 읽는다.
+렌더러가 쓰는 Markdown·수식·코드 강조 라이브러리(`markdown-it`, `markdown-it-deflist`, `markdown-it-footnote`, `@vscode/markdown-it-katex`, `katex`, `highlight.js`, `shiki`, `yaml`)는 홈페이지 `package.json`의 `devDependencies`에 정확한 판으로 둔다. 디자인은 같은 저장소의 `src/design/`이며 외부 패키지가 아니다. 디자인 생성에 쓰는 `postcss`, `purgecss`, `esbuild`도 같은 `devDependencies`에 있다.
 
 | 의존성 | 선언 | 이유 |
 |---|---|---|
-| `@woonyong-choi/design-tokens` | 고정 commit | 기본 테마는 홈페이지가 설치한 디자인을 쓴다 |
 | `katex` | `overrides`로 한 판 강제 | `@vscode/markdown-it-katex` 1.1.2는 `katex ^0.16.4`를 선언한다. 강제가 없으면 0.16 판이 따로 설치되어 수식 출력과 스타일·글꼴(`mathAssets`)의 KaTeX 판이 갈리고, 0.16 판의 보안 권고(GHSA-238p-pmpm-9mq7)가 남는다 |
 
 ### 검증

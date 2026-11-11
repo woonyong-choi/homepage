@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import * as ui from '@woonyong-choi/design-tokens/components';
+import * as ui from '#design/ui/index.mjs';
 import { parseDocument, renderDocument } from '../index.js';
 import { parseDocumentSync, renderPreview } from '../preview/index.js';
 

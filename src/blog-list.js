@@ -1,4 +1,4 @@
-import { RUNTIMES } from '@woonyong-choi/design-tokens/ui/manifest.mjs';
+import { RUNTIMES } from '#design/ui/manifest.mjs';
 
 // 이어 붙인 글이 쓰는 공통 런타임과 댓글 런타임. 페이지 조립의 clientEntrypoints와 같은 정본 목록을 읽는다.
 const CONTENT_SCRIPTS = new Set([...Object.keys(RUNTIMES), 'comments.js'].map(file => `/${file}`));

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
-import { initDocumentNavigation } from '@woonyong-choi/design-tokens/ui/runtime/document-navigation.js';
-import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
+import { initDocumentNavigation } from '#design/ui/runtime/document-navigation.js';
+import * as ui from '#design/ui/index.mjs';
 
 test('document_outline_tracks_subheadings_and_preserves_mobile_disclosure_choices', () => {
   const html = ui.DocumentLayout({

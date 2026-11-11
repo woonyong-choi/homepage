@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom';
 import { initBlogList } from './blog-list.js';
 import { blogFeed } from './blog-layout.mjs';
 import { MATH_STYLESHEET } from './document/index.js';
-import { RUNTIMES } from '@woonyong-choi/design-tokens/ui/manifest.mjs';
+import { RUNTIMES } from '#design/ui/manifest.mjs';
 
 const posts = Array.from({ length: 6 }, (_, id) => ({ route: `/blog/p${id}/`, title: `글 ${id}`, description: '요약' }));
 const tick = () => new Promise(resolve => setImmediate(resolve));

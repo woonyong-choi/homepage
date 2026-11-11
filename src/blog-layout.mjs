@@ -1,4 +1,4 @@
-import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
+import * as ui from '#design/ui/index.mjs';
 import { paginate, dateLabel } from './content-model.mjs';
 import { loadBlogLayout } from './layout-config.mjs';
 import { dateLine, tagLinks, searchBox } from './publication-layout.mjs';

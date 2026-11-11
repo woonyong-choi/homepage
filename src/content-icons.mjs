@@ -1,9 +1,9 @@
 // 콘텐츠 SVG와 공통 목록의 아이콘을 정본 렌더러에 연결한다.
 import { readFileSync } from 'node:fs';
 
-import { ContentIcon, ContentIconImage, trusted } from '@woonyong-choi/design-tokens/ui/index.mjs';
-import { getIconCatalog, readIcon } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
-import { renderSvgIcon } from '@woonyong-choi/design-tokens/ui/svg.mjs';
+import { ContentIcon, ContentIconImage, trusted } from '#design/ui/index.mjs';
+import { getIconCatalog, readIcon } from '#design/ui/build/icons.mjs';
+import { renderSvgIcon } from '#design/ui/svg.mjs';
 import { brandIcon } from './brand-icons.mjs';
 
 export function renderContentSvg(source, className = '', readAsset) {

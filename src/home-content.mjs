@@ -2,8 +2,8 @@
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
-import { SOCIAL_ICONS } from '@woonyong-choi/design-tokens/ui/index.mjs';
-import { iconFile } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { SOCIAL_ICONS } from '#design/ui/index.mjs';
+import { iconFile } from '#design/ui/build/icons.mjs';
 import { THEME_ROOT as THEME } from './design-package.mjs';
 import { summaryParts } from './interviews.mjs';
 import { readContentFile } from './content-files.mjs';

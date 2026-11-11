@@ -1,6 +1,6 @@
 // /admin/: 관리자 로그인 화면. 빈 화면 가운데에 사이트 로고와 로그인만 둔다.
 // 로그인 서버(authUrl)가 있으면 GitHub 로그인 단추, 없으면 GitHub 토큰을 붙여 넣는 칸을 쓴다.
-import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
+import * as ui from '#design/ui/index.mjs';
 import { renderContentSvg } from './content-icons.mjs';
 
 // 토큰 만들기 화면에 이름·설명·권한을 미리 채운다. 저장소 선택(Vault·홈페이지)만 직접 고른다.

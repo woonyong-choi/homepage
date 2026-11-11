@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { browserScripts } from './browser-scripts.mjs';
 import { JSDOM } from 'jsdom';
 import { renderArticle } from './article-renderer.mjs';
-import { values } from '@woonyong-choi/design-tokens/tokens.js';
+import { values } from '#design/tokens.js';
 
 test('appended_code_and_galleries_initialize_without_duplicate_handlers_on_existing_elements', async () => {
   const dom = new JSDOM('<main></main>', { url: 'https://example.com/blog/', runScripts: 'outside-only' });

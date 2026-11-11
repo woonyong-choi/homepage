@@ -1,0 +1,37 @@
+/* 구독 입력과 제출 버튼. */
+.app-newsletter { width: var(--container-form); max-width: 100%; margin: 0 auto calc(var(--text-landing-review-font) * var(--leading-feature-body-line)); font-size: var(--text-landing-review-font); line-height: var(--leading-feature-line); text-align: center; }
+.app-newsletter .app-input { margin-bottom: var(--spacing-underline); }
+.app-newsletter-note { margin: var(--spacing-landing-panel-gap) 0; font-size: var(--text-landing-newsletter-note); text-align: left; color: var(--color-control-muted); }
+.app-newsletter-note a { color: inherit; text-decoration: underline; }
+/* 구독 버튼은 한글 대체 글꼴의 normal 행간에도 높이를 유지한다. */
+.app-newsletter button { margin-bottom: var(--spacing-newsletter-button-margin); padding: var(--component-newsletter-button-padding); font-size: var(--text-newsletter-button-font); font-weight: var(--font-weight-bold); line-height: var(--leading-newsletter-button-line); color: var(--color-button-primary-ink); background: var(--color-button-primary); border: var(--border-width-thin) solid transparent; border-radius: var(--radius-newsletter-button-radius); }
+.app-newsletter button:hover { background: var(--color-button-primary-hover); box-shadow: var(--shadow-action-shadow); text-decoration: none; }
+.app-newsletter button:active { background: var(--color-button-primary-active); }
+.app-newsletter button:focus { outline: 0; box-shadow: var(--component-action-focus); }
+.app-newsletter :disabled { cursor: default; }
+/* 비활성 구독 단추는 Things 비활성 단추처럼 같은 파랑을 투명도 .4로 흐린다. */
+.app-newsletter button:disabled, .app-newsletter button:disabled:hover { color: var(--color-button-primary-ink); background: var(--color-button-primary); box-shadow: none; opacity: var(--opacity-button-disabled); }
+
+
+/* 텍스트 입력의 단일 구현. 일반 입력·검색·구독이 모두 .app-input을 쓰고 크기·면·앞 아이콘 칸만 변형한다.
+   기본은 Things 입력 칸(옅은 회색 면, 1px 선, 반경 .4em)이고 높이는 분할 탭 묶음과 같다. 초점 강조선은 두지 않는다(사용자 결정). 크기 is-medium·is-large는 검색의 본문·강조 크기, is-control은 구독 폼 크기다.
+   면 is-field는 검색의 불투명 면, is-card는 테두리가 있는 카드 면이다. */
+.app-input { box-sizing: border-box; width: 100%; height: var(--spacing-input-height); margin: 0; padding: 0 var(--spacing-gap-sm); border: var(--border-width-thin) solid var(--color-input-border); border-radius: var(--radius-input-radius); background: var(--color-input-background); color: var(--color-input-ink); font: inherit; font-size: var(--text-input-font); line-height: var(--leading-line-compact); }
+.app-input::placeholder { color: var(--color-input-placeholder); opacity: 1; }
+.app-input:is(:focus, :focus-visible) { outline: 0; box-shadow: none; }
+.app-input.is-medium { height: auto; padding: var(--component-article-search-padding); border-radius: var(--radius-article-search-radius); font-size: var(--text-article-search-font); line-height: var(--leading-line-intro); }
+.app-input.is-large { height: auto; padding: var(--component-search-input-padding); border-radius: var(--radius-search-input-radius); font-size: var(--text-search-input-font); line-height: var(--leading-line-intro); }
+/* 글 작성 화면의 여러 줄 입력도 같은 안내 글자 색을 쓴다. */
+.app-textarea::placeholder { color: var(--color-input-field-placeholder); }
+.app-input.is-control { height: var(--spacing-control); padding: var(--spacing-platform-button-y); border-radius: var(--radius-newsletter-input-radius); font-size: inherit; line-height: normal; }
+.app-input.is-field { background: var(--color-search-bg); }
+.app-input.is-field::placeholder { color: var(--color-input-field-placeholder); }
+.app-input.is-card { background: var(--color-ui-card); border: var(--border-width-thin) solid var(--color-ui-line); }
+.app-input.is-card::placeholder { color: var(--color-ui-muted); }
+.app-input.is-bare { width: auto; flex: 1; min-width: 0; height: auto; padding: 0; border: 0; border-radius: 0; background: transparent; }
+.app-input.is-bare::placeholder { color: var(--color-input-field-placeholder); }
+/* 앞 아이콘 칸. 기본·본문 크기는 일반 아이콘, 강조 크기는 검색 아이콘 크기를 쓴다. 중간·큰 크기의 여백에는 아이콘 칸과 뒤 동작 칸이 들어 있다. */
+.app-input-field { position: relative; }
+.app-input-icon { position: absolute; top: 50%; left: var(--spacing-gap-xs); width: var(--spacing-icon); transform: translateY(-50%); }
+.app-input-field:has(> .app-input.is-large) > .app-input-icon { width: var(--spacing-search-icon-size); }
+.app-input-field > .app-input:not(.is-medium, .is-large) { padding-left: calc(var(--spacing-gap-xs) * 2 + var(--spacing-icon)); }

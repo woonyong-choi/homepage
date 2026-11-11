@@ -1,0 +1,42 @@
+/* 검색: 추천어, 지우기 단추, 결과 패널과 공개 검색. 입력 칸은 forms.css의 .app-input 변형이다. 지원 문서와 개인 사이트가 같은 역할 값을 쓴다. */
+.app-search { max-width: var(--container-body-width); margin: var(--spacing-search-top) auto var(--spacing-search-bottom); position: relative; }
+.app-search-clear { position: absolute; top: var(--spacing-tab-inset); right: var(--spacing-tab-inset); bottom: var(--spacing-tab-inset); display: grid; place-items: center; width: var(--spacing-search-clear-width); padding: 0; border: 0; border-radius: var(--radius-article-search-radius); background: transparent; cursor: pointer; }
+.app-search-clear:hover { background: var(--color-search-clear-hover); }
+.app-search-clear:active { background: var(--color-search-clear-active); }
+.app-search-frequent { text-align: center; margin-top: var(--spacing-gap-sm); }
+.app-search-frequent button { border: 0; background: none; text-decoration: underline; }
+.app-search:not(:has(.app-search-frequent)) { margin-block: var(--spacing-gap) var(--spacing-article-search-space); }
+.app-search-clear .app-control-icon { width: var(--spacing-search-icon-size); height: var(--spacing-search-icon-size); }
+.app-search-frequent button + button { margin-left: 0; }
+.app-search-frequent { width: var(--spacing-search-suggestion-width); margin: var(--text-landing-product-copy) auto; font-size: var(--text-landing-product-copy); line-height: var(--leading-feature-body-line); }
+.app-search:not(:has(.app-search-frequent)) { margin-top: var(--spacing-article-search-top); margin-bottom: 0; }
+.app-search-frequent { color: var(--color-search-suggestion-color); }
+.app-search-frequent button { display: inline-block; padding: var(--component-search-suggestion-padding); }
+.app-search-frequent button:hover { color: var(--color-search-suggestion-hover); }
+.app-search-message { box-sizing: content-box; max-width: var(--spacing-search-message-width); margin: 0 auto; padding: var(--component-search-message-padding); color: var(--color-search-message-color); line-height: var(--leading-search-message-line); text-align: center; }
+.app-public-search.app-search { margin-block: var(--spacing-article-search-top) var(--spacing-gap-lg); max-width: var(--container-body-width); }
+.app-public-search.app-search.is-prominent { margin-block: var(--spacing-search-top) var(--spacing-search-bottom); }
+.app-search-panel { margin: var(--component-search-results-margin); padding: var(--spacing-search-results-padding); background: var(--color-search-results-background); box-shadow: var(--shadow-search-results-shadow); border-radius: var(--radius-search-results-radius); font-size: var(--text-search-result-size); line-height: var(--leading-feature-line); }
+.app-search-result-link { position: relative; display: block; padding: var(--component-search-result-padding); font-size: var(--text-search-result-size); line-height: var(--leading-feature-line); border-radius: var(--radius-search-result-radius); color: var(--color-search-result-color); text-decoration: none; overflow-wrap: anywhere; }
+.app-search-result-link > strong { font-weight: var(--font-weight-semibold); }
+.app-search-result-link > p { margin: 0; color: var(--color-search-result-muted); font-size: inherit; line-height: inherit; }
+.app-search-result-link > .app-content-icon { position: absolute; left: var(--spacing-search-results-padding); top: var(--spacing-search-result-icon-top); }
+.app-search-result-link::after { content: ''; position: absolute; top: 0; bottom: 0; right: var(--spacing-search-results-padding); width: var(--spacing-gap-sm); background: url('./assets/icons/navigation/chevron-right.svg') center / var(--component-help-grouped-chevron) no-repeat; opacity: var(--opacity-help-chevron-opacity); }
+.app-search-result-link:hover, .app-search-result-link:focus-visible, .app-search-result-link[aria-selected=true], .app-search-choice:hover, .app-search-choice[aria-selected=true] { background: var(--color-search-hover); text-decoration: none; }
+.app-search-result-link:active, .app-search-choice:active { background: var(--color-search-active); }
+.app-search-result-link + .app-search-result-link { border-top: var(--border-width-thin) solid var(--color-search-result-line); }
+.app-search-result-note { white-space: nowrap; margin-left: var(--spacing-gap-xs); font-size: var(--text-small-text); color: var(--color-search-result-muted); }
+.app-search-panel mark { background: var(--color-search-match); color: inherit; }
+.app-search-choice { display: inline-block; margin: var(--spacing-search-results-padding); padding: var(--spacing-gap-xs); border-radius: var(--radius-search-result-radius); color: var(--color-search-result-color); font-size: var(--text-small-text); text-decoration: none; }
+.app-suggestion-label { margin: var(--spacing-gap-sm) var(--spacing-search-results-padding) 0; color: var(--color-ui-muted); font-size: var(--text-small-text); }
+
+/* 입력하는 동안의 추천 목록은 아래 결과를 밀지 않고 입력 칸 바로 아래에 겹쳐 뜬다. 정해진 높이를 넘는 항목은 목록 안에서 스크롤한다. */
+.app-search > [role=listbox] { position: absolute; left: 0; right: 0; z-index: var(--z-index-overlay); max-height: min(var(--spacing-search-suggestions-max), 60dvh); margin-bottom: 0; overflow-y: auto; overscroll-behavior: contain; text-align: left; }
+
+.app-search-result-link:not(:has(> .app-content-icon)) { padding-left: var(--spacing-search-results-padding); }
+
+.app-tag-filter { justify-content: center; align-items: center; gap: var(--spacing-gap-sm); margin-top: var(--spacing-gap-lg); }
+.app-tag-filter .app-tag { max-width: 100%; padding-inline: var(--spacing-gap-sm); overflow-wrap: anywhere; }
+
+
+.app-tag-reset { padding: calc(var(--spacing-gap-xs) / 2) var(--spacing-gap-xs); font-size: var(--text-tiny-text); line-height: var(--leading-line-body); color: var(--color-tag-ink); text-decoration: underline; }

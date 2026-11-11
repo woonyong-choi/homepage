@@ -1,8 +1,8 @@
 import { documentOutline } from './document-navigation.mjs';
 import { dateLabel } from './content-model.mjs';
 import { personalFooter } from './publication-footer.mjs';
-import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
-import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
+import { escape } from '#design/ui/index.mjs';
+import * as ui from '#design/ui/index.mjs';
 import { brandIcon } from './brand-icons.mjs';
 import { renderContentSvg } from './content-icons.mjs';
 import { loadBlogLayout } from './layout-config.mjs';

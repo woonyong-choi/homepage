@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { clientEntrypoints, publicationAssets } from './publication-assets.mjs';
 import { documentShell } from './publication-layout.mjs';
-import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { getIconCatalog } from '#design/ui/build/icons.mjs';
 
 test('publication_includes_nested_css_and_search_assets_without_shipping_authoring_files', () => {
   const source = new Map(Object.entries({

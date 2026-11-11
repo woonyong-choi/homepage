@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { getIconCatalog } from '#design/ui/build/icons.mjs';
 import { brandIcon, brandNames } from './brand-icons.mjs';
 import { contentIcon } from './content-icons.mjs';
 import { readContentFile } from './content-files.mjs';

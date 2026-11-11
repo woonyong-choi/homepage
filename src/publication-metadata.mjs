@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { sha256 } from './sha256.mjs';
 
-import { escape } from '@woonyong-choi/design-tokens/ui/index.mjs';
-import { iconFile } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { escape } from '#design/ui/index.mjs';
+import { iconFile } from '#design/ui/build/icons.mjs';
 
 export const FAVICON = '/assets/site-icon.svg';
 export const SITE_ICON = `/theme/assets/icons/${iconFile('document')}`;

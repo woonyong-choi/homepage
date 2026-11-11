@@ -1,4 +1,4 @@
-import { getIconCatalog, iconFile } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { getIconCatalog, iconFile } from '#design/ui/build/icons.mjs';
 
 export function brandIcon(name) {
   const brand = getIconCatalog().brands[name];

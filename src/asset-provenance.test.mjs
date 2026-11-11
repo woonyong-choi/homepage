@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
 
-// 공통 디자인(설치한 @woonyong-choi/design-tokens)의 출처는 design-tokens가 검사한다. 여기서는 홈페이지가 직접 싣는 파일만 본다.
+// 공통 디자인(src/design)의 아이콘·글꼴 출처는 src/design/test/asset-provenance.test.js가 검사한다. 여기서는 홈페이지가 직접 싣는 파일만 본다.
 const root = new URL('../', import.meta.url).pathname;
 const SKIP = new Set(['node_modules', '.git', 'dist', '.content-sync.lock']);
 const ORIGINS = new Set(['project-original', 'third-party', 'user-provided']);
