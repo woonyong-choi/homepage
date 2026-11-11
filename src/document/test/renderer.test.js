@@ -1,9 +1,7 @@
 // 렌더러와 테마 계약: 같은 해석 결과를 여러 번·다른 테마로 그려도 문서가 변하지 않고, 교체와 실패가 진단으로 드러난다.
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { test } from 'node:test';
-import { pathToFileURL } from 'node:url';
 
 import {
   DEFAULT_THEME_FILES,
@@ -204,11 +202,8 @@ test('dark_mode_is_a_theme_attribute_so_the_same_html_serves_light_and_dark', as
   assert.equal(output.theme, 'default');
 });
 
-test('default_theme_files_resolve_inside_the_installed_design_package', () => {
-  const design = createRequire(import.meta.url).resolve(
-    '@woonyong-choi/design-tokens/package.json',
-  );
-  assert.equal(DEFAULT_THEME_FILES.root.href, new URL('./dist/', pathToFileURL(design)).href);
+test('default_theme_files_resolve_inside_the_owned_design_output', () => {
+  assert.equal(DEFAULT_THEME_FILES.root.href, new URL('../../design/dist/', import.meta.url).href);
   for (const name of [
     DEFAULT_THEME_FILES.tokens,
     DEFAULT_THEME_FILES.styles,

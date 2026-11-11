@@ -163,9 +163,9 @@ items:
 
 #### 기술 로고
 
-기술 이름을 가리키는 로고는 design-tokens의 `brands` 카탈로그가 소유한다. 홈페이지는 `/theme/assets/icons/`로 발행하는 정본 파일과 출처·라이선스 고지를 소비한다. `content/assets/brands/`나 `config/assets.json`에 로고 사본과 중복 출처 기록을 추가하지 않는다.
+기술 이름을 가리키는 로고는 디자인 정본의 `brands` 카탈로그(`src/design/assets/icons/catalog.json`, 원본 `src/design/assets/icons/brands/`)가 소유한다. 홈페이지는 `/theme/assets/icons/`로 발행하는 정본 파일과 출처·라이선스 고지를 소비한다. `content/assets/brands/`나 `config/assets.json`에 로고 사본과 중복 출처 기록을 추가하지 않는다.
 
-`src/brand-icons.mjs`는 공통 카탈로그의 `brands`에서만 이름과 표시 이름을 찾는다. 홈의 기술 줄은 이 조회를 사용하고 로고를 공통 `LogoItem`으로 싣는다. 새 로고와 출처·고지는 design-tokens 정본에 추가한 뒤 고정 의존성을 갱신해 가져온다. 발행은 같은 카탈로그와 정본 고지를 사용한다. `src/brand-icons.test.mjs`가 카탈로그 조회·발행 경로·고지·미등록 이름 처리를 검사한다. 공개 글·카드·검색 결과에는 장식 글 아이콘을 넣지 않는다.
+`src/brand-icons.mjs`는 공통 카탈로그의 `brands`에서만 이름과 표시 이름을 찾는다. 홈의 기술 줄은 이 조회를 사용하고 로고를 공통 `LogoItem`으로 싣는다. 새 로고와 출처·고지는 `src/design/assets/icons/`에 추가하고 `src/design/test/asset-provenance.test.js`로 확인한다. 발행은 같은 카탈로그와 정본 고지를 사용한다. `src/brand-icons.test.mjs`가 카탈로그 조회·발행 경로·고지·미등록 이름 처리를 검사한다. 공개 글·카드·검색 결과에는 장식 글 아이콘을 넣지 않는다.
 
 기술 구간 제목의 장식 PNG는 표시하지 않는다. 기술 로고 목록과 활성·비활성 규칙은 제목 장식의 표시 여부와 별개로 유지한다. 홈페이지 전용 크기나 스타일을 추가하지 않는다.
 

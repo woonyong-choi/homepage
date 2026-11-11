@@ -1,21 +1,14 @@
 // 기본 테마. 디자인 정본의 구성 요소(ui)를 그대로 불러 쓰며 HTML·CSS·SVG를 새로 만들지 않는다.
-// 디자인은 홈페이지가 설치한 @woonyong-choi/design-tokens 하나다. 렌더러는 사본을 두지 않는다.
-import { createRequire } from 'node:module';
-import { pathToFileURL } from 'node:url';
+// 디자인은 홈페이지가 소유한 src/design 하나이며 렌더러는 그 생성 결과(src/design/dist)를 읽는다.
 
 import { createDefaultComponents } from './components.js';
 
-const THEME_DIR = new URL(
-  './dist/',
-  pathToFileURL(
-    createRequire(import.meta.url).resolve('@woonyong-choi/design-tokens/package.json'),
-  ),
-);
+const THEME_DIR = new URL('../../design/dist/', import.meta.url);
 let loading;
 
 /**
  * 기본 테마 파일의 위치. 호스트가 스타일·글꼴·runtime을 문서 화면에 연결할 때 쓴다.
- * root는 설치된 디자인 패키지의 dist 폴더이고 나머지는 그 안의 상대 위치다.
+ * root는 디자인 생성 결과(src/design/dist) 폴더이고 나머지는 그 안의 상대 위치다.
  */
 export const DEFAULT_THEME_FILES = Object.freeze({
   root: THEME_DIR,
@@ -35,10 +28,10 @@ async function importTheme() {
   // 구성 요소·아이콘·SVG는 디자인 패키지의 이름 있는 export로 읽는다. runtime 목록(manifest)은 이름 있는 export가
   // 없어 디자인 패키지의 `./*`(dist) 경로로 읽는다.
   const [ui, icons, svg, manifest] = await Promise.all([
-    import('@woonyong-choi/design-tokens/components'),
-    import('@woonyong-choi/design-tokens/icons'),
-    import('@woonyong-choi/design-tokens/svg'),
-    import('@woonyong-choi/design-tokens/ui/manifest.mjs'),
+    import('#design/ui/index.mjs'),
+    import('#design/ui/build/icons.mjs'),
+    import('#design/ui/svg.mjs'),
+    import('#design/ui/manifest.mjs'),
   ]);
   return {
     name: 'default',

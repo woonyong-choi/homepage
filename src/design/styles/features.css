@@ -1,0 +1,49 @@
+/* 기능 소개 화면: 기능 히어로, 설명 상자, 데모 목록. */
+.app-feature { text-align: center; }
+.app-feature-media { max-width: var(--container-page); margin: var(--spacing-gap-lg) auto 0; }
+.app-feature-media img { margin: auto; }
+.app-feature-description { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin: var(--spacing-gap-lg) auto 0; text-align: left; }
+.app-feature-description p { margin: 0; }
+.app-feature .app-figure img { border-radius: 0; }
+.app-feature .app-device { margin: 0 auto; }
+.app-feature-demos { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: center; text-align: left; }
+.app-feature-demo-description { margin-block: var(--spacing-gap-lg); }
+@media (max-width: breakpoint(feature-split)) {
+  .app-feature-demos { grid-template-columns: minmax(0,1fr); }
+}
+.app-feature { padding-block: var(--spacing-feature-section); background: var(--color-feature-canvas); }
+.app-feature .app-player { width: var(--spacing-feature-video); max-width: 100%; margin-inline: auto; }
+.app-feature .app-player video { width: 100%; max-width: 100%; }
+.app-feature-description { max-width: none; }
+.app-feature-description > div { font-size: var(--text-feature-box-text); }
+.app-feature .app-player.is-wide, .app-device .app-player { width: 100%; }
+.app-feature.app-feature-canvas { background: var(--color-canvas); }
+.app-feature.app-feature-lightest { background: var(--color-feature-canvas); }
+.app-feature.app-feature-light { background: var(--color-feature-light); }
+.app-feature.app-feature-medium { background: var(--color-feature-medium); }
+.app-feature-description { gap: var(--spacing-landing-panel-gap); margin-bottom: var(--spacing-landing-panel-gap); }
+.app-feature-description > div { background: var(--color-feature-box-background); border-radius: var(--radius-feature-box-radius); padding: var(--spacing-feature-box-padding); }
+.app-feature-description h3 { font-size: inherit; margin: 0; }
+.app-feature-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--spacing-landing-panel-gap); text-align: left; }
+.app-feature-list section { padding: var(--spacing-feature-box-padding); background: var(--color-feature-box-background); border-radius: var(--radius-feature-box-radius); font-size: var(--text-feature-box-text); }
+.app-feature-list h3, .app-feature-list p { margin: 0; font-size: inherit; }
+@media (max-width: breakpoint(intro-compact)) { .app-feature-list, .app-feature-description { grid-template-columns: minmax(0,1fr); } }
+.app-feature-description { align-items: start; }
+.app-feature-description > div { line-height: var(--leading-feature-body-line); }
+.app-feature-list > ul { list-style: none; padding: 0; margin: 0; }
+.app-feature-list li, .app-feature-demo-description { padding: var(--spacing-feature-box-padding); background: var(--color-feature-box-background); border-radius: var(--radius-feature-box-radius); font-size: var(--text-feature-box-text); line-height: var(--leading-feature-body-line); margin: 0 0 var(--text-feature-box-text); }
+.app-feature-demo-description h3 { align-items: center; flex-wrap: wrap; margin: 0; font-size: inherit; }
+.app-feature-demo-description p { margin: 0; }
+.app-feature-demos { gap: var(--spacing-landing-panel-gap); }
+.app-feature .app-remote { font-size: var(--text-body-text); }
+.app-feature .app-figure { margin: 0 0 var(--spacing-landing-panel-gap); }
+.app-feature .app-figure figcaption { margin-top: 0; font-size: inherit; }
+.app-feature .app-figure figcaption:empty { display: none; }
+.app-feature .app-media-controls { margin: 0 0 calc(var(--text-body-text) * var(--leading-feature-body-line)); line-height: var(--leading-feature-body-line); }
+.app-feature-demo-description h3 { display: block; }
+.app-feature-demo-description .app-remote { font-size: inherit; margin-left: 0; padding-block: var(--spacing-control-inset-block); }
+.app-feature-media { margin-top: var(--spacing-landing-heading-space); }
+.app-feature .app-media-controls { display: flex; justify-content: center; }
+.app-feature-media > .app-figure { display: flow-root; }
+.app-feature-description { margin-top: 0; }
+.app-feature-description > div { margin-bottom: var(--text-feature-box-text); }

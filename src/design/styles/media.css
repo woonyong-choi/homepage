@@ -1,0 +1,20 @@
+/* 미디어: 그림, 영상 플레이어, 기기 틀(토큰으로 그린 둥근 몸체와 화면). 갤러리는 탭 구성 요소다. 본문 블록 폭(app-width-*)은 그림·도표·영상·탭(갤러리)·코드가 함께 쓰며 가로 여백(margin-inline)은 폭 규칙만 정한다. 블록 구성 요소는 세로 여백(margin-block)만 쓴다. */
+.app-figure { margin-block: var(--spacing-gap-lg); margin-inline: 0; text-align: center; }
+.app-figure img { width: 100%; border-radius: var(--radius-media-radius); }
+.app-figure figcaption { margin-top: var(--spacing-gap-sm); font-size: var(--text-small-text); color: var(--color-ui-muted); }
+.app-width-narrow { max-width: var(--spacing-width-narrow); margin-inline: auto; }
+.app-width-wide { width: var(--component-width-wide); max-width: none; margin-inline: calc((100% - var(--component-width-wide)) / 2); }
+.app-device { position: relative; width: min(100%, var(--spacing-device-width)); margin: var(--spacing-gap) auto; border-radius: var(--radius-device-radius); background: var(--icon-device-case); }
+.app-device-screen { padding: var(--component-device-pad); }
+.app-device-screen img, .app-device-screen video { display: block; width: 100%; height: auto; aspect-ratio: var(--aspect-device-ratio); border-radius: var(--radius-device-screen-radius); }
+.app-device-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.app-player { position: relative; }
+.app-player.is-hidden-until-played:not(.has-played) { visibility: hidden; overflow: hidden; height: 0; }
+.app-project-showcase:target .app-player.is-hidden-until-played:not(.is-initialized) { visibility: visible; overflow: visible; height: auto; }
+.app-player video { display: block; }
+.app-video-error { display: block; padding: var(--spacing-gap-sm); color: var(--color-ui-muted); background: var(--color-ui-card); font-size: var(--text-small-text); }
+.app-player-button { position: absolute; top: 50%; left: 50%; width: var(--spacing-player-overlay); height: var(--spacing-player-overlay); min-width: var(--spacing-player-min); min-height: var(--spacing-player-min); padding: 0; border: 0; color: var(--color-control-link); background: transparent; transform: translate(-50%, -50%); opacity: var(--opacity-player-opacity); cursor: pointer; }
+.app-player-button > .app-control-icon { display: block; width: 100%; height: 100%; }
+.app-player-button:hover { opacity: var(--opacity-player-hover-opacity); }
+.app-player.is-playing .app-player-button, .app-player.has-controls.has-played .app-player-button { display: none; }
+.app-media-controls { margin-block: var(--spacing-gap-sm); text-align: center; }

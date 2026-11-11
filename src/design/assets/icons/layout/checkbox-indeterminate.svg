@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" color="var(--icon-structure-edge)" role="img">
+<title>checkbox-indeterminate</title>
+<desc>취소한 작업 체크 상자: 회색 외곽과 X 표시</desc>
+<rect x="5.125" y="5.125" width="21.75" height="21.75" rx="5.875" fill="none" stroke="currentColor" stroke-width="2.25"/><path d="M12 12L20 20M20 12L12 20" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/>
+</svg>

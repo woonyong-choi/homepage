@@ -1,0 +1,170 @@
+/* 본문 문법: app-prose 아래 제목·문단·목록·인용·표·코드·콜아웃·각주·수식·도표. 새 Markdown 요소는 여기에 둔다. */
+/* 글 위계는 Things 블로그 공통 CSS를 따른다: 본문 18/1.4, h1 36/1.1, h2 27/1.25, h3 20.25/1.4, 도입 22.5/1.25, 작은 글·그림 설명 16/1.36, 코드 .85em. 문단·제목·목록·인용·구분선 간격도 Things의 em 값이다. */
+.app-prose { word-break: normal; overflow-wrap: anywhere; font-size: var(--text-body-text); line-height: var(--leading-feature-body-line); color: var(--color-body); }
+/* 본문은 한국어도 음절 단위로 줄을 바꿔 줄 끝을 단 폭까지 채운다. 제목은 낱말 단위를 유지한다. */
+.app-prose :is(h1, h2, h3, h4, h5, h6) { word-break: keep-all; }
+.app-prose h1 { font-size: var(--text-section-title); line-height: var(--leading-prose-heading-line); margin: var(--component-prose-h1-margin); }
+.app-prose h1:first-child, .app-prose h2.app-heading-1:first-child { margin-top: 0; }
+.app-prose :is(h2, h3, h4, h5, h6, strong, dt, th, summary) { color: var(--color-ink); }
+.app-prose h2, .app-prose h2.app-heading-2, .app-blog-post .app-feed-body .app-heading-2 { margin: var(--spacing-prose-h2-before) 0 var(--spacing-prose-h2-after); font-size: var(--text-subtitle); font-weight: var(--font-weight-bold); line-height: var(--leading-line-intro); }
+.app-prose h3, .app-prose .app-heading-3, .app-blog-post .app-feed-body .app-heading-3 { margin: var(--spacing-prose-h3-before) 0 var(--spacing-prose-h3-after); font-size: var(--text-feature-intro); font-weight: var(--font-weight-bold); line-height: var(--leading-feature-body-line); }
+.app-prose :is(h1 + h2, h2 + h3) { margin-top: 0; }
+.app-prose h4 { font-size: inherit; line-height: inherit; margin: 0 0 var(--spacing-prose-paragraph-gap); }
+.app-prose h5, .app-prose h6 { font-size: inherit; margin: 0; }
+.app-prose h6 { font-weight: var(--font-weight-normal); }
+.app-prose p { margin: 0 0 var(--spacing-prose-paragraph-gap); }
+.app-prose a:active { color: var(--color-prose-link-active); }
+:where(.app-prose) strong { font-weight: var(--font-weight-bold); }
+:where(.app-prose) b { font-weight: var(--font-weight-semibold); }
+.app-prose ul, .app-prose ol { margin: 0 0 var(--spacing-prose-paragraph-gap); padding-left: var(--spacing-prose-list-inset); }
+.app-prose ul { list-style: disc; }
+.app-prose ol { list-style: decimal; }
+.app-prose li { margin: 0; }
+.app-prose li::marker { color: var(--color-prose-marker); }
+.app-prose li > ul, .app-prose li > ol { margin: 0; }
+.app-prose li > p:last-child { margin-bottom: 0; }
+/* 인용은 Things처럼 기울이고 양옆을 들여 쓴다. 줄이나 면을 더하지 않는다. */
+.app-prose blockquote { margin: var(--component-prose-quote-margin); padding: 0; border: 0; font-style: italic; }
+.app-prose blockquote > :last-child { margin-bottom: 0; }
+.app-prose blockquote blockquote { margin-top: var(--spacing-prose-item); }
+.app-prose hr { width: var(--component-prose-rule-width); margin: var(--component-prose-rule-margin); border: 0; border-top: var(--border-width-thin) solid var(--color-prose-rule-color); }
+:where(.app-prose) small { font-size: var(--text-post-date-size); color: var(--color-prose-caption-color); }
+:where(.app-prose) mark { padding: var(--component-prose-code-padding); color: inherit; background: var(--color-prose-mark-background); border-radius: var(--radius-prose-code-radius); }
+:where(.app-prose) sub, :where(.app-prose) sup { font-size: var(--component-prose-script-size); font-weight: var(--font-weight-prose-script-weight); }
+:where(.app-prose) sub { line-height: 1; }
+:where(.app-prose) sup { line-height: var(--leading-prose-script-line); }
+.app-prose dl:not(.app-definitions) { margin: 0 0 var(--spacing-prose-paragraph-gap); }
+.app-prose dl:not(.app-definitions) dt { font-weight: var(--font-weight-bold); }
+.app-prose dl:not(.app-definitions) dd { margin: var(--component-prose-definition-margin); }
+.app-prose .app-figure { margin-block: var(--spacing-prose-block); }
+/* 본문 그림은 기본으로 모서리를 깎지 않는다. 작성자가 rounded 옵션(img.is-rounded)을 고르면 코드 블록과 같은 곡률로 자른다. 기기 틀 안의 화면은 기기 곡률을 따른다. */
+:is(.app-prose, .app-figure-grid-item) .app-figure > :is(img, a > img) { border-radius: 0; }
+:is(.app-prose, .app-figure-grid-item) .app-figure > :is(img, a > img).is-rounded { border-radius: var(--radius-prose-block-radius); }
+:is(.app-prose, .app-figure-grid-item) > .app-figure { display: flex; flex-direction: column; align-items: center; text-align: start; }
+:is(.app-prose, .app-figure-grid-item) > .app-figure > .app-player { align-self: stretch; }
+:is(.app-prose, .app-figure-grid-item) > .app-figure > a > img { display: block; }
+:is(.app-prose, .app-figure-grid-item) > .app-figure:not(.app-width-wide):not(.app-width-narrow) > :is(img, a > img) { width: auto; }
+.app-prose .app-figure figcaption { margin: var(--spacing-prose-item) 0 0; font-size: var(--text-post-date-size); line-height: var(--leading-caption-line); text-align: center; color: var(--color-prose-caption-color); }
+.app-prose .app-figure figcaption:empty { display: none; }
+/* 인라인 코드: 크기·안쪽 여백·곡률은 Things 값이다. 면은 입력 칸 면, 테두리는 코드 블록 테두리, 글자는 코드 블록 잉크색을 써서 본문 안에서 또렷하게 구분한다. */
+.app-prose code { padding: var(--component-prose-code-padding); border: var(--border-width-thin) solid var(--color-prose-code-border); border-radius: var(--radius-prose-code-radius); background: var(--color-prose-code-background); color: var(--color-prose-code-color); font-family: var(--font-mono); font-size: var(--text-prose-code-size); line-height: var(--leading-feature-body-line); white-space: pre-wrap; overflow-wrap: break-word; }
+.app-prose kbd { display: inline-block; box-sizing: content-box; min-width: var(--text-key-size); padding: var(--component-key-padding); margin: var(--component-key-margin); border: 0; border-radius: var(--radius-key-radius); background: var(--color-key-background); color: var(--color-key-color); box-shadow: var(--shadow-key-shadow); font-family: var(--font-key-font); font-size: var(--text-key-size); font-weight: var(--font-weight-medium); font-style: normal; line-height: 1; text-align: center; vertical-align: var(--border-width-thin); }
+/* 코드 블록: 라이트·다크 모두 어두운 바탕이다. 이름 머리줄 없이 복사 단추만 오른쪽 위에 겹치고, 긴 줄은 줄을 바꾸지 않고 가로로 옮겨 본다. */
+.app-code { font-size: var(--text-prose-code-size); display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; margin-block: var(--spacing-prose-block); overflow: hidden; background: var(--color-code-surface); border: var(--border-width-thin) solid var(--color-code-border); border-radius: var(--radius-prose-block-radius); color: var(--color-code-ink); }
+.app-code pre { min-width: 0; margin: 0; padding: var(--component-prose-pre-padding); overflow-x: auto; background: transparent; color: inherit; font-family: var(--font-mono); font-size: inherit; line-height: var(--leading-feature-body-line); tab-size: var(--component-prose-tab-size); white-space: pre; overflow-wrap: normal; }
+.app-code code { padding: 0; border: 0; border-radius: 0; background: transparent; color: inherit; font: inherit; white-space: inherit; overflow-wrap: inherit; }
+/* 어두운 코드 면 위의 복사 단추는 같은 도구 단추이고 면에 맞는 색만 정한다. */
+.app-code .app-tool-header { padding: var(--spacing-2); }
+.app-code :is(.app-tool-button, .app-tool-label) { color: var(--color-syntax-comment); }
+.app-code .app-tool-button:is(:hover, :active, :focus-visible) { color: var(--color-code-ink); background: var(--color-code-control-hover); }
+.app-syntax-keyword { color: var(--color-syntax-keyword); }
+.app-syntax-string { color: var(--color-syntax-string); }
+.app-syntax-number { color: var(--color-syntax-number); font-weight: var(--font-weight-bold); }
+.app-syntax-function { color: var(--color-syntax-function); font-weight: var(--font-weight-bold); }
+.app-syntax-type { color: var(--color-syntax-type); }
+.app-syntax-property { color: var(--color-syntax-property); }
+.app-syntax-parameter { color: var(--color-syntax-parameter); }
+.app-syntax-variable { color: var(--color-syntax-variable); }
+.app-syntax-constant { color: var(--color-syntax-constant); font-weight: var(--font-weight-bold); }
+.app-syntax-comment { color: var(--color-syntax-comment); }
+.app-syntax-operator { color: var(--color-syntax-operator); }
+.app-syntax-punctuation { color: var(--color-syntax-punctuation); }
+.app-syntax-annotation { color: var(--color-syntax-annotation); }
+.app-figure-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(var(--spacing-figure-grid-min), 1fr)); gap: var(--spacing-gap); margin-bottom: var(--spacing-gap); }
+.app-figure-grid.is-small { grid-template-columns: repeat(auto-fit, minmax(var(--spacing-figure-grid-min-small), 1fr)); }
+.app-figure-grid.is-large { grid-template-columns: repeat(auto-fit, minmax(var(--spacing-figure-grid-min-large), 1fr)); }
+.app-figure-grid.has-one-column { grid-template-columns: minmax(0, 1fr); }
+.app-figure-grid.has-two-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.app-figure-grid.has-three-columns { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.app-figure-grid.has-four-columns { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.app-figure-grid.has-five-columns { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.app-figure-grid.has-six-columns { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.app-figure-grid-item > .app-figure { margin: 0; }
+.app-prose .app-figure-grid-item > :last-child { margin-bottom: 0; }
+.app-prose .app-table-scroll { margin: var(--spacing-prose-block) 0; }
+.app-prose .is-center { text-align: center; }
+.app-prose .is-right { text-align: right; }
+/* 안내 상자: 옅은 면과 본문색 글자. 상태(success, warning, error)는 같은 아이콘 묶음의 색 아이콘으로 알리고 테두리나 색 줄을 두지 않는다. */
+.app-callout { position: relative; margin: var(--spacing-prose-block) 0; padding: var(--spacing-4); border: 0; border-radius: var(--radius-prose-block-radius); background: var(--color-prose-soft); color: var(--color-body); }
+.app-callout:is(.is-success, .is-warning, .is-error) { padding-inline-start: calc(var(--spacing-4) + var(--spacing-6) + var(--spacing-2)); }
+.app-callout:is(.is-success, .is-warning, .is-error)::before { content: ""; position: absolute; inset-block-start: calc(var(--spacing-4) + (var(--text-body-text) * var(--leading-feature-body-line) - var(--spacing-6)) / 2); inset-inline-start: var(--spacing-4); width: var(--spacing-6); height: var(--spacing-6); background: currentColor; mask: var(--app-callout-icon) center / contain no-repeat; }
+.app-callout.is-success { --app-callout-icon: url('./assets/icons/actions/check.svg'); background: var(--color-status-success-surface); }
+.app-callout.is-warning { --app-callout-icon: url('./assets/icons/actions/warning.svg'); background: var(--color-status-warning-surface); }
+.app-callout.is-error { --app-callout-icon: url('./assets/icons/actions/close.svg'); background: var(--color-status-error-surface); }
+.app-callout.is-success::before { color: var(--color-status-success-ink); }
+.app-callout.is-warning::before { color: var(--color-status-warning-ink); }
+.app-callout.is-error::before { color: var(--color-status-error-ink); }
+.app-details { margin-block: var(--spacing-prose-block); padding: var(--spacing-3) var(--spacing-4); border: var(--border-width-thin) solid var(--color-prose-block-line); border-radius: var(--radius-prose-block-radius); }
+.app-details summary { cursor: pointer; font-weight: var(--font-weight-semibold); }
+.app-details[open] > summary { margin-bottom: var(--spacing-prose-item); }
+.app-details > :last-child { margin-bottom: 0; }
+.app-definitions { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,2fr); gap: var(--spacing-gap); }
+.app-definitions dt { font-weight: var(--font-weight-semibold); }
+.app-definitions dd { margin: 0; }
+@media (max-width: breakpoint(product-pair)) {
+  .app-definitions { grid-template-columns: minmax(0,1fr); }
+}
+.app-syntax-row { margin-bottom: var(--spacing-gap-lg); }
+.app-syntax-row pre { margin: 0 0 var(--spacing-syntax-example-gap); padding: var(--component-syntax-example-padding); background: var(--color-syntax-example-background); border: var(--border-width-thin) solid var(--color-syntax-example-border); border-radius: var(--radius-syntax-example-radius); color: var(--color-body); white-space: pre-wrap; }
+/* 일반 페이지의 본문 간격은 앞선 구성 요소 규칙을 덮어쓴다. 블로그와 지원 문서 문맥은 위쪽 기본 본문 규칙에 함께 선언한다. */
+.app-prose p.app-fineprint { margin: var(--component-prose-fineprint-margin); font-size: var(--text-post-date-size); line-height: var(--leading-caption-line); color: var(--color-prose-caption-color); }
+.app-prose p.app-article-lead { margin: 0 0 var(--spacing-post-lead-margin); font-size: var(--text-post-lead-size); line-height: var(--leading-line-intro); color: var(--color-body); word-break: keep-all; }
+.app-cancelled-task { display: inline-block; width: var(--spacing-task-size); height: var(--spacing-task-size); vertical-align: var(--spacing-task-align); background: url('./assets/icons/layout/checkbox-indeterminate.svg') center / contain no-repeat; }
+/* 취소선은 글에만 긋는다. flex가 아이콘 뒤 공백을 지우고 같은 폭의 간격으로 대신해, 선이 아이콘과 공백까지 이어지지 않는다. */
+.task-list-item.is-cancelled { display: flex; align-items: flex-start; gap: var(--spacing-task-gap); text-decoration: line-through; color: var(--color-ui-muted); list-style: none; }
+.task-list-item.is-cancelled > .app-cancelled-task { flex: none; margin-top: calc((1lh - var(--spacing-task-size)) / 2); }
+.app-callout.is-fineprint { font-size: var(--text-post-date-size); line-height: var(--leading-caption-line); }
+.app-prose .app-callout > strong { display: block; margin-bottom: var(--spacing-callout-title-gap); }
+.app-prose .app-callout p { margin: 0 0 var(--spacing-prose-item); }
+.app-prose .app-callout li { margin-block: var(--spacing-callout-title-gap); }
+.app-prose .app-callout li:first-child { margin-top: 0; }
+.app-prose .app-callout > :last-child { margin-bottom: 0; }
+.app-prose .task-list-item { list-style: none; }
+.app-prose :is(ul, ol):has(> .task-list-item) { padding-left: 0; }
+.app-prose .task-list-item-checkbox { appearance: none; display: inline-block; width: var(--spacing-task-size); height: var(--spacing-task-size); margin: 0; border: 0; border-radius: 0; vertical-align: var(--spacing-task-align); background: url('./assets/icons/layout/checkbox-empty.svg') center / contain no-repeat; }
+.app-prose .task-list-item-checkbox:checked { background-image: url('./assets/icons/layout/checkbox-check.svg'); }
+.app-prose .app-menu-label { font-weight: var(--font-weight-semibold); color: var(--color-ink); }
+/* Markdown `:::steps`는 목록 항목 사이를 넓힌다. `:icon[이름]`은 문장 속 작은 콘텐츠 아이콘이다. */
+.app-prose .app-steps li { margin-block: var(--spacing-gap-sm); }
+.app-prose .app-steps li:first-child { margin-top: 0; }
+.app-prose .app-steps li:last-child { margin-bottom: 0; }
+.app-prose .app-inline-icon { display: inline-block; margin-inline: var(--spacing-gap-xs); vertical-align: middle; }
+.app-prose .app-definitions dd > :last-child { margin-bottom: 0; }
+/* Markdown 본문: 태그 단계가 문서 위치에 따라 옮겨져도 쓴 단계(app-heading-N)의 위계를 지킨다. 값은 Things 공통 CSS의 em 비율에서 가져온다. */
+.app-prose h2.app-heading-1 { font-size: var(--text-section-title); line-height: var(--leading-prose-heading-line); margin: var(--component-prose-h1-margin); }
+.app-prose .app-heading-1 + .app-heading-2, .app-prose .app-heading-2 + .app-heading-3 { margin-top: 0; }
+.app-prose .app-heading-4 { font-size: inherit; line-height: inherit; font-weight: var(--font-weight-bold); margin: 0 0 var(--spacing-prose-paragraph-gap); }
+.app-prose .app-heading-5 { font-size: inherit; font-weight: var(--font-weight-bold); margin: 0; }
+.app-prose .app-heading-6 { font-size: inherit; font-weight: var(--font-weight-normal); margin: 0; }
+.app-prose ul ul { list-style: circle; }
+.app-prose .app-details .app-code { margin: var(--spacing-prose-item) 0 0; }
+.app-prose .footnotes { font-size: var(--text-small-text); color: var(--color-ui-muted); }
+.app-prose .footnotes li + li { margin-top: var(--spacing-1); }
+.app-prose .footnotes-sep { width: 100%; margin: var(--spacing-prose-rule) 0 var(--spacing-4); }
+.app-prose .footnote-item p { margin: 0; }
+.app-prose .footnote-ref a, .app-prose .footnote-backref { text-decoration: none; }
+/* 수식과 도표: KaTeX 글꼴·스타일과 도표 렌더러는 해당 글에서만 불러온다. 긴 수식과 넓은 도표는 안에서 스크롤한다. */
+.app-prose .katex-block { margin-top: 0; }
+.app-prose .katex-display { margin-block: 0; }
+.app-prose .katex-block, .app-prose .katex-display { overflow-x: auto; overflow-y: hidden; }
+.app-prose .katex-error { color: var(--color-ui-muted); text-decoration: underline dotted; }
+/* 좁은 화면: 글 크기는 Things처럼 그대로 두고 간격만 좁은 값을 쓴다. */
+/* 좁은 화면의 인용은 Things처럼 들여쓰기를 줄인다. */
+@media (max-width: breakpoint(feature-split)) {
+  .app-prose blockquote { margin-inline: var(--component-prose-quote-inset-compact); }
+  :root {
+    --spacing-post-header-top: var(--spacing-post-header-top-compact);
+    --spacing-post-tags-after: var(--spacing-post-tags-after-compact);
+  }
+}
+/* 본문 그림 확대: 누르면 화면 크기 창(.app-image-viewer)이 열리고 다시 누르면 닫힌다(ui/runtime/document.js). */
+.app-prose img[data-zoomable] { cursor: zoom-in; }
+.app-image-viewer { width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: var(--spacing-gap); border: 0; background: transparent; cursor: zoom-out; }
+.app-image-viewer[open] { display: grid; place-items: center; }
+.app-image-viewer::backdrop { background: var(--color-dialog-backdrop); }
+.app-image-viewer img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--radius-prose-block-radius); background: var(--color-ui-card); }
+/* 좁은 화면: 가로로 긴 그림은 화면 높이에 맞춰 키우고 옆으로 밀어 본다. */
+@media (max-width: breakpoint(feature-split)) {
+  .app-image-viewer[open] { place-items: normal; overflow: auto; }
+  .app-image-viewer img { max-width: none; max-height: calc(100dvh - 2 * var(--spacing-gap)); margin: auto; }
+}

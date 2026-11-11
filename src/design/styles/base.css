@@ -1,0 +1,39 @@
+/* 문서와 폼의 기본값은 이 모듈에서 한 번 정의한다. */
+* { box-sizing: border-box; scrollbar-color: var(--color-border-strong) transparent; scrollbar-width: thin; }
+html { scroll-behavior: smooth; scrollbar-width: auto; }
+*::-webkit-scrollbar { width: var(--spacing-figure-scrollbar); height: var(--spacing-figure-scrollbar); }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { border-radius: var(--radius-full); background: var(--color-border-strong); }
+*::-webkit-scrollbar-thumb:hover { background: var(--color-outline); }
+button, a, summary { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+a { text-decoration: none; }
+img, svg { display: block; }
+[hidden] { display: none !important; }
+body { margin: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: var(--font-sans); font-size: var(--text-body-text); line-height: var(--leading-feature-line); color: var(--color-body); background: var(--color-ui-card); }
+html { scroll-padding-top: var(--spacing-gap); }
+img, video { max-width: 100%; height: auto; }
+button, input, textarea, select { font: inherit; }
+button { color: inherit; }
+button, input, textarea, select { border: var(--border-width-thin) solid var(--color-ui-line); border-radius: var(--radius-button-radius); }
+button { background: var(--color-soft); padding: var(--spacing-gap-xs) var(--spacing-gap-sm); }
+a { color: var(--color-action-link); }
+a:hover { text-decoration: underline; }
+:focus-visible { outline: var(--outline-width-focus) solid var(--color-ui-focus); outline-offset: var(--spacing-focus-offset); }
+.app-skip { position: absolute; top: 0; left: 0; transform: translateY(-100%); padding: var(--spacing-gap-sm); background: var(--color-ui-card); z-index: var(--z-index-layer-header); }
+.app-skip:focus { transform: none; }
+.app-caption { color: var(--color-ui-muted); font-size: var(--text-small-text); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+html::-webkit-scrollbar { width: var(--spacing-scrollbar); height: var(--spacing-scrollbar); }
+body { overflow-x: clip; }
+body > main { overflow-x: clip; }
+
+/* 인쇄: 글 본문만 남긴다. 머리·꼬리말, 검색, 목차, 댓글, 쪽 이동, 코드 도구와 관리자 단추는 종이에서 쓸 수 없으므로 뺀다. */
+@media print {
+  .app-skip, .app-header, .app-footer, .app-public-search, .app-document-outline, .app-comments, .app-page-links, .app-tool-header, .app-admin-dock { display: none !important; }
+  body > main { overflow: visible; }
+  .app-figure, pre, table, blockquote { break-inside: avoid; }
+  h2, h3, h4 { break-after: avoid; }
+}

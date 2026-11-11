@@ -1,5 +1,5 @@
 // 글 본문 목차를 공통 구성 요소에 연결한다.
-import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
+import * as ui from '#design/ui/index.mjs';
 
 export function documentOutline(headings) {
   if (!headings.some(heading => heading.level <= 3)) return undefined;

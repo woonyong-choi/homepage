@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { JSDOM } from 'jsdom';
 import { Resvg } from '@resvg/resvg-js';
-import { readIcon } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { readIcon } from '#design/ui/build/icons.mjs';
 import { publicationMetadata, siteOrigin } from './publication-metadata.mjs';
 import { documentShell, notFoundPage } from './publication-layout.mjs';
 import { siteIdentity } from './site-identity.mjs';

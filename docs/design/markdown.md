@@ -256,7 +256,7 @@ const message = "넓은 코드블록";
 
 `:::` 블록은 같은 `app-*` 클래스와 마크업을 낸다. 단계 목록과 인라인 아이콘은 공통 테마의 `.app-steps`, `.app-inline-icon`을 사용한다. 동작은 기존 `document.js`(갤러리 선택 줄의 화살표·Home·End, 팝오버 설명)와 `video.js`를 그대로 쓴다. `ui:` 블록은 변경이 없고 `:::` 블록 안에서도, 반대로도 쓸 수 있다.
 
-강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`@woonyong-choi/design-tokens/ui/index.mjs`, 정의는 design-tokens `docs/styles.md`의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 본문의 문법 해석과 구성 요소 조립은 문서 렌더러(`src/document`)가 맡고, `article-renderer.mjs`는 프로젝트 문서 정리와 소개 문단 분리를 연결한다. 페이지 조립은 `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `document-navigation.mjs`가 맡는다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
+강조 상자, 카드, 갤러리, 코드 블록, 설명의 HTML은 테마의 구성 요소 모듈(`#design/ui/index.mjs`, 정의는 [디자인 시스템 스타일 구조](system/styles.md)의 "구성 요소 모듈")이 한 번만 정의하고, `ui:` 호환 블록과 `:::` 블록이 같은 함수를 가져다 쓴다. 본문의 문법 해석과 구성 요소 조립은 문서 렌더러(`src/document`)가 맡고, `article-renderer.mjs`는 프로젝트 문서 정리와 소개 문단 분리를 연결한다. 페이지 조립은 `publication-layout.mjs`, `blog-layout.mjs`, `home-sections.mjs`, `post-article.mjs`, `document-navigation.mjs`가 맡는다. 홈 히어로 영상, 섹션 머리, 가로 흐름 목록, 블로그 카드, 쪽 이동, 태그 목록, 목차, 글 틀, 검색 결과 줄은 서버와 브라우저(`search-view.mjs`)가 같은 모듈을 쓰고, 브라우저는 구성 요소 출력만 `<template>`로 DOM에 옮긴다. 소비자에 남은 것의 분류는 design-tokens `docs/styles.md`의 "소비자가 소유하는 것"에 있다.
 
 블록·인라인 규칙, 속성 검사, 블록 정의표는 문서 렌더러(`src/document/parser/directive-blocks.js`)가 소유한다. 다른 Markdown 해석기를 두지 않는다. 새 블록은 정의표에 허용 속성, 놓을 자리, 본문 규칙을, 출력 표(`src/document/renderer/directive-render.js`)에 출력을 한 항목씩 추가한다. 계약은 [문서 렌더러](document-renderer.md)에 있다.
 

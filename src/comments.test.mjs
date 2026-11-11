@@ -17,16 +17,10 @@ test('comment_theme_keeps_https_origin_and_requires_https_preview_overrides', ()
   }
 });
 
-test('preview_comment_theme_reads_the_installed_design_commit_from_a_public_cdn', () => {
-  const root = fileURLToPath(new URL('../', import.meta.url));
-  const spec = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).devDependencies['@woonyong-choi/design-tokens'];
-  const [, repository, revision] = /^github:([\w.-]+\/[\w.-]+)#([a-f0-9]{40})$/.exec(spec);
+test('preview_without_a_public_origin_uses_the_giscus_light_theme', () => {
   const themeUrl = commentThemeUrl({ repository: 'owner/blog' });
-  assert.equal(themeUrl, `https://cdn.jsdelivr.net/gh/${repository}@${revision}/dist/assets/giscus.css`);
-  const lock = JSON.parse(readFileSync(new URL('../package-lock.json', import.meta.url), 'utf8'));
-  assert.match(lock.packages['node_modules/@woonyong-choi/design-tokens'].resolved, new RegExp(`#${revision}$`));
-  assert.ok(readFileSync(new URL('assets/giscus.css', `file://${root}node_modules/@woonyong-choi/design-tokens/dist/`)).length > 0);
-  assert.match(commentsSection({ id: 'stable-id', comments: true }, config, themeUrl), /data-theme="https:\/\/cdn\.jsdelivr\.net\/gh\//);
+  assert.equal(themeUrl, 'light');
+  assert.match(commentsSection({ id: 'stable-id', comments: true }, config, themeUrl), /data-theme="light"/);
 });
 
 test('댓글은 글 제목과 URL이 바뀌어도 고정 문서 ID로 연결한다', () => {

@@ -1,11 +1,9 @@
-// 홈페이지가 의존성으로 설치한 공통 디자인 패키지의 위치와 버전. 사본을 두지 않고 고정 commit의 설치본을 읽는다.
+// 홈페이지가 직접 소유하는 디자인 정본(src/design)의 생성 결과 위치와 내용 해시.
+// src/design/scripts/build.mjs가 tokens·styles·ui·assets에서 src/design/dist를 만든다(npm run build:design).
 import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-export const DESIGN_PACKAGE = '@woonyong-choi/design-tokens';
-const packageFile = createRequire(import.meta.url).resolve(`${DESIGN_PACKAGE}/package.json`);
-/** 설치된 디자인 패키지의 dist 폴더. 페이지의 /theme/ 경로가 이 폴더를 가리킨다. */
-export const THEME_ROOT = join(dirname(packageFile), 'dist');
+/** 디자인 생성 결과 폴더. 페이지의 /theme/ 경로가 이 폴더를 가리킨다. */
+export const THEME_ROOT = fileURLToPath(new URL('./design/dist/', import.meta.url));
 /** 생성 파일 목록과 내용 해시. 캐시 무효화용 버전 값(contentHash)으로만 쓴다. */
-export const THEME_MANIFEST = JSON.parse(readFileSync(join(THEME_ROOT, 'manifest.json'), 'utf8'));
+export const THEME_MANIFEST = JSON.parse(readFileSync(new URL('manifest.json', `file://${THEME_ROOT}`), 'utf8'));

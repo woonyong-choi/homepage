@@ -30,13 +30,13 @@ const specifiersOf = (text) => [...text.matchAll(SPECIFIERS)].map((match) => mat
 
 test('import_scan_finds_multi_line_static_reexport_and_dynamic_imports', () => {
   const text = [
-    "import {\n  a,\n  b,\n} from '@woonyong-choi/design-tokens/components';",
+    "import {\n  a,\n  b,\n} from '#design/ui/index.mjs';",
     "export { c } from './c.js';",
     "const d = await import('shiki');",
     "import 'side-effect';",
   ].join('\n');
   assert.deepEqual(specifiersOf(text), [
-    '@woonyong-choi/design-tokens/components',
+    '#design/ui/index.mjs',
     './c.js',
     'shiki',
     'side-effect',
@@ -49,6 +49,7 @@ test('parser_sources_do_not_import_the_renderer_theme_design_or_output_libraries
     /theme\//,
     /dist\//,
     /@woonyong-choi\/design-tokens/,
+    /#design\//,
     /diagramplay/,
     /highlight\.js/,
     /shiki/,

@@ -6,7 +6,7 @@ import { splitLead, summaryOf } from './article-summary.mjs';
 import { publishDate } from './content-metadata.mjs';
 import { createSiteSync } from './admin-site.mjs';
 import { RESERVED_SLUGS } from './blog-model.mjs';
-import * as ui from '@woonyong-choi/design-tokens/ui/index.mjs';
+import * as ui from '#design/ui/index.mjs';
 import { fromBase64, imageFileName, imageMarkdown, postFileName, readPost, SLUG, toBase64, writePost } from './admin-model.mjs';
 import { TOKEN_KEY } from './admin-token.mjs';
 

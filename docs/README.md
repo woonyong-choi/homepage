@@ -11,3 +11,7 @@
   - [글 관리](design/admin.md)
 - [개인 사이트 발행](design/publication.md)
   - [스타일 수정 지도](design/styles.md)
+    - [디자인 시스템: 스타일 구조](design/system/styles.md)
+    - [디자인 시스템: 공통 구성 요소](design/system/components.md)
+    - [디자인 시스템: 구조](design/system/architecture.md)
+    - [디자인 시스템: 아이콘](design/system/content-icons.md)

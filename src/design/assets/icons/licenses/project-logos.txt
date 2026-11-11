@@ -1,0 +1,30 @@
+Project and original-author technology marks
+
+These names and logos identify their respective projects. They are not original
+artwork of this icon collection. Source URLs, chosen variants, and source hashes
+are recorded per mark in assets/icons/catalog.json.
+
+PostgreSQL: distributed by the PostgreSQL project. The registered trademark
+owner is the PostgreSQL Community Association of Canada,
+https://wiki.postgresql.org/wiki/Logo and https://www.postgresql.org/about/policies/trademarks/.
+Git: Jason Long, https://git-scm.com/community/logos, CC BY 3.0,
+https://creativecommons.org/licenses/by/3.0/.
+GitHub: GitHub, Inc., current Invertocat distribution,
+https://brand.github.com/foundations/logo and https://brand.github.com/GitHub_Logos.zip.
+LinkedIn: LinkedIn Corporation, complete inbug-blue-28 symbol used on the
+official brand website, https://brand.linkedin.com/in-logo. This web variant
+already contains transparent counters and has no separate registration glyph.
+Software licenses do not grant blanket rights to these trademarks.
+NGINX: F5 / NGINX, standalone N symbol group from the official logo lockup,
+https://nginx.org/img/nginx_logo.svg and https://www.f5.com/company/policies/trademarks.
+Redis: Redis Ltd., three-layer cube from the project documentation repository,
+https://github.com/redis/docs/blob/main/static/images/redis-cube.svg and
+https://redis.io/legal/trademark-policy/.
+
+Treatment: icon-only variants are selected from original project distributions;
+geometry and palette are retained and proportional fit/centering is applied.
+GitHub's monochrome identity uses the shared neutral foreground for readable
+light/dark presentation. Existing monochrome APIs use negative internal marks;
+these render adaptations are distinct from the original color distributions.
+Monochrome API presentations are compatibility variants and are not claimed to
+be separate official color assets. No extra decorative background is added.

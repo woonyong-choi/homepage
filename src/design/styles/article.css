@@ -1,0 +1,78 @@
+/* 문서 상세: 제목 줄, 목차, 문서 목록 접기, 함께 읽기, 날짜와 예시 안내. */
+.app-article-title { border-bottom: var(--spacing-underline) solid var(--color-ui-line); font-size: var(--text-section-title); word-break: keep-all; overflow-wrap: anywhere; color: var(--color-ink); }
+.app-article-title > .app-content-icon { margin-inline-end: var(--spacing-gap-xs); }
+.app-article-lead { font-size: var(--text-article-lead); line-height: var(--leading-line-intro); word-break: keep-all; overflow-wrap: anywhere; }
+.app-article-title { line-height: var(--leading-article-title-line); padding-bottom: var(--spacing-article-title-padding); margin-bottom: var(--spacing-article-title-gap); }
+.app-document-shell { line-height: var(--leading-feature-body-line); }
+.app-document { min-width: 0; max-width: var(--container-body-width); margin: var(--spacing-article-search-bottom) auto 0; overflow-wrap: anywhere; }
+.app-document-header { margin-bottom: var(--spacing-article-title-gap); }
+.app-document-header .app-article-title { margin: 0; border-color: var(--color-article-title-border); }
+.app-document-lead { font-size: var(--text-post-lead-size); margin: 0 0 var(--spacing-post-lead-margin); }
+.app-document-metadata { margin-bottom: var(--spacing-post-lead-margin); }
+.app-document-dates { display: flex; flex-wrap: wrap; gap: var(--spacing-gap-sm); color: var(--color-ui-muted); font-size: var(--text-small-text); }
+.app-example-notice { padding: var(--spacing-gap-sm); border-left: var(--spacing-outline) solid var(--color-ui-line); color: var(--color-ui-muted); font-size: var(--text-small-text); }
+.app-source-link { font-size: var(--text-small-text); }
+
+.app-document-shell { max-width: calc(var(--container-page) + 2 * var(--spacing-sidebar-width) + 2 * var(--spacing-gap-lg)); }
+.app-document-layout { display: grid; grid-template-areas: "content"; gap: var(--spacing-gap); margin-top: var(--spacing-article-search-bottom); align-items: start; }
+.app-document-layout:has(.app-document-outline) { grid-template-areas: "outline" "content"; }
+.app-document-layout:has(.app-document-sidebar) { grid-template-areas: "tree" "content"; }
+.app-document-layout:has(.app-document-sidebar):has(.app-document-outline) { grid-template-areas: "tree" "outline" "content"; }
+/* 좁은 화면에서 목차가 글 위에 놓이면 글의 위 여백을 목차와의 간격으로 대신한다. 빈 행과 여백이 겹쳐 제목이 멀어지지 않게 한다. */
+@media (width < breakpoint(document-outline)) {
+  .app-document-layout:has(.app-document-outline) .app-document-content > .app-blog-post { padding-top: 0; }
+}
+.app-document-sidebar { grid-area: tree; min-width: 0; }
+.app-document-outline { grid-area: outline; min-width: 0; }
+.app-document-content { grid-area: content; min-width: 0; container-type: inline-size; }
+.app-document-layout .app-document { width: 100%; margin-top: 0; --component-width-wide: min(var(--container-page), 100cqw); }
+.app-document-nav { max-width: var(--container-body-width); margin-inline: auto; font-size: var(--text-small-text); color: var(--color-ui-muted); }
+/* 좁은 화면의 접는 목차: 요약 줄과 펼친 목록이 같은 상자 안에 있다. 넓은 화면에서는 상자 없이 목록만 보인다. */
+.app-document-nav { border: var(--border-width-thin) solid var(--color-help-border); border-radius: var(--radius-button-radius); background: var(--color-help-bg); }
+.app-document-nav > summary { padding: var(--spacing-gap-sm); cursor: pointer; }
+.app-document-nav summary { display: flex; align-items: center; list-style: none; }
+.app-document-nav summary::-webkit-details-marker { display: none; }
+.app-document-nav > nav { padding: 0 var(--spacing-gap-xs) var(--spacing-gap-sm); }
+.app-document-nav :is(ul, ol) { margin: 0; padding: 0; list-style: none; }
+.app-document-nav ul ul { padding-left: var(--spacing-gap-sm); border-left: var(--border-width-thin) solid var(--color-ui-line); margin-left: var(--spacing-gap-xs); }
+.app-document-nav li { margin: 0; min-width: 0; }
+.app-document-nav li > details > summary { cursor: pointer; border-radius: var(--radius-button-radius); }
+.app-document-nav :is(a, li > span, summary > span) { padding: calc(var(--spacing-gap-xs) / 2) var(--spacing-gap-xs); color: inherit; border-radius: var(--radius-button-radius); overflow-wrap: anywhere; }
+.app-document-nav a { display: block; word-break: keep-all; overflow-wrap: anywhere; }
+.app-document-nav summary > a, .app-document-nav summary > span { flex: 1; min-width: 0; }
+.app-document-nav > nav > ul > li > details > summary { font-weight: var(--font-weight-bold); color: var(--color-ink); }
+.app-document-nav :is(a, li > details > summary):hover { background: var(--color-help-bg); color: var(--color-document-nav-active-ink); text-decoration: none; }
+/* 현재 위치는 Things 메뉴 선택처럼 면 없이 파란 글자로만 표시한다. */
+.app-document-nav a[aria-current="location"], .app-document-nav .is-selected { color: var(--color-document-nav-active-ink); font-weight: var(--font-weight-semibold); }
+.app-document-nav a.is-parent { color: var(--color-action-link); }
+.app-document-nav .is-subsection { padding-left: var(--spacing-gap-sm); }
+.app-document-nav summary:focus-visible { outline: var(--outline-width-focus) solid var(--color-ui-focus); outline-offset: var(--spacing-focus-offset); }
+.app-document-pager { margin-block: var(--spacing-gap-lg); }
+.app-document-pager > a[rel=next] { grid-column: 2; }
+@media (max-width: breakpoint(feature-split)) {
+  .app-document-pager > a[rel=next] { grid-column: auto; }
+}
+@media (min-width: breakpoint(document-tree)) {
+  /* 문서 계층(사이드바)이 있을 때만 왼쪽 열을 둔다. 블로그 글처럼 계층이 없으면 빈 열 때문에 본문이 오른쪽으로 밀리지 않게 한 열로 둔다. */
+  .app-document-layout:has(.app-document-sidebar) { grid-template-columns: var(--spacing-sidebar-width) minmax(0, 1fr); grid-template-areas: "tree content"; column-gap: var(--spacing-gap-lg); }
+  .app-document-layout:has(.app-document-sidebar):has(.app-document-outline) { grid-template-areas: "tree outline" "tree content"; }
+  .app-document-sidebar { position: sticky; top: var(--spacing-gap-lg); max-height: calc(100vh - 2 * var(--spacing-gap-lg)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  .app-document-sidebar .app-document-nav > summary { display: none; }
+  .app-document-sidebar > .app-document-nav { border: 0; background: transparent; }
+  .app-document-sidebar > .app-document-nav > nav { padding: 0; }
+  /* 처음에는 닫힌 상태로 내려보내 좁은 화면에서 본문이 밀리지 않게 하고, 넓은 화면은 스크립트 전에도 내용을 보인다. */
+  .app-document-sidebar .app-document-nav::details-content { content-visibility: visible; block-size: auto; }
+}
+@media (min-width: breakpoint(document-outline)) {
+  .app-document-shell:has(.app-document-outline) { max-width: none; }
+  .app-document-layout { grid-template-columns: var(--spacing-sidebar-width) minmax(0, 1fr) var(--spacing-sidebar-width); grid-template-areas: "tree content outline"; }
+  .app-document-layout:has(.app-document-outline) { grid-template-columns: minmax(var(--spacing-sidebar-width), 1fr) minmax(0, var(--container-body-width)) minmax(var(--spacing-sidebar-width), 1fr); grid-template-areas: "tree content outline"; }
+  /* 목차가 있는 세 열 배치에서는 넓은 그림도 본문 열 폭까지만 쓴다. 넘치면 본문 열이 커져 목차 열이 좁아진다. */
+  .app-document-layout:has(.app-document-outline) .app-width-wide { width: 100%; margin-inline: 0; }
+  .app-document-sidebar > .app-document-nav, .app-document-outline > .app-document-nav { max-width: none; border: 0; background: transparent; }
+  .app-document-outline > .app-document-nav > nav { padding: 0; }
+  .app-document-outline .app-document-nav > summary { display: none; }
+  /* 처음에는 닫힌 상태로 내려보내 좁은 화면에서 본문이 밀리지 않게 하고, 넓은 화면은 스크립트 전에도 내용을 보인다. */
+  .app-document-outline .app-document-nav::details-content { content-visibility: visible; block-size: auto; }
+  .app-document-outline { position: sticky; top: var(--spacing-gap-lg); max-height: calc(100vh - 2 * var(--spacing-gap-lg)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+}

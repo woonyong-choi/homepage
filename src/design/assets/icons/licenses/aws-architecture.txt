@@ -1,0 +1,35 @@
+AWS Architecture Icons
+
+Copyright and trademarks belong to Amazon Web Services, Inc. and/or its
+affiliates. These assets are not covered by this repository's MIT license.
+
+Official distribution (checked 2026-10-19):
+https://aws.amazon.com/architecture/icons/
+https://d1.awsstatic.com/onedam/marketing-channels/website/public/shared/architecture-icon-release/Icon-package_07312026.5846e92413caa21490223536cc97f1269e44fa92.zip
+AWS Site Terms, last updated June 4, 2025:
+https://aws.amazon.com/terms/
+
+AWS's architecture icon page permits customers and partners to use the
+toolkits and assets in architecture diagrams, whitepapers, presentations,
+data sheets, and posters. This collection records that specific permission.
+It does not assert an open-source asset license, a blanket redistribution
+license, permission to sell an icon pack, or permission to imply AWS
+endorsement. Other uses remain subject to the AWS Site Terms and any
+applicable agreement. AWS marks must identify AWS services accurately and
+must not suggest sponsorship or confuse ownership.
+
+The official ZIP contains image files and no separate LICENSE, NOTICE,
+README, or terms file. The permission and terms links above are retained
+for consumers to check the conditions for their intended use.
+
+Selection: 17 service icons for backend operations diagrams, from the
+Architecture-Service-Icons_07312026 48px-named variant entries. The source
+SVGs have a 64x64 viewBox. File names, original ZIP entries, source SHA-256,
+archive SHA-256, resulting SHA-256, and retrieval date are in catalog.json.
+
+Treatment: only the unused xmlns:xlink namespace declaration and
+non-referenced id attributes are removed for the static SVG parser.
+All paths, shapes, transforms, colors, backgrounds, viewBox values,
+proportions, XML declaration, and title text remain unchanged.
+Monochrome rendering in an existing caller-controlled API is a compatibility
+presentation and is not a separately approved AWS color variant.

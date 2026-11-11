@@ -1,5 +1,5 @@
-import { runtimeEntrypoints } from '@woonyong-choi/design-tokens/ui/manifest.mjs';
-import { getIconCatalog } from '@woonyong-choi/design-tokens/ui/build/icons.mjs';
+import { runtimeEntrypoints } from '#design/ui/manifest.mjs';
+import { getIconCatalog } from '#design/ui/build/icons.mjs';
 const ORIGIN = 'https://publication.invalid';
 const ICON_CATALOG = getIconCatalog();
 const ICON_NOTICES = [...new Set([...ICON_CATALOG.libraries, ...Object.values(ICON_CATALOG.brands)].map(item => item.notice).filter(Boolean))].map(file => `/theme/assets/icons/${file}`);

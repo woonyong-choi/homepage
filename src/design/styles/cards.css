@@ -1,0 +1,67 @@
+/* 카드와 칩: 도움말 카드(변형 is-*), 지식 카드, 태그. 화면 모듈은 맥락 선택자로 배치만 바꾼다. */
+.app-help-card { position: relative; display: block; padding: var(--spacing-card-top) var(--spacing-card-right) var(--spacing-card-inset) var(--spacing-card-inset); color: var(--color-body); background: var(--color-help-bg); border: var(--border-width-thin) solid var(--color-help-border); border-radius: var(--radius-help-radius); line-height: var(--leading-line-card); }
+.app-help-card:hover { text-decoration: none; }
+.app-help-card strong { display: block; font-weight: var(--font-weight-bold); word-break: keep-all; overflow-wrap: anywhere; }
+.app-help-card::after { content: ''; position: absolute; right: var(--spacing-gap-xs); }
+.app-help-card.is-compact { padding: var(--spacing-compact-inset) var(--spacing-card-right) var(--spacing-compact-inset) var(--spacing-compact-inset); line-height: var(--leading-line-compact); font-size: var(--text-compact-text); font-weight: var(--font-weight-semibold); }
+.app-help-card :is(.app-article-icon, .app-content-icon) { width: var(--spacing-icon-lg); height: var(--spacing-icon-lg); position: absolute; top: var(--spacing-card-inset); left: var(--spacing-card-inset); }
+.app-support-grid.is-pair > .app-help-card:not(.is-compact) { min-height: var(--spacing-support-card-min); }
+.app-help-card, .app-blog-card { transition: box-shadow var(--duration-help-motion) var(--ease-reveal), transform var(--duration-help-motion) var(--ease-reveal); }
+.app-help-card:hover, .app-help-card:focus-visible, .app-blog-card:hover, .app-blog-card:focus-within { background: var(--color-help-hover); border-color: var(--color-help-hover-border); transform: translateY(var(--spacing-help-lift)); box-shadow: var(--shadow-help-hover-shadow); }
+.app-help-card:active, .app-blog-card:active { background: var(--color-help-active); }
+@media (max-width: breakpoint(support-pair)) {
+  .app-support-grid.is-pair > .app-help-card:not(.is-compact), .app-help-card:not(.is-compact) { min-height: 0; padding: var(--spacing-help-mobile-block) var(--spacing-card-right) var(--spacing-help-mobile-block) var(--spacing-help-mobile-left); }
+  .app-help-card :is(.app-article-icon, .app-content-icon) { width: var(--spacing-help-mobile-icon); height: var(--spacing-help-mobile-icon); top: var(--spacing-help-mobile-icon-inset); left: var(--spacing-help-mobile-icon-inset); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-help-card, .app-blog-card { transition: none; }
+  .app-help-card:hover, .app-help-card:focus-visible, .app-blog-card:hover, .app-blog-card:focus-within { transform: none; }
+}
+.app-help-card strong { margin-bottom: var(--spacing-help-title-gap); color: var(--color-help-title-color); }
+.app-help-card p { margin: 0; color: var(--color-help-copy-color); }
+.app-help-card.is-compact strong { margin: 0; }
+.app-prose .app-help-card { text-decoration: none; }
+.app-support-grid.is-pair > .app-help-card.is-horizontal { min-height: 0; padding: var(--component-help-horizontal-padding); }
+.app-help-card.is-horizontal :is(.app-article-icon, .app-content-icon) { width: var(--spacing-help-horizontal-icon); height: var(--spacing-help-horizontal-icon); left: var(--spacing-help-horizontal-inset); top: var(--spacing-help-horizontal-inset); }
+.app-help-card::after { width: var(--spacing-help-mobile-block); height: 100%; top: 0; border: 0; transform: none; background: url('./assets/icons/navigation/chevron-right.svg') left center / var(--component-help-chevron-size) no-repeat; opacity: var(--opacity-help-chevron-opacity); }
+.app-support-grid > .app-help-card.is-centered:not(.is-compact) { min-height: 0; padding: var(--component-help-centered-padding); text-align: center; }
+.app-help-card.is-centered :is(.app-article-icon, .app-content-icon) { width: var(--spacing-icon-lg); height: var(--spacing-icon-lg); top: var(--spacing-help-mobile-block); left: calc(50% - var(--spacing-icon-lg) / 2); }
+.app-support-grid > .app-help-card.is-grouped:not(.is-compact) { min-height: 0; padding: var(--component-help-grouped-padding); font-size: var(--text-help-grouped-text); line-height: var(--leading-line-compact); font-weight: var(--font-weight-semibold); border-radius: var(--radius-help-grouped-radius); background: var(--color-help-grouped-bg); border-color: transparent; }
+.app-help-card.is-grouped :is(.app-article-icon, .app-content-icon) { width: var(--spacing-icon); height: var(--spacing-icon); top: var(--spacing-gap-xs); left: var(--spacing-gap-xs); }
+.app-help-card.is-grouped::after { width: var(--spacing-gap-sm); background-size: var(--component-help-grouped-chevron); }
+.app-support-grid > .app-help-card.is-grouped:hover { background: var(--color-help-hover); border-color: var(--color-help-hover-border); }
+.app-support-grid > .app-help-card.is-grouped:active { background: var(--color-help-active); }
+.app-support-grid > .app-help-card.is-grouped.has-no-icon { padding-left: var(--spacing-compact-inset); }
+.app-help-card.is-grouped strong { font-weight: inherit; margin: 0; }
+.app-inline-links { margin-bottom: var(--spacing-prose-paragraph-gap); }
+.app-help-card.is-inline { display: inline-block; min-height: 0; padding: var(--component-help-inline-padding); margin: var(--component-help-inline-margin); font-size: var(--text-help-inline-text); font-weight: var(--font-weight-semibold); line-height: inherit; border-radius: var(--radius-md); }
+.app-help-card.is-inline strong { display: inline; margin: 0; font-weight: inherit; color: inherit; }
+.app-help-card.is-inline :is(.app-article-icon, .app-content-icon) { width: var(--spacing-help-inline-icon); height: var(--spacing-help-inline-icon); left: var(--spacing-help-inline-icon-inset); top: var(--spacing-help-inline-icon-inset); }
+.app-help-card.is-inline::after { right: var(--spacing-help-inline-chevron-inset); width: var(--spacing-compact-inset); background-size: var(--component-help-inline-chevron); opacity: var(--opacity-help-inline-opacity); }
+.app-help-card.is-inline.has-no-icon { padding-left: var(--spacing-help-inline-no-icon); }
+.app-related-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-gap-xs); }
+/* 관련 글 제목과 목록은 하나의 작은 묶음으로 배치한다. */
+.app-prose .app-related-grid { margin-bottom: var(--spacing-gap-sm); }
+.app-prose :is(.app-heading-2, .app-heading-3, .app-heading-4):has(+ .app-related-grid) { margin-block: var(--spacing-gap) var(--spacing-gap-sm); }
+@media (max-width: breakpoint(feature-split)) { .app-related-grid { grid-template-columns: minmax(0, 1fr); } }
+.app-related-link { background: var(--color-related-background); border-color: var(--color-related-border); }
+.app-help-card.app-related-link { display: flex; align-items: center; gap: var(--spacing-gap-sm); min-height: 0; padding: var(--spacing-compact-inset) var(--spacing-card-right) var(--spacing-compact-inset) var(--spacing-compact-inset); font-size: var(--text-compact-text); font-weight: var(--font-weight-semibold); line-height: var(--leading-line-compact); text-align: left; }
+.app-related-link .app-content-icon { position: static; flex: none; width: var(--spacing-icon); height: var(--spacing-icon); }
+.app-related-link strong { min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-related-link[rel=prev] { padding-inline: var(--spacing-card-right) var(--spacing-compact-inset); }
+.app-related-link[rel=prev]::after { right: auto; left: var(--spacing-gap-xs); transform: scaleX(-1); }
+.app-tags { display: flex; flex-wrap: wrap; gap: var(--spacing-2); align-items: baseline; }
+/* 태그는 글 머리, 글 카드, 검색 어디서나 같은 알약(13/1.4)이다. is-medium은 작은 글(15) 크기다. */
+.app-tag, .app-tags-more > summary { display: inline-block; padding: var(--spacing-0-5) var(--spacing-2-5); border: 0; border-radius: var(--radius-pill); color: var(--color-tag-ink); background: var(--color-tag-background); font-size: var(--text-tiny-text); line-height: var(--leading-line-body); text-decoration: none; }
+.app-tag.is-medium, .app-tags-more > summary.is-medium { font-size: var(--text-small-text); }
+/* 태그는 어디서나 같은 단계다: 기본 회색 알약, 호버·초점은 한 단계 진한 회색, 고른 태그(검색 필터)는 Things 선택 탭과 같은 파랑. */
+.app-tag:hover, .app-tag:focus-visible, .app-tags-more > summary:hover, .app-tags-more > summary:focus-visible { color: var(--color-tag-preview-ink); background: var(--color-tag-preview); text-decoration: none; }
+.app-tag[aria-pressed=true], .app-tag[aria-pressed=true]:hover { color: var(--color-on-action); background: var(--color-tag-hover); }
+.app-tag[aria-pressed], .app-tags-more > summary { cursor: pointer; }
+.app-tags-more > .app-tags { margin-top: var(--spacing-gap-xs); }
+
+/* 주제와 블로그 목록은 설명의 전체 텍스트를 보존하고 두 줄까지만 표시한다. */
+.app-card-summary { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--component-card-summary-lines); overflow: hidden; word-break: keep-all; overflow-wrap: anywhere; }
+.app-help-card.is-summary, .app-support-grid.is-pair > .app-help-card.is-summary { padding: calc(var(--spacing-card-inset) + var(--spacing-8) + var(--spacing-gap-xs)) var(--spacing-card-right) var(--spacing-card-inset) var(--spacing-card-inset); }
+.app-help-card.is-summary :is(.app-article-icon, .app-content-icon) { top: var(--spacing-card-inset); left: var(--spacing-card-inset); width: var(--spacing-8); height: var(--spacing-8); }
+.app-help-card.is-summary.has-no-icon, .app-support-grid.is-pair > .app-help-card.is-summary.has-no-icon { padding-top: var(--spacing-card-inset); padding-left: var(--spacing-card-inset); }

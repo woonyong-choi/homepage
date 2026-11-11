@@ -63,7 +63,7 @@
 
 없는 주소는 공통 사이트 껍데기의 `404.html`로 안내한다. 홈·Blog·Search로 돌아가는 루트 기준 링크를 제공하고 검색엔진 색인과 사이트맵에서 제외한다. GitHub Pages와 로컬 `src/serve.mjs`는 없는 경로에 404 상태를 반환한다.
 
-본문 갤러리·복사·영상·댓글은 실제 요소가 있는 페이지에 필요한 공통 런타임만 연결한다. 코드 복사는 공통 피드백을 사용하며 실패 시 원문 선택과 재시도를 유지한다. 클라이언트 모듈 URL은 내용 해시를 포함한다. Blog 피드가 이어 불러온 글은 design-tokens의 `RUNTIMES`와 댓글 런타임에서 해당 모듈만 불러오고, 수식 스타일은 페이지 조립이 `MATH_STYLESHEET`로 표시한 `data-math-stylesheet` link를 한 번만 복사한다.
+본문 갤러리·복사·영상·댓글은 실제 요소가 있는 페이지에 필요한 공통 런타임만 연결한다. 코드 복사는 공통 피드백을 사용하며 실패 시 원문 선택과 재시도를 유지한다. 클라이언트 모듈 URL은 내용 해시를 포함한다. Blog 피드가 이어 불러온 글은 디자인 정본의 `RUNTIMES`와 댓글 런타임에서 해당 모듈만 불러오고, 수식 스타일은 페이지 조립이 `MATH_STYLESHEET`로 표시한 `data-math-stylesheet` link를 한 번만 복사한다.
 
 댓글은 설정한 저장소의 Comments 분류에 `specific`·strict 방식으로 고정 글 ID를 연결한다. 댓글 표시 여부는 글의 `comments`로 정한다. URL이나 제목 변경으로 댓글 ID를 바꾸지 않는다. giscus iframe은 공식 widget URL·세션·메시지 형식을 사용하고 message의 origin과 source를 모두 확인한다. 높이·오류·토론 URL은 해당 iframe에만 적용한다. 문서마다 message 리스너 하나가 event.source로 해당 iframe을 찾는다. Blog 피드는 댓글 창을 접어 두고 Things의 "더 보기" 같은 링크 단추(`댓글 N개`, 개수를 모르거나 0이면 `댓글`)만 보인다. 누르거나 주소의 댓글 앵커로 들어올 때만 iframe을 만들어 펼치므로 긴 댓글이 다음 글로의 연속 읽기를 막지 않는다. 글 상세의 iframe은 페이지의 load 이벤트 뒤 브라우저가 한가할 때(`requestIdleCallback`, 없으면 다음 작업) 바로 만들어 아래로 스크롤하지 않아도 준비한다. 댓글 앵커로 들어오면 즉시 만든다. 댓글은 바로 게시하므로 작성·미리보기 탭은 숨긴다. giscus에는 수정·삭제가 없어 댓글의 시간을 누르면 GitHub 토론에서 고칠 수 있다고 안내한다. 로그인 반환값은 주소에서 제거하고 저장소가 차단되면 현재 화면에서만 유지한다. 로그아웃·세션 만료를 로드된 댓글에 반영한다. 실패 시 재시도와 GitHub 링크를 제공하며 댓글이 없는 상태는 오류가 아니다.
 
@@ -91,9 +91,9 @@ HTML의 이미지·링크·poster, CSS의 상대 URL·import와 실제 런타임
 
 빌드에서 GitHub CLI 인증으로 설정한 저장소·Comments 분류의 토론과 댓글을 읽는다. giscus strict 매핑과 같은 글 ID의 SHA-1로 연결한다. 댓글 수는 최상위 댓글과 답글의 합이며 모든 페이지를 읽는다. 토론이 없는 것으로 확인된 경우만 0개를 표시한다. 인증 없음·네트워크 오류·불완전한 페이지·중복 매핑이면 숫자 대신 댓글 링크를 표시하고 본문 빌드는 계속한다. 보고서의 `commentsStatus`로 수집 결과를 구분한다. 숫자는 빌드 당시 값이며 인증 정보와 토론 본문은 브라우저로 보내지 않는다.
 
-### 의존성 갱신
+### 디자인 수정
 
-디자인의 고정 commit은 `package.json`이 정한다. 원본을 수정한 뒤 [스타일 수정 지도](styles.md#갱신)의 설치·검사를 거쳐 갱신한다. 설치 사본을 직접 고치거나 다른 저장소의 변경을 자동 수신하지 않는다.
+디자인 정본은 `src/design/`이다. [스타일 수정 지도](styles.md#디자인-수정)의 생성·검사를 거쳐 화면 변경과 같은 PR로 반영한다. 생성 결과 `src/design/dist/`를 직접 고치지 않는다.
 
 ### 문서와 블로그 탐색
 
@@ -129,9 +129,9 @@ npm run content:check
 
 ### 댓글 테마 배포
 
-HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/giscus.css`를 디자인 해시 주소로 읽는다. origin이 없거나 HTTP인 미리보기는 `package.json`이 고정한 공개 디자인 저장소 커밋의 `dist/assets/giscus.css`를 jsDelivr에서 읽는다. 주소 선택은 `src/comments.mjs`의 `commentThemeUrl`이 담당한다.
+HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/giscus.css`를 디자인 해시 주소로 읽는다. origin이 없거나 HTTP인 미리보기는 giscus 서버가 읽을 공개 주소가 없으므로 `comments.themeUrl`이 없으면 giscus 기본 `light` 테마를 쓴다. 주소 선택은 `src/comments.mjs`의 `commentThemeUrl`이 담당한다.
 
-미리보기의 CSS 주소를 직접 정하려면 `config/site.json`의 `comments.themeUrl`에 같은 공통 CSS를 제공하는 공개 HTTPS 주소를 지정한다. 설치한 디자인 패키지의 공개 커밋을 해석할 수 없으면 명시한 주소가 필요하다. 외부 주소는 [giscus 사용자 테마 계약](https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md#data-theme)에 따라 익명 CORS로 CSS를 제공해야 한다. 확인할 때는 공개 응답과 현재 CSS의 SHA-256, HTTP 상태·MIME·CORS 및 실제 iframe의 계산 스타일을 대조한다.
+미리보기의 CSS 주소를 직접 정하려면 `config/site.json`의 `comments.themeUrl`에 같은 공통 CSS를 제공하는 공개 HTTPS 주소를 지정한다. 외부 주소는 [giscus 사용자 테마 계약](https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md#data-theme)에 따라 익명 CORS로 CSS를 제공해야 한다. 확인할 때는 공개 응답과 현재 CSS의 SHA-256, HTTP 상태·MIME·CORS 및 실제 iframe의 계산 스타일을 대조한다.
 
 ### 문서 렌더러 연결
 
@@ -139,7 +139,7 @@ HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/gi
 
 문법·출력 오류 진단은 파일을 발행하기 전에 예외로 바꾼다. 승인 원고 확인, front matter, 검색·댓글, 경로와 출력 저장은 홈페이지가 소유한다. 문서 렌더러의 오류 HTML을 정상 발행 결과로 받아들이지 않는다. 수식 감지와 KaTeX 자산도 렌더러의 공개 함수를 사용해 렌더러와 같은 버전을 싣는다. 홈페이지 자산의 존재와 이미지 크기 조회는 `document-assets.mjs`가 제공한다.
 
-문서 렌더러는 이 저장소의 `src/document`에 있다. 계약은 [문서 렌더러](document-renderer.md)에 있다. 렌더러는 홈페이지가 설치한 디자인을 읽는다. `article-renderer.mjs`는 렌더러의 `DEFAULT_THEME_FILES.root`가 홈페이지의 디자인 패키지 위치와 같은지 확인하고. 검증과 배포 워크플로는 `npm ci`만으로 설치하며 비공개 저장소나 배포 키를 쓰지 않는다. 배포에는 `dist/site`만 업로드한다.
+문서 렌더러는 이 저장소의 `src/document`에 있다. 계약은 [문서 렌더러](document-renderer.md)에 있다. 렌더러는 `src/design/dist/`를 읽는다. `article-renderer.mjs`는 렌더러의 `DEFAULT_THEME_FILES.root`가 홈페이지의 디자인 생성 결과 위치와 같은지 확인한다. 검증과 배포 워크플로는 `npm ci`만으로 설치하며 비공개 저장소나 배포 키를 쓰지 않는다. 배포에는 `dist/site`만 업로드한다.
 
 ### 발행 링크 검사
 
