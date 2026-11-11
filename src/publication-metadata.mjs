@@ -55,7 +55,7 @@ export function publicationMetadata(page, context) {
     if (page.updatedAt) html += meta('article:modified_time', page.updatedAt);
     for (const tag of page.tags ?? []) html += meta('article:tag', tags[tag]?.label ?? tag);
     // 검색 엔진용 글 정보. 화면에 보이는 제목·요약·날짜·글쓴이와 같은 값만 적는다.
-    const posting = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: pageTitle, description, url: canonical, mainEntityOfPage: canonical, inLanguage: 'ko', ...(page.publishedAt ? { datePublished: page.publishedAt } : {}), ...(page.updatedAt ? { dateModified: page.updatedAt } : {}), ...(cover ? { image: origin + cover.src } : {}), ...(config.name ? { author: { '@type': 'Person', name: config.name, url: origin + '/' } } : {}) };
+    const posting = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: pageTitle, description, url: canonical, mainEntityOfPage: canonical, inLanguage: 'ko', ...(page.publishedAt ? { datePublished: page.publishedAt } : {}), ...(page.publishedAt ? { dateModified: page.updatedAt ?? page.publishedAt } : {}), ...(cover ? { image: origin + cover.src } : {}), ...(config.name ? { author: { '@type': 'Person', name: config.name, url: origin + '/' } } : {}) };
     html += jsonLd(posting);
   } else if (page.route === '/') {
     // 첫 화면은 사이트와 사람 정보를 알린다. 화면과 설정에 있는 값만 적는다.

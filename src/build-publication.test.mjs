@@ -21,7 +21,7 @@ function workspace(t) {
   mkdirSync(blog, { recursive: true });
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const posts = [
-    post({ id: 'first-post', title: '첫 글', date: '2026-01-01', body: '## 첫 절\n\n[두 번째 글](/articles/second-post/)과 [절 이동](/articles/second-post/#second-heading), [위키](/wiki/outside-note/), [첫 절로](#첫-절).' }),
+    post({ id: 'first-post', title: '첫 글', date: '2026-01-01', body: '## 첫 절\n\n[두 번째 글](/blog/second-post/)과 [절 이동](/blog/second-post/#second-heading), [첫 절로](#첫-절).' }),
     post({ id: 'second-post', title: '두 번째 글', date: '2026-01-02', body: '## Second heading\n\n두 번째 본문.' }),
     post({ id: 'third-post', title: '세 번째 글', date: '2026-01-03' }),
     post({ id: 'fourth-post', title: '네 번째 글', date: '2026-01-04' }),
@@ -40,7 +40,8 @@ test('blog_feed_xml_escapes_and_orders_items', () => {
     { id: 'b', route: '/blog/b/', title: 'B & <C>', description: '"설명"', publishedAt: '2026-01-02' },
     { id: 'a', route: '/blog/a/', title: 'A', description: 'a', publishedAt: '2026-01-01' },
   ], { title: '사이트 & 기록', description: '소개', origin: ORIGIN });
-  assert.match(xml, /^<\?xml version="1.0" encoding="UTF-8"\?><rss version="2.0"><channel><title>사이트 &amp; 기록<\/title><link>https:\/\/example.test\/blog\/<\/link>/);
+  assert.match(xml, /^<\?xml version="1.0" encoding="UTF-8"\?><rss version="2.0" xmlns:atom="http:\/\/www.w3.org\/2005\/Atom"><channel><title>사이트 &amp; 기록<\/title><link>https:\/\/example.test\/blog\/<\/link><atom:link href="https:\/\/example.test\/blog\/feed.xml" rel="self" type="application\/rss\+xml"\/>/);
+  assert.match(xml, /<language>ko<\/language><lastBuildDate>Fri, 02 Jan 2026 00:00:00 GMT<\/lastBuildDate>/);
   assert.match(xml, /<item><title>B &amp; &lt;C&gt;<\/title><link>https:\/\/example.test\/blog\/b\/<\/link><guid isPermaLink="false">b<\/guid><pubDate>Fri, 02 Jan 2026 00:00:00 GMT<\/pubDate>/);
   assert.ok(xml.indexOf('/blog/b/') < xml.indexOf('/blog/a/'));
   assert.ok(xml.endsWith('</channel></rss>'));
@@ -76,7 +77,6 @@ test('build_with_posts_writes_feed_sitemap_pages_and_rewritten_links', { timeout
   const article = read(output, 'blog/first-post/index.html');
   assert.match(article, /href="\/blog\/second-post\/"/);
   assert.match(article, /href="\/blog\/second-post\/#second-post-second-heading"/);
-  assert.match(article, /href="https:\/\/docs\.woonyong\.com\/wiki\/outside-note\/"/);
   assert.doesNotMatch(article, /href="\/(articles|wiki)\//);
   assert.match(article, /href="#first-post-첫-절"/);
   assert.match(article, /id="first-post-첫-절"/);

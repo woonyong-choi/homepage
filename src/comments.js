@@ -24,18 +24,13 @@ function readSession(view) {
 function documentState(doc) {
   if (documents.has(doc)) return documents.get(doc);
   const view = doc.defaultView;
-  const state = { session: readSession(view), threads: new Set(), pending: new Map(), observer: null };
+  const state = { session: readSession(view), threads: new Set() };
   view.addEventListener('message', event => {
     if (event.origin !== host || !event.source || !event.data?.giscus) return;
     for (const thread of liveThreads(state)) {
       if (thread.source() === event.source) { thread.receive(event.data.giscus); return; }
     }
   });
-  if (view.IntersectionObserver) {
-    state.observer = new view.IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) state.pending.get(entry.target)?.();
-    }, { rootMargin: '100% 0px' });
-  }
   documents.set(doc, state);
   return state;
 }
@@ -44,8 +39,15 @@ function documentState(doc) {
 function* liveThreads(state) {
   for (const thread of state.threads) {
     if (thread.section.isConnected) yield thread;
-    else { state.threads.delete(thread); state.pending.delete(thread.section); state.observer?.unobserve(thread.section); }
+    else state.threads.delete(thread);
   }
+}
+
+// 글 상세의 댓글은 본문과 그림을 다 불러온 뒤 한가할 때 만들어 스크롤하지 않아도 준비해 둔다.
+function afterPageLoad(view, callback) {
+  const idle = () => (view.requestIdleCallback ? view.requestIdleCallback(callback, { timeout: 2000 }) : view.setTimeout(callback, 0));
+  if (view.document.readyState === 'complete') idle();
+  else view.addEventListener('load', idle, { once: true });
 }
 
 export function initComments(root) {
@@ -95,8 +97,6 @@ export function initComments(root) {
 
     function load(reload = false) {
       if (frame && !reload) return;
-      state.pending.delete(section);
-      state.observer?.unobserve(section);
       view.clearTimeout(timeout);
       failed = false;
       status.hidden = false;
@@ -163,11 +163,7 @@ export function initComments(root) {
       else load();
     } else if (expand) {
       // 피드의 댓글은 '댓글 보기'를 누를 때만 불러온다.
-    } else if (state.observer) {
-      // 화면 근처에 오기 전까지 iframe을 만들지 않아 연속 읽기의 요청 수를 보이는 글로 제한한다.
-      state.pending.set(section, () => load());
-      state.observer.observe(section);
-    } else load();
+    } else afterPageLoad(view, () => load());
   }
 }
 

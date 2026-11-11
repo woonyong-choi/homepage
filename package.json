@@ -14,7 +14,7 @@
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",
     "@vscode/markdown-it-katex": "1.1.2",
-    "@woonyong-choi/design-tokens": "github:woonyong-choi/design-tokens#e2676d33fca990707bc3071f815f17e841ac2964",
+    "@woonyong-choi/design-tokens": "github:woonyong-choi/design-tokens#85218ac38b9dead215e73d95cbcf70b1039833a5",
     "esbuild": "0.28.2",
     "highlight.js": "11.12.0",
     "jsdom": "29.1.1",

@@ -96,11 +96,9 @@ test('recommended_aliases_find_every_post_counted_under_the_canonical_keyword', 
   assert.equal(searchDocuments(index, { query: recommendation.keyword, tags: [], page: 1 }).total, 2);
 });
 
-// 검색 요약에 수식 블록·`:::` 표식 같은 작성 문법이 드러나지 않게 한다. 일반 코드 블록은 검색할 수 있게 남긴다.
-test('search_text_drops_math_blocks_and_directive_markers', () => {
-  const body = '앞\n\n$$\nx^2\n$$\n\n:::note\n안내\n:::\n\n```sql\nSELECT 1\n```\n뒤';
-  const { text } = searchEntry({ id: 'a', route: '/blog/a/', title: '제목', description: '설명', tags: [], publishedAt: '2026-01-01', body }, {});
-  assert.doesNotMatch(text, /x\^2|:::/);
-  assert.match(text, /안내/);
-  assert.match(text, /SELECT 1/);
+// 검색 요약은 렌더링한 글에서 읽는 글자만 담는다. 작성 문법, 수식 내부 표기, 조작 단추, 각주 되돌아가기 표시는 빼고 코드는 검색할 수 있게 남긴다.
+test('search_text_reads_rendered_words_without_markup_math_or_controls', () => {
+  const html = '<p>앞 <mark>형광</mark>, H<sub>2</sub>O, <kbd>K</kbd>도 &amp; 씁니다.</p><span class="katex"><span class="katex-mathml"><math><mi>x</mi><annotation encoding="application/x-tex">x^2</annotation></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span>x</span></span></span></span><div class="app-code"><button type="button">복사</button><pre><code>SELECT 1</code></pre></div><a class="footnote-backref" href="#fnref1">↩</a><svg><text>도표</text></svg>';
+  const { text } = searchEntry({ id: 'a', route: '/blog/a/', title: '제목', description: '설명', tags: [], publishedAt: '2026-01-01', html }, {});
+  assert.equal(text, '앞 형광, H2O, K도 & 씁니다. x SELECT 1');
 });
