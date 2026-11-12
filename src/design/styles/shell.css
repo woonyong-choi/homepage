@@ -17,7 +17,9 @@
 .app-nav { display: block; font-size: var(--text-small-text); font-weight: var(--font-weight-semibold); line-height: var(--leading-line-compact); text-align: right; margin-right: 0; }
 .app-nav-item { display: inline-block; margin: 0 var(--spacing-help-mobile-icon-inset); white-space: nowrap; }
 .app-nav a { display: block; padding: var(--spacing-underline) var(--spacing-landing-nav-inset); margin: var(--spacing-underline) calc(-1 * var(--spacing-landing-nav-inset)); font-size: inherit; line-height: var(--spacing-icon); border-radius: var(--radius-md); }
-.app-nav a:hover { color: var(--color-nav-hover-color); background: var(--color-landing-nav-hover); text-decoration: none; transition: background var(--duration-landing-nav-motion) var(--ease-reveal); }
+.app-nav a { transition: background-color var(--duration-landing-nav-motion) var(--ease-reveal), color var(--duration-landing-nav-motion) var(--ease-reveal); }
+.app-nav a:hover { color: var(--color-nav-hover-color); background: var(--color-landing-nav-hover); text-decoration: none; }
+.app-nav a[aria-current] { color: var(--color-nav-current-color); }
 .app-nav a:active { color: var(--color-nav-active-color); background: var(--color-nav-active-background); transform: scale(var(--component-landing-nav-scale)); }
 .app-canvas { background: var(--color-canvas); }
 .app-publication.app-canvas { background: var(--color-ui-card); }

@@ -53,9 +53,15 @@ export function suggestions(entries, tags, state) {
   const query = normalizeQuery(state.query);
   if (!query) return { queries: [], tags: [], entries: [], count: 0 };
   const result = searchDocuments(entries, { ...state, page: 1 });
-  const queries = [...new Set(result.all.flatMap(entry => [entry.title, ...entry.keywords]))].filter(value => normalizeQuery(value).includes(query) && normalizeQuery(value) !== query).slice(0, 5);
   const available = searchDocuments(entries, { ...state, query: '', page: 1 }).all;
   const matchingTags = Object.entries(tags).filter(([id, tag]) => !state.tags.includes(id) && [tag.label, ...(tag.aliases ?? [])].some(value => normalizeQuery(value).includes(query)) && available.some(entry => entry.tags.includes(id))).slice(0, 5);
+  // 연관 검색어는 대소문자만 다른 말과 태그로 이미 보이는 말을 한 번만 보인다.
+  const seen = new Set([query, ...matchingTags.map(([, tag]) => normalizeQuery(tag.label))]);
+  const queries = [];
+  for (const value of result.all.flatMap(entry => [entry.title, ...entry.keywords])) {
+    const key = normalizeQuery(value);
+    if (queries.length < 5 && key.includes(query) && !seen.has(key)) { seen.add(key); queries.push(value); }
+  }
   return { queries, tags: matchingTags, entries: result.all.slice(0, SUGGESTION_LIMIT).map(entry => ({ ...entry, excerpt: searchExcerpt(entry, query.split(' ')) })), count: result.all.length };
 }
 

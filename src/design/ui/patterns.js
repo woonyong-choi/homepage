@@ -10,7 +10,7 @@ export function ContentIcon({ graphic, badge, size = 'card' }) {
 }
 
 export function SearchBox({ combobox = true, large = false, query = '', action, labels, suggestions = [], filters, fallback }) {
-  return out(`<section class="app-search app-public-search${large ? ' is-prominent' : ''}" data-public-search aria-label="${escape(labels.region)}"><form action="${safeUrl(action)}" role="search">${TextInput({ id: 'site-query', name: 'q', label: labels.input, value: query, placeholder: labels.placeholder, autocomplete: 'off', size: large ? 'large' : 'medium', surface: 'field', icon: ControlIcon('search', 'app-input-icon'), action: out(`<button class="app-search-clear" type="button" data-clear-query aria-label="${escape(labels.clear)}" hidden>${ControlIcon('clear')}</button>`), role: combobox ? 'combobox' : 'searchbox', controls: combobox ? 'search-suggestions' : undefined })}</form><div class="app-search-panel" id="search-suggestions" role="listbox" hidden></div><p class="app-sr" data-search-status role="status" aria-live="polite"></p>${suggestions.length ? `<p class="app-search-frequent">${escape(labels.suggestions)} ${suggestions.map(query => `<button type="button" data-query="${escape(query)}">${escape(query)}</button>`).join(' ')}</p>` : ''}${filters === undefined ? '' : slot(filters, 'filters')}${fallback ? `<noscript>${slot(fallback, 'fallback')}</noscript>` : ''}</section>`);
+  return out(`<section class="app-search app-public-search${large ? ' is-prominent' : ''}" data-public-search aria-label="${escape(labels.region)}"><form action="${safeUrl(action)}" role="search">${TextInput({ id: 'site-query', name: 'q', label: labels.input, value: query, placeholder: labels.placeholder, autocomplete: 'off', size: large ? 'large' : 'medium', surface: 'field', icon: ControlIcon('search', 'app-input-icon'), action: out(`<button class="app-search-clear" type="button" data-clear-query aria-label="${escape(labels.clear)}" hidden>${ControlIcon('clear')}</button>`), role: combobox ? 'combobox' : 'searchbox', controls: combobox ? 'search-suggestions' : undefined })}</form><div class="app-search-panel" id="search-suggestions" role="listbox" hidden></div><p class="app-sr" data-search-status role="status" aria-live="polite"></p>${suggestions.length ? `<p class="app-search-frequent"><span>${escape(labels.suggestions)}</span>${suggestions.map(query => `<button class="app-tag is-quiet" type="button" data-query="${escape(query)}">${escape(query)}</button>`).join('')}</p>` : ''}${filters === undefined ? '' : slot(filters, 'filters')}${fallback ? `<noscript>${slot(fallback, 'fallback')}</noscript>` : ''}</section>`);
 }
 
 export function DocumentArticle({ title, icon, lead, metadata, body, after }) {
@@ -76,33 +76,32 @@ export function BlogCard({ href, title, showTitle = true, level = 3, cover, auto
   // 카드는 대표 태그만 보인다. 나머지는 글 머리의 전체 태그에서 확인한다.
   const shown = tagItems.slice(0, tagLimit);
   const summary = shown.length ? `<div class="app-blog-card-tags" role="group" aria-label="태그">${shown.map(item => String(Tag(item))).join(' ')}</div>` : '';
-  return out(`<article class="app-blog-card"><a class="app-blog-card-link" href="${link}" aria-label="${escape(title)}">${media === undefined ? '' : `<div class="app-blog-cover">${slot(media, 'cover')}</div>`}<div class="app-blog-card-body"><${heading} class="app-blog-card-title${showTitle ? '' : ' app-sr'}">${escape(title)}</${heading}>${description ? `<p class="app-card-summary">${escape(description)}</p>` : ''}</div></a>${summary}${tags === undefined ? '' : slot(tags, 'tags')}${metadata}</article>`);
+  // 카드 전체를 덮는 링크는 비어 있는 첫 자식이다. 표지와 본문은 링크 밖에 두어 키보드 초점과 읽기 순서를 지킨다.
+  return out(`<article class="app-blog-card"><a class="app-blog-card-link" href="${link}" aria-label="${escape(title)}"></a>${media === undefined ? '' : `<div class="app-blog-cover">${slot(media, 'cover')}</div>`}<div class="app-blog-card-body"><${heading} class="app-blog-card-title${showTitle ? '' : ' app-sr'}">${escape(title)}</${heading}>${description ? `<p class="app-card-summary">${escape(description)}</p>` : ''}</div>${summary}${tags === undefined ? '' : slot(tags, 'tags')}${metadata}</article>`);
 }
 /** 쪽 이동. `before`·`after`는 `{ href, text }`, `numbers`는 `{ page, href, current }`, `summary`는 번호 대신 쓰는 글자다. */
 export function PageLinks({ label, before, after, numbers = [], summary, resultPages = false }) {
   const edge = (item, rel) => item ? `<a class="app-navigation-link${rel === 'prev' ? ' is-back' : ''}" rel="${rel}" href="${safeUrl(item.href)}">${escape(item.text)}</a>` : '';
   const middle = summary === undefined ? numbers.map((item) => item.current ? `<span aria-current="page">${Number(item.page)}</span>` : `<a href="${safeUrl(item.href)}" aria-label="${Number(item.page)}페이지">${Number(item.page)}</a>`).join('') : `<span>${escape(summary)}</span>`;
-  return out(`<nav class="app-page-links"${resultPages ? ' data-result-pages' : ''} aria-label="${escape(label)}">${edge(before, 'prev')}${middle}${edge(after, 'next')}</nav>`);
+  const links = `${edge(before, 'prev')}${middle}${edge(after, 'next')}`;
+  // 이동할 쪽이 없으면 빈 탐색 영역을 숨긴다. 검색 결과는 이 자리를 다시 채운다.
+  return out(`<nav class="app-page-links"${resultPages ? ' data-result-pages' : ''} aria-label="${escape(label)}"${links ? '' : ' hidden'}>${links}</nav>`);
 }
 /** 목록 이동 링크. 돌아가기는 같은 꺾쇠를 반대 방향으로 표시한다. */
 export const NavigationLink = ({ href, text, back = false }) => out(`<a class="app-navigation-link${back ? ' is-back' : ''}" href="${safeUrl(href)}">${escape(text)}</a>`);
 export const ListLink = ({ href, text }) => out(`<p class="app-page-links">${NavigationLink({ href, text })}</p>`);
 
 
-function tagSize(size) {
-  if (!['small', 'medium'].includes(size)) throw new Error(`Unknown tag size: ${size}`);
-  return size === 'medium' ? ' is-medium' : '';
-}
-export const Tag = ({ href, label, size = 'small' }) => out(`<a class="app-tag${tagSize(size)}" href="${safeUrl(href)}">${escape(label)}</a>`);
-export function TagList({ tags, limit = Infinity, size = 'small' }) {
-  const variant = tagSize(size);
-  const link = (tag) => String(Tag({ ...tag, size }));
+// 태그 알약은 어디서나 한 크기다. quiet는 투명 바탕 변형(초기화, 추천 검색어)이다.
+export const Tag = ({ href, label, quiet = false }) => out(`<a class="app-tag${quiet ? ' is-quiet' : ''}" href="${safeUrl(href)}">${escape(label)}</a>`);
+export function TagList({ tags, limit = Infinity }) {
+  const link = (tag) => String(Tag(tag));
   const remaining = tags.slice(limit);
-  return out(`<div class="app-tags" role="group" aria-label="태그">${tags.slice(0, limit).map(link).join('')}${remaining.length ? `<details class="app-tags-more"><summary${variant ? ` class="${variant.trim()}"` : ''}>+${remaining.length}</summary><div class="app-tags">${remaining.map(link).join('')}</div></details>` : ''}</div>`);
+  return out(`<div class="app-tags" role="group" aria-label="태그">${tags.slice(0, limit).map(link).join('')}${remaining.length ? `<details class="app-tags-more"><summary>+${remaining.length}</summary><div class="app-tags">${remaining.map(link).join('')}</div></details>` : ''}</div>`);
 }
 
 export function TagFilter({ tags, reset }) {
-  return out(`<div class="app-tags app-tag-filter" data-tag-filter role="group" aria-label="태그">${tags.map(tag => `<button class="app-tag" type="button" data-tag-toggle="${escape(tag.id)}" aria-pressed="${Boolean(tag.selected)}">${escape(tag.label)}</button>`).join('')}${reset ? `<a class="app-tag-reset" href="${safeUrl(reset.href)}" data-tag-reset>${escape(reset.label)}</a>` : ''}</div>`);
+  return out(`<div class="app-tags app-tag-filter" data-tag-filter role="group" aria-label="태그">${tags.map(tag => `<button class="app-tag" type="button" data-tag-toggle="${escape(tag.id)}" aria-pressed="${Boolean(tag.selected)}">${escape(tag.label)}</button>`).join('')}${reset ? `<a class="app-tag is-quiet" href="${safeUrl(reset.href)}" data-tag-reset>${escape(reset.label)}</a>` : ''}</div>`);
 }
 
 

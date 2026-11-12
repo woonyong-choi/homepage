@@ -274,7 +274,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     const split = splitLead(parsed.tokens, description, heading());
     const lead = split.kind === 'lead' ? html(parsed, split.lead) : split.kind === 'summary' ? ui.escape(description) : '';
     const date = state.current?.publishedAt || today();
-    const tags = state.tags.length ? ui.TagList({ tags: state.tags.map(tag => ({ href: `/search/?tag=${encodeURIComponent(tag)}`, label: tag })), size: 'medium' }) : undefined;
+    const tags = state.tags.length ? ui.TagList({ tags: state.tags.map(tag => ({ href: `/search/?tag=${encodeURIComponent(tag)}`, label: tag })) }) : undefined;
     preview.innerHTML = ui.PostArticle({
       id: 'admin-preview', detail: true, href: '/', title: heading() || '제목 없음', date, dateLabel: DATE.format(new Date(date)),
       lead: ui.trusted(lead), tags, body: ui.trusted(html(parsed, split.tokens)), byline: settings.author,

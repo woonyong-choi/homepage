@@ -46,7 +46,7 @@
   .app-hero-copy :is(.app-hero-logo, .app-hero-wordmark) { margin-bottom: calc(var(--text-mobile-intro) * 1.5); }
   .app-hero-wordmark { height: var(--text-heading); }
 }
-@media (prefers-reduced-motion: reduce) { .app-nav a:hover { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .app-nav a { transition: none; } }
 .app-landing-heading .app-landing-social { display: block; margin: var(--spacing-landing-description-margin) auto; }
 .app-landing-social a, .app-landing-social span { display: inline-block; padding: var(--spacing-landing-social-y) var(--spacing-landing-social-x); border-radius: var(--radius-md); color: var(--color-action-link); }
 .app-landing-social a:hover { color: var(--color-action-link); background: var(--color-control-hover); }

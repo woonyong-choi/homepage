@@ -27,3 +27,10 @@ test('suggestions offer matching posts and tags', () => {
   assert.deepEqual(result.entries.map(entry => entry.id), ['b']);
   assert.deepEqual(result.tags.map(([id]) => id), ['SQL']);
 });
+
+test('related queries skip case variants and words already shown as tags', () => {
+  const index = prepareIndex([{ id: 'c', title: 'sql 문법', description: '', text: '', keywords: ['SQL', 'Sql 튜닝'], tags: ['SQL'], date: '2026-01-04' }]);
+  const result = suggestions(index, tags, { query: 'sql', tags: [], page: 1 });
+  assert.deepEqual(result.tags.map(([id]) => id), ['SQL']);
+  assert.deepEqual(result.queries, ['sql 문법', 'Sql 튜닝']);
+});

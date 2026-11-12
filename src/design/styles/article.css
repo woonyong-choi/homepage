@@ -41,7 +41,7 @@
 .app-document-nav a { display: block; word-break: keep-all; overflow-wrap: anywhere; }
 .app-document-nav summary > a, .app-document-nav summary > span { flex: 1; min-width: 0; }
 .app-document-nav > nav > ul > li > details > summary { font-weight: var(--font-weight-bold); color: var(--color-ink); }
-.app-document-nav :is(a, li > details > summary):hover { background: var(--color-help-bg); color: var(--color-document-nav-active-ink); text-decoration: none; }
+.app-document-nav :is(a, li > details > summary):hover { background: var(--color-control-hover); color: var(--color-document-nav-active-ink); text-decoration: none; }
 /* 현재 위치는 Things 메뉴 선택처럼 면 없이 파란 글자로만 표시한다. */
 .app-document-nav a[aria-current="location"], .app-document-nav .is-selected { color: var(--color-document-nav-active-ink); font-weight: var(--font-weight-semibold); }
 .app-document-nav a.is-parent { color: var(--color-action-link); }

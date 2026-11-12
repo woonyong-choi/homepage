@@ -79,7 +79,7 @@ function resultLink(entry, query) {
 
 function resultCard(entry, tags, state, card = { title: true, description: true, media: 'image', tags: false, date: true, comments: true }) {
   const cover = card.media === 'image' && entry.thumbnail ? ui.trusted(`<img src="${ui.safeUrl(entry.thumbnail.src)}" alt="${ui.escape(entry.thumbnail.alt)}" loading="lazy" decoding="async"${entry.thumbnail.position ? ` style="object-position:${entry.thumbnail.position.x}% ${entry.thumbnail.position.y}%"` : ''}>`) : undefined;
-  return ui.BlogCard({ href: entry.route, title: entry.title, showTitle: card.title, level: 2, cover, automaticCover: card.media === 'image', description: card.description ? entry.excerpt ?? entry.description : '', tagItems: (card.tags ? entry.tags : []).map(tag => ({ href: searchUrl({ ...state, tags: [...new Set([...state.tags, tag])], page: 1 }), label: tags[tag]?.label ?? tag })), author: card.author || undefined, publishedAt: card.date ? entry.date : undefined, dateLabel: entry.date ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(entry.date)) : undefined, commentsHref: card.comments && entry.comments ? `${entry.route}#comments` : undefined, commentCount: card.comments ? entry.commentCount : undefined });
+  return ui.BlogCard({ href: entry.route, title: entry.title, showTitle: card.title, level: 2, cover, automaticCover: card.media === 'image', description: card.description ? entry.excerpt ?? entry.description : '', tagItems: (card.tags ? [...entry.tags].sort((a, b) => Number(state.tags.includes(b)) - Number(state.tags.includes(a))) : []).map(tag => ({ href: searchUrl({ ...state, tags: [...new Set([...state.tags, tag])], page: 1 }), label: tags[tag]?.label ?? tag })), author: card.author || undefined, publishedAt: card.date ? entry.date : undefined, dateLabel: entry.date ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(entry.date)) : undefined, commentsHref: card.comments && entry.comments ? `${entry.route}#comments` : undefined, commentCount: card.comments ? entry.commentCount : undefined });
 }
 
 export function renderSuggestions(output, result, state) {
@@ -93,7 +93,11 @@ export function renderSuggestions(output, result, state) {
     if (!links.length) continue;
     const group = element('div'); group.setAttribute('role', 'group'); group.setAttribute('aria-label', label);
     group.append(element('p', label, 'app-suggestion-label'));
-    for (const [title, href] of links) { const node = link(title, href, 'app-search-choice'); if (label === '연관 검색어') node.dataset.query = title; node.setAttribute('role', 'option'); node.id = `suggestion-${index++}`; node.tabIndex = -1; group.append(node); }
+    // 태그는 사이트의 다른 태그와 같은 알약으로 보인다.
+    const isTags = label === '태그';
+    const list = isTags ? element('div', '', 'app-suggestion-tags') : group;
+    for (const [title, href] of links) { const node = link(title, href, isTags ? 'app-tag' : 'app-search-choice'); if (!isTags) node.dataset.query = title; node.setAttribute('role', 'option'); node.id = `suggestion-${index++}`; node.tabIndex = -1; list.append(node); }
+    if (isTags) group.append(list);
     output.append(group);
   }
   const entries = element('div'); entries.setAttribute('role', 'group'); entries.setAttribute('aria-label', '글');
