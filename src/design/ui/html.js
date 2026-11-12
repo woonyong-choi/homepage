@@ -1,4 +1,3 @@
-// 텍스트, 주소, 식별자와 명시적으로 신뢰한 HTML 슬롯의 경계다.
 const ID = /^[\w-]+$/;
 
 export const escape = (value = '') => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -12,7 +11,6 @@ class Trusted {
   constructor(html) { this.html = String(html); }
   toString() { return this.html; }
 }
-/** 이미 안전하게 만든 HTML을 슬롯으로 넘긴다. 이스케이프하지 않는다. */
 export const trusted = (html) => new Trusted(html);
 export const isTrusted = (value) => value instanceof Trusted;
 

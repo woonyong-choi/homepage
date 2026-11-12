@@ -1,4 +1,3 @@
-// 실제 원고로 사이트 전체를 임시 폴더에 만들어 본다. 깨진 내부 링크와 앵커는 빌드가 직접 오류로 멈춘다.
 import assert from 'node:assert/strict';
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';

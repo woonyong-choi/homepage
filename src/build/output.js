@@ -1,9 +1,7 @@
-// 완성한 발행 파일 집합을 검사한 다음 기존 산출물을 교체한다.
 import { existsSync, lstatSync, mkdirSync, mkdtempSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { pageLinks } from './links.js';
 import { basename, dirname, join, resolve } from 'node:path';
 
-// GitHub Pages와 로컬 미리보기가 없는 경로에 돌려주는 파일.
 export const NOT_FOUND_FILE = '/404.html';
 
 function validateOutput(output, files) {

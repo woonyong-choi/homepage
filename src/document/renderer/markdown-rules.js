@@ -1,5 +1,3 @@
-// 해석기가 남긴 토큰을 HTML로 바꾸는 출력 규칙. 토큰은 바꾸지 않는다: 속성과 태그는 그리는 동안만 고치고 되돌린다.
-// 모양은 테마 구성 요소(render.components)와 디자인 정본(render.kit.ui)이 정한다.
 import mathPlugin from '@vscode/markdown-it-katex';
 import katex from 'katex';
 import MarkdownIt from 'markdown-it';
@@ -11,7 +9,6 @@ import { renderDirective, renderInlineDirective } from './directive-render.js';
 import { resolveCodeAlias } from './code-alias.js';
 import { UI_RENDERERS } from './ui-components.js';
 
-// 수식은 KaTeX가 HTML과 MathML로 만든다. 믿을 수 없는 명령(\href, \includegraphics 등)은 실행하지 않고, 틀린 수식은 원문을 그대로 보여 준다.
 const MATH_OPTIONS = Object.freeze({
   katex,
   throwOnError: false,
@@ -21,10 +18,6 @@ const MATH_OPTIONS = Object.freeze({
   output: 'htmlAndMathml',
 });
 
-/**
- * @returns {MarkdownIt} 출력 규칙만 설치한 렌더러. env.render에 렌더링 상태를 담아 호출한다.
- *   각주·정의 목록·수식 플러그인은 해석기와 같은 버전이며 여기서는 출력 규칙만 쓴다.
- */
 export function createRenderer() {
   const md = new MarkdownIt({ html: false, linkify: true, typographer: true })
     .use(footnote)
@@ -37,7 +30,6 @@ export function createRenderer() {
   return md;
 }
 
-// 토큰의 속성·태그를 임시로 고쳐 그리고 되돌린다. 같은 문서를 다른 테마로 다시 그릴 수 있어야 한다.
 function renderChanged(tokens, index, change, draw) {
   const token = tokens[index];
   const { attrs, tag } = token;
@@ -58,7 +50,6 @@ function installTextRules(md) {
   const call = (env, name, method, props, tokens, index) =>
     callComponent(env.render, name, method, props, lineOf(tokens, index, env));
 
-  // 열기·닫기 쌍마다 성공 여부를 스택에 둔다. 안쪽 쌍의 실패가 바깥 쌍의 상태를 바꾸지 않고, 실패한 열기의 닫기는 내지 않는다.
   const open = (env, name, props, tokens, index) => {
     const result = attemptComponent(env.render, name, 'open', props, lineOf(tokens, index, env));
     env.render.pairs.push({ name, failed: result.failed });
@@ -169,7 +160,6 @@ function installStructureRules(md) {
   }
 }
 
-// 그림으로 표시할 문단은 figure 태그와 공통 그림 클래스로 그린다.
 function paragraphAs(role, tokens, index, options, env, self) {
   if (role !== 'figure') return self.renderToken(tokens, index, options);
   const change = (token) => {

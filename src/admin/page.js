@@ -1,9 +1,6 @@
-// /admin/: 관리자 로그인 화면. 빈 화면 가운데에 사이트 로고와 로그인만 둔다.
-// 로그인 서버(authUrl)가 있으면 GitHub 로그인 단추, 없으면 GitHub 토큰을 붙여 넣는 칸을 쓴다.
 import * as ui from '#design/ui/index.js';
 import { renderContentSvg } from '../layouts/icons.js';
 
-// 토큰 만들기 화면에 이름·설명·권한을 미리 채운다. 저장소 선택(Vault·홈페이지)만 직접 고른다.
 export function tokenUrl(config) {
   const url = new URL('https://github.com/settings/personal-access-tokens/new');
   const owner = config.repository.split('/')[0];
@@ -13,7 +10,6 @@ export function tokenUrl(config) {
 
 export function adminPage(config, context, admin) {
   const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : ui.trusted(ui.escape(config.title ?? config.name ?? ''));
-  // 로그아웃 화면도 로그인 화면과 같은 짜임이다: 파란 주 단추 하나와 그 아래 글자 링크 하나.
   const signout = `${ui.Button({ label: '로그아웃', variant: 'primary', action: 'signout', hidden: true })}${ui.LinkButton({ label: '홈으로', href: '/', variant: 'quiet', hidden: true })}`;
   const login = admin.authUrl
     ? [ui.Button({ label: 'GitHub로 로그인', variant: 'primary', action: 'signin' }), signout]

@@ -1,5 +1,4 @@
 import { cssTimeMs } from './time.js';
-// 자동 이동은 합성 가능한 transform으로, 직접 탐색은 네이티브 스크롤로 처리한다.
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const scopes = new Map();
 for (const rail of document.querySelectorAll('[data-flow-rail]')) {
@@ -32,7 +31,6 @@ for (const [scope, rails] of scopes) {
   function update() {
     const interacting = focused || manual || reduced.matches;
     const running = rows.some(row => row.visible) && !document.hidden && !suspended;
-    // 길이가 다른 두 줄도 같은 픽셀 속도로 흐르게 한다.
     const longest = Math.max(...rows.map(row => row.distance));
     for (const row of rows) {
       if (interacting) { handoff(row); continue; }
@@ -90,7 +88,6 @@ for (const [scope, rails] of scopes) {
   area.addEventListener('focusin', () => {
     focused = !!area.querySelector(':focus-visible') || area.matches(':focus-visible');
     update();
-    // 이동 중 화면 밖에 있던 원본 링크도 Tab으로 초점을 받으면 드러낸다.
     if (focused) for (const row of rows) {
       const target = row.group.querySelector(':focus-visible');
       if (!target) continue;

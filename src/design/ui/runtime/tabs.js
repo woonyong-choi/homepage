@@ -1,4 +1,3 @@
-/** 탭의 선택 상태와 키보드 이동. 패널의 내용과 재생 여부는 사용하는 쪽이 정한다. */
 export function bindTabs(container, onSelect) {
   const buttons = [...container.querySelectorAll(':scope > [role=tab]')];
   const select = (index) => {

@@ -1,13 +1,6 @@
 @import './fonts.css';
-/*
- * 공통 화면 스타일의 진입점. 이 파일은 모듈 가져오기 순서만 정하고 빌드가 한 파일로 평탄화한다.
- * 순서가 곧 덮어쓰기 계약이다. 같은 우선순위의 규칙은 아래 모듈이 위 모듈을 이긴다.
- * 모듈별 소유 범위와 새 규칙을 둘 자리는 docs/design/styles.md에 있다.
- */
 
-/* 1. 기초: 문서 기본값 */
 @import "base.css";
-/* 2. 공통 조각: 여러 화면이 조합해 쓰는 것 */
 @import "shell.css";
 @import "tabs.css";
 @import "toolbar.css";
@@ -21,7 +14,6 @@
 @import "cards.css";
 @import "prose.css";
 @import "media.css";
-/* 3. 화면 묶음: 위 조각을 조합하고 화면별로 덮어쓴다 */
 @import "article.css";
 @import "support.css";
 @import "blog.css";

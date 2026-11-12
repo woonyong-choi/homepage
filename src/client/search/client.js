@@ -1,4 +1,3 @@
-// 요청 번호를 유지해 느린 이전 응답과 최신 입력을 구분한다.
 import { querySearch } from './query.js';
 
 let worker;

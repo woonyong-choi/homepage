@@ -1,4 +1,3 @@
-// 테마 토큰을 검증하고 CSS 변수와 계산용 값으로 변환한다.
 import { flattenTokens, TokenError } from './tokens.js';
 
 const REFS = /\{([\w.-]+)\}/g;
@@ -21,7 +20,6 @@ export function themeTable(source) {
   return table;
 }
 
-/** 모든 참조를 추적한다. 식 안의 참조도 존재와 순환을 검사한다. */
 export function resolveValue(table, name, seen = []) {
   if (seen.includes(name)) throw new TokenError(`token reference cycle: ${[...seen, name].join(' -> ')}`);
   const token = table.get(name);
@@ -51,7 +49,6 @@ function declarations(source) {
   }).join('\n');
 }
 
-/** 토큰 전체를 :root의 CSS 변수로 쓴다. 사이트는 라이트 화면 하나만 쓴다. */
 export function tokensCss(source) {
   const faces = source.$extensions?.theme?.fontFaces ?? [];
   return `/* tokens/tokens.json: 생성물, 손으로 고치지 않음 */\n:root {\n${declarations(source)}\n  color-scheme: light;\n}\n${faces.join('\n')}`.trimEnd() + '\n';

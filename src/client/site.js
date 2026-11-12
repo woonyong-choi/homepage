@@ -1,4 +1,3 @@
-// 정적 탐색 위에 검색 추천과 필터 결과를 연결한다.
 import { readSearchState, searchUrl } from '../lib/search.js';
 import { queryIndex } from './search/client.js';
 import { renderResults, renderSuggestions, showSearchError } from './search/view.js';
@@ -23,13 +22,11 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     const position = history.state?.searchPosition;
     if (page && position) requestAnimationFrame(() => window.scrollTo(position.x, position.y));
   }
-  // 검색 페이지에서는 입력한 검색어를 주소에 반영하고 아래 결과 목록을 함께 갱신한다.
   function applyQuery() {
     const url = new URL(location.href); url.search = new URL(searchUrl({ ...state(), query: input.value, page: 1 }), location.origin).search;
     history.replaceState({ ...history.state, searchPosition: null }, '', url);
     results();
   }
-  // 이전 추천은 새 추천이 올 때까지 그대로 두어 입력할 때마다 목록이 깜빡이지 않게 한다.
   async function propose() {
     const request = ++revision;
     clear.hidden = !input.value;
@@ -43,7 +40,6 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
       status.textContent = `검색 결과 ${result.count}개`;
     } catch { if (request === revision) { showSearchError(output, propose); open(); status.textContent = failureStatus; } }
   }
-  // 결과가 올 때까지 지금 보이는 목록을 그대로 두고 aria-busy만 표시한다. 중간 안내 카드로 바꾸지 않는다.
   async function results() {
     if (!page) return;
     const request = ++resultRevision;
@@ -96,7 +92,6 @@ for (const box of document.querySelectorAll('[data-public-search]')) {
     if (!suggestion) return;
     event.preventDefault(); input.value = suggestion.dataset.query; input.focus(); propose();
   });
-  // 추천 목록 밖을 누르거나 초점이 검색 영역을 벗어나면 목록을 닫는다.
   document.addEventListener('pointerdown', event => { if (!output.hidden && !box.contains(event.target)) close(); });
   box.addEventListener('focusout', event => { if (!output.hidden && event.relatedTarget && !box.contains(event.relatedTarget)) close(); });
   window.addEventListener('pagehide', () => {

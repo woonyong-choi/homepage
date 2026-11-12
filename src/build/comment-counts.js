@@ -1,4 +1,3 @@
-// 빌드 시 공개 토론의 댓글과 답글만 읽으며 인증 정보는 브라우저로 보내지 않는다.
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 
@@ -30,7 +29,6 @@ export function readCommentCounts(pages, config, query = githubQuery) {
     }
     return { counts, status: 'available' };
   } catch {
-    // 조회 실패나 일부 응답을 댓글 0개로 오인하지 않도록 숫자를 생략한다.
     return { counts: new Map(), status: 'unavailable' };
   }
 }

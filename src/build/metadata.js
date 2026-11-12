@@ -38,7 +38,6 @@ export function pageMetadata(page, context) {
   const canonical = origin + page.route;
   html += `<link rel="canonical" href="${escape(canonical)}">`;
   html += meta('og:title', pageTitle) + meta('og:description', description) + meta('og:type', page.id ? 'article' : 'website') + meta('og:url', canonical) + meta('og:site_name', site) + meta('og:locale', 'ko_KR');
-  // 글은 대표 그림(썸네일 또는 본문 첫 그림)을 공유 그림으로 쓰고 큰 카드로 보인다. 움직이는 GIF는 배포 때 다른 형식으로 바뀌므로 쓰지 않는다.
   const cover = page.id && shareImage(page.cardImage ?? page.thumbnail);
   html += meta('twitter:card', cover ? 'summary_large_image' : 'summary', 'name') + meta('twitter:title', pageTitle, 'name') + meta('twitter:description', description, 'name');
   if (cover) {
@@ -54,11 +53,9 @@ export function pageMetadata(page, context) {
     if (page.publishedAt) html += meta('article:published_time', page.publishedAt);
     if (page.updatedAt) html += meta('article:modified_time', page.updatedAt);
     for (const tag of page.tags ?? []) html += meta('article:tag', tags[tag]?.label ?? tag);
-    // 검색 엔진용 글 정보. 화면에 보이는 제목·요약·날짜·글쓴이와 같은 값만 적는다.
     const posting = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: pageTitle, description, url: canonical, mainEntityOfPage: canonical, inLanguage: 'ko', ...(page.publishedAt ? { datePublished: page.publishedAt } : {}), ...(page.publishedAt ? { dateModified: page.updatedAt ?? page.publishedAt } : {}), ...(cover ? { image: origin + cover.src } : {}), ...(config.name ? { author: { '@type': 'Person', name: config.name, url: origin + '/' } } : {}) };
     html += jsonLd(posting);
   } else if (page.route === '/') {
-    // 첫 화면은 사이트와 사람 정보를 알린다. 화면과 설정에 있는 값만 적는다.
     const person = { '@type': 'Person', name: config.name, url: origin + '/', ...(config.github || config.linkedin ? { sameAs: [config.github, config.linkedin].filter(Boolean) } : {}) };
     html += jsonLd({ '@context': 'https://schema.org', '@type': 'WebSite', name: site, url: origin + '/', inLanguage: 'ko', description, author: person });
   }

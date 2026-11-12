@@ -1,11 +1,9 @@
-// 테마 스타일 진입점의 로컬 @import를 한 파일로 평탄화한다. 배포 CSS에는 @import가 남지 않는다.
 import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { TokenError } from './tokens.js';
 
 const SPECIFIER = /^(?:"([^"\\]*)"|'([^'\\]*)'|url\(\s*(?:"([^"\\]*)"|'([^'\\]*)'|([^\s"'()]+))\s*\))\s*$/;
 
-/** 주석과 문자열 밖에서 @import가 나오는 위치를 찾는다. */
 function nextImport(text, from) {
   for (let i = from; i < text.length; i++) {
     const c = text[i];
@@ -21,7 +19,6 @@ function nextImport(text, from) {
   return -1;
 }
 
-/** 문장 끝의 세미콜론 위치. 따옴표 문자열 안은 건너뛴다. */
 function statementEnd(text, from, file) {
   for (let i = from; i < text.length; i++) {
     const c = text[i];
@@ -41,14 +38,6 @@ function inside(boundary, path) {
   return rel !== '' && !rel.startsWith('..') && !isAbsolute(rel) && !rel.split(sep).includes('..');
 }
 
-/**
- * entry의 @import를 재귀적으로 펼친다.
- * 허용: 같은 테마 폴더 안의 상대 경로 `.css`, 규칙보다 앞선 위치, 파일당 한 번.
- * 거부: 외부 주소, 절대 경로, 폴더 밖 경로, 조건(media/layer/supports), 순환, 중복, 없는 파일, 규칙 뒤의 @import.
- * @param {string} entry 진입점 파일 경로
- * @param {string} boundary 가져올 수 있는 최상위 폴더(테마 폴더)
- * @returns {string} 평탄화한 CSS
- */
 export function flattenStyle(entry, boundary) {
   const root = realpathSync(boundary);
   const seen = new Set();

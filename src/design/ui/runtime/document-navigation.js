@@ -1,4 +1,3 @@
-// 넓은 화면의 탐색 열과 좁은 화면의 기본 접기를 같은 DOM으로 사용한다.
 export function initDocumentNavigation(layout) {
   const doc = layout.ownerDocument;
   const view = doc.defaultView;
@@ -30,7 +29,6 @@ export function initDocumentNavigation(layout) {
     for (let index = 0; index < headings.length; index++) {
       if (headings[index]?.getBoundingClientRect().top <= offset) next = index;
     }
-    // 짧은 마지막 절은 화면 위까지 올라오지 못하므로 문서 끝에서도 선택한다.
     if (view.scrollY > 0 && view.scrollY + view.innerHeight >= doc.documentElement.scrollHeight - 1) next = headings.length - 1;
     if (next === active) return;
     active = next;

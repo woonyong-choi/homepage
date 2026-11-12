@@ -1,5 +1,3 @@
-// markdown-it에 `:::` 블록과 `:이름[글]{속성}` 인라인 표기를 더한다. 정의는 directive-blocks.js에 있다.
-// 해석만 한다. HTML을 만들거나 테마를 부르지 않고 이름·라벨·속성·본문 상태를 토큰에 남긴다.
 import { BLOCKS, INLINES } from './directive-blocks.js';
 import {
   MAX_DEPTH,
@@ -12,7 +10,6 @@ import { DirectiveError, reportSyntaxError } from './diagnostics.js';
 import { findMarkEnd } from './inline-marks.js';
 import { reserveId } from './units.js';
 
-// 목록이나 인용 안에서는 닫는 줄의 위치를 들여쓰기로 판단할 수 없어 쓰지 못한다.
 const PARENT_TYPES = new Set(['root', 'directive', 'details']);
 const KIND_NAMES = {
   paragraph: '문단',
@@ -45,7 +42,6 @@ export function installDirectives(md) {
   md.core.ruler.at('inline', parseInlineContent);
 }
 
-// 속성 값 검사. 호출자가 확인 함수를 주지 않은 항목은 해석 단계에서 확인하지 않는다(출력 단계가 다시 거부한다).
 function checksOf(env) {
   const { assets, icons, urls, vocabulary } = env.context;
   return {
@@ -62,7 +58,6 @@ function checksOf(env) {
   };
 }
 
-// `::글::`처럼 같은 줄에서 닫히는 강조로 시작하는 줄은 블록이 아니라 문단이다. 강조 규칙(markdown.js)과 같은 조건을 쓴다.
 function isInlineMark(found, text) {
   return found.kind === 'leaf' && found.flat && findMarkEnd(text, 0, '::') > 0;
 }
@@ -73,7 +68,6 @@ const closesFence = (marker, fence, text) =>
   marker.length >= fence.length &&
   text.slice(marker.length).trim() === '';
 
-// 여는 줄에서 닫는 줄을 찾는다. 코드 펜스 안의 줄은 건너뛰고, 열린 블록은 스택으로 짝을 맞춘다.
 function findClose(state, start, end, opener, fail) {
   const scan = { stack: [{ ...opener, line: start + 1 }], fence: null };
   for (let at = start + 1; at < end; at += 1) {
@@ -129,7 +123,6 @@ function directiveBlock(state, startLine, endLine, silent) {
   const text = lineAt(state, startLine);
   const found = classifyLine(text);
   if (found.kind === 'text' || isInlineMark(found, text)) return false;
-  // 문단 바로 다음 줄의 닫는 줄·형식이 틀린 줄도 문단을 끊고 진단한다. 글자로 흡수하지 않는다.
   if (silent) return true;
   const scope = { end: startLine + 1 };
   const saved = saveState(state);
@@ -144,7 +137,6 @@ function directiveBlock(state, startLine, endLine, silent) {
   }
 }
 
-// 오류가 난 블록을 진단으로 기록하고 오류 토큰 하나로 바꾼다. 닫는 줄을 못 찾았으면 여는 줄만 소비한다.
 function recover(state, startLine, scope, error) {
   reportSyntaxError(state.env, error);
   const token = state.push('directive_error', '', 0);
@@ -221,7 +213,6 @@ function pushBlock(state, startLine, endLine, { found, spec, meta, fail, scope }
   const direct = state.tokens
     .slice(first)
     .filter((token) => token.level === open.level + 1 && token.nesting !== -1);
-  // 이미 진단으로 기록한 안쪽 오류 블록은 본문 규칙 검사와 의미 준비에서 뺀다. 같은 오류를 다시 보고하지 않는다.
   const children = direct.filter((token) => token.type !== 'directive_error');
   checkBody(spec, children, fail, direct.length > children.length);
   spec.prepare?.(meta, children, { fail, reserveId: (target) => reserveId(state.env, target) });
@@ -230,7 +221,6 @@ function pushBlock(state, startLine, endLine, { found, spec, meta, fail, scope }
   return true;
 }
 
-// 닫는 줄까지의 본문을 일반 블록으로 해석한다. 중첩 깊이와 부모 종류는 끝나면 반드시 되돌린다.
 function tokenizeBody(state, from, close, name) {
   const stack = state.env.directiveStack;
   const [oldMax, oldParent] = [state.lineMax, state.parentType];
@@ -270,7 +260,6 @@ function directiveInline(state, silent) {
   if (!match || !Object.hasOwn(INLINES, match[1])) return false;
   const [name, label] = [match[1], match[2]];
   const spec = INLINES[name];
-  // 줄은 해석을 감싼 쪽(parseInlineContent)이 오류 위치(offset)에서 센다.
   const fail = (message) => {
     const error = new DirectiveError(message, { page: state.env.pageId, name });
     error.offset = state.pos;
@@ -299,8 +288,6 @@ function directiveInline(state, silent) {
   return true;
 }
 
-// 인라인 오류에 줄 번호를 붙이기 위해 기본 inline 규칙을 같은 동작에 오류 기록만 더해 바꾼다.
-// 줄은 인라인 토큰의 시작 줄에 오류 위치 앞의 줄바꿈 수를 더한 값이다.
 function parseInlineContent(state) {
   for (const token of state.tokens) {
     if (token.type !== 'inline') continue;

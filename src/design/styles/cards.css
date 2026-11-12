@@ -1,4 +1,3 @@
-/* 카드와 칩: 도움말 카드(변형 is-*), 지식 카드, 태그. 화면 모듈은 맥락 선택자로 배치만 바꾼다. */
 .app-help-card { position: relative; display: block; padding: var(--spacing-card-top) var(--spacing-card-right) var(--spacing-card-inset) var(--spacing-card-inset); color: var(--color-body); background: var(--color-help-bg); border: var(--border-width-thin) solid var(--color-help-border); border-radius: var(--radius-help-radius); line-height: var(--leading-line-card); }
 .app-help-card:hover { text-decoration: none; }
 .app-help-card strong { display: block; font-weight: var(--font-weight-bold); word-break: keep-all; overflow-wrap: anywhere; }
@@ -40,7 +39,6 @@
 .app-help-card.is-inline::after { right: var(--spacing-help-inline-chevron-inset); width: var(--spacing-compact-inset); background-size: var(--component-help-inline-chevron); opacity: var(--opacity-help-inline-opacity); }
 .app-help-card.is-inline.has-no-icon { padding-left: var(--spacing-help-inline-no-icon); }
 .app-related-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacing-gap-xs); }
-/* 관련 글 제목과 목록은 하나의 작은 묶음으로 배치한다. */
 .app-prose .app-related-grid { margin-bottom: var(--spacing-gap-sm); }
 .app-prose :is(.app-heading-2, .app-heading-3, .app-heading-4):has(+ .app-related-grid) { margin-block: var(--spacing-gap) var(--spacing-gap-sm); }
 @media (max-width: breakpoint(feature-split)) { .app-related-grid { grid-template-columns: minmax(0, 1fr); } }
@@ -51,9 +49,6 @@
 .app-related-link[rel=prev] { padding-inline: var(--spacing-card-right) var(--spacing-compact-inset); }
 .app-related-link[rel=prev]::after { right: auto; left: var(--spacing-gap-xs); transform: scaleX(-1); }
 .app-tags { display: flex; flex-wrap: wrap; gap: var(--spacing-2); align-items: baseline; }
-/* 태그 알약은 글 머리, 글 카드, 검색 필터, 추천 검색어에서 크기(13/1.4)와 상태가 같다.
-   기본은 회색 면, 호버·초점은 한 단계 진한 회색, 고른 태그는 링크 파랑이다. 밑줄은 쓰지 않는다.
-   is-quiet는 같은 알약의 투명 변형(추천 검색어)으로 호버하면 기본 알약 면이 된다. */
 .app-tag, .app-tags-more > summary { display: inline-block; max-width: 100%; padding: var(--spacing-0-5) var(--spacing-2-5); border: 0; border-radius: var(--radius-pill); color: var(--color-tag-ink); background: var(--color-tag-background); font: inherit; font-size: var(--text-tiny-text); line-height: var(--leading-line-body); text-decoration: none; overflow-wrap: anywhere; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-reveal), color var(--duration-fast) var(--ease-reveal); }
 .app-tag:hover, .app-tag:focus-visible, .app-tags-more > summary:hover, .app-tags-more > summary:focus-visible { color: var(--color-tag-ink-hover); background: var(--color-tag-background-hover); text-decoration: none; }
 .app-tag[aria-pressed=true] { color: var(--color-tag-selected-ink); background: var(--color-tag-selected); }
@@ -62,7 +57,6 @@
 @media (prefers-reduced-motion: reduce) { .app-tag, .app-tags-more > summary { transition: none; } }
 .app-tags-more > .app-tags { margin-top: var(--spacing-gap-xs); }
 
-/* 주제와 블로그 목록은 설명의 전체 텍스트를 보존하고 두 줄까지만 표시한다. */
 .app-card-summary { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--component-card-summary-lines); overflow: hidden; word-break: keep-all; overflow-wrap: anywhere; }
 .app-help-card.is-summary, .app-support-grid.is-pair > .app-help-card.is-summary { padding: calc(var(--spacing-card-inset) + var(--spacing-8) + var(--spacing-gap-xs)) var(--spacing-card-right) var(--spacing-card-inset) var(--spacing-card-inset); }
 .app-help-card.is-summary :is(.app-article-icon, .app-content-icon) { top: var(--spacing-card-inset); left: var(--spacing-card-inset); width: var(--spacing-8); height: var(--spacing-8); }

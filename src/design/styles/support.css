@@ -1,4 +1,3 @@
-/* 지원·위키 화면: 지원 그룹과 격자, 지식 목록, 키보드 단축키 표. */
 .app-support-group { margin-bottom: var(--spacing-support-gap); }
 .app-support-group > h2 { font-size: var(--text-subtitle); color: var(--color-ink); margin: 0 0 var(--spacing-support-title-gap); line-height: var(--leading-line-intro); }
 .app-support-group > h3 { font-size: var(--text-subtitle); color: var(--color-ink); margin: 0 0 var(--spacing-support-title-gap); line-height: var(--leading-line-intro); }

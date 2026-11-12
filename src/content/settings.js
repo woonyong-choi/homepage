@@ -1,9 +1,9 @@
-// 공개 Blog와 검색창의 문구·표시 정책만 읽는다. 공개할 원문은 승인 목록이 별도로 정한다.
 import { readFileSync } from 'node:fs';
 
 import { settingsValidator } from '../lib/validate.js';
 
-const ROOT = new URL('../../config/', import.meta.url);
+const FILE = new URL('../../config/site.json', import.meta.url);
+const PATH = 'config/site.json';
 const SEARCH_LABELS = ['region', 'input', 'placeholder', 'clear', 'suggestions'];
 const CARD_FIELDS = ['title', 'description', 'media', 'tags', 'date', 'comments', 'author'];
 const { fail, record, text, flag } = settingsValidator();
@@ -28,17 +28,20 @@ function card(value, path) {
   return result;
 }
 
-export function loadBlogLayout(root = ROOT) {
-  const blog = JSON.parse(readFileSync(new URL('blog.json', root), 'utf8'));
-  const search = JSON.parse(readFileSync(new URL('search.json', root), 'utf8'));
-  const box = search.box;
-  const labels = Object.fromEntries(SEARCH_LABELS.map(key => [key, text(box?.labels?.[key], `config/search.json.box.labels.${key}`)]));
-  return { blog: { title: text(blog.title, 'config/blog.json.title'), feedSize: integer(blog.feedSize, 'config/blog.json.feedSize', 1000), autoLoad: flag(blog.autoLoad, 'config/blog.json.autoLoad'), archiveLabel: text(blog.archiveLabel, 'config/blog.json.archiveLabel'), collection: grid(blog.collection, 'config/blog.json.collection'), card: withAuthor(card(blog.card, 'config/blog.json.card'), root) }, search: { title: text(search.title, 'config/search.json.title'), box: { labels, suggestions: [] } } };
+const SITE_KEYS = ['url', 'name', 'title', 'description', 'copyright', 'logo', 'avatar', 'github', 'linkedin', 'repository', 'comments', 'blog', 'search', 'admin'];
+
+export function loadSiteConfig(file = FILE) {
+  return record(JSON.parse(readFileSync(file, 'utf8')), PATH, SITE_KEYS);
 }
 
-// 카드 글쓴이는 사이트 주인 한 명이다. 이름은 config/site.json의 name, 선택 사진은 avatar(공개 자산 주소)를 쓴다.
-function withAuthor(result, root) {
+export function loadBlogLayout(site = loadSiteConfig()) {
+  const blog = record(site.blog, `${PATH}.blog`, ['title', 'feedSize', 'autoLoad', 'archiveLabel', 'collection', 'card']);
+  const search = record(site.search, `${PATH}.search`, ['title', 'labels']);
+  const labels = Object.fromEntries(SEARCH_LABELS.map(key => [key, text(search.labels?.[key], `${PATH}.search.labels.${key}`)]));
+  return { blog: { title: text(blog.title, `${PATH}.blog.title`), feedSize: integer(blog.feedSize, `${PATH}.blog.feedSize`, 1000), autoLoad: flag(blog.autoLoad, `${PATH}.blog.autoLoad`), archiveLabel: text(blog.archiveLabel, `${PATH}.blog.archiveLabel`), collection: grid(blog.collection, `${PATH}.blog.collection`), card: withAuthor(card(blog.card, `${PATH}.blog.card`), site) }, search: { title: text(search.title, `${PATH}.search.title`), box: { labels, suggestions: [] } } };
+}
+
+function withAuthor(result, site) {
   if (!result.author) return result;
-  const site = JSON.parse(readFileSync(new URL('site.json', root), 'utf8'));
-  return { ...result, author: { name: text(site.name, 'config/site.json.name'), ...(site.avatar === undefined ? {} : { avatar: text(site.avatar, 'config/site.json.avatar') }) } };
+  return { ...result, author: { name: text(site.name, `${PATH}.name`), ...(site.avatar === undefined ? {} : { avatar: text(site.avatar, `${PATH}.avatar`) }) } };
 }

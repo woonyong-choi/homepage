@@ -1,22 +1,13 @@
-// 언어 문법의 scope를 공통 구문 역할로 연결한다. 색과 HTML은 테마 구성 요소가 정한다.
-// 언어 목록(이름·별칭·표시 이름)의 기준은 highlight.js 하나다. 같은 이름의 TextMate 문법이 shiki에 있으면 그 문법으로,
-// 없으면 highlight.js로 분석한다. TextMate 문법은 문서가 쓰는 언어만 렌더링 전에 불러온다.
 export { resolveCodeAlias } from './code-alias.js';
 
 let loading;
 
-/**
- * 코드 블록 하나의 TextMate 분석 시간 제한(밀리초). 넘으면 강조하지 않고 escape한 원문을 출력한다.
- * 값은 shiki가 한 줄에 쓰는 기본 제한(tokenizeTimeLimit 500ms)과 같다. 이 값을 블록 전체에 적용해 한 블록이 렌더링을
- * 그 이상 붙잡지 않는다. 일반 블록(수백 줄)은 수 밀리초 안에 끝난다.
- */
 export const HIGHLIGHT_TIME_LIMIT_MS = 500;
 
 const LANGUAGE_NAME = /^[\w+#.-]+$/;
 const PLAIN = Object.freeze({ id: 'plaintext', label: 'Plain text' });
 const PLAIN_NAMES = new Set(['plaintext', 'text', 'txt']);
 
-// IntelliJ Language Defaults의 역할을 따른다. 판별하지 못한 심볼의 타입·소유자는 추측하지 않는다.
 const SCOPES = Object.freeze([
   [/^(?:comment|punctuation\.definition\.comment)(?:\.|$)/, 'comment'],
   [
@@ -79,13 +70,6 @@ const FALLBACK_ROLES = Object.freeze({
   punctuation: 'punctuation',
 });
 
-/**
- * @returns {Promise<{
- *   codeLanguage(info?: string): { id: string, label: string },
- *   prepare(infos: Iterable<string>): Promise<void>,
- *   highlightCode(source: string, language: string, ui: object, options?: { timeLimit?: number }): string,
- * }>}
- */
 export function loadHighlighter() {
   loading ??= createEngine();
   return loading;
@@ -108,7 +92,6 @@ async function createEngine() {
       const language = lookup(info);
       return language ? { id: language.id, label: language.label } : PLAIN;
     },
-    // 문서가 쓰는 언어의 TextMate 문법만 불러온다. 이미 불러온 문법은 다시 읽지 않는다.
     async prepare(infos) {
       const grammars = new Set();
       for (const info of infos) {
@@ -127,7 +110,6 @@ async function createEngine() {
       if (grammar || PLAIN_NAMES.has(language) || !languages.has(language)) {
         return ui.escape(source);
       }
-      // TextMate 문법이 없는 언어는 highlight.js로 분석한다. 두 분석기의 출력은 같은 역할과 CSS를 사용한다.
       return hljs
         .highlight(source, { language, ignoreIllegals: true })
         .value.replace(/class="([^"]+)"/g, (_, classes) => {
@@ -158,7 +140,6 @@ function collectLanguages(hljs, bundledLanguages) {
   return languages;
 }
 
-// 줄마다 TextMate 문법으로 분석한다. 블록 전체가 시간 제한을 넘거나 한 줄이라도 끝까지 분석하지 못하면 escape한 원문을 낸다.
 function textMateCode(grammar, source, ui, timeLimit) {
   const deadline = performance.now() + timeLimit;
   const parts = [];

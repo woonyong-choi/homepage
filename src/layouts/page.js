@@ -13,7 +13,6 @@ import { postArticle } from './post.js';
 import { pageMetadata, siteTitle } from '../build/metadata.js';
 import { usesMath, MATH_STYLESHEET } from '../document/index.js';
 
-// 관리 CSS의 내용 해시는 모든 페이지를 그린 뒤 정해지므로 빌드가 이 자리 표시를 바꿔 넣는다.
 export const ADMIN_STYLES_VERSION = 'admin-styles-version';
 
 const NAVIGATION = Object.freeze([{ href: '/search/', label: 'Search', match: ['/search/'] }, { href: '/blog/', label: 'Blog', match: ['/blog/'] }]);
@@ -23,11 +22,9 @@ export function pageShell(page, body, context) {
   const hashOf = file => scriptHashes[file] ?? scriptHash;
   const navigation = context.navigation ?? NAVIGATION;
   const active = navigation.flatMap(item => item.match.filter(prefix => prefix === '/' ? page.route === '/' : page.route.startsWith(prefix)).map(prefix => ({ href: item.href, length: prefix.length }))).sort((a, b) => b.length - a.length)[0]?.href;
-  // 작성 화면 같은 도구 화면(bare)은 사이트 머리·꼬리말 없이 화면 전체를 쓴다.
   const footer = page.bare ? '' : siteFooter(config);
   const entries = clientEntrypoints(body + footer);
   const searchScript = entries.includes('site.js') ? `<script type="module" async src="/site.js?v=${hashOf('site.js')}"></script>` : '';
-  // 글 관리 설정이 있으면 모든 페이지에 작은 로더를 붙인다. 로그인한 관리자에게만 작성 기능을 불러온다.
   const admin = context.admin ? `<meta name="admin-settings" content="${ui.escape(JSON.stringify({ ...context.admin, editor: `/admin-editor.js?v=${hashOf('admin-editor.js')}`, styles: `/theme/admin.css?v=${ADMIN_STYLES_VERSION}` }))}">` : '';
   if (context.admin && !entries.includes('admin.js')) entries.push('admin.js');
   const scripts = admin + entries.filter(file => file !== 'site.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
@@ -44,7 +41,6 @@ export function tagLinks(page, tags, limit = Infinity, url = searchUrl) {
   return String(ui.TagList({ tags: page.tags.map(id => ({ href: url({ tags: [id] }), label: tags[id]?.label ?? id })), limit }));
 }
 
-// 설정 목록의 순서가 곧 홈의 섹션 순서다.
 const HOME_SECTIONS = {
   hero: heroSection,
   projects: projectsSection,
@@ -62,7 +58,6 @@ export function articlePage(page, context, comments = '') {
   const updated = page.updatedAt && page.updatedAt !== page.publishedAt ? dateLine({ updatedAt: page.updatedAt }) : '';
   const example = page.example ? '<p class="app-example-notice">화면 검증을 위한 예시 글입니다.</p>' : '';
   const article = postArticle({ ...page, html: page.html + relatedPostsSection(page) }, { detail: true, tags: tagLinks(page, context.tags ?? {}), footer: `${updated}${example}`, after: comments, byline: context.layout?.blog.card.author });
-  // 넓은 화면에서는 본문 오른쪽에 목차를 고정하고, 좁은 화면에서는 본문 위 접기 목차로 둔다(공통 DocumentLayout·DocumentOutline).
   const outline = documentOutline(page.headings ?? []);
   if (!outline) return `<main id="main" class="app-shell">${article}</main>`;
   return `<main id="main" class="app-shell app-document-shell">${ui.DocumentLayout({ outline, content: ui.trusted(article) })}</main>`;
@@ -75,7 +70,6 @@ function relatedPostsSection(page) {
   return `<h2 id="${escape(page.id)}-related-posts">관련 글</h2>${ui.CardGroup({ variant: 'related', cards })}`;
 }
 
-// 없는 주소의 응답. 어느 경로에서든 읽히므로 링크는 모두 루트 기준이다.
 export function notFoundPage() {
   return `<main class="app-shell app-body" id="main">${searchBox()}${ui.PageHeading({ title: '페이지를 찾을 수 없습니다' })}<p>주소가 바뀌었거나 없는 페이지입니다. <a href="/">홈</a>, <a href="/blog/">블로그</a>, <a href="/search/">글 목록</a>에서 찾거나 검색해 주세요.</p></main>`;
 }

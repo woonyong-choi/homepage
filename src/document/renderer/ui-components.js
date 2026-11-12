@@ -1,15 +1,4 @@
-// ui: 코드 펜스의 구성 요소 출력. 해석기가 보존한 YAML 데이터와 안쪽 Markdown 출력으로 구성 요소 하나를 만든다.
-// 안쪽 Markdown은 이미 해석된 토큰을 그리기만 하며 다시 해석하지 않는다.
 import { CALLOUT_TITLE } from './directive-render.js';
-
-/**
- * @typedef {object} ComponentContext
- * @property {string} id 구성 요소 ID
- * @property {(path: string) => string} html 안쪽 Markdown 필드의 출력
- * @property {(name: string, method: string | undefined, props: object) => string} call 구성 요소 호출
- * @property {(name: string, method: string | undefined, props: object) => { html: string, failed: boolean }} attempt 성공 여부까지 돌려주는 호출
- * @property {object} kit 자산·아이콘 도구와 디자인 정본 ui
- */
 
 const body = (item, rc, index) => rc.kit.trusted(rc.html(`items.${index}.body`));
 
@@ -37,7 +26,6 @@ function remote(rc, src = '') {
   });
 }
 
-// 기기 틀 위에 겹칠 그림. 자산 이름은 호스트가 출력 문맥의 deviceOverlay로 정하며 없으면 겹치지 않는다.
 const overlay = ({ kit }) => kit.deviceOverlay();
 
 function feature(data, rc) {
@@ -91,7 +79,6 @@ function demos(data, rc) {
   });
 }
 
-// 열기·닫기 한 쌍. 열기가 실패하면 오류 표시와 안쪽 내용만 내고 닫기는 부르지 않는다. 성공 여부는 쌍마다 따로 쥔다.
 function paired(rc, name, props, inner, closeProps = {}) {
   const open = rc.attempt(name, 'open', props);
   const body = inner();
@@ -148,7 +135,6 @@ function cards(data, rc) {
   return paired(rc, 'cards', props, () => html.join(rc.call('cards', 'gap', props)), props);
 }
 
-/** ui: 종류별 출력. 값은 HTML 문자열이나 Trusted다. */
 export const UI_RENDERERS = Object.freeze({
   __proto__: null,
   group: (data, rc) =>

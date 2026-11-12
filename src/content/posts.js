@@ -1,6 +1,5 @@
 import { isDocumentId, parseContent, publishDate, validateThumbnail } from './front-matter.js';
 
-// /blog/ 아래 목록 주소와 겹쳐 글 주소로 쓸 수 없는 이름. 관리 화면도 출간 전에 같은 목록으로 막는다.
 export const RESERVED_SLUGS = Object.freeze(['all', 'page', 'feed']);
 
 export function readPost(source, { now = new Date(), includeUnpublished = false } = {}) {
@@ -8,7 +7,6 @@ export function readPost(source, { now = new Date(), includeUnpublished = false 
   return includeUnpublished || isPublished(post, now) ? post.page : null;
 }
 
-// 형식 검증은 공개 여부와 무관하게 한 번만 한다.
 function parsePost(source) {
   const { metadata, body } = parseContent(source);
   for (const key of ['id', 'slug']) if (!isDocumentId(metadata[key])) throw new Error(`invalid post ${key}`);
@@ -33,13 +31,11 @@ function parsePost(source) {
   return { metadata, page: { id: metadata.id, slug: metadata.slug, title: metadata.title.trim(), description: metadata.description.trim(), tags: normalized, ...(metadata.keywords ? { keywords: [...new Set(keywords.map(word => word.trim().normalize('NFC')))] } : {}), publishedAt: metadata.publishedAt, ...(metadata.updatedAt ? { updatedAt: metadata.updatedAt } : {}), ...(metadata.thumbnail ? { thumbnail: metadata.thumbnail } : {}), comments: metadata.comments ?? false, example: metadata.example ?? false, body, route: `/blog/${metadata.slug}/` } };
 }
 
-// 공개 글만 사이트에 싣는다. 임시(draft)와 비공개(private)는 원본 저장소에만 남는다.
 export const VISIBILITIES = Object.freeze(['public', 'draft', 'private']);
 function isPublished({ metadata }, now) {
   return !(metadata.visibility !== 'public' || metadata.publish === false || metadata.status === 'draft' || metadata.publishedAt > publishDate(now));
 }
 
-// 작성 중인 임시·비공개 글의 형식 오류가 공개 글 배포를 막지 않게 한다. 공개 글의 오류는 그대로 멈춘다.
 function parseSource(source) {
   try {
     return parsePost(source);
@@ -75,7 +71,6 @@ export function searchEntry(post, tags) {
   return { id: post.id, route: post.route, title: post.title, description: post.description, tags: post.tags, date: post.publishedAt, thumbnail: post.cardImage ?? post.thumbnail, comments: post.comments, commentCount: post.commentCount, example: post.example, keywords, text: searchText(post.html ?? '') };
 }
 
-// 검색 본문은 렌더링한 HTML에서 읽는 글만 꺼낸다. Markdown 원문 문법(==, ~ ~, :kbd[])과 수식 내부 표기, 조작 단추 글자가 결과 요약에 드러나지 않게 한다.
 const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'", apos: "'", nbsp: ' ' };
 
 function withoutElements(html, open, tag) {

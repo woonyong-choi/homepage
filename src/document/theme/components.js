@@ -1,7 +1,3 @@
-// 기본 테마의 지원 구성 요소. 모든 항목은 `(props, kit)`을 받아 HTML 문자열을 돌려준다.
-// props는 JSON으로 표현할 수 있는 값이며 kit.ui는 디자인 정본 구성 요소다. 사용자 테마는 이 이름 중 일부를 같은 모양으로 바꾼다.
-
-/** 사용자 테마가 바꿀 수 있는 구성 요소와 필요한 함수. 문자열은 `name.method` 형식이다. */
 export const COMPONENT_SHAPES = Object.freeze({
   callout: ['open', 'close'],
   steps: ['open', 'close'],
@@ -19,7 +15,6 @@ export const COMPONENT_SHAPES = Object.freeze({
   tip: null,
 });
 
-/** 카드 아이콘 입력(`content:이름`, 객체, 문서 아이콘 이름)을 아이콘 HTML로 바꾼다. */
 function iconHtml(name = 'question', kit) {
   if (typeof name === 'object' && name !== null) return kit.contentIcon(name);
   if (typeof name === 'string' && name.startsWith('content:'))
@@ -39,7 +34,6 @@ function cardMark(props, kit) {
 }
 
 function card(props, kit) {
-  // 카드 모양 이름은 디자인 정본 Card가 검사한다.
   const { variant } = props;
   const mark = cardMark(props, kit);
   return String(
@@ -115,7 +109,6 @@ function code(props, kit) {
   );
 }
 
-/** @returns {object} 기본 구성 요소 표 */
 export function createDefaultComponents() {
   return Object.freeze({
     callout: {

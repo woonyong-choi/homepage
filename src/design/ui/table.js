@@ -1,6 +1,5 @@
 import { escape, slot, out } from './html.js';
 
-/** 행과 열은 소비자의 의미 구조다. 표의 틀·스크롤·색·간격은 한 구성 요소가 소유한다. */
 export function Table({ body, ...props }) {
   return out(`${Table.open(props)}${slot(body, 'table body')}${Table.close()}`);
 }

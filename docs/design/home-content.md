@@ -18,7 +18,7 @@
 | `content/interviews/index.md` | 동료평가 구간의 제목·소개와 카드 |
 | `content/interviews.local.md` | 선택. Git 밖의 검토용 카드. 미리보기 빌드만 읽는다 |
 
-세 원고는 Vault 승인 사본이므로 Vault 원문을 고치고 `npm run content:sync -- <vault-root>`로 가져온다. 제목과 소개는 Markdown 본문의 첫 제목과 그 아래 문단에서 읽는다. 잘못된 값은 `home.md sections[1].items[0].link.href: ...`처럼 경로가 붙은 오류로 빌드를 멈춘다.
+세 원고는 이 저장소에서 직접 고친다. 제목과 소개는 Markdown 본문의 첫 제목과 그 아래 문단에서 읽는다. 잘못된 값은 `home.md sections[1].items[0].link.href: ...`처럼 경로가 붙은 오류로 빌드를 멈춘다.
 
 ## 원고 예
 
@@ -86,7 +86,7 @@ sections:
 
 ## 사이트 이름과 로고
 
-`config/site.json`의 `title`은 탭·공유 정보·RSS의 사이트 이름, `name`은 작성자 이름이다. 상단 로고는 `logo: {src, alt}`로 정한다. 상단 메뉴는 Search(`/search/`)와 Blog(`/blog/`)로 고정이며, `content/home.md`의 `navigation`은 Vault 원고 호환을 위해 형식만 검사한다.
+`config/site.json`의 `title`은 탭·공유 정보·RSS의 사이트 이름, `name`은 작성자 이름, `copyright`는 바닥글 `© 연도 <copyright>`의 이름(없으면 `name`)이다. 상단 로고는 `logo: {src, alt}`로 정한다. 상단 메뉴는 Search(`/search/`)와 Blog(`/blog/`)로 고정이며, `content/home.md`의 `navigation`은 형식만 검사한다.
 
 ## 기술 로고
 
@@ -94,11 +94,11 @@ sections:
 
 ## 자산 출처
 
-`content/assets/`, `content/media/`의 파일은 `config/assets.json`에 출처(`origin`)와 라이선스(`license`)를 기록한다. 제3자 파일은 원본 주소와 `-NOTICE.txt` 고지를 함께 둔다. 빌드는 발행 HTML이 실제로 참조한 자산과 그 고지만 싣는다.
+`content/assets/`, `content/media/`의 파일은 `config/assets.json`에 출처(`origin`)와 라이선스(`license`)를 기록한다. 제3자 파일은 원본 주소를 적고 `notice`에 `-NOTICE.txt` 고지 파일을 지정한다. 빌드는 이 `notice`로 자산과 고지를 묶는다. 빌드는 발행 HTML이 실제로 참조한 자산과 그 고지만 싣는다.
 
 ## 검토용 인터뷰
 
-`content/interviews.local.md`는 `---`로 감싼 YAML의 `items`만 갖는다. 미리보기 빌드에서만 활성 인터뷰 구간의 `items`를 대체하고 같은 검증을 적용한다. `--production` 빌드는 이 파일을 읽지 않는다. 공개할 카드는 Vault 원문에 반영해 승인한다.
+`content/interviews.local.md`는 `---`로 감싼 YAML의 `items`만 갖는다. 미리보기 빌드에서만 활성 인터뷰 구간의 `items`를 대체하고 같은 검증을 적용한다. `--production` 빌드는 이 파일을 읽지 않는다. 공개할 카드는 `content/interviews/index.md`에 반영한다.
 
 ## 확인
 

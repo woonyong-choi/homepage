@@ -43,11 +43,11 @@
 
 ## 설정
 
-`src/content/settings.js`의 `loadBlogLayout`이 다음 값을 읽고 검증한다.
+`src/content/settings.js`의 `loadBlogLayout`이 `config/site.json`의 `blog`·`search`에서 다음 값을 읽고 검증한다.
 
 | 파일·필드 | 내용 |
 |---|---|
-| `config/blog.json` `title` | Blog 제목 |
+| `blog.title` | Blog 제목 |
 | `collection.columns`, `collection.rows` | Search 목록의 열(1~5)과 쪽당 행. `rows: null`이면 한 쪽에 전부 |
 | `card.title`, `description`, `tags`, `date`, `comments` | 카드에 보일 항목(참거짓) |
 | `card.media` | `image`, `icon`, `none` |
@@ -55,14 +55,14 @@
 | `feedSize` | Blog 피드 한 쪽의 글 수 |
 | `autoLoad` | 피드 끝에서 다음 쪽을 자동으로 불러올지 |
 | `archiveLabel` | Blog에서 Search 전체 글로 가는 링크 문구 |
-| `config/search.json` `title` | Search 제목 |
-| `box.labels` | 검색창의 `region`, `input`, `placeholder`, `clear`, `suggestions` 문구 |
+| `search.title` | Search 제목 |
+| `search.labels` | 검색창의 `region`, `input`, `placeholder`, `clear`, `suggestions` 문구 |
 
-`config/blog.json`의 `preview`, `archiveTitle`, `feedLabel`과 `config/search.json`의 `sections`는 Vault 원고 호환 값이며 읽지 않는다. 카드 설정은 표시만 바꾸고 글 포함 여부는 바꾸지 않는다.
+카드 설정은 표시만 바꾸고 글 포함 여부는 바꾸지 않는다.
 
 ## 카드 표지
 
-`card.media: image`이면 front matter의 `thumbnail`, 본문 첫 그림, 제목으로 만든 표지 순서로 정한다. 제목 표지는 HTML과 CSS로 그리며 그림 파일을 만들지 않고 카드에만 표시한다. `thumbnail.position`(`x`, `y`, 0~100)은 카드 자르기 위치다. 외부 썸네일의 원본 크기는 `config/image-sizes.json`에서 찾는다.
+`card.media: image`이면 front matter의 `thumbnail`, 본문 첫 그림, 제목으로 만든 표지 순서로 정한다. 제목 표지는 HTML과 CSS로 그리며 그림 파일을 만들지 않고 카드에만 표시한다. `thumbnail.position`(`x`, `y`, 0~100)은 카드 자르기 위치다.
 
 ## 댓글 수
 

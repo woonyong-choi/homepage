@@ -1,4 +1,3 @@
-// 파일 위치는 작성 편의를 위한 정보다. 주소와 문서 계층은 프런트매터에서만 읽는다.
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseContent } from '../lib/format.js';

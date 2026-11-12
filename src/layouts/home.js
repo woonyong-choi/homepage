@@ -1,4 +1,3 @@
-// 홈 설정의 섹션 종류마다 독립된 HTML 구성 요소를 만든다.
 import { escape } from '#design/ui/index.js';
 import * as ui from '#design/ui/index.js';
 import { href } from '../content/home.js';
@@ -34,13 +33,11 @@ export function heroSection(hero, context = {}) {
   return String(ui.Hero({ id: hero.id, title: hero.title, description: hero.description, icon: logo ? trusted(logo) : undefined, action: action ? trusted(action) : undefined, showcase: trusted(heroShowcase(hero)) }));
 }
 
-// 프로젝트, 기술, 인터뷰, 연락이 함께 쓰는 섹션 머리: 아이콘, 제목, 설명, 링크 행, 동작 링크.
 function sectionIntro({ icon, title, titleId, description, links = [], action }) {
   const graphic = icon?.src.endsWith('.svg') ? ui.ContentIconImage({ src: icon.src, size: 'card' }) : icon ? trusted(picture(icon)) : undefined;
   return String(ui.SectionIntro({ id: titleId, icon: graphic, title, description: description ? trusted(paragraphs(description)) : undefined, links: links.length ? trusted(links.map(socialLink).join('')) : undefined, action }));
 }
 
-// href가 없는 항목은 아이콘만 보이는 자리표시이며 링크로 읽히지 않고 클릭되지 않는다.
 function socialLink(item) {
   const icon = linkIcon(item);
   return String(ui.SocialLink({ href: item.href, label: item.label, icon: item.icon ? trusted(icon) : undefined }));
@@ -75,7 +72,6 @@ export function technologySection(section, brandIcon, { tags = {}, knownTags = {
 export function interviewsSection(section, { preview = false } = {}) {
   const entries = publicInterviews(section.items, preview);
   if (!entries.length) return '';
-  // 순서를 유지한 채 앞 절반을 위 줄, 나머지를 아래 줄에 둔다. 한 장이면 한 줄이다. 위 줄은 왼쪽, 아래 줄은 오른쪽으로 흐른다.
   const split = entries.length > 1 ? Math.ceil(entries.length / 2) : entries.length;
   const rows = [entries.slice(0, split), entries.slice(split)].filter(row => row.length);
   const rails = rows.map((row, index) => flowRail({ kind: 'interviews', direction: index ? 'right' : undefined, label: '인터뷰', ariaLabel: rows.length > 1 ? `인터뷰 카드 ${index + 1}행` : '인터뷰 카드' }, interviewCards(row, href))).join('');
