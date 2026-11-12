@@ -31,6 +31,8 @@
 .app-search-result-link:not(:has(> .app-content-icon)) { padding-left: var(--spacing-search-results-padding); }
 
 .app-tag-filter { justify-content: center; align-items: center; gap: var(--spacing-gap-sm); margin-top: var(--spacing-gap-lg); }
+/* 초기화는 알약이 아닌 밑줄 글자 링크다(의도). 크기와 글자색은 태그와 같다. */
+.app-tag-reset { padding: calc(var(--spacing-gap-xs) / 2) var(--spacing-gap-xs); font-size: var(--text-tiny-text); line-height: var(--leading-line-body); color: var(--color-tag-ink); text-decoration: underline; }
 
 
 /* 화살표로 고른 추천 항목은 마우스 호버보다 한 단계 진한 면과 초점 링으로 보인다. 태그 항목은 알약이다. */
