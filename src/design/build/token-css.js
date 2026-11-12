@@ -51,25 +51,8 @@ function declarations(source) {
   }).join('\n');
 }
 
-/** Tailwind v4가 읽는 분류만 노출한다. 구성 요소 전용 복합 값은 일반 CSS 변수로 유지한다. */
-export function tailwindCss(theme) {
-  const allowed = /^(?:color|font|text|font-weight|tracking|leading|breakpoint|container|spacing|radius|shadow|inset-shadow|drop-shadow|blur|perspective|aspect|ease|animate)-/;
-  const rows = declarations(theme.sources[theme.meta.defaultMode]).split('\n').filter(line => allowed.test(line.trim().slice(2)) && !/^\s*--spacing-\d/.test(line));
-  if (themeTable(theme.sources[theme.meta.defaultMode]).has('spacing.unit')) rows.push('  --spacing: var(--spacing-unit);');
-  return `/* 생성물, 손으로 고치지 않음 */\n@import '../scripts/lib/tokens.css';\n@theme inline {\n${rows.join('\n')}\n}\n`;
-}
-
-/** 공통 값을 한 번 정의하고 모드에서 달라지는 속성만 재정의한다. */
-export function themeCss(theme) {
-  const { meta, sources } = theme;
-  const light = declarations(sources.light).split('\n');
-  const dark = declarations(sources.dark).split('\n');
-  const changed = dark.map((line, index) => line !== light[index]);
-  const delta = (rows, mode) => `${rows.filter((_, index) => changed[index]).join('\n')}\n  color-scheme: ${mode};`;
-  let css = `/* tokens/tokens.json: 생성물, 손으로 고치지 않음 */\n:root {\n${light.join('\n')}\n  color-scheme: light;\n}\n`;
-  css += `@media (prefers-color-scheme: dark) {\n  :root:not([data-theme='light']):not([data-theme='dark']) {\n${delta(dark, 'dark')}\n  }\n}\n`;
-  css += `[data-theme='dark'] {\n${delta(dark, 'dark')}\n}\n[data-theme='light'] {\n${delta(light, 'light')}\n}\n`;
-  const faces = sources[meta.defaultMode].$extensions?.theme?.fontFaces ?? [];
-  if (meta.fonts !== 'bundled-by-renderer') css += faces.join('\n') + '\n';
-  return css.trimEnd() + '\n';
+/** 토큰 전체를 :root의 CSS 변수로 쓴다. 사이트는 라이트 화면 하나만 쓴다. */
+export function tokensCss(source) {
+  const faces = source.$extensions?.theme?.fontFaces ?? [];
+  return `/* tokens/tokens.json: 생성물, 손으로 고치지 않음 */\n:root {\n${declarations(source)}\n  color-scheme: light;\n}\n${faces.join('\n')}`.trimEnd() + '\n';
 }

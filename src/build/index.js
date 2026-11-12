@@ -135,14 +135,12 @@ async function writeSite(output, posts, context, scripts, notFound, outputRoot) 
   // 404 문서는 경로가 아닌 파일로 싣지만 스타일 선별과 자산 수집에는 다른 페이지처럼 포함한다.
   const rendered = new Map([...output, [NOT_FOUND_FILE, notFound]]);
   const sourceStyles = readFileSync(join(THEME, 'styles.css'), 'utf8');
-  // 공개 사이트는 라이트로 고정(documentShell의 data-theme="light")이라 다크 토큰 블록을 싣지 않는다.
   const theme = readFileSync(join(THEME, 'tokens.css'), 'utf8');
-  const fixed = { scheme: 'light' };
   // 관리 화면 스타일(작성·출간 화면)은 관리자만 쓰므로 공개 CSS에서 빼고 관리 CSS로 따로 싣는다.
   // 관리 CSS는 전체 페이지와 스크립트 기준이라 공개 CSS를 모두 포함하고, 관리 로더가 로그인한 뒤에만 불러온다.
-  const full = await publicationStyles(sourceStyles, rendered, scripts, theme, fixed);
+  const full = await publicationStyles(sourceStyles, rendered, scripts, theme);
   const styles = context.admin
-    ? await publicationStyles(sourceStyles, new Map([...rendered].filter(([route]) => route !== ADMIN_ROUTE)), new Map([...scripts].filter(([file]) => file !== ADMIN_EDITOR)), theme, fixed)
+    ? await publicationStyles(sourceStyles, new Map([...rendered].filter(([route]) => route !== ADMIN_ROUTE)), new Map([...scripts].filter(([file]) => file !== ADMIN_EDITOR)), theme)
     : full;
   // 토큰과 스타일을 한 파일로 합쳐 첫 화면을 막는 CSS 요청을 하나로 줄인다. 공개 CSS는 공개 페이지가 쓰는 토큰만 담는다.
   const publicSheet = styles.theme + styles.css;
