@@ -53,7 +53,7 @@
 .app-tags { display: flex; flex-wrap: wrap; gap: var(--spacing-2); align-items: baseline; }
 /* 태그 알약은 글 머리, 글 카드, 검색 필터, 추천 검색어에서 크기(13/1.4)와 상태가 같다.
    기본은 회색 면, 호버·초점은 한 단계 진한 회색, 고른 태그는 링크 파랑이다. 밑줄은 쓰지 않는다.
-   is-quiet는 같은 알약의 투명 변형(초기화, 추천 검색어)으로 호버하면 기본 알약 면이 된다. */
+   is-quiet는 같은 알약의 투명 변형(추천 검색어)으로 호버하면 기본 알약 면이 된다. */
 .app-tag, .app-tags-more > summary { display: inline-block; max-width: 100%; padding: var(--spacing-0-5) var(--spacing-2-5); border: 0; border-radius: var(--radius-pill); color: var(--color-tag-ink); background: var(--color-tag-background); font: inherit; font-size: var(--text-tiny-text); line-height: var(--leading-line-body); text-decoration: none; overflow-wrap: anywhere; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-reveal), color var(--duration-fast) var(--ease-reveal); }
 .app-tag:hover, .app-tag:focus-visible, .app-tags-more > summary:hover, .app-tags-more > summary:focus-visible { color: var(--color-tag-ink-hover); background: var(--color-tag-background-hover); text-decoration: none; }
 .app-tag[aria-pressed=true] { color: var(--color-tag-selected-ink); background: var(--color-tag-selected); }

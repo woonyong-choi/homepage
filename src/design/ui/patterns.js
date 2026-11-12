@@ -89,7 +89,7 @@ export const NavigationLink = ({ href, text, back = false }) => out(`<a class="a
 export const ListLink = ({ href, text }) => out(`<p class="app-page-links">${NavigationLink({ href, text })}</p>`);
 
 
-// 태그 알약은 어디서나 한 크기다. quiet는 투명 바탕 변형(초기화, 추천 검색어)이다.
+// 태그 알약은 어디서나 한 크기다. quiet는 투명 바탕 변형(추천 검색어)이다.
 export const Tag = ({ href, label, quiet = false }) => out(`<a class="app-tag${quiet ? ' is-quiet' : ''}" href="${safeUrl(href)}">${escape(label)}</a>`);
 export function TagList({ tags, limit = Infinity }) {
   const link = (tag) => String(Tag(tag));
@@ -98,7 +98,7 @@ export function TagList({ tags, limit = Infinity }) {
 }
 
 export function TagFilter({ tags, reset }) {
-  return out(`<div class="app-tags app-tag-filter" data-tag-filter role="group" aria-label="태그">${tags.map(tag => `<button class="app-tag" type="button" data-tag-toggle="${escape(tag.id)}" aria-pressed="${Boolean(tag.selected)}">${escape(tag.label)}</button>`).join('')}${reset ? `<a class="app-tag is-quiet" href="${safeUrl(reset.href)}" data-tag-reset>${escape(reset.label)}</a>` : ''}</div>`);
+  return out(`<div class="app-tags app-tag-filter" data-tag-filter role="group" aria-label="태그">${tags.map(tag => `<button class="app-tag" type="button" data-tag-toggle="${escape(tag.id)}" aria-pressed="${Boolean(tag.selected)}">${escape(tag.label)}</button>`).join('')}${reset ? `<a class="app-tag-reset" href="${safeUrl(reset.href)}" data-tag-reset>${escape(reset.label)}</a>` : ''}</div>`);
 }
 
 
