@@ -21,7 +21,7 @@ export function queryIndex(action, state) {
 }
 
 function createWorker() {
-  const url = new URL('./search-worker.mjs', import.meta.url);
+  const url = new URL('./search-worker.js', import.meta.url);
   url.search = new URL(import.meta.url).search;
   const instance = new Worker(url, { type: 'module' });
   instance.addEventListener('message', ({ data }) => {

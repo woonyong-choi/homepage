@@ -541,7 +541,7 @@ export function startAdmin(settings, token, { fetcher = (...args) => fetch(...ar
     return undefined;
   }
 
-  // 공개 글은 사이트 저장소의 승인 사본으로 옮긴다(src/admin-site.mjs). 사이트 저장소는 공개라 임시·비공개 글은 올리지 않는다.
+  // 공개 글은 사이트 저장소의 승인 사본으로 옮긴다(src/admin/sync.js). 사이트 저장소는 공개라 임시·비공개 글은 올리지 않는다.
   const siteRepo = settings.deploy ? settings.deploy.split('/').slice(0, 2).join('/') : '';
   const encode = bytes => { let binary = ''; for (let at = 0; at < bytes.length; at += 0x8000) binary += String.fromCharCode(...bytes.subarray(at, at + 0x8000)); return btoa(binary); };
   const digest = async bytes => [...new Uint8Array(await view.crypto.subtle.digest('SHA-256', bytes))].map(byte => byte.toString(16).padStart(2, '0')).join('');

@@ -1,6 +1,6 @@
 import { documentOutline } from './outline.js';
 import { dateLabel } from '../lib/format.js';
-import { personalFooter } from './footer.js';
+import { siteFooter } from './footer.js';
 import { escape } from '#design/ui/index.js';
 import * as ui from '#design/ui/index.js';
 import { brandIcon } from '../content/brands.js';
@@ -10,7 +10,7 @@ import { searchUrl } from '../lib/search.js';
 import { clientEntrypoints } from '../build/assets.js';
 import { heroSection, projectsSection, technologySection, interviewsSection, contactSection } from './home.js';
 import { postArticle } from './post.js';
-import { publicationMetadata, siteTitle } from '../build/metadata.js';
+import { pageMetadata, siteTitle } from '../build/metadata.js';
 import { usesMath, MATH_STYLESHEET } from '../document/index.js';
 
 // 관리 CSS의 내용 해시는 모든 페이지를 그린 뒤 정해지므로 빌드가 이 자리 표시를 바꿔 넣는다.
@@ -18,21 +18,21 @@ export const ADMIN_STYLES_VERSION = 'admin-styles-version';
 
 const NAVIGATION = Object.freeze([{ href: '/search/', label: 'Search', match: ['/search/'] }, { href: '/blog/', label: 'Blog', match: ['/blog/'] }]);
 
-export function documentShell(page, body, context) {
+export function pageShell(page, body, context) {
   const { config, themeHash, scriptHash, scriptHashes = {}, math } = context;
   const hashOf = file => scriptHashes[file] ?? scriptHash;
   const navigation = context.navigation ?? NAVIGATION;
   const active = navigation.flatMap(item => item.match.filter(prefix => prefix === '/' ? page.route === '/' : page.route.startsWith(prefix)).map(prefix => ({ href: item.href, length: prefix.length }))).sort((a, b) => b.length - a.length)[0]?.href;
   // 작성 화면 같은 도구 화면(bare)은 사이트 머리·꼬리말 없이 화면 전체를 쓴다.
-  const footer = page.bare ? '' : personalFooter(config);
+  const footer = page.bare ? '' : siteFooter(config);
   const entries = clientEntrypoints(body + footer);
-  const searchScript = entries.includes('publication.js') ? `<script type="module" async src="/publication.js?v=${hashOf('publication.js')}"></script>` : '';
+  const searchScript = entries.includes('site.js') ? `<script type="module" async src="/site.js?v=${hashOf('site.js')}"></script>` : '';
   // 글 관리 설정이 있으면 모든 페이지에 작은 로더를 붙인다. 로그인한 관리자에게만 작성 기능을 불러온다.
   const admin = context.admin ? `<meta name="admin-settings" content="${ui.escape(JSON.stringify({ ...context.admin, editor: `/admin-editor.js?v=${hashOf('admin-editor.js')}`, styles: `/theme/admin.css?v=${ADMIN_STYLES_VERSION}` }))}">` : '';
   if (context.admin && !entries.includes('admin.js')) entries.push('admin.js');
-  const scripts = admin + entries.filter(file => file !== 'publication.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
+  const scripts = admin + entries.filter(file => file !== 'site.js').map(file => `<script type="module" src="/${file}?v=${hashOf(file)}"></script>`).join('');
   const logo = config.logo ? ui.trusted(renderContentSvg(config.logo.src, '', context.readAsset)) : undefined;
-  return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${publicationMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}" data-math-stylesheet>` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}">${page.bare ? '' : '<a class="app-skip" href="#main">본문으로 이동</a>'}${page.bare ? '' : ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
+  return `<!doctype html><html lang="ko" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light">${pageMetadata(page, context)}<link rel="alternate" type="application/rss+xml" title="Blog" href="/blog/feed.xml"><link rel="stylesheet" href="/theme/tokens.css?v=${themeHash}"><link rel="stylesheet" href="/theme/styles.css?v=${themeHash}">${usesMath(body) && math ? `<link rel="stylesheet" href="${MATH_STYLESHEET}?v=${math.hash}" data-math-stylesheet>` : ''}${scripts}</head><body class="app-publication${page.route === '/' ? ' app-canvas' : ''}">${page.bare ? '' : '<a class="app-skip" href="#main">본문으로 이동</a>'}${page.bare ? '' : ui.SiteHeader({ label: '주요 메뉴', title: siteTitle(config), homeLabel: `${config.logo?.alt || siteTitle(config)} 홈`, logo, items: navigation, active })}${body}${footer}${searchScript}</body></html>`;
 }
 
 export function searchBox({ large = false, query = '', combobox = true, action = '/search/', filters, config = loadBlogLayout().search.box } = {}) {
@@ -53,7 +53,7 @@ const HOME_SECTIONS = {
   contact: contactSection,
 };
 
-export function personalHome(context) {
+export function homePage(context) {
   const title = context.home.find(section => section.type === 'hero')?.title ?? context.config.name;
   return `<main id="main" class="app-landing"><h1 class="app-sr">${escape(title)}</h1>${context.home.map(section => HOME_SECTIONS[section.type](section, context)).join('')}</main>`;
 }

@@ -3,7 +3,7 @@
 import { parseDocumentSync } from '../document/parser/index.js';
 import { readPost } from './post-file.js';
 
-// Vault 원본의 상대 주소(../assets/, assets/)와 사이트 주소(/assets/)를 같은 이름으로 본다(build-publication의 assetLinks와 같은 규칙).
+// Vault 원본의 상대 주소(../assets/, assets/)와 사이트 주소(/assets/)를 같은 이름으로 본다(src/build/index.js의 assetLinks와 같은 규칙).
 const ASSET = /^(?:\.\.\/|\/)?assets\/([^?#]+)/;
 
 function assetName(value) {

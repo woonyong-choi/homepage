@@ -1,6 +1,6 @@
 import { runtimeEntrypoints } from '#design/ui/manifest.js';
 import { getIconCatalog } from '../design/build/icons.js';
-const ORIGIN = 'https://publication.invalid';
+const ORIGIN = 'https://site.invalid';
 const ICON_CATALOG = getIconCatalog();
 const ICON_NOTICES = [...new Set([...ICON_CATALOG.libraries, ...Object.values(ICON_CATALOG.brands)].map(item => item.notice).filter(Boolean))].map(file => `/theme/assets/icons/${file}`);
 const ASSET_ROOTS = ['/theme/', '/assets/', '/media/', '/katex/'];
@@ -15,7 +15,7 @@ const ASSET_NOTICES = new Map([
 
 export function clientEntrypoints(body) {
   const scripts = [];
-  if (/<[^>]+\sdata-public-search(?:[\s=>])/.test(body)) scripts.push('publication.js');
+  if (/<[^>]+\sdata-public-search(?:[\s=>])/.test(body)) scripts.push('site.js');
   scripts.push(...runtimeEntrypoints(body));
   if (/<[^>]+\sdata-comments(?:[\s=>])/.test(body)) scripts.push('comments.js');
   if (/<[^>]+\sdata-blog-list(?:[\s=>])/.test(body)) scripts.push('blog-list.js');
@@ -32,7 +32,7 @@ function styleReferences(source) {
   return [...urls, ...imports];
 }
 
-export function publicationAssets(pages, searchEntries, readAsset) {
+export function collectAssets(pages, searchEntries, readAsset) {
   const files = new Map();
   function include(reference, from = '/') {
     if (!reference || reference.startsWith('#')) return;
@@ -40,10 +40,10 @@ export function publicationAssets(pages, searchEntries, readAsset) {
     if (url.origin !== ORIGIN) return;
     const path = decodeURIComponent(url.pathname);
     if (!ASSET_ROOTS.some(root => path.startsWith(root))) {
-      if (ASSET_ROOTS.some(root => from.startsWith(root))) throw new Error(`asset dependency outside publication roots: ${reference}`);
+      if (ASSET_ROOTS.some(root => from.startsWith(root))) throw new Error(`asset dependency outside asset roots: ${reference}`);
       return;
     }
-    if (path.includes('\\') || path.split('/').some(part => part === '..' || part === '.')) throw new Error(`invalid publication asset: ${reference}`);
+    if (path.includes('\\') || path.split('/').some(part => part === '..' || part === '.')) throw new Error(`invalid asset path: ${reference}`);
     if (files.has(path)) return;
     const content = readAsset(path);
     files.set(path, content);

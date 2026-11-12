@@ -1,6 +1,6 @@
 // 완성한 발행 파일 집합을 검사한 다음 기존 산출물을 교체한다.
 import { existsSync, lstatSync, mkdirSync, mkdtempSync, realpathSync, renameSync, rmSync, writeFileSync } from 'node:fs';
-import { publicationLinks } from './links.js';
+import { pageLinks } from './links.js';
 import { basename, dirname, join, resolve } from 'node:path';
 
 // GitHub Pages와 로컬 미리보기가 없는 경로에 돌려주는 파일.
@@ -10,7 +10,7 @@ function validateOutput(output, files) {
   for (const [route, html] of output) {
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);
     if (new Set(ids).size !== ids.length) throw new Error(`duplicate HTML id: ${route}`);
-    for (const url of new Set([...publicationLinks(html, route), ...[...html.matchAll(/(?:href|src|poster)="([^"]+)"/g)].map(match => match[1])])) {
+    for (const url of new Set([...pageLinks(html, route), ...[...html.matchAll(/(?:href|src|poster)="([^"]+)"/g)].map(match => match[1])])) {
       if (!url.startsWith('/') && !url.startsWith('#')) continue;
       const [path, fragment] = url.split('#');
       const target = path.split('?')[0] || route;
@@ -20,20 +20,20 @@ function validateOutput(output, files) {
   }
 }
 
-export function replacePublication(outputRoot, pages, files) {
+export function writeOutput(outputRoot, pages, files) {
   const output = new Map(files);
   for (const [route, html] of pages) {
-    if (!route.endsWith('/')) throw new Error(`invalid publication route: ${route}`);
+    if (!route.endsWith('/')) throw new Error(`invalid route: ${route}`);
     const path = `${route}index.html`;
-    if (output.has(path)) throw new Error(`duplicate publication file: ${path}`);
+    if (output.has(path)) throw new Error(`duplicate output file: ${path}`);
     output.set(path, html);
   }
   for (const path of output.keys()) {
-    if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//') || path.endsWith('/') || /[\u0000\\]/.test(path) || path.slice(1).split('/').some(part => part === '' || part === '.' || part === '..')) throw new Error(`invalid publication file: ${path}`);
+    if (typeof path !== 'string' || !path.startsWith('/') || path.startsWith('//') || path.endsWith('/') || /[\u0000\\]/.test(path) || path.slice(1).split('/').some(part => part === '' || part === '.' || part === '..')) throw new Error(`invalid output file: ${path}`);
   }
   for (const path of output.keys()) {
     for (let parent = dirname(path); parent !== '/'; parent = dirname(parent)) {
-      if (output.has(parent)) throw new Error(`publication path conflict: ${parent} -> ${path}`);
+      if (output.has(parent)) throw new Error(`output path conflict: ${parent} -> ${path}`);
     }
   }
   validateOutput(output.has(NOT_FOUND_FILE) ? new Map([...pages, [NOT_FOUND_FILE, output.get(NOT_FOUND_FILE)]]) : pages, output);
@@ -43,26 +43,26 @@ export function replacePublication(outputRoot, pages, files) {
   const lock = `${root}.lock`;
   try { mkdirSync(lock); }
   catch (error) {
-    if (error.code === 'EEXIST') throw new Error(`publication is already locked: ${lock}`);
+    if (error.code === 'EEXIST') throw new Error(`output is already locked: ${lock}`);
     throw error;
   }
   let staged;
   try {
-    if (existsSync(root) && (!lstatSync(root).isDirectory() || lstatSync(root).isSymbolicLink())) throw new Error(`invalid publication directory: ${root}`);
+    if (existsSync(root) && (!lstatSync(root).isDirectory() || lstatSync(root).isSymbolicLink())) throw new Error(`invalid output directory: ${root}`);
     staged = mkdtempSync(`${root}.build-`);
     for (const [path, content] of output) {
       const destination = join(staged, path);
       mkdirSync(dirname(destination), { recursive: true });
       writeFileSync(destination, content);
     }
-    installPublication(root, staged);
+    swapOutput(root, staged);
   } finally {
     try { if (staged) rmSync(staged, { recursive: true, force: true }); }
     finally { rmSync(lock, { recursive: true }); }
   }
 }
 
-function installPublication(root, staged) {
+function swapOutput(root, staged) {
   const backup = `${staged}.previous`;
   const previous = existsSync(root);
   if (previous) renameSync(root, backup);
@@ -70,7 +70,7 @@ function installPublication(root, staged) {
   catch (error) {
     if (previous) {
       try { renameSync(backup, root); }
-      catch (rollbackError) { throw new AggregateError([error, rollbackError], `publication restore failed; previous output remains at ${backup}`); }
+      catch (rollbackError) { throw new AggregateError([error, rollbackError], `output restore failed; previous output remains at ${backup}`); }
     }
     throw error;
   }

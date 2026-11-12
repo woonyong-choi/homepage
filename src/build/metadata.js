@@ -24,7 +24,7 @@ export function siteOrigin(value, preview) {
   return url.origin;
 }
 
-export function publicationMetadata(page, context) {
+export function pageMetadata(page, context) {
   const { config, origin = '', preview, identity, tags = {} } = context;
   const site = siteTitle(config);
   const pageTitle = page.title ?? site;

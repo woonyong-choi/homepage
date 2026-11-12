@@ -1,5 +1,5 @@
 // 홈페이지가 직접 소유하는 디자인 정본(src/design)의 생성 결과 위치와 내용 해시.
-// src/design/scripts/build.mjs가 tokens·styles·ui·assets에서 src/design/dist를 만든다(npm run build:design).
+// src/design/build/index.js가 tokens·styles·ui·assets에서 src/design/dist를 만든다.
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 

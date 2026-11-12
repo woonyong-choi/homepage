@@ -8,15 +8,15 @@ import { THEME_ROOT } from './theme.js';
 
 const SOURCE = fileURLToPath(new URL('../', import.meta.url));
 const ENTRIES = {
-  'publication.js': 'client/site.js',
-  'search-worker.mjs': 'client/search/worker.js',
+  'site.js': 'client/site.js',
+  'search-worker.js': 'client/search/worker.js',
   'comments.js': 'client/comments.js',
   'blog-list.js': 'client/blog-list.js',
   'admin.js': 'admin/loader.js',
   'admin-editor.js': 'admin/editor.js',
 };
 
-export function browserScripts() {
+export function bundleScripts() {
   const scripts = new Map();
   const entries = new Map(Object.entries(ENTRIES).map(([file, source]) => [file, join(SOURCE, source)]));
   for (const file of Object.keys(RUNTIMES)) entries.set(file, join(THEME_ROOT, 'ui/runtime', file));

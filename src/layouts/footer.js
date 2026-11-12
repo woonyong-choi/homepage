@@ -1,6 +1,6 @@
 import { SiteFooter } from '#design/ui/index.js';
 
-export function personalFooter(config, year = new Date().getFullYear()) {
+export function siteFooter(config, year = new Date().getFullYear()) {
   const links = [{ href: config.github, label: 'GitHub', icon: 'github' }];
   if (config.linkedin) links.push({ href: config.linkedin, label: 'LinkedIn', icon: 'linkedin' });
   links.push({ href: '/blog/feed.xml', label: 'RSS', icon: 'rss' });

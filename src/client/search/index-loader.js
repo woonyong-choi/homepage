@@ -1,5 +1,5 @@
 // 공개 색인은 내용 버전이 같을 때만 재사용하고 캐시를 쓸 수 없으면 직접 읽는다.
-const CACHE_NAME = 'publication-search-v1';
+const CACHE_NAME = 'search-index-v1';
 
 // cost: time O(n), heap O(n), stack O(1), io 최대 3회 네트워크와 캐시 읽기·쓰기
 // vars: n = 압축 해제된 색인의 바이트 수

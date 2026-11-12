@@ -1,4 +1,4 @@
-// 공통 카탈로그와 SVG 파일을 읽는 Node 진입점. 도형 해석과 렌더링은 ui/svg.mjs가 소유한다.
+// 공통 카탈로그와 SVG 파일을 읽는 Node 진입점. 도형 해석과 렌더링은 ui/svg.js가 소유한다.
 import { readFileSync } from 'node:fs';
 
 const ROOT = new URL('../dist/assets/icons/', import.meta.url);
