@@ -6,15 +6,12 @@
     "#design/*": "./src/design/dist/*"
   },
   "scripts": {
-    "prepare": "npm run build:design",
-    "build:design": "node src/design/scripts/build.mjs",
-    "build": "npm run build:design && node src/build-publication.mjs",
-    "build:site": "npm run build:design && node src/build-publication.mjs",
-    "dev": "npm run build:site && node src/serve.mjs --port 8796 --root dist/site",
-    "check:tokens": "npm run build:design && node scripts/audit-design.mjs",
-    "check:product": "npm run build:design && node --test src/*.test.mjs src/document/test/*.test.js src/design/test/*.test.js",
-    "content:sync-vault": "node src/approved-content.mjs sync-vault",
-    "content:check": "node src/approved-content.mjs check"
+    "prepare": "node src/design/build/index.js",
+    "build": "node src/design/build/index.js && node src/build/index.js",
+    "dev": "npm run build && node src/build/serve.js",
+    "test": "node src/design/build/index.js && node --test",
+    "content:sync": "node src/vault/approved.js sync-vault",
+    "content:check": "node src/vault/approved.js check"
   },
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",

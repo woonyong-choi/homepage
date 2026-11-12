@@ -28,10 +28,10 @@ async function importTheme() {
   // 구성 요소·아이콘·SVG는 디자인 패키지의 이름 있는 export로 읽는다. runtime 목록(manifest)은 이름 있는 export가
   // 없어 디자인 패키지의 `./*`(dist) 경로로 읽는다.
   const [ui, icons, svg, manifest] = await Promise.all([
-    import('#design/ui/index.mjs'),
-    import('#design/ui/build/icons.mjs'),
-    import('#design/ui/svg.mjs'),
-    import('#design/ui/manifest.mjs'),
+    import('#design/ui/index.js'),
+    import('../../design/build/icons.js'),
+    import('#design/ui/svg.js'),
+    import('#design/ui/manifest.js'),
   ]);
   return {
     name: 'default',

@@ -1,5 +1,5 @@
 import { cssTimeMs } from './time.js';
-import { ControlIcon } from '../icons.mjs';
+import { ControlIcon } from '../icons.js';
 // 원본의 거리 비례 스크롤과 swing 곡선을 사용한다.
 let scrollFrame;
 export function revealVideo(element, downward = false) {

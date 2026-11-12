@@ -1,0 +1,114 @@
+// 결과 줄, 쪽 이동, 태그 칩은 테마 구성 요소가 이스케이프해 만든 출력만 DOM으로 옮긴다. 메시지, 제안 라벨, 선택 링크, 다시 시도 단추는 텍스트 노드로 만든다. 입력과 본문을 직접 HTML로 해석하지 않는다.
+import { searchUrl } from '../../lib/search.js';
+import * as ui from '#design/ui/index.js';
+
+// 구성 요소가 만든 결과만 DOM으로 바꾼다. 글자는 구성 요소가 이스케이프하고 주소는 검사하므로 임의의 HTML이 들어오지 않는다.
+function nodeFrom(component) {
+  if (!ui.isTrusted(component)) throw new TypeError('theme component output required');
+  const template = document.createElement('template');
+  template.innerHTML = component.html;
+  return template.content.firstElementChild;
+}
+
+function element(tag, text, className) {
+  const node = document.createElement(tag);
+  if (text !== undefined) node.textContent = text;
+  if (className) node.className = className;
+  return node;
+}
+
+function link(text, href, className) {
+  const node = element('a', text, className);
+  node.href = href;
+  return node;
+}
+
+export function renderResults(root, result, state, tags) {
+  const summary = root.querySelector('[data-filter-summary]');
+  if (summary) summary.replaceChildren(...state.tags.map(tag => nodeFrom(ui.Tag({ href: searchUrl({ ...state, tags: state.tags.filter(value => value !== tag), page: 1 }), label: `${tags[tag]?.label ?? tag} ×` }))));
+  if (summary && (state.query || state.tags.length)) summary.append(link('조건 초기화', searchUrl()));
+  const output = root.querySelector('[data-full-results]');
+  output.classList.remove('app-search-panel');
+  const cards = result.entries.map(entry => resultCard(entry, tags, state, root.dataset.card ? JSON.parse(root.dataset.card) : undefined));
+  output.replaceChildren(nodeFrom(ui.CardGroup({ columns: Number(root.dataset.columns) || 3, cards })));
+  const choices = root.querySelector('[data-tag-filter]');
+  if (choices) {
+    const buttons = [...choices.querySelectorAll('[data-tag-toggle]')];
+    const focusedIndex = buttons.indexOf(document.activeElement);
+    const focusedTag = focusedIndex < 0 ? undefined : buttons[focusedIndex].dataset.tagToggle;
+    const resetFocused = choices.contains(document.activeElement) && document.activeElement.hasAttribute('data-tag-reset');
+    const available = new Set([...(result.tagIds ?? []), ...state.tags]);
+    const ids = [...new Set([...Object.keys(tags), ...state.tags])].filter(tag => available.has(tag));
+    const next = nodeFrom(ui.TagFilter({ tags: ids.map(id => ({ id, label: tags[id]?.label ?? id, selected: state.tags.includes(id) })), reset: state.tags.length ? { href: searchUrl(), label: '초기화' } : undefined }));
+    choices.replaceWith(next);
+    if (resetFocused) root.querySelector('[data-public-search] input')?.focus({ preventScroll: true });
+    if (focusedTag !== undefined) {
+      const buttons = [...next.querySelectorAll('[data-tag-toggle]')];
+      const target = buttons.find(button => button.dataset.tagToggle === focusedTag) ?? buttons[Math.min(focusedIndex, buttons.length - 1)] ?? root.querySelector('[data-public-search] input');
+      target?.focus({ preventScroll: true });
+    }
+  }
+  if (summary && state.query) summary.prepend(nodeFrom(ui.Tag({ href: searchUrl({ ...state, query: '', page: 1 }), label: `${state.query} ×` })));
+
+  if (!result.entries.length) {
+    output.append(state.query || state.tags.length
+      ? element('p', '조건에 맞는 글이 없습니다.', 'app-search-message')
+      : element('p', '아직 발행한 글이 없습니다.', 'app-empty'));
+  }
+  const multiple = result.totalPages > 1;
+  const pages = nodeFrom(ui.PageLinks({
+    label: '검색 페이지',
+    resultPages: true,
+    before: multiple && result.page > 1 ? { href: searchUrl({ ...state, page: result.page - 1 }), text: '이전' } : undefined,
+    after: multiple && result.page < result.totalPages ? { href: searchUrl({ ...state, page: result.page + 1 }), text: '다음' } : undefined,
+    numbers: multiple ? Array.from({ length: result.totalPages }, (_, index) => ({ page: index + 1, href: searchUrl({ ...state, page: index + 1 }), current: index + 1 === result.page })) : [],
+  }));
+  const previous = root.querySelector('[data-result-pages]');
+  if (previous) previous.replaceWith(pages); else output.after(pages);
+  root.setAttribute('aria-busy', 'false');
+}
+
+function resultLink(entry, query) {
+  return nodeFrom(ui.SearchResultLink({
+    href: entry.route,
+    title: ui.Highlight({ text: entry.title, query }),
+    example: entry.example,
+    description: ui.Highlight({ text: entry.excerpt ?? entry.description, query }),
+  }));
+}
+
+function resultCard(entry, tags, state, card = { title: true, description: true, media: 'image', tags: false, date: true, comments: true }) {
+  const cover = card.media === 'image' && entry.thumbnail ? ui.trusted(`<img src="${ui.safeUrl(entry.thumbnail.src)}" alt="${ui.escape(entry.thumbnail.alt)}" loading="lazy" decoding="async"${entry.thumbnail.position ? ` style="object-position:${entry.thumbnail.position.x}% ${entry.thumbnail.position.y}%"` : ''}>`) : undefined;
+  return ui.BlogCard({ href: entry.route, title: entry.title, showTitle: card.title, level: 2, cover, automaticCover: card.media === 'image', description: card.description ? entry.excerpt ?? entry.description : '', tagItems: (card.tags ? entry.tags : []).map(tag => ({ href: searchUrl({ ...state, tags: [...new Set([...state.tags, tag])], page: 1 }), label: tags[tag]?.label ?? tag })), author: card.author || undefined, publishedAt: card.date ? entry.date : undefined, dateLabel: entry.date ? new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(new Date(entry.date)) : undefined, commentsHref: card.comments && entry.comments ? `${entry.route}#comments` : undefined, commentCount: card.comments ? entry.commentCount : undefined });
+}
+
+export function renderSuggestions(output, result, state) {
+  output.replaceChildren();
+  const groups = [
+    ['연관 검색어', result.queries.map(query => [query, searchUrl({ ...state, query, page: 1 })])],
+    ['태그', result.tags.map(([id, tag]) => [tag.label, searchUrl({ ...state, tags: [...state.tags, id], page: 1 })])],
+  ];
+  let index = 0;
+  for (const [label, links] of groups) {
+    if (!links.length) continue;
+    const group = element('div'); group.setAttribute('role', 'group'); group.setAttribute('aria-label', label);
+    group.append(element('p', label, 'app-suggestion-label'));
+    for (const [title, href] of links) { const node = link(title, href, 'app-search-choice'); if (label === '연관 검색어') node.dataset.query = title; node.setAttribute('role', 'option'); node.id = `suggestion-${index++}`; node.tabIndex = -1; group.append(node); }
+    output.append(group);
+  }
+  const entries = element('div'); entries.setAttribute('role', 'group'); entries.setAttribute('aria-label', '글');
+  for (const entry of result.entries) { const node = resultLink(entry, state.query); node.setAttribute('role', 'option'); node.id = `suggestion-${index++}`; node.tabIndex = -1; entries.append(node); }
+  if (!result.count) entries.append(element('p', '일치하는 글이 없습니다. 다른 검색어를 입력해 보세요.', 'app-search-message'));
+  output.append(entries);
+  const all = link(`전체 검색 결과 ${result.count}개 보기`, searchUrl({ ...state, page: 1 }), 'app-search-choice');
+  all.setAttribute('role', 'option'); all.id = `suggestion-${index}`; all.tabIndex = -1; output.append(all);
+}
+
+export function showSearchError(output, retry) {
+  output.classList.add('app-search-panel');
+  const button = element('button', '다시 시도', 'app-inline-button'); button.type = 'button'; button.addEventListener('click', retry);
+  if (output.getAttribute('role') === 'listbox') { button.setAttribute('role', 'option'); button.id = `${output.id}-retry`; button.tabIndex = -1; }
+  const message = nodeFrom(ui.SearchMessage({ lines: ['검색 자료를 불러오지 못했습니다.', '연결을 확인해 주세요.'] }));
+  message.append(button);
+  output.replaceChildren(message);
+}
