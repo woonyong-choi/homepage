@@ -47,7 +47,8 @@ export async function buildSite({ origin, mode = 'preview', blogRoot = join(CONT
   const posts = collectPosts(markdownFiles(blogRoot).map(file => readFileSync(file, 'utf8')));
   const tags = postTags(posts, knownTags);
   const layout = loadBlogLayout(config);
-  const recommendations = keywordRanking(posts, knownTags).slice(0, 3);
+  const tagLabels = new Set(Object.values(tags).map(tag => tag.label.normalize('NFC').toLowerCase()));
+  const recommendations = keywordRanking(posts, knownTags).filter(item => !tagLabels.has(item.keyword.normalize('NFC').toLowerCase())).slice(0, 3);
   layout.search.box.suggestions = recommendations.map(item => item.keyword);
   const comments = readCommentCounts(posts, config);
   for (const post of posts) {
