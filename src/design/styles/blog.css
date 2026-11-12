@@ -54,6 +54,8 @@ a.app-blog-card-comments:hover { color: var(--color-ink); }
 .app-comments[data-expanded=false] :is(.app-comments-viewport, .app-comments-status) { display: none; }
 .app-comments-viewport > .app-caption { margin: var(--spacing-gap-sm) 0 0; }
 .app-comments[data-expanded=false] { text-align: center; }
+.app-comments > .app-button.is-link { gap: calc(var(--spacing-gap-xs) / 2); padding: var(--spacing-gap-xs) var(--spacing-gap-sm); font-size: var(--text-small-text); font-weight: var(--font-weight-normal); line-height: var(--leading-line-body); }
+.app-blog-feed-items > .app-blog-slice:last-child .app-blog-post { padding-bottom: 0; }
 .app-empty { padding-block: var(--spacing-gap-lg); color: var(--color-ui-muted); text-align: center; }
 .app-post-footer { margin: var(--component-post-footer-margin); }
 .app-post-footer .app-caption { text-align: center; }
