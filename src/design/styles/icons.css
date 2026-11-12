@@ -1,4 +1,3 @@
-/* 아이콘 도형은 assets/icons에서 읽고 배치는 이 공통 조각에서 정한다. */
 .app-article-icon { display: inline-block; flex: none; width: var(--spacing-article-icon); height: var(--spacing-article-icon); }
 .app-control-icon { width: var(--icon-size-small); height: var(--icon-size-small); }
 .app-content-icon { position: relative; display: inline-flex; flex: none; width: var(--icon-size-card); height: var(--icon-size-card); vertical-align: middle; }

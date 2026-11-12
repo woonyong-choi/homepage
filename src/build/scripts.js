@@ -1,4 +1,3 @@
-// 브라우저에서 실행하는 진입점을 각각 하나의 파일로 묶는다. 키는 사이트 루트의 출력 파일 이름이다.
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 

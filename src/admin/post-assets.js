@@ -1,9 +1,6 @@
-// 글이 쓰는 사이트 그림 이름. 사이트 빌드처럼 해석한 문서의 그림·링크 주소 중 assets 폴더를 가리키는 것만 센다.
-// 코드 블록·외부 주소·글자 속 경로는 세지 않는다. 브라우저 관리 화면과 Node 시험이 함께 쓴다.
 import { parseDocumentSync } from '../document/parser/index.js';
 import { readPost } from './post-file.js';
 
-// Vault 원본의 상대 주소(../assets/, assets/)와 사이트 주소(/assets/)를 같은 이름으로 본다(src/build/index.js의 assetLinks와 같은 규칙).
 const ASSET = /^(?:\.\.\/|\/)?assets\/([^?#]+)/;
 
 function assetName(value) {
@@ -24,7 +21,6 @@ function collect(tokens, names) {
   }
 }
 
-/** 글 원문(글 머리 포함)이 쓰는 그림 이름 목록. 본문의 그림·링크와 글 머리 썸네일을 센다. */
 export function postAssets(text) {
   const post = readPost(String(text));
   const names = new Set();

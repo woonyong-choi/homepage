@@ -1,16 +1,16 @@
+import { readFileSync } from 'node:fs';
+
 import { runtimeEntrypoints } from '#design/ui/manifest.js';
 import { getIconCatalog } from '../design/build/icons.js';
 const ORIGIN = 'https://site.invalid';
 const ICON_CATALOG = getIconCatalog();
 const ICON_NOTICES = [...new Set([...ICON_CATALOG.libraries, ...Object.values(ICON_CATALOG.brands)].map(item => item.notice).filter(Boolean))].map(file => `/theme/assets/icons/${file}`);
 const ASSET_ROOTS = ['/theme/', '/assets/', '/media/', '/katex/'];
-// Pretendard는 unicode-range 부분 집합 여러 개로 나뉘며 모두 같은 OFL 고지를 따른다.
 const PRETENDARD_SUBSETS = '/theme/assets/fonts/pretendard-variable/';
+const ASSET_SOURCES = JSON.parse(readFileSync(new URL('../../config/assets.json', import.meta.url), 'utf8'));
 const ASSET_NOTICES = new Map([
   ['/theme/assets/fonts/jetbrains-mono-regular.woff2', '/theme/assets/fonts/jetbrains-mono-license.txt'],
-  ['/media/woonyong-interview.mp4', '/media/woonyong-interview-NOTICE.txt'],
-  ['/media/woonyong-interview-poster.jpg', '/media/woonyong-interview-NOTICE.txt'],
-  ...['j2ysoft', 'jusin-background', 'neople-background', 'nexon', 'roborobo'].map(name => [`/assets/company-${name}.png`, '/assets/company-logos-NOTICE.txt']),
+  ...ASSET_SOURCES.filter(source => source.notice).map(source => [`/${source.file}`, `/${source.notice}`]),
 ]);
 
 export function clientEntrypoints(body) {
@@ -47,7 +47,6 @@ export function collectAssets(pages, searchEntries, readAsset) {
     if (files.has(path)) return;
     const content = readAsset(path);
     files.set(path, content);
-    // 화면에서 요청하지 않는 고지도 해당 자산의 배포 의존성이다.
     const notice = path.startsWith('/katex/fonts/') ? '/katex/LICENSE' : path.startsWith(PRETENDARD_SUBSETS) ? '/theme/assets/fonts/pretendard-license.txt' : ASSET_NOTICES.get(path);
     if (notice) include(notice);
     const references = path.endsWith('.css') ? styleReferences(content.toString()) : path.endsWith('.svg') ? markupReferences(content.toString()) : [];
@@ -57,9 +56,7 @@ export function collectAssets(pages, searchEntries, readAsset) {
     for (const reference of markupReferences(html)) include(reference, route);
   }
   for (const entry of searchEntries) include(entry.thumbnail?.src);
-  // 인라인 아이콘과 같은 원본에서 만든 사이트 아이콘은 파일 링크 없이도 정본 고지를 배포한다.
   for (const notice of ICON_NOTICES) include(notice);
-  // iframe에서 직접 읽는 테마는 부모 HTML에 stylesheet 링크가 없다.
   include('/theme/assets/giscus.css');
   return files;
 }

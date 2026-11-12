@@ -1,6 +1,3 @@
-// Markdown 구성 블록과 코드 펜스가 공유하는 옵션 문법. 해석기는 HTML과 디자인 모듈을 알지 못한다.
-// 폭·카드 모양처럼 디자인이 정하는 값 목록은 호출자가 해석 문맥의 vocabulary로 넘긴다.
-
 export const MAX_DEPTH = 3;
 
 const NAME = '[a-z][a-z0-9-]{0,23}';
@@ -14,8 +11,6 @@ const BARE = /^[^\s"'{}=\\]+/;
 const CONTROL = /[\u0000-\u001f\u007f]/u;
 const LIMITS = { attributes: 12, value: 300, label: 80 };
 
-// 한 줄을 여는 줄(`:::이름`), 닫는 줄(`:::`), 리프 줄(`::이름`)로 나눈다. 콜론은 셋(블록)과 둘(리프)만 쓴다.
-// 블록 줄처럼 보이지만 형식이 틀리면(`::::note` 같은 네 콜론 포함) 'invalid'다.
 export function classifyLine(text) {
   if (!text.startsWith('::')) return { kind: 'text' };
   let match = OPEN.exec(text);
@@ -52,7 +47,6 @@ export function parseLabel(label, fail) {
   return value;
 }
 
-// `key=값 key="공백 있는 값" flag` 형식. 값은 따옴표 안에서만 `\"`와 `\\`를 쓴다. 중복 키와 제어 문자는 거부한다.
 function parseAttributes(source = '', fail) {
   const attrs = Object.create(null);
   let at = skipBlanks(source, 0);
@@ -62,7 +56,6 @@ function parseAttributes(source = '', fail) {
   return attrs;
 }
 
-// 속성 하나를 읽어 attrs에 넣고 다음 읽을 위치를 돌려준다.
 function readAttribute(source, from, attrs, fail) {
   const key = KEY.exec(source.slice(from))?.[0];
   if (!key) fail(`속성 이름이 잘못되었습니다: ${JSON.stringify(source.slice(from, from + 12))}`);
@@ -119,7 +112,6 @@ function readBare(source, from, key, fail) {
   return { value, end: from + value.length };
 }
 
-// 인라인 `{...}`의 끝을 따옴표를 고려해 찾는다. 닫는 위치(`}`의 다음 인덱스)를 돌려준다.
 export function attributeEnd(text, start) {
   let quoted = false;
   for (let at = start + 1; at < text.length && text[at] !== '\n'; at += 1) {
@@ -130,7 +122,6 @@ export function attributeEnd(text, start) {
   return -1;
 }
 
-// 속성 명세({ 이름: { type, required, values, min, max } })로 값을 검사해 새 객체를 만든다. 명세에 없는 속성은 거부한다.
 function validateAttributes(raw, spec, fail, checks) {
   const result = Object.create(null);
   for (const key of Object.keys(raw)) {
@@ -174,20 +165,14 @@ function checkValue(key, rule, value, fail, checks) {
   return value;
 }
 
-/**
- * 열거형 규칙의 값 목록. values가 문자열이면 호출자가 준 vocabulary의 그 이름 목록이다.
- * 호출자가 목록을 주지 않았으면 undefined이며 해석 단계에서 확인하지 않는다(출력 단계의 디자인 구성 요소가 다시 거부한다).
- */
 function enumValues(rule, checks = {}) {
   if (typeof rule.values !== 'string') return rule.values;
   const values = checks.vocabulary?.[rule.values];
   return Array.isArray(values) ? values : undefined;
 }
 
-// 폭 값은 호출자가 vocabulary.widths로 준 디자인 정본 목록을 쓴다.
 export const WIDTH_OPTION = Object.freeze({ type: 'enum', values: 'widths' });
 
-// `key=값`과 값 없는 참거짓 이름(`rounded`)만 받는다. 명세에 없는 이름은 허용하지 않는 속성이다.
 export function parseOptions(source, spec, fail, checks = {}) {
   return validateAttributes(parseAttributes(source, fail), spec, fail, checks);
 }

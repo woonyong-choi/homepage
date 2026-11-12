@@ -8,7 +8,7 @@
 
 This repository builds a personal home page and a Blog from Markdown and JSON settings into static HTML and deploys it to GitHub Pages. It is the source of [woonyong.com](https://woonyong.com). Without a server, it provides search, tag filters, RSS, comments (giscus), and a post editor for the administrator. The internal document renderer (`src/document`) parses Markdown, and the internal design system (`src/design`) owns screen values and shared markup. Guides are in the [documentation index](docs/README.md) (Korean).
 
-![Only approved input that passes link and asset checks becomes the static site](docs/assets/publication-flow.svg)
+![Only post and settings input that passes link and asset checks becomes the static site](docs/assets/publication-flow.svg)
 
 ## Requirements
 
@@ -59,36 +59,40 @@ Write the body in Markdown.
 
 `publish: false` or `status: draft` also leaves a post out. A duplicate `id` or `slug` or an invalid date stops the build. Put images and videos in `content/assets/` and `content/media/`. Supported syntax is in [Markdown 글 작성](docs/design/markdown.md) (Korean).
 
-In this repository, `content/blog/` holds approved copies imported from a private Vault. Do not edit them directly; import them with `npm run content:sync -- <vault-root>`. The flow is in [발행](docs/design/publication.md) (Korean).
+`content/blog/` and the home page text are the source of the site and are edited directly in this repository. The flow is in [발행](docs/design/publication.md) (Korean).
 
 ## Configuration
 
 | File | Content |
 |---|---|
-| `config/site.json` | Site name, author, logo, description, GitHub and LinkedIn, projects, repository, comments (giscus) |
-| `config/blog.json` | Blog title, list columns and rows, card fields, posts per feed page |
-| `config/search.json` | Search title and search box labels |
+| `config/site.json` | Site settings. Only the keys below are allowed; an unknown key stops the build with the list of allowed keys |
 | `config/tags.json` | Tag display names and search aliases |
-| `config/admin.json` | Post repository, deploy workflow, and sign-in server for the admin screen |
-| `config/approved-content.json` | File list and SHA-256 of approved copies. Updated by sync |
-| `config/assets.json` | Source and license records of content assets |
-| `config/image-sizes.json` | Width and height of external images |
-| `config/publication-manifest.json` | Document sources recorded by Vault sync |
-| `config/cs.json`, `config/tech.json` | Inputs kept for Vault sync compatibility. The site code does not read them |
+| `config/assets.json` | Source and license records of content assets. An entry's `notice` file is shipped with it as the `-NOTICE.txt` notice |
+
+| `site.json` key | Content |
+|---|---|
+| `url` | Production address (HTTPS origin). Used by `npm run build -- --production`; the `SITE_ORIGIN` environment variable overrides it |
+| `name`, `title`, `description` | Author name, site name, site description |
+| `copyright` | Name in the footer `© year <copyright>`. Falls back to `name` |
+| `logo`, `avatar` | Header logo `{src, alt}` and author photo |
+| `github`, `linkedin`, `repository` | Profile links and the site repository |
+| `comments` | Comments (giscus) repository and category |
+| `blog` | Blog title, posts per feed page, auto-loading, list columns and rows, card fields |
+| `search` | Search title and search box labels |
+| `admin` | Post repository, deploy workflow, and sign-in server for the admin screen. Without it, `/admin/` is not built |
 
 The home page is assembled from `content/home.md`, `content/pages/tech.md`, and `content/interviews/index.md`. The format is in [홈 원고](docs/design/home-content.md) (Korean).
 
 ## Folder structure
 
 ```text
-config/          Settings and approval lists
+config/          Site settings, tags, asset sources
 content/         Home page text, Blog posts, images and videos
 src/build/       Site build entry (index.js) and preview server (serve.js)
 src/content/     Reading and validating posts, home page, settings
 src/layouts/     Page assembly
 src/client/      Browser scripts (search, comments, feed)
 src/admin/       Administrator post editor
-src/vault/       Sync of approved copies from the Vault
 src/document/    Markdown document renderer
 src/design/      Tokens, CSS, shared components, icons
 test/            node:test tests
@@ -103,14 +107,12 @@ docs/            Design notes and guides
 | `npm run dev` | Build and preview at http://127.0.0.1:8796 |
 | `npm run build` | Generate the design and build the site into `dist/site/` |
 | `npm test` | Generate the design and run `test/*.test.js` |
-| `npm run content:sync -- <vault-root>` | Import approved files listed by the Vault publication manifest |
-| `npm run content:check` | Check that approved copies match their hashes |
 
-`npm run build -- --production` is the production build. With an HTTPS `SITE_ORIGIN`, it writes canonical URLs, a sitemap, and sharing metadata. A preview built without `--production` blocks search engine indexing.
+`npm run build -- --production` is the production build. It uses `url` in `config/site.json` (or `SITE_ORIGIN`) to write canonical URLs, a sitemap, and sharing metadata. A preview built without `--production` blocks search engine indexing.
 
 ## Deployment
 
-`.github/workflows/validate.yml` runs `npm ci` and `npm test` on every push and pull request. `.github/workflows/deploy.yml` runs manually on `main`: after `npm test`, it builds with `npm run build -- --production` and `SITE_ORIGIN`, then uploads `dist/site` to GitHub Pages. If the repository secret `VAULT_TOKEN` exists, it checks out the Vault's `publish` and `assets` folders and builds with `--blog-root .vault/publish`.
+`.github/workflows/validate.yml` runs `npm ci` and `npm test` on every push and pull request. `.github/workflows/deploy.yml` runs manually on `main`: after `npm ci` and `npm test`, it builds with `npm run build -- --production`, then uploads `dist/site` to GitHub Pages.
 
 ## License
 

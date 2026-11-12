@@ -1,4 +1,3 @@
-// Worker와 격리된 미리보기가 같은 색인 캐시와 검색 모델을 사용한다.
 import { prepareIndex, searchDocuments, suggestions } from '../../lib/search.js';
 import { loadSearchIndex } from './index-loader.js';
 

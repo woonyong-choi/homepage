@@ -1,4 +1,3 @@
-// 하나의 디자인 정본을 해시가 붙은 독립 배포본으로 만든다.
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';

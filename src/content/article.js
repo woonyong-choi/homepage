@@ -1,4 +1,3 @@
-// 소개와 같은 첫 문단만 옮기며 링크·각주·강조를 그대로 보존한다.
 import { realpathSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { DEFAULT_THEME_FILES, parseDocument, renderDocument } from '../document/index.js';
@@ -7,7 +6,6 @@ import { documentAssets as assets } from './images.js';
 import { THEME_ROOT } from '../build/theme.js';
 import { splitLead } from './summary.js';
 
-// 문서 렌더러(src/document)의 기본 테마가 홈페이지와 같은 디자인 생성 결과(src/design/dist)를 읽는지 확인한다.
 if (realpathSync(fileURLToPath(DEFAULT_THEME_FILES.root)) !== realpathSync(THEME_ROOT)) throw new Error('문서 렌더러와 홈페이지가 서로 다른 디자인 생성 결과를 읽습니다.');
 function rejectErrors(output, page) {
   const errors = output.diagnostics.filter(item => item.severity === 'error');
@@ -23,7 +21,6 @@ export async function parseArticle(page, options = {}) {
 export async function renderArticle(page, options = {}) {
   const document = options.document ?? await parseArticle(page, options);
   const context = { assets: options.assets ?? assets };
-  // 요약과 같은 첫 문단은 글 머리로 옮기고, 요약이 제목이거나 본문에 이미 있으면 머리를 비운다.
   const split = splitLead([...document.tokens], page.description, page.title);
   const tokens = split.tokens;
   let leadHtml = split.kind === 'summary' ? escape(page.description) : '';

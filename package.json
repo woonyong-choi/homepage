@@ -9,9 +9,7 @@
     "prepare": "node src/design/build/index.js",
     "build": "node src/design/build/index.js && node src/build/index.js",
     "dev": "npm run build && node src/build/serve.js",
-    "test": "node src/design/build/index.js && node --test",
-    "content:sync": "node src/vault/approved.js sync-vault",
-    "content:check": "node src/vault/approved.js check"
+    "test": "node src/design/build/index.js && node --test"
   },
   "devDependencies": {
     "@resvg/resvg-js": "2.6.2",

@@ -1,6 +1,5 @@
 import { cssTimeMs } from './time.js';
 import { ControlIcon } from '../icons.js';
-// 원본의 거리 비례 스크롤과 swing 곡선을 사용한다.
 let scrollFrame;
 export function revealVideo(element, downward = false) {
   const rect = element.getBoundingClientRect();
@@ -29,8 +28,6 @@ export function revealVideo(element, downward = false) {
 }
 for (const event of ['wheel', 'touchstart', 'pointerdown']) window.addEventListener(event, () => cancelAnimationFrame(scrollFrame), { passive: true });
 
-// 설정 문구(data-label)가 있는 히어로 버튼은 문구와 aria-label이 고정이고 아이콘만 재생/일시정지 두 상태다.
-// 끝난 영상은 재생 상태로 돌아가며 다시 누르면 처음부터 재생한다.
 export function updateRemote(button, video, selected = true) {
   const playing = selected && !video.paused;
   const ended = selected && video.ended;

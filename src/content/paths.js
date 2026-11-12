@@ -1,4 +1,3 @@
-// 모든 발행 입력은 정해진 루트 안의 경로만 사용한다.
 import { lstatSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
@@ -12,7 +11,6 @@ export function safeFile(root, path) {
   if (!lstatSync(cursor).isDirectory() || lstatSync(cursor).isSymbolicLink()) throw new Error('invalid content root');
   for (const part of path.split('/')) {
     cursor = join(cursor, part);
-    // 끊어진 심볼릭 링크도 거부한다.
     try {
       if (lstatSync(cursor).isSymbolicLink()) throw new Error('symbolic links are not content sources');
     } catch (error) {

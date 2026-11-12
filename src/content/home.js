@@ -1,4 +1,3 @@
-// 홈 원고의 본문과 메타데이터를 읽고 섹션별 계약을 검증한다.
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
@@ -43,7 +42,6 @@ export function href(value, path) {
   return secure(link, path);
 }
 
-// 로컬 파일은 콘텐츠 자산 또는 검증된 테마 자산만 허용하고 빌드 전에 존재를 확인한다.
 function media(value, path, types, context) {
   const source = text(value, path);
   if (!source.startsWith('/')) return secure(source, path);
@@ -70,7 +68,6 @@ function sectionIcon(value, path, context) {
   return picture(image, path, context);
 }
 
-// 요약 안의 [라벨](주소) 링크는 링크와 같은 주소 규칙을 따른다.
 function summary(value, path) {
   const content = text(value, path);
   for (const part of summaryParts(content)) if (part.url !== undefined) href(part.url, `${path} 링크`);
@@ -83,13 +80,10 @@ function link(value, path, hrefRequired = true) {
   return { label: text(item.label, `${path}.label`), href: hrefRequired || item.href !== undefined ? href(item.href, `${path}.href`) : undefined };
 }
 
-// 아이콘, 제목, 설명을 가진 섹션 머리. 기본 문구가 없는 설명은 생략할 수 있다.
 function intro(item, path, context, title, description) {
   return { icon: sectionIcon(item.icon, `${path}.icon`, context), title: text(item.title, `${path}.title`, false) ?? title, description: text(item.description, `${path}.description`, false) ?? description };
 }
 
-// 제목 아래 링크 행. icon은 내장 이름(github, rss, linkedin) 또는 이미지 파일이고 없으면 label이 글자로 보인다.
-// 주소를 아직 모르는 내장 아이콘은 href 없이 두면 아이콘만 보이고 링크가 되지 않는다.
 function links(value, path, context) {
   return list(value ?? [], path).map((entry, index) => {
     const where = `${path}[${index}]`;
@@ -160,7 +154,6 @@ const SECTIONS = {
       if (seen.has(id)) fail(`${where}.id`, `중복된 인터뷰 id입니다: ${id}`);
       seen.add(id);
       if (interview.example !== undefined && typeof interview.example !== 'boolean') fail(`${where}.example`, 'true 또는 false여야 합니다');
-      // 카드 아래는 이미지, 제목, 부제목 세 자리다. 회사, 플랫폼 같은 의미는 설정이 정한다.
       const profile = interview.profile === undefined ? undefined : record(interview.profile, `${where}.profile`, ['image', 'title', 'subtitle']);
       if (interview.url !== undefined && !profile) fail(`${where}.url`, '카드 링크를 설명할 profile.title이 필요합니다');
       return {
@@ -204,7 +197,6 @@ const SECTIONS = {
   },
 };
 
-// 섹션 id에서 파생되는 DOM id까지 포함해 한 페이지 안의 중복을 막는다.
 const DERIVED_IDS = {
   hero: id => [id, `${id}-video`, `${id}-player`],
   technologies: id => [id, `${id}-title`],
@@ -235,9 +227,6 @@ export function parseHomeSections(data, { technologies = new Set(), exists = () 
   });
 }
 
-// cost: time O(b+n), heap O(b+n), stack O(d), io O(n)
-// vars: b = 홈 원고 전체 바이트 수, n = 섹션과 카드 수, d = YAML 최대 중첩 깊이
-// basis: estimate
 export function loadHomeContent(technologies, root = ROOT, { preview = false, readContent = readContentFile, exists } = {}) {
   const options = { technologies, exists: exists ?? (path => existsSync(path.startsWith('/theme/') ? join(THEME, path.slice('/theme/'.length)) : join(root, path))) };
   const home = readContent(join(root, HOME_CONTENT));

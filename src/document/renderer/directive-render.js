@@ -1,7 +1,5 @@
-// 디렉티브 블록과 인라인 표기의 출력. 해석기가 남긴 이름·라벨·속성에서 구성 요소 호출 하나로 바꾼다.
 import { attemptComponent } from './call.js';
 
-/** 제목을 생략한 :::note와 ui:callout의 제목. */
 export const CALLOUT_TITLE = '참고';
 
 const CALLOUTS = Object.freeze({
@@ -9,7 +7,6 @@ const CALLOUTS = Object.freeze({
   warning: { tone: 'warning', title: '주의' },
 });
 
-// 이름별 출력. open/close는 블록 앞뒤, render는 본문 없는 블록 하나다. 구성 요소 이름과 입력은 theme/components.js가 정한다.
 const BLOCKS = Object.freeze({
   __proto__: null,
   note: {
@@ -71,7 +68,6 @@ function calloutProps(meta) {
   return { title: meta.label ?? callout.title, tone: callout.tone };
 }
 
-// 호출마다 실패를 따로 센다. 한 블록 안의 호출이 여러 번이어도 앞선 실패를 뒤의 성공이 지우지 않는다.
 function callerOf(render, line) {
   const state = { failed: false };
   const call = (name, method, props) => {
@@ -82,12 +78,6 @@ function callerOf(render, line) {
   return { call, state };
 }
 
-/**
- * directive_open·directive_close·directive 토큰의 HTML. 여는 호출이 실패한 블록은 닫을 때 아무것도 내지 않는다.
- * @param {object} render 렌더링 상태
- * @param {object} token 디렉티브 토큰
- * @param {number | undefined} line 진단에 붙일 문서 줄
- */
 export function renderDirective(render, token, line) {
   const { meta } = token;
   const { call, state } = callerOf(render, line);

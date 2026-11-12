@@ -1,4 +1,3 @@
-// 문서 작성 도구가 넘긴 텍스트와 검증된 본문 슬롯을 공통 구조로 조립한다.
 import { escape, slot, out } from './html.js';
 import { Kbd } from './components.js';
 

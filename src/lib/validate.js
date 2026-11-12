@@ -1,4 +1,3 @@
-// 작성 설정과 홈 원고가 같은 형식 검사를 사용한다. 오류에는 입력 출처와 설정 경로를 붙인다.
 export function settingsValidator(prefix = '') {
   const fail = (path, message) => { throw new Error(`${prefix}${path}: ${message}`); };
 
@@ -16,7 +15,6 @@ export function settingsValidator(prefix = '') {
     return trimmed;
   }
 
-  // fallback이 있으면 생략한 값에 사용하고, 없으면 값을 반드시 요구한다.
   function flag(value, path, fallback) {
     if (value === undefined && fallback !== undefined) return fallback;
     if (typeof value !== 'boolean') fail(path, 'true 또는 false여야 합니다');

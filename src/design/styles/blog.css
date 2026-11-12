@@ -1,13 +1,10 @@
-/* 블로그: 글 머리, 목록 카드, 쪽 이동, 댓글, 글 꼬리말. */
 .app-blog-post { max-width: var(--container-body-width); }
 .app-blog-slice + .app-blog-slice { border-top: var(--spacing-post-divider-width) solid var(--color-post-divider-color); }
 .app-post-date { display: block; text-align: start; }
 .app-post-title { text-align: start; color: var(--color-ink); }
 .app-post-title a { color: inherit; }
 .app-blog-post { padding: var(--component-post-padding); margin: 0 auto; color: var(--color-ink); line-height: var(--leading-feature-body-line); }
-/* 글 머리: 위 48, 제목 → 24 → 리드 → 24 → 글쓴이 줄 → 16 → 태그 → 48 → 본문. 리드·글쓴이 줄·태그는 본문 흐름 안에 있다. */
 .app-post-header { margin: var(--spacing-post-header-top) 0 var(--spacing-6); }
-/* 글쓴이 줄: 사진, 이름, 날짜를 한 줄에 둔다. 날짜는 같은 app-post-date 글자 크기를 쓴다. */
 .app-post-byline { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-2); margin-block: 0 var(--spacing-4); }
 .app-prose .app-post-byline .app-post-avatar, .app-post-avatar { flex: none; margin: 0; width: var(--spacing-post-avatar); height: var(--spacing-post-avatar); border-radius: var(--radius-pill); object-fit: cover; background: var(--color-ui-card); }
 .app-post-byline-name { font-size: var(--text-post-date-size); font-weight: var(--font-weight-medium); color: var(--color-ink); }
@@ -15,7 +12,6 @@
 .app-post-date { font-size: var(--text-post-date-size); line-height: var(--leading-feature-body-line); color: var(--color-post-date-color); }
 .app-post-title { margin: 0; font-size: var(--text-post-title-size); font-weight: var(--font-weight-bold); line-height: var(--leading-post-title-line); word-break: keep-all; overflow-wrap: anywhere; }
 .app-blog-card { position: relative; display: flex; flex-direction: column; min-width: 0; overflow: hidden; border: var(--border-width-thin) solid var(--color-help-border); border-radius: var(--radius-blog-card-radius); background: var(--color-ui-card); isolation: isolate; }
-/* 링크는 카드 전체를 덮는 빈 대상이다. 태그와 댓글 링크만 그 위로 올라와 따로 누를 수 있다. */
 .app-blog-card-link { position: absolute; inset: 0; }
 .app-blog-card:has(.app-blog-card-link:focus-visible) { outline: var(--outline-width-focus) solid var(--color-ui-focus); outline-offset: var(--spacing-focus-offset); }
 .app-blog-card-link:focus-visible { outline: none; }
@@ -31,17 +27,14 @@
 .app-blog-card :is(.app-tag, a.app-blog-card-comments) { position: relative; z-index: var(--z-index-raised); }
 .app-blog-post .app-tags { margin-block: 0 var(--spacing-post-tags-after); }
 .app-blog-post .app-tags a { text-decoration: none; }
-/* 카드 높이를 맞추려고 제목은 한 줄, 요약은 두 줄까지만 보인다. */
 .app-blog-card-title { display: block; margin: 0 0 var(--spacing-1); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: var(--text-body-text); font-weight: var(--font-weight-bold); line-height: var(--leading-card-title); color: var(--color-ink); }
 .app-blog-card-body > p.app-card-summary { -webkit-line-clamp: var(--component-blog-card-summary-lines); margin: 0; font-size: var(--text-small-text); line-height: var(--leading-normal); word-break: keep-all; overflow-wrap: anywhere; color: var(--color-body); }
-/* 카드 메타는 글 머리의 글쓴이 줄과 같다: 사진 28, 이름 500, 가운뎃점, 날짜는 Things 날짜색. */
 .app-blog-card-meta { order: 3; display: flex; align-items: center; gap: var(--spacing-1); margin-top: auto; padding: var(--spacing-3) var(--spacing-blog-card-inset) var(--spacing-4); font-size: var(--text-tiny-text); color: var(--color-body); }
 .app-blog-card-date { font-weight: var(--font-weight-normal); color: var(--color-post-date-color); }
 .app-blog-card-meta > [aria-hidden=true] { color: var(--color-prose-marker); }
 .app-blog-card-date { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .app-blog-card-comments { flex: none; }
 .app-blog-card-comments { display: inline-flex; align-items: center; justify-content: center; gap: calc(var(--spacing-gap-xs) / 2); min-width: var(--spacing-icon); min-height: var(--spacing-icon); margin-inline-start: auto; color: inherit; }
-/* 카드마다 반복되는 보조 동작이라 주황 대신 메타 글자색을 쓴다. */
 a.app-blog-card-comments:hover { color: var(--color-ink); }
 .app-blog-card-author { display: inline-flex; flex: none; align-items: center; min-width: 0; gap: var(--spacing-2); font-weight: var(--font-weight-medium); color: var(--color-ink); }
 .app-blog-card-author > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -58,7 +51,6 @@ a.app-blog-card-comments:hover { color: var(--color-ink); }
 .app-comments-status { font-size: var(--text-small-text); color: var(--color-ui-muted); }
 .app-comments-viewport { position: relative; }
 .app-comments-frame { display: block; width: 100%; min-height: var(--spacing-comments-preview-height); border: 0; }
-/* 피드는 댓글 창을 접어 두고 공통 링크 단추(.app-button.is-link)만 "더 보기"처럼 가운데에 보인다. 누르면 그 자리에서 펼친다. */
 .app-comments[data-expanded=false] :is(.app-comments-viewport, .app-comments-status) { display: none; }
 .app-comments-viewport > .app-caption { margin: var(--spacing-gap-sm) 0 0; }
 .app-comments[data-expanded=false] { text-align: center; }

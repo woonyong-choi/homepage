@@ -1,4 +1,3 @@
-// 글 본문 목차를 공통 구성 요소에 연결한다.
 import * as ui from '#design/ui/index.js';
 
 export function documentOutline(headings) {

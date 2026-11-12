@@ -1,4 +1,3 @@
-// 공통 정본을 검증한 다음 하나의 배포 세트를 생성한다.
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmdirSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,7 +16,6 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outputs = new Map();
 try {
   for (const [name, content] of Object.entries(buildDesign(root))) outputs.set(`dist/${name}`, content);
-  // dist는 이 생성기의 전용 출력이다. 이름이 바뀐 모듈이 다음 배포에 남지 않게 한다.
   const outputRoot = join(root, 'dist');
   if (existsSync(outputRoot)) for (const entry of readdirSync(outputRoot, { recursive: true, withFileTypes: true })) {
     if (!entry.isFile()) continue;

@@ -1,48 +1,57 @@
 {
+  "url": "https://woonyong.com",
   "name": "최우녕",
   "title": "Who Knows",
+  "description": "문서와 개발 흐름에서 반복되는 문제를 코드로 해결합니다.",
+  "copyright": "woonyong",
   "logo": {
     "src": "/assets/who-knows.svg",
     "alt": "Who Knows"
   },
   "avatar": "/assets/profile.png",
-  "description": "문서와 개발 흐름에서 반복되는 문제를 코드로 해결합니다.",
   "github": "https://github.com/woonyong-choi",
   "linkedin": "https://www.linkedin.com/in/woonyong-choi",
-  "projects": [
-    {
-      "title": "Manta",
-      "description": "Obsidian의 코드, 일정, 노트 관계와 다이어그램 작업을 위한 도구입니다.",
-      "href": "https://github.com/woonyong-choi/manta-code-blocks",
-      "icon": "project",
-      "links": [
-        {
-          "title": "Calendar",
-          "href": "https://github.com/woonyong-choi/manta-calendar"
-        },
-        {
-          "title": "Graph",
-          "href": "https://github.com/woonyong-choi/manta-graph"
-        },
-        {
-          "title": "Diagrams",
-          "href": "https://github.com/woonyong-choi/manta-diagrams"
-        }
-      ]
-    },
-    {
-      "title": "Saturn",
-      "description": "로컬 폴더와 CLI 세션, 대화와 검증 기록을 함께 다루는 작업 공간입니다.",
-      "href": "https://github.com/woonyong-choi/saturn",
-      "icon": "terminal",
-      "links": []
-    }
-  ],
+  "repository": "woonyong-choi/homepage",
   "comments": {
     "repoId": "R_kgDOU8zFrQ",
     "category": "Comments",
     "categoryId": "DIC_kwDOU8zFrc4DHTnu"
   },
-  "repository": "woonyong-choi/homepage",
-  "guides": []
+  "blog": {
+    "title": "Blog",
+    "feedSize": 4,
+    "autoLoad": true,
+    "archiveLabel": "전체 글 보기",
+    "collection": {
+      "columns": 3,
+      "rows": 5
+    },
+    "card": {
+      "title": true,
+      "description": true,
+      "media": "image",
+      "tags": true,
+      "date": true,
+      "comments": true,
+      "author": true
+    }
+  },
+  "search": {
+    "title": "Search",
+    "labels": {
+      "region": "통합 검색",
+      "input": "글 검색",
+      "placeholder": "어떤 내용을 찾으세요?",
+      "clear": "검색어 지우기",
+      "suggestions": "추천 검색어:"
+    }
+  },
+  "admin": {
+    "repository": "woonyong-choi/vault",
+    "branch": "main",
+    "posts": "publish",
+    "assets": "assets",
+    "deploy": "woonyong-choi/homepage/deploy.yml",
+    "authUrl": ""
+  }
 }

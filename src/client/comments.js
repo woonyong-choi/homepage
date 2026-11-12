@@ -1,4 +1,3 @@
-// 각 글의 iframe과 상태를 따로 관리해 연속 읽기에서도 토론과 높이가 섞이지 않게 한다.
 const initialized = new WeakSet();
 const documents = new WeakMap();
 const host = 'https://giscus.app';
@@ -9,7 +8,7 @@ function readSession(view) {
   const url = new URL(view.location.href);
   const callback = url.searchParams.get('giscus');
   if (callback) {
-    try { view.localStorage.setItem(sessionKey, JSON.stringify(callback)); } catch { /* 저장소가 막혀도 현재 화면의 로그인은 유지한다. */ }
+    try { view.localStorage.setItem(sessionKey, JSON.stringify(callback)); } catch { }
     url.searchParams.delete('giscus');
     view.history.replaceState(view.history.state, '', url);
     return callback;
@@ -20,7 +19,6 @@ function readSession(view) {
   } catch { return ''; }
 }
 
-// 문서마다 message 리스너와 화면 관찰자를 하나만 두고 event.source로 해당 댓글 iframe을 찾는다.
 function documentState(doc) {
   if (documents.has(doc)) return documents.get(doc);
   const view = doc.defaultView;
@@ -35,7 +33,6 @@ function documentState(doc) {
   return state;
 }
 
-// 무한 피드에서 문서 밖으로 빠진 댓글 영역은 등록에서 지운다.
 function* liveThreads(state) {
   for (const thread of state.threads) {
     if (thread.section.isConnected) yield thread;
@@ -43,7 +40,6 @@ function* liveThreads(state) {
   }
 }
 
-// 글 상세의 댓글은 본문과 그림을 다 불러온 뒤 한가할 때 만들어 스크롤하지 않아도 준비해 둔다.
 function afterPageLoad(view, callback) {
   const idle = () => (view.requestIdleCallback ? view.requestIdleCallback(callback, { timeout: 2000 }) : view.setTimeout(callback, 0));
   if (view.document.readyState === 'complete') idle();
@@ -127,7 +123,7 @@ export function initComments(root) {
     function receive(data) {
       const expired = typeof data.error === 'string' && /Bad credentials|Invalid state value|State has expired/.test(data.error);
       if (data.signOut || expired && state.session) {
-        try { view.localStorage.removeItem(sessionKey); } catch { /* 저장소 접근이 막힌 환경에서도 로그아웃한다. */ }
+        try { view.localStorage.removeItem(sessionKey); } catch { }
         state.session = '';
         for (const thread of liveThreads(state)) thread.reload();
         return;
@@ -162,7 +158,6 @@ export function initComments(root) {
       if (expand) showFull();
       else load();
     } else if (expand) {
-      // 피드의 댓글은 '댓글 보기'를 누를 때만 불러온다.
     } else afterPageLoad(view, () => load());
   }
 }

@@ -1,10 +1,7 @@
-/* 코드와 그림의 블록 안 조작부. 크기·아이콘·상태·노출 규칙은 여기서만 정한다. */
 .app-sr { position: absolute; width: var(--border-width-thin); height: var(--border-width-thin); padding: 0; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .app-tool-surface { position: relative; border-radius: var(--radius-card-radius); }
 .app-tool-header { position: relative; z-index: var(--z-index-raised); display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: var(--spacing-3); min-width: 0; padding: var(--spacing-1); }
-/* 이름표 없는 머리(코드)는 자리를 차지하지 않고 오른쪽 위에 겹쳐 놓는다. 숨은 조작부가 빈 띠를 만들지 않게 한다. */
 .app-tool-header:not(:has(> .app-tool-label)):not(.is-row) { position: absolute; inset-block-start: 0; inset-inline-end: 0; }
-/* 단추 줄 머리(도표)는 내용 위에 자기 줄을 차지해 어떤 폭에서도 그림을 덮지 않는다. 자리가 늘 있으므로 단추도 늘 보인다. */
 .app-tool-header.is-row { justify-content: flex-end; padding: 0; }
 .app-tool-header.is-row .app-toolbar { opacity: 1; }
 .app-tool-label { min-width: 0; padding-inline-start: var(--spacing-1-5); overflow: hidden; color: var(--color-ui-muted); font-size: var(--text-post-date-size); text-overflow: ellipsis; white-space: nowrap; }

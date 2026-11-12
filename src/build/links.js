@@ -1,4 +1,3 @@
-// 이전 정적 주소도 쿼리와 앵커를 보존해 새 정본 주소로 연결한다.
 import { JSDOM } from 'jsdom';
 
 const LINK_ORIGIN = 'https://site.invalid';

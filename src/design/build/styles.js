@@ -1,4 +1,3 @@
-// 정적 마크업과 런타임에서 쓰는 선택자·변수만 내보낸다. 원본 테마는 바꾸지 않는다.
 import { pruneTokens } from './prune-tokens.js';
 import { PurgeCSS } from 'purgecss';
 import { transform } from 'esbuild';

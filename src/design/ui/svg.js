@@ -1,4 +1,3 @@
-// 정적 아이콘의 도형과 내부 mask 참조만 읽는다. 원본 좌표는 유지하고 삽입할 때 ID를 분리한다.
 import { escape } from './html.js';
 
 const SHAPES = Object.freeze({
@@ -32,14 +31,12 @@ const MAX_LENGTH = 262144;
 const MAX_ELEMENTS = 4096;
 let nextIconId = 0;
 
-/** @returns {{viewBox: number[], body: string}} @throws {Error} 정적 도형·내부 mask 참조 밖의 SVG일 때 */
 export function parseIconSvg(text) {
   const parsed = parseSvg(text);
   return { viewBox: parsed.viewBox, body: svgBody(parsed) };
 }
 
 
-/** 검증한 원본 좌표로 장식용 SVG를 만든다. 크기는 사용하는 구성 요소가 정한다. */
 export function renderSvgIcon(text, { className = '', prefix, monochrome = false } = {}) {
   if (typeof className !== 'string' || !/^[\w -]*$/.test(className)) throw new TypeError('invalid icon class');
   const parsed = parseSvg(text);
@@ -195,7 +192,6 @@ function attributes(element, { prefix, monochrome = false }) {
   delete attrs['data-name'];
   if (element.variant) delete attrs.display;
   if (monochrome && !element.isMask) delete attrs.color;
-  // mask의 상속 색도 고정해야 바깥 visible paint를 단색으로 바꿀 때 의미가 바뀌지 않는다.
   if (monochrome && element.tag === 'mask') Object.assign(attrs, element.paint);
   return Object.entries(attrs).map(([name, original]) => {
     let value = original;

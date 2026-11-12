@@ -1,5 +1,3 @@
-// 디렉티브 블록과 인라인 표기의 문법 정의. 각 항목이 허용 속성, 놓을 수 있는 자리, 본문 규칙과 의미 준비를 정한다.
-// 출력은 renderer/directive-render.js가 같은 이름으로 정의한다. 이 파일은 HTML과 테마를 알지 못한다.
 import { WIDTH_OPTION } from './directive-syntax.js';
 
 const PLACES = ['root'];
@@ -119,7 +117,6 @@ export const BLOCKS = Object.freeze({
   },
 });
 
-// 한 줄 안에서 쓰는 `:이름[글]{속성}`.
 export const INLINES = Object.freeze({
   __proto__: null,
   kbd: { attrs: {} },

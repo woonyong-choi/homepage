@@ -1,4 +1,3 @@
-// 콘텐츠 SVG와 공통 목록의 아이콘을 정본 렌더러에 연결한다.
 import { readFileSync } from 'node:fs';
 
 import { ContentIcon, ContentIconImage, trusted } from '#design/ui/index.js';
@@ -13,7 +12,6 @@ export function renderContentSvg(source, className = '', readAsset) {
 
 export function contentIcon(spec, size = 'card', variant = 'default') {
   const { name, kind } = typeof spec === 'string' ? { name: spec } : spec;
-  // 로고는 원본 색과 도형을 그대로 보이도록 파일 그림으로 싣는다.
   const brand = brandIcon(name);
   if (brand) return String(ContentIconImage({ src: brand.src, size }));
   let badge;

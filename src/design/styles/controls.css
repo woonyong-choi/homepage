@@ -1,5 +1,3 @@
-/* 조작 요소: 재생·원격 버튼, 주요 동작 링크, 갤러리 패널 묶음, 툴팁, 인라인 버튼. 화면은 맥락 선택자로 크기만 바꾼다. */
-/* 갤러리 패널 묶음: 상자 없이 보이는 장 하나와 그 아래 선택 줄(tabs.css). */
 .app-tabs { margin-block: 0 var(--spacing-prose-paragraph-gap); }
 .app-tabpanel { text-align: left; }
 .app-tabs .app-tabpanel > :first-child { margin-top: 0; }

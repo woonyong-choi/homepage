@@ -11,7 +11,7 @@
 
 ## 파일과 front matter
 
-맨 위에 `---`로 감싼 YAML을 두고 아래에 본문을 쓴다. 폴더는 작성 편의용이며 공개 주소는 `/blog/<slug>/`다. 이 저장소의 `content/blog/`는 Vault 승인 사본이므로 Vault 원문을 고친 뒤 `npm run content:sync -- <vault-root>`로 가져온다.
+맨 위에 `---`로 감싼 YAML을 두고 아래에 본문을 쓴다. 폴더는 작성 편의용이며 공개 주소는 `/blog/<slug>/`다. 글은 `content/blog/`에서 직접 고친다.
 
 | 필드 | 필수 | 내용 |
 |---|---|---|

@@ -1,10 +1,8 @@
-// 글 원문과 작성 화면 입력 사이의 변환. 글 머리(YAML)의 다른 항목과 따옴표 모양은 그대로 둔다.
 import { isScalar, parseDocument } from 'yaml';
 
 const FRONT = /^---\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)/;
 export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export const IMAGE_TYPES = Object.freeze({ 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp' });
-// 글 상태 하나가 Vault 글 머리의 세 항목을 함께 정한다. 임시는 작성 중, 비공개는 다 썼지만 사이트에 싣지 않는 글이다.
 export const STATES = Object.freeze({
   public: { visibility: 'public', status: 'published', publish: true },
   private: { visibility: 'private', status: 'published', publish: false },
@@ -32,7 +30,6 @@ export function readPost(text) {
   };
 }
 
-// 기존 값은 따옴표 모양을 유지한다. 새 제목·설명·발행일은 Vault 글처럼 큰따옴표로 쓴다(날짜가 날짜 형식으로 바뀌지 않게).
 const QUOTED = new Set(['title', 'description', 'publishedAt']);
 function setValue(doc, key, value) {
   const node = doc.get(key, true);
@@ -42,7 +39,6 @@ function setValue(doc, key, value) {
   doc.set(key, created);
 }
 
-/** 입력값을 원문에 반영한다. 새 글이면 Vault 글 머리 기본 항목을 만든다. */
 export function writePost(original, values) {
   const { yaml } = split(original ?? '');
   const doc = parseDocument(yaml || '{}');
@@ -50,7 +46,6 @@ export function writePost(original, values) {
     doc.contents = doc.createNode({});
     for (const [key, value] of Object.entries({ id: values.slug, slug: values.slug, type: 'blog' })) setValue(doc, key, value);
   }
-  // 임시 주소(draft-)로 저장한 글은 출간할 때 정한 주소로 id·slug를 바꾼다.
   if (original && values.slug) { setValue(doc, 'id', values.slug); setValue(doc, 'slug', values.slug); }
   setValue(doc, 'title', values.title);
   setValue(doc, 'description', values.description);
@@ -64,14 +59,12 @@ export function writePost(original, values) {
   return `---\n${head}\n---\n\n${values.body.replace(/^\s*\n/, '')}${values.body.endsWith('\n') ? '' : '\n'}`;
 }
 
-/** Vault 발행 글 이름: 발행일(YY-MM-DD)과 주소 이름. */
 export function postFileName(slug, date) {
   if (!SLUG.test(slug)) throw new Error('주소 이름은 영어 소문자·숫자와 - 만 쓸 수 있습니다.');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('발행일은 YYYY-MM-DD 형식이어야 합니다.');
   return `${date.slice(2)}-${slug}.md`;
 }
 
-/** 올린 그림의 저장 이름. 날짜를 앞에 붙이고 영어 소문자·숫자·-만 남긴다. */
 export function imageFileName(name, type, date) {
   const extension = IMAGE_TYPES[type];
   if (!extension) throw new Error('PNG, JPG, GIF, WebP 그림만 올릴 수 있습니다.');
@@ -90,6 +83,5 @@ export function toBase64(text) {
 
 export function fromBase64(value) {
   const binary = atob(String(value).replace(/\s/g, ''));
-  // BOM은 뗀다. 남기면 글 머리(---)를 찾지 못한다. 열어서 저장하면 BOM 없는 파일이 된다.
   return new TextDecoder().decode(Uint8Array.from(binary, char => char.charCodeAt(0)));
 }

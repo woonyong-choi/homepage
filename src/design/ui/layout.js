@@ -1,4 +1,3 @@
-// 페이지의 데이터·주소·문구를 받아 공통 배치만 조립한다.
 import { escape, id, safeUrl, slot, out } from './html.js';
 import { SocialIcon } from './icons.js';
 
@@ -38,13 +37,6 @@ const INPUT_TYPES = ['text', 'email', 'url', 'tel', 'date', 'password'];
 const INPUT_SIZES = ['small', 'medium', 'large', 'control'];
 const INPUT_SURFACES = ['track', 'field', 'card', 'bare'];
 const INPUT_ROLES = ['searchbox', 'combobox'];
-/**
- * 모든 텍스트 입력의 단일 구성 요소. 보이지 않는 이름표와 `app-input` 입력을 조립한다.
- * `size`는 small(분할 탭 높이)·medium·large(검색)·control(구독 폼), `surface`는 track·field·card·bare(면 없이 글자만, 태그 입력 칸)다.
- * `icon`이 있으면 앞 아이콘 칸, `action`이 있으면 입력 뒤 동작(지우기 단추 등)을 같은 `app-input-field` 안에 둔다.
- * `role`은 searchbox 또는 combobox이며 combobox는 `controls`로 추천 목록 ID를 받는다.
- * `labelVisible: true`이면 이름표를 입력 위에 보이게 둔다(편집 화면의 입력 칸).
- */
 export function TextInput({ id: name, name: field = name, label, type = 'text', value = '', placeholder = '', autocomplete, describedBy, required = false, disabled = false, size = 'small', surface = 'track', icon, action, role, controls, labelVisible = false }) {
   if (!INPUT_TYPES.includes(type)) throw new Error(`Unknown input type: ${type}`);
   if (!INPUT_SIZES.includes(size)) throw new Error(`Unknown input size: ${size}`);

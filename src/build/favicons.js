@@ -1,4 +1,3 @@
-// 같은 문서 도형에서 브라우저·공유용 크기만 생성한다. 실행 화면에는 렌더러를 배포하지 않는다.
 import { Resvg } from '@resvg/resvg-js';
 
 import { sha256 } from '../lib/sha256.js';

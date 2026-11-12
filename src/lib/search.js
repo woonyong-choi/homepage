@@ -1,5 +1,4 @@
 const PAGE_SIZE = 12;
-// 추천 목록에 싣는 글 수. 목록은 정해진 높이까지만 보이고 나머지는 목록 안에서 스크롤한다.
 const SUGGESTION_LIMIT = 20;
 
 export function normalizeQuery(value) {
@@ -55,7 +54,6 @@ export function suggestions(entries, tags, state) {
   const result = searchDocuments(entries, { ...state, page: 1 });
   const available = searchDocuments(entries, { ...state, query: '', page: 1 }).all;
   const matchingTags = Object.entries(tags).filter(([id, tag]) => !state.tags.includes(id) && [tag.label, ...(tag.aliases ?? [])].some(value => normalizeQuery(value).includes(query)) && available.some(entry => entry.tags.includes(id))).slice(0, 5);
-  // 연관 검색어는 대소문자만 다른 말과 태그로 이미 보이는 말을 한 번만 보인다.
   const seen = new Set([query, ...matchingTags.map(([, tag]) => normalizeQuery(tag.label))]);
   const queries = [];
   for (const value of result.all.flatMap(entry => [entry.title, ...entry.keywords])) {

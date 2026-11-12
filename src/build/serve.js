@@ -1,4 +1,3 @@
-// 로컬 정적 미리보기. 영상 탐색을 위한 바이트 범위 요청을 지원한다.
 import { createServer } from 'node:http';
 import { createReadStream, readFileSync, statSync } from 'node:fs';
 import { resolve, extname, sep } from 'node:path';
@@ -37,7 +36,6 @@ const server = createServer((request, response) => {
     stream.on('error', () => response.destroy()); stream.pipe(response);
   } catch { notFound(request, response); }
 });
-// 없는 경로는 빌드한 404 문서를 404 상태로 돌려준다. 발행 결과가 없으면 글자 응답으로 대신한다.
 function notFound(request, response) {
   let body;
   try { body = readFileSync(resolve(root, '404.html')); }

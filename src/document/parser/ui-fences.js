@@ -6,22 +6,15 @@ import { createEnv } from './units.js';
 
 const CODE_ATTRIBUTES = Object.freeze({ width: WIDTH_OPTION, filename: { type: 'text' } });
 
-// 항목 목록 안의 Markdown 필드. 필드 순서는 구성 요소가 본문을 그리는 순서이며 구성 요소 번호와 각주 ID가 이 순서를 따른다.
 const itemBodies = (data, field = 'body') =>
   Array.isArray(data.items)
     ? data.items.map((_, index) => ({ path: `items.${index}.${field}` }))
     : [];
 
-// 필드 형식. text는 글(문자열·숫자·참거짓·null), items는 객체 목록, texts는 글 목록이다.
-// 명세에 없는 필드는 검사하지 않는다(구성 요소 출력이 읽지 않는다).
 const TEXT = 'text';
 const items = (fields = {}, required = false) => ({ type: 'items', fields, required });
 const ITEM_BODY = { body: TEXT };
 
-/**
- * ui: 구성 요소 명세. fields는 해석 단계에서 검사하는 필드 형식, bodies는 안쪽 Markdown 필드 목록이다.
- * inline 필드는 문단 없이 한 줄 안에서 해석한다.
- */
 const UI_KINDS = Object.freeze({
   __proto__: null,
   group: { fields: { title: TEXT, body: TEXT }, bodies: () => [{ path: 'body' }] },
@@ -75,7 +68,6 @@ const UI_KINDS = Object.freeze({
 const isText = (value) => value === null || typeof value !== 'object';
 const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 
-// 명세대로 데이터를 검사한다. 틀린 필드는 그 필드의 경로와 함께 fail(message, path)로 알린다.
 function checkFields(data, fields, fail, prefix = '') {
   for (const [key, rule] of Object.entries(fields)) {
     const path = `${prefix}${key}`;
@@ -108,7 +100,6 @@ export function installFences(md) {
   md.core.ruler.push('fence-semantics', fenceSemantics);
 }
 
-/** `a.items.0.body` 같은 경로로 구성 요소 데이터의 값을 읽는다. */
 function valueAt(data, path) {
   return path.split('.').reduce((value, key) => value?.[key], data);
 }
@@ -159,7 +150,6 @@ function classifyComponent(state, token, kind, fail) {
   return { role: 'ui', kind: name, data, units };
 }
 
-// YAML을 읽어 데이터와 필드 경로의 줄(펜스 안 1부터)을 돌려준다. 실패는 fail(message, 펜스 안 줄)로 알린다.
 function readComponentData(token, kind, fail) {
   const lineCounter = new LineCounter();
   const document = parseYamlDocument(token.content, { lineCounter, maxAliasCount: 0 });
@@ -182,8 +172,6 @@ function readComponentData(token, kind, fail) {
   return { data, lineOf };
 }
 
-// 안쪽 Markdown 필드를 같은 해석기로 해석해 { path, tokens, env } 단위로 보존한다.
-// 값이 없으면 빈 글이다. null은 nullAsEmpty 필드(fineprint)만 빈 글로 보고 나머지는 원본처럼 글자 그대로 둔다.
 function parseField(state, token, data, { path, inline = false, nullAsEmpty = false }) {
   const raw = valueAt(data, path);
   const text = raw === undefined || (nullAsEmpty && raw === null) ? '' : String(raw);

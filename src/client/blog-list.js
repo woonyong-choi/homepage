@@ -1,6 +1,5 @@
 import { RUNTIMES } from '#design/ui/manifest.js';
 
-// 이어 붙인 글이 쓰는 공통 런타임과 댓글 런타임. 페이지 조립의 clientEntrypoints와 같은 정본 목록을 읽는다.
 const CONTENT_SCRIPTS = new Set([...Object.keys(RUNTIMES), 'comments.js'].map(file => `/${file}`));
 
 export function initBlogList(root, { fetchPage, Observer, loadModule = url => import(url) } = {}) {
@@ -98,7 +97,6 @@ async function prepareContent(page, doc, url, loadModule) {
     const source = new URL(script.getAttribute('src'), url);
     if (source.origin === doc.location.origin && CONTENT_SCRIPTS.has(source.pathname)) await loadModule(source.href);
   }
-  // 수식 스타일 주소는 페이지 조립이 문서 렌더러(src/document)의 MATH_STYLESHEET로 표시한 link에서 읽는다.
   const math = page.querySelector('link[data-math-stylesheet]');
   if (math && !doc.querySelector('link[data-math-stylesheet]')) doc.head.append(math.cloneNode(true));
 }

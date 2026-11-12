@@ -1,11 +1,8 @@
-// 글 요약 규칙. 요약은 본문의 첫 문단 글자이고, 본문 맨 앞 문단이 요약과 같으면 글 머리로 옮긴다.
-// 사이트 빌드와 관리자 작성 화면이 같은 해석 토큰으로 같은 규칙을 쓴다. 브라우저에서도 돌도록 Node 모듈을 쓰지 않는다.
 export const SUMMARY_LIMIT = 150;
 const FORMATTING = new Set(['em_open', 'em_close', 'strong_open', 'strong_close', 's_open', 's_close', 'link_open', 'link_close', 'mark_open', 'mark_close', 'footnote_ref']);
 
 export const normalize = text => text.normalize('NFC').replace(/\s+/gu, ' ').trim();
 
-// 강조·링크만 있는 문단의 보이는 글자. 그림·코드 블록처럼 글자로 줄일 수 없는 내용이 있으면 null이다.
 export function visibleText(children) {
   let value = '';
   for (const token of children) {
@@ -16,7 +13,6 @@ export function visibleText(children) {
   return value;
 }
 
-// 본문의 글자 문단(인용·목록 안 포함)을 차례대로 돌려준다.
 function* paragraphTexts(tokens) {
   for (let index = 0; index + 2 < tokens.length; index++) {
     if (tokens[index].type !== 'paragraph_open' || tokens[index + 1].type !== 'inline') continue;
@@ -25,17 +21,12 @@ function* paragraphTexts(tokens) {
   }
 }
 
-/** 본문의 첫 글자 문단을 요약 길이로 줄인다. 글자 문단이 없으면 제목을 쓴다. */
 export function summaryOf(tokens, title) {
   const [first] = paragraphTexts(tokens);
   if (!first) return normalize(title ?? '');
   return first.length > SUMMARY_LIMIT ? `${first.slice(0, SUMMARY_LIMIT - 1).trimEnd()}…` : first;
 }
 
-/**
- * 글 머리 결정. 본문이 요약과 같은 문단으로 시작하면 그 문단을 머리로 옮기고(lead), 요약이 제목이거나 본문 다른 곳에 이미 있으면
- * 머리를 비운다(empty). 그 밖에는 요약 글자를 머리에 둔다(summary).
- */
 export function splitLead(tokens, description, title) {
   const summary = normalize(description);
   if (tokens[0]?.type === 'paragraph_open' && tokens[1]?.type === 'inline' && tokens[2]?.type === 'paragraph_close') {

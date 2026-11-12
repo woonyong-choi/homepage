@@ -1,8 +1,6 @@
-// 결과 줄, 쪽 이동, 태그 칩은 테마 구성 요소가 이스케이프해 만든 출력만 DOM으로 옮긴다. 메시지, 제안 라벨, 선택 링크, 다시 시도 단추는 텍스트 노드로 만든다. 입력과 본문을 직접 HTML로 해석하지 않는다.
 import { searchUrl } from '../../lib/search.js';
 import * as ui from '#design/ui/index.js';
 
-// 구성 요소가 만든 결과만 DOM으로 바꾼다. 글자는 구성 요소가 이스케이프하고 주소는 검사하므로 임의의 HTML이 들어오지 않는다.
 function nodeFrom(component) {
   if (!ui.isTrusted(component)) throw new TypeError('theme component output required');
   const template = document.createElement('template');
@@ -93,7 +91,6 @@ export function renderSuggestions(output, result, state) {
     if (!links.length) continue;
     const group = element('div'); group.setAttribute('role', 'group'); group.setAttribute('aria-label', label);
     group.append(element('p', label, 'app-suggestion-label'));
-    // 태그는 사이트의 다른 태그와 같은 알약으로 보인다.
     const isTags = label === '태그';
     const list = isTags ? element('div', '', 'app-suggestion-tags') : group;
     for (const [title, href] of links) { const node = link(title, href, isTags ? 'app-tag' : 'app-search-choice'); if (!isTags) node.dataset.query = title; node.setAttribute('role', 'option'); node.id = `suggestion-${index++}`; node.tabIndex = -1; list.append(node); }

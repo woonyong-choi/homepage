@@ -3,7 +3,6 @@ import { bindToolbar } from './toolbar.js';
 
 const initialized = new WeakSet();
 function initContent(root) {
-  // 정적 문서의 독립적인 상호작용을 연결한다. 갤러리의 장 선택은 공통 탭 처리(bindTabs)를 쓴다.
   for (const gallery of root.querySelectorAll('[data-tabs]')) {
     if (initialized.has(gallery)) continue;
     initialized.add(gallery);
@@ -17,7 +16,6 @@ function initContent(root) {
     initialized.add(block);
     bindToolbar(block, { source: () => block.querySelector('code').textContent });
   }
-  // 본문 그림: 누르면 화면 크기로 확대한 창이 열리고, 창 어디든 다시 누르거나 Esc를 누르면 닫힌다.
   for (const image of root.querySelectorAll('.app-prose .app-figure > img, .app-prose p > img')) {
     if (initialized.has(image) || image.closest('a, button')) continue;
     initialized.add(image);
@@ -51,7 +49,6 @@ function initContent(root) {
     tooltips.add({ bubble, position });
   }
 }
-// 확대 창은 문서에 하나만 두고 그림마다 원본 주소와 대체 글만 바꾼다.
 let viewer;
 function openImage(image) {
   if (!viewer) {
@@ -67,7 +64,6 @@ function openImage(image) {
   viewer.setAttribute('aria-label', image.alt || '확대한 그림');
   viewer.showModal();
 }
-// 창 크기·스크롤 리스너는 툴팁마다 붙이지 않고 하나만 두며, 문서에서 빠진 툴팁은 함께 정리한다.
 const tooltips = new Set();
 function openTooltips() {
   for (const tooltip of tooltips) if (!tooltip.bubble.isConnected) tooltips.delete(tooltip);
