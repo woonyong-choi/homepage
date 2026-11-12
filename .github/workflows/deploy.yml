@@ -17,8 +17,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - run: npm run check:tokens
-      - run: npm run check:product
+      - run: npm test
       # 글 원본은 비공개 Vault 저장소에 있다. 읽기 토큰(VAULT_TOKEN)이 있으면 publish·assets만 받아 공개 글을 싣고,
       # 없으면 이 저장소의 승인 사본(content/blog)으로 빌드한다.
       - id: vault
@@ -37,11 +36,11 @@ jobs:
         run: |
           mkdir -p content/assets
           cp -Rn .vault/assets/. content/assets/
-          npm run build:site -- --production --blog-root .vault/publish
+          npm run build -- --production --blog-root .vault/publish
         env:
           SITE_ORIGIN: https://woonyong.com
       - if: steps.vault.outputs.enabled != 'true'
-        run: npm run build:site -- --production
+        run: npm run build -- --production
         env:
           SITE_ORIGIN: https://woonyong.com
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

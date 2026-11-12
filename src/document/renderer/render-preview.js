@@ -20,7 +20,7 @@ const plainHighlighter = Object.freeze({
 });
 
 /**
- * 해석한 문서를 사이트와 같은 규칙으로 동기 출력한다. 테마 모듈은 호스트가 이미 불러온 디자인 패키지를 넘긴다.
+ * 해석한 문서를 사이트와 같은 규칙으로 동기 출력한다. 테마 모듈은 호스트가 이미 불러온 디자인 모듈을 넘긴다.
  * @param {object} document parseDocumentSync의 결과
  * @param {{ ui: object, icons?: object, svg?: object, assets?: object, codeAliases?: object }} context
  * @returns {{ html: string, diagnostics: object[] }}

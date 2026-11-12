@@ -1,5 +1,5 @@
 import { cssTimeMs } from './time.js';
-import { ToolIcon } from '../toolbar.mjs';
+import { ToolIcon } from '../toolbar.js';
 
 /** 원문과 다운로드 작업만 소비자가 제공한다. 복사·결과 알림·재시도는 모든 블록이 공유한다. */
 export function bindToolbar(root, { source, download } = {}) {

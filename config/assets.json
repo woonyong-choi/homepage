@@ -3,7 +3,7 @@
     "file": "assets/who-knows.svg",
     "origin": "project-original",
     "license": "MIT",
-    "note": "Inter Display Black 글자 윤곽을 도형으로 변환한 브랜드. 글꼴(OFL-1.1)은 design-tokens assets/fonts에서 관리한다."
+    "note": "Inter Display Black 글자 윤곽을 도형으로 변환한 브랜드. 글꼴 파일은 사이트에 싣지 않는다."
   },
   {
     "file": "assets/site-icon.svg",

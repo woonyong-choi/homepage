@@ -1,86 +1,117 @@
 <h1 align="center">homepage</h1>
 
 <p align="center">
-  A Markdown-based personal blog and website<br>
-  <a href="https://github.com/woonyong-choi/homepage/actions/workflows/validate.yml"><img src="https://github.com/woonyong-choi/homepage/actions/workflows/validate.yml/badge.svg?branch=main" alt="Build and product check status"></a><br>
+  A static blog and personal home page written in Markdown<br>
+  <a href="https://github.com/woonyong-choi/homepage/actions/workflows/validate.yml"><img src="https://github.com/woonyong-choi/homepage/actions/workflows/validate.yml/badge.svg?branch=main" alt="Validate status"></a><br>
   <a href="README.md">한국어</a> | English
 </p>
 
-This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content, uses the shared design package, and parses Markdown with its internal document renderer in `src/document`.
+This repository builds a personal home page and a Blog from Markdown and JSON settings into static HTML and deploys it to GitHub Pages. It is the source of [woonyong.com](https://woonyong.com). Without a server, it provides search, tag filters, RSS, comments (giscus), and a post editor for the administrator. The internal document renderer (`src/document`) parses Markdown, and the internal design system (`src/design`) owns screen values and shared markup. Guides are in the [documentation index](docs/README.md) (Korean).
 
-> [!NOTE]
-> In development. There are no releases; build from source.
+![Only approved input that passes link and asset checks becomes the static site](docs/assets/publication-flow.svg)
+
+## Requirements
+
+- Node.js 22 and npm
+- Git
+- Optional: an authenticated GitHub CLI (`gh`). With it, the build reads comment counts for the post list; without it, the list shows comment links only.
 
 ## Quick start
-
-Use Node.js 22.x, version 22.13 or later, npm, and Git. Run these commands from the repository.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open the home page in the [local preview](http://localhost:8796/). Browse all posts and filter by query and tags at `/search/`. Read recent posts in full at `/blog/`. Restart the command after you change a file. The build output is in `dist/site/`. The default build reads approved copies and blocks search engine indexing. The list stays empty until an approved real post is published.
+`npm ci` generates the design output (`src/design/dist/`). `npm run dev` builds the site into `dist/site/` and serves it at http://127.0.0.1:8796. Run `npm run dev` again after changing files. To change the host or port, run `node src/build/serve.js --host <host> --port <port>`. Main paths: home `/`, all posts and search `/search/`, post feed `/blog/`, post `/blog/<slug>/`, RSS `/blog/feed.xml`, admin `/admin/`.
 
-The approved copies in this repository and the public Git dependencies are enough to run the site. Importing new content requires a publication manifest from the private Vault. If GitHub CLI is unavailable, unauthenticated, or a lookup fails, the site shows comment links instead of comment counts.
+## Writing a post
 
-## Why
+A post is one `.md` file under `content/blog/`. Folder and file names do not affect the URL. Put YAML front matter at the top.
 
-The site publishes selected files from private notes after approval. The build stops when files do not match the hashes in the publication manifest. Post IDs and URLs are separate from file locations, so moving a source file preserves its public URL. Technical posts, walks, reading notes, and retrospectives share one Blog with free-form tags.
+```markdown
+---
+id: first-post
+slug: first-post
+title: "First post"
+description: "Summary shown in lists and search results"
+tags: [notes, javascript]
+publishedAt: "2026-01-15"
+visibility: public
+comments: true
+---
 
-For a blog with public content only, a static site tool without a separate approval manifest can be sufficient.
-
-## How it works
-
-1. Read approved Blog Markdown, author settings, and assets, then check them against the publication manifest.
-2. Parse the content with the internal document renderer (`src/document`). Diagrams are added as images.
-3. Assemble pages and check internal links, anchors, and assets.
-4. Replace the publication output in `dist/site/` after the checks pass.
-
-![Only approved input that passes link and asset checks becomes the static site](docs/assets/publication-flow.svg)
-
-[개인 사이트 발행](docs/design/publication.md) describes synchronization, recovery, preview, and deployment. Public posts come only from `content/blog/`. Approved `content/docs/` input stops the public build. Private Vault wiki preview and synchronization contracts remain separate. Do not edit approved copies of content and settings directly. Update the source and its approval, then import it with these commands.
-
-```sh
-npm run content:sync-vault -- <vault-root>
-npm run content:check
+Write the body in Markdown.
 ```
 
-`<vault-root>` is the Vault root with an approved `tooling/dist/publication.json`. External project documents are maintained in their source repositories.
+| Field | Required | Content |
+|---|---|---|
+| `id` | Yes | Fixed ID. Lowercase letters and digits joined by hyphens. Used to link comments |
+| `slug` | Yes | URL `/blog/<slug>/`. Same format as `id`; `all`, `page`, and `feed` are reserved |
+| `title`, `description` | Yes | Title and summary |
+| `publishedAt` | Yes | Publication date `YYYY-MM-DD`. Posts dated after today (Korea time) are left out |
+| `visibility` | Yes | `public`, `draft`, or `private`. Only `public` is published |
+| `updatedAt` | No | Update date `YYYY-MM-DD`. Cannot precede the publication date |
+| `tags`, `keywords` | No | String arrays. Tags are free text; `config/tags.json` only sets display names and aliases |
+| `thumbnail` | No | `{ src, alt, position? }`. `src` is an image under `/assets/` or `/media/`, or an HTTPS URL |
+| `comments` | No | Show comments. Default `false` |
+| `example` | No | `true` leaves the post out |
 
-## Status
+`publish: false` or `status: draft` also leaves a post out. A duplicate `id` or `slug` or an invalid date stops the build. Put images and videos in `content/assets/` and `content/media/`. Supported syntax is in [Markdown 글 작성](docs/design/markdown.md) (Korean).
 
-| Area | Scope |
+In this repository, `content/blog/` holds approved copies imported from a private Vault. Do not edit them directly; import them with `npm run content:sync -- <vault-root>`. The flow is in [발행](docs/design/publication.md) (Korean).
+
+## Configuration
+
+| File | Content |
 |---|---|
-| Implemented | Personal introduction, Search list, search and tags, recent Blog feed, RSS, comments, Markdown publication, admin-only writing, publishing and editing on the site (`/admin/`) |
-| Limitations | Published pages use the light theme, code execution is unavailable, and the subscription endpoint is not configured |
-| Next | [Full audit](https://github.com/woonyong-choi/homepage/issues/215), [integration checks](https://github.com/woonyong-choi/homepage/issues/28), [site mark](https://github.com/woonyong-choi/homepage/issues/303) |
+| `config/site.json` | Site name, author, logo, description, GitHub and LinkedIn, projects, repository, comments (giscus) |
+| `config/blog.json` | Blog title, list columns and rows, card fields, posts per feed page |
+| `config/search.json` | Search title and search box labels |
+| `config/tags.json` | Tag display names and search aliases |
+| `config/admin.json` | Post repository, deploy workflow, and sign-in server for the admin screen |
+| `config/approved-content.json` | File list and SHA-256 of approved copies. Updated by sync |
+| `config/assets.json` | Source and license records of content assets |
+| `config/image-sizes.json` | Width and height of external images |
+| `config/publication-manifest.json` | Document sources recorded by Vault sync |
+| `config/cs.json`, `config/tech.json` | Inputs kept for Vault sync compatibility. The site code does not read them |
 
-Each issue records the scope of automated checks, visual checks, and production verification. This implementation serves a personal site and does not guarantee backward compatibility for content formats or commands.
+The home page is assembled from `content/home.md`, `content/pages/tech.md`, and `content/interviews/index.md`. The format is in [홈 원고](docs/design/home-content.md) (Korean).
 
-## Documentation
+## Folder structure
 
-The design documents are written in Korean.
-
-- [개인 랜딩 페이지](docs/design/personal-landing.md)
-  - [기록 탐색과 화면 구성](docs/design/knowledge-navigation.md)
-  - [홈 원고 가이드](docs/design/home-content.md)
-  - [영역 설정](docs/design/layout-settings.md)
-- [Markdown 글 작성](docs/design/markdown.md)
-  - [글 관리](docs/design/admin.md)
-- [개인 사이트 발행](docs/design/publication.md)
-  - [스타일 수정 지도](docs/design/styles.md)
-
-[All documents](docs/README.md)
-
-## Development
-
-```sh
-npm run build:site
-npm run check:product
-npm run check:tokens
+```text
+config/          Settings and approval lists
+content/         Home page text, Blog posts, images and videos
+src/build/       Site build entry (index.js) and preview server (serve.js)
+src/content/     Reading and validating posts, home page, settings
+src/layouts/     Page assembly
+src/client/      Browser scripts (search, comments, feed)
+src/admin/       Administrator post editor
+src/vault/       Sync of approved copies from the Vault
+src/document/    Markdown document renderer
+src/design/      Tokens, CSS, shared components, icons
+test/            node:test tests
+workers/         OAuth sign-in relay for the admin screen (Cloudflare Worker)
+docs/            Design notes and guides
 ```
 
-CI runs installation, token checks, product checks, and the build on Node.js 22. The design package uses a pinned Git commit. The document renderer lives in this repository under `src/document`. To change shared components, update their source repository and follow [스타일 수정 지도](docs/design/styles.md#갱신) to update the dependency.
+## Commands
 
-Create a production build with `SITE_ORIGIN=https://woonyong.com npm run build:site -- --production`. Run the `Deploy woonyong.com` GitHub Actions workflow manually on `main` to check the site and deploy it to GitHub Pages.
+| Command | Content |
+|---|---|
+| `npm run dev` | Build and preview at http://127.0.0.1:8796 |
+| `npm run build` | Generate the design and build the site into `dist/site/` |
+| `npm test` | Generate the design and run `test/*.test.js` |
+| `npm run content:sync -- <vault-root>` | Import approved files listed by the Vault publication manifest |
+| `npm run content:check` | Check that approved copies match their hashes |
+
+`npm run build -- --production` is the production build. With an HTTPS `SITE_ORIGIN`, it writes canonical URLs, a sitemap, and sharing metadata. A preview built without `--production` blocks search engine indexing.
+
+## Deployment
+
+`.github/workflows/validate.yml` runs `npm ci` and `npm test` on every push and pull request. `.github/workflows/deploy.yml` runs manually on `main`: after `npm test`, it builds with `npm run build -- --production` and `SITE_ORIGIN`, then uploads `dist/site` to GitHub Pages. If the repository secret `VAULT_TOKEN` exists, it checks out the Vault's `publish` and `assets` folders and builds with `--blog-root .vault/publish`.
+
+## License
+
+There is no LICENSE file that covers the whole repository. Sources and licenses of content assets are in `config/assets.json`; sources of icons and fonts are in `src/design/assets/sources.json` and the accompanying notice files.

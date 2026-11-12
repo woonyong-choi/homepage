@@ -38,8 +38,8 @@ geometry and palette are retained and proportional fit/centering is applied.
 The Kotlin, C#, and Node.js gradients are converted to static paint steps for
 the SVG renderer. Node.js uses 512 sRGB samples per gradient and masks for the
 original clipped faces; the source geometry and gradient stops remain the
-comparison reference. Neutral glyph parts use the light theme neutral ink of
-design-tokens. No extra decorative background is added.
+comparison reference. Neutral glyph parts use the site neutral ink token.
+No extra decorative background is added.
 
 JavaScript is the community logo distributed by its original authors / JSConf,
 not an Ecma-designated official mark. https://github.com/voodootikigod/logo.js

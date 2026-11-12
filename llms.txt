@@ -1,17 +1,16 @@
 # homepage
 
-> A Markdown-based personal blog and website
+> A static blog and personal home page written in Markdown, deployed to GitHub Pages
 
-This repository contains the source for [woonyong.com](https://woonyong.com). It publishes a personal introduction and Blog posts from Markdown as static HTML. It imports approved content, uses the shared design package, and parses Markdown with its internal document renderer in `src/document`.
+This repository builds a personal home page and a Blog from Markdown and JSON settings into static HTML. It is the source of [woonyong.com](https://woonyong.com). The internal document renderer in `src/document` parses Markdown, and the internal design system in `src/design` owns tokens, CSS, and shared components.
 
 ## Docs
 
-- [개인 랜딩 페이지](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/personal-landing.md)
-- [기록 탐색과 화면 구성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/knowledge-navigation.md)
-- [홈 원고 가이드](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/home-content.md)
-- [영역 설정](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/layout-settings.md)
+- [README](https://raw.githubusercontent.com/woonyong-choi/homepage/main/README.en.md)
 - [Markdown 글 작성](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/markdown.md)
-- [문서 렌더러](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/document-renderer.md)
+- [홈 원고](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/home-content.md)
+- [Blog와 Search](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/blog-search.md)
 - [글 관리](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/admin.md)
-- [개인 사이트 발행](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/publication.md)
-- [스타일 수정 지도](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/styles.md)
+- [발행](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/publication.md)
+- [문서 렌더러](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/document-renderer.md)
+- [디자인 시스템](https://raw.githubusercontent.com/woonyong-choi/homepage/main/docs/design/styles.md)

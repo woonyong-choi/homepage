@@ -26,8 +26,6 @@ export async function parseDocument(source, context = {}) {
 
 export const renderDocument = render;
 
-/** 호출자가 받는 엔진. `parseDocument(source, { id })`, `renderDocument(document, { id })`로 호출한다. */
-export const documentEngine = Object.freeze({ parseDocument, renderDocument });
 
 function hasIcon(catalog, name) {
   const target = Object.hasOwn(catalog.icons, name) ? name : catalog.aliases[name];

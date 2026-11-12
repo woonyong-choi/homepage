@@ -51,13 +51,15 @@
 .app-related-link[rel=prev] { padding-inline: var(--spacing-card-right) var(--spacing-compact-inset); }
 .app-related-link[rel=prev]::after { right: auto; left: var(--spacing-gap-xs); transform: scaleX(-1); }
 .app-tags { display: flex; flex-wrap: wrap; gap: var(--spacing-2); align-items: baseline; }
-/* 태그는 글 머리, 글 카드, 검색 어디서나 같은 알약(13/1.4)이다. is-medium은 작은 글(15) 크기다. */
-.app-tag, .app-tags-more > summary { display: inline-block; padding: var(--spacing-0-5) var(--spacing-2-5); border: 0; border-radius: var(--radius-pill); color: var(--color-tag-ink); background: var(--color-tag-background); font-size: var(--text-tiny-text); line-height: var(--leading-line-body); text-decoration: none; }
-.app-tag.is-medium, .app-tags-more > summary.is-medium { font-size: var(--text-small-text); }
-/* 태그는 어디서나 같은 단계다: 기본 회색 알약, 호버·초점은 한 단계 진한 회색, 고른 태그(검색 필터)는 Things 선택 탭과 같은 파랑. */
-.app-tag:hover, .app-tag:focus-visible, .app-tags-more > summary:hover, .app-tags-more > summary:focus-visible { color: var(--color-tag-preview-ink); background: var(--color-tag-preview); text-decoration: none; }
-.app-tag[aria-pressed=true], .app-tag[aria-pressed=true]:hover { color: var(--color-on-action); background: var(--color-tag-hover); }
-.app-tag[aria-pressed], .app-tags-more > summary { cursor: pointer; }
+/* 태그 알약은 글 머리, 글 카드, 검색 필터, 추천 검색어에서 크기(13/1.4)와 상태가 같다.
+   기본은 회색 면, 호버·초점은 한 단계 진한 회색, 고른 태그는 링크 파랑이다. 밑줄은 쓰지 않는다.
+   is-quiet는 같은 알약의 투명 변형(초기화, 추천 검색어)으로 호버하면 기본 알약 면이 된다. */
+.app-tag, .app-tags-more > summary { display: inline-block; max-width: 100%; padding: var(--spacing-0-5) var(--spacing-2-5); border: 0; border-radius: var(--radius-pill); color: var(--color-tag-ink); background: var(--color-tag-background); font: inherit; font-size: var(--text-tiny-text); line-height: var(--leading-line-body); text-decoration: none; overflow-wrap: anywhere; cursor: pointer; transition: background-color var(--duration-fast) var(--ease-reveal), color var(--duration-fast) var(--ease-reveal); }
+.app-tag:hover, .app-tag:focus-visible, .app-tags-more > summary:hover, .app-tags-more > summary:focus-visible { color: var(--color-tag-ink-hover); background: var(--color-tag-background-hover); text-decoration: none; }
+.app-tag[aria-pressed=true] { color: var(--color-tag-selected-ink); background: var(--color-tag-selected); }
+.app-tag.is-quiet { background: transparent; }
+.app-tag.is-quiet:hover, .app-tag.is-quiet:focus-visible { background: var(--color-tag-background); }
+@media (prefers-reduced-motion: reduce) { .app-tag, .app-tags-more > summary { transition: none; } }
 .app-tags-more > .app-tags { margin-top: var(--spacing-gap-xs); }
 
 /* 주제와 블로그 목록은 설명의 전체 텍스트를 보존하고 두 줄까지만 표시한다. */

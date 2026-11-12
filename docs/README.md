@@ -1,17 +1,11 @@
 # 문서
 
-개인 소개와 단일 Blog의 설계·작성·발행 안내다. 문서는 한국어로 쓴다. [개인 랜딩 페이지](design/personal-landing.md)부터 읽는다.
+개인 홈과 Blog의 작성·발행·구조 안내다. 처음이면 저장소 [README](../README.md)부터 읽는다.
 
-- [개인 랜딩 페이지](design/personal-landing.md)
-  - [기록 탐색과 화면 구성](design/knowledge-navigation.md)
-  - [홈 원고 가이드](design/home-content.md)
-  - [영역 설정](design/layout-settings.md)
-- [Markdown 글 작성](design/markdown.md)
-  - [문서 렌더러](design/document-renderer.md)
-  - [글 관리](design/admin.md)
-- [개인 사이트 발행](design/publication.md)
-  - [스타일 수정 지도](design/styles.md)
-    - [디자인 시스템: 스타일 구조](design/system/styles.md)
-    - [디자인 시스템: 공통 구성 요소](design/system/components.md)
-    - [디자인 시스템: 구조](design/system/architecture.md)
-    - [디자인 시스템: 아이콘](design/system/content-icons.md)
+- [Markdown 글 작성](design/markdown.md): front matter, 지원 문법, 구성 블록, 코드 블록
+- [홈 원고](design/home-content.md): 홈 구간의 순서와 필드
+- [Blog와 Search](design/blog-search.md): 주소, 검색 조건, 태그, `config/blog.json`·`config/search.json`
+- [글 관리](design/admin.md): 관리자 로그인과 작성·출간 화면
+- [발행](design/publication.md): 빌드 모드, 출력, 검사, Vault 동기화, 배포
+- [문서 렌더러](design/document-renderer.md): `src/document`의 진입점과 계약
+- [디자인 시스템](design/styles.md): `src/design`의 토큰, CSS, 구성 요소, 아이콘

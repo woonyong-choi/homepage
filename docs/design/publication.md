@@ -1,175 +1,74 @@
-# 개인 사이트 발행
+# 발행
 
 | 항목 | 값 |
 |---|---|
 | 상태 | 구현 |
+| 코드 | `src/build/`, `src/vault/` |
 
 ## 요약
 
-승인한 Blog 원고·설정·자산을 정적 사이트로 만든다. 공개 빌드는 단일 Blog를 발행하고 개인 Vault의 위키 미리보기·동기화 API는 별도로 유지한다.
+승인한 글·원고·설정·자산을 정적 사이트 `dist/site/`로 만든다. 빌드는 승인 목록의 해시를 검사하고, 링크·앵커·자산 검사를 통과한 결과로만 이전 발행 폴더를 교체한다.
 
-## 해결하는 문제
+## 흐름
 
-비공개 원문과 공개 사본이 섞이거나 승인 뒤 원문이 바뀌면 의도하지 않은 내용을 발행할 수 있다. 명시적인 발행 목록과 해시를 검사하고 검증을 마친 결과만 교체한다.
+1. Vault에서 원문을 고치고 승인한 뒤 발행 목록을 만든다.
+2. `npm run content:sync -- <vault-root>`로 승인 파일을 이 저장소에 가져온다.
+3. `npm run build`(미리보기) 또는 `npm run build -- --production`(운영)으로 빌드한다.
+4. `main`에서 Deploy 워크플로를 실행해 GitHub Pages에 올린다.
 
-## 사용 예
+## 빌드 모드
 
-### 사용 장면
+| 모드 | 명령 | 결과 |
+|---|---|---|
+| `approved-preview` | `npm run build` | 승인 사본으로 빌드. `robots.txt`가 모든 수집을 막는다 |
+| `production` | `npm run build -- --production` | 같은 입력으로 빌드하고 사이트맵을 가리키는 수집 허용 `robots.txt`를 만든다 |
 
-원문을 승인하고 발행 목록을 만든 뒤 `npm run content:sync-vault -- <vault-root>`로 가져온다. `npm run build:site`로 승인 사본 미리보기를 만든다. 운영 빌드는 HTTPS `SITE_ORIGIN`과 `--production`을 지정한다.
+`--blog-root <폴더>`는 글을 `content/blog/` 대신 지정한 폴더에서 읽는다. 배포는 `VAULT_TOKEN`이 있을 때 `.vault/publish`를 넘긴다. 어느 모드든 `example: true` 글, 초안, 미래 날짜 글은 싣지 않는다. 승인 목록에 `content/docs/` 파일이 있으면 빌드를 멈춘다.
 
-## 작동 방식
+`SITE_ORIGIN`은 HTTPS origin(예 `https://example.com`)이어야 한다. 사용자 정보·경로·쿼리·해시·후행 슬래시가 있으면 거부한다. origin이 있으면 정식 주소와 Open Graph·Twitter 메타데이터를 만들고 사이트맵에 절대 주소를 적는다. 로컬 미리보기는 origin 없이 빌드한다.
 
-### 계약
+## 출력
 
-공개 글은 `content/blog/`의 승인 사본만 사용한다. ID·slug·제목·설명·최초 발행일·공개 상태를 갖는 단일 Blog 모델이며 태그는 생략하면 빈 배열이다. 분야·분류·부모·장식 아이콘을 요구하지 않는다. 글 형식과 선택 필드는 [Markdown 글 작성](markdown.md)에 있다.
-
-초안과 미래 발행 글은 HTML·검색 색인·RSS·사이트맵에서 제외한다. 운영 빌드는 `example: true`인 글도 제외한다. 중복 ID·slug, 잘못된 날짜와 경로는 오류다. 태그는 임의의 문자열이며 등록되지 않은 태그라는 이유로 거부하지 않는다.
-
-공개 빌드는 위키를 Blog로 자동 변환하지 않는다. 승인된 `content/docs/` 입력이 있으면 결과를 쓰기 전에 중단한다. 기존 `cs`, `tech`, `topics` 설정과 위키의 `category`, `parent`는 Vault 동기화 호환 입력으로만 남는다. 공개 발행을 위해 승인 사본을 직접 수정하지 않는다.
-
-### 화면
-
-홈은 승인 원고의 소개·영상·기술 로고·동료평가·연락을 조립한다. 공개 상단 탐색은 Search와 Blog다. Search는 전체 글의 목록·검색·태그 탐색이며 Blog는 같은 글의 최근 날짜순 본문 피드다. 기술 로고는 `/search/?tag=python`처럼 같은 Blog의 태그 필터로 연결한다. 홈 콘텐츠·영상·흐름의 동작은 [홈 원고 가이드](home-content.md)를 따른다.
-
-글 상세는 날짜·제목·소개·태그·선택 대표 이미지·본문과 댓글을 공통 구성 요소로 조립한다. 공개 글·카드·검색 결과에 장식 아이콘을 넣지 않는다. 썸네일이 없으면 빈 표지도 만들지 않는다. 검색·복사·재생·펼치기 같은 조작 아이콘과 본문의 선택 구성 문법은 유지한다.
-
-카드·제목·본문·코드·댓글의 크기, 간격, 표면, 반응형과 초점 동작은 공통 디자인 정본이 소유한다. 홈페이지가 CSS 치수를 다시 정의하지 않는다. 수정 위치와 의존성은 [스타일 수정 지도](styles.md)에 있다.
-
-본문의 첫 최상위 문단이 소개 전체와 같을 때만 그 문단을 소개로 옮긴다. 링크·강조·코드·각주를 유지하며 원본 Markdown은 바꾸지 않는다. 일부 문장만 같거나 인용문·목록·이미지로 시작하면 본문을 유지한다. 내부 링크 변환은 소개와 본문 양쪽에 적용한다.
-
-### 입력
-
-`config/approved-content.json`은 승인 사본의 집합과 SHA-256을 검증한다. `config/publication-manifest.json`은 가져온 문서의 식별자와 원문 출처를 기록한다. 개인 정본에 직접 쓰거나 파일을 묵시적으로 승인하지 않는다.
-
-`config/site.json`은 사이트·저장소·댓글 정보를 관리한다. `repository`의 owner/name은 댓글과 토론 링크에 사용하며 잘못된 경로는 오류다. 댓글 저장소 ID·분류 ID는 실제 giscus 설정과 함께 갱신한다. 홈 원고와 기술 로고·인터뷰의 입력 위치는 [홈 원고 가이드](home-content.md)에 있다. 태그의 표시 이름·별칭은 `config/tags.json`에 있으며 허용 목록이 아니다.
-
-### 실행과 댓글
-
-| 모드 | 입력과 결과 |
+| 파일 | 내용 |
 |---|---|
-| 기본 `approved-preview` | 승인 사본 사용. 검색엔진 수집 금지 |
-| `production` | 승인된 실제 공개 글만 발행. 합성 글과 예시 글 제외 |
+| 페이지 HTML | 홈, Search, Blog 피드, 글 상세, `404.html`, 관리 설정이 있으면 `/admin/` |
+| `/theme/site.css` | 토큰과 공통 CSS 가운데 공개 페이지가 쓰는 선택자·변수만 남긴 한 파일 |
+| `/theme/admin.css` | 관리 화면까지 포함한 CSS. 관리자 로그인 뒤에만 불러온다 |
+| `site.js`, `search-worker.js`, `comments.js`, `blog-list.js` | 공개 페이지 스크립트. 쓰는 요소가 있는 페이지만 싣는다 |
+| `admin.js`, `admin-editor.js` | 관리 로더와 작성 화면 |
+| `/search-index.json`, `/search-index.json.gz`, `/search-version.json` | 검색 색인과 색인 버전 |
+| `/blog/feed.xml`, `/sitemap.xml`, `/robots.txt` | RSS, 사이트맵, 수집 규칙 |
+| `/service-tags.json` | 홈 기술 로고 후보와 활성 여부 |
+| `/build-report.json` | 쪽 수, 글 수, 모드, 댓글 수 조회 결과, 추천 검색어, CSS·자산 크기, 경로 목록 |
 
-기본 미리보기와 운영 빌드는 같은 승인 입력만 사용한다. 실제 공개 글이 없으면 빈 목록을 표시하며 합성 글을 생성하지 않는다. 운영 빌드는 `SITE_ORIGIN=https://woonyong.com npm run build:site -- --production`으로 만든다. `.github/workflows/deploy.yml`의 수동 실행은 검사 후 GitHub Pages에 배포한다. 로컬 빌드 성공은 배포 완료가 아니다.
+스크립트는 `src/build/scripts.js`가 esbuild로 묶고, 주소에 내용 해시를 붙인다. 수식이 있는 페이지만 KaTeX CSS와 글꼴을 싣는다.
 
-빌드는 모든 페이지·스크립트·자산을 준비하고 내부 링크·앵커·중복 ID·출력 경로를 검사한 뒤 발행 폴더를 교체한다. 입력·자산 읽기·검증이 실패하면 기존 결과를 유지한다. 같은 실제 출력 경로는 잠금으로 직렬화한다. 모든 파일을 새 작업 폴더에 쓴 뒤 교체하며 설치 실패 시 이전 결과를 복원한다. 교체 사이의 짧은 경로 공백과 강제 종료까지 무중단으로 보장하지 않는다. 복원 실패 시 오류에 표시된 이전 결과와 잠금을 보존한다. 남은 잠금은 실행 중인 빌드가 없는지 확인한 뒤 처리한다.
+## 검사와 교체
 
-운영 origin은 정규화된 HTTPS origin이다. 사용자명·비밀번호·경로·쿼리·해시·공백·불필요한 후행 슬래시는 출력 변경 전에 거부한다. 유효한 포트는 허용하며 로컬 미리보기만 HTTP를 허용한다. origin이 있으면 정식 주소와 Open Graph·Twitter 메타데이터를 만들고 등록된 발행일·수정일·태그만 포함한다. origin이 없는 미리보기는 정식 주소를 만들지 않고 수집 금지를 유지한다.
+빌드는 모든 페이지·스크립트·자산을 메모리에 준비한 뒤 내부 링크·앵커·중복 id·출력 경로를 검사한다(`src/build/links.js`, `src/build/output.js`). 실패하면 기존 `dist/site/`를 그대로 둔다. 통과하면 새 폴더에 쓰고 교체하며, 교체에 실패하면 이전 결과를 되돌린다. 같은 출력 경로는 `.lock` 폴더로 동시 실행을 막는다.
 
-글의 공유 그림은 썸네일 또는 본문 첫 그림이며 `summary_large_image` 카드로 보인다. 그림이 없거나 GIF(배포 때 다른 형식으로 바뀜)면 사이트 아이콘을 쓴다. 글은 `BlogPosting`, 첫 화면은 `WebSite`와 글쓴이 `Person`(설정의 GitHub·LinkedIn을 `sameAs`) 구조화 데이터를 싣는다. 사이트맵의 글 주소에는 수정일(없으면 발행일)을 `lastmod`로 적고, `BlogPosting.dateModified`도 같은 값을 쓴다. Blog·Search·404는 사이트 설명 대신 페이지 성격에 맞는 설명을 쓰고 `/blog/page/<번호>/`는 제목에 쪽 번호를 붙인다. RSS는 요약 피드이며 자기 주소(`atom:link`), `language`, 마지막 글 날짜(`lastBuildDate`)를 적는다.
+자산은 HTML의 그림·링크·poster와 CSS의 `url()`을 따라 모은다. 참조한 파일과 필요한 고지만 싣고, 없는 자산이나 경로 이탈은 오류다. 폭 720px보다 큰 정지 그림은 720·1360px webp 사본을 만들어 `srcset`으로 고르게 하고, GIF는 더 작아질 때만 webp로 바꾼다(`src/build/images.js`).
 
-공개 페이지의 스타일은 토큰과 공통 CSS를 합친 `/theme/publication.css` 한 파일이다. 공개 페이지가 쓰는 선택자와 토큰만 남긴다. 관리 화면은 전체 토큰과 CSS를 합친 `/theme/admin.css`를 쓴다. 푸터 연도는 빌드할 때 적고 연도만 바꾸는 스크립트는 싣지 않는다.
+## 메타데이터
 
-없는 주소는 공통 사이트 껍데기의 `404.html`로 안내한다. 홈·Blog·Search로 돌아가는 루트 기준 링크를 제공하고 검색엔진 색인과 사이트맵에서 제외한다. GitHub Pages와 로컬 `src/serve.mjs`는 없는 경로에 404 상태를 반환한다.
+글의 공유 그림은 썸네일 또는 본문 첫 그림이며 없으면 사이트 아이콘을 쓴다. 글은 `BlogPosting`, 홈은 `WebSite`와 작성자 `Person` 구조화 데이터를 싣는다. 사이트맵의 `lastmod`는 수정일, 없으면 발행일이다. 없는 주소는 `404.html`로 안내하며 미리보기 서버도 404 상태를 돌려준다.
 
-본문 갤러리·복사·영상·댓글은 실제 요소가 있는 페이지에 필요한 공통 런타임만 연결한다. 코드 복사는 공통 피드백을 사용하며 실패 시 원문 선택과 재시도를 유지한다. 클라이언트 모듈 URL은 내용 해시를 포함한다. Blog 피드가 이어 불러온 글은 디자인 정본의 `RUNTIMES`와 댓글 런타임에서 해당 모듈만 불러오고, 수식 스타일은 페이지 조립이 `MATH_STYLESHEET`로 표시한 `data-math-stylesheet` link를 한 번만 복사한다.
+## 댓글
 
-댓글은 설정한 저장소의 Comments 분류에 `specific`·strict 방식으로 고정 글 ID를 연결한다. 댓글 표시 여부는 글의 `comments`로 정한다. URL이나 제목 변경으로 댓글 ID를 바꾸지 않는다. giscus iframe은 공식 widget URL·세션·메시지 형식을 사용하고 message의 origin과 source를 모두 확인한다. 높이·오류·토론 URL은 해당 iframe에만 적용한다. 문서마다 message 리스너 하나가 event.source로 해당 iframe을 찾는다. Blog 피드는 댓글 창을 접어 두고 Things의 "더 보기" 같은 링크 단추(`댓글 N개`, 개수를 모르거나 0이면 `댓글`)만 보인다. 누르거나 주소의 댓글 앵커로 들어올 때만 iframe을 만들어 펼치므로 긴 댓글이 다음 글로의 연속 읽기를 막지 않는다. 글 상세의 iframe은 페이지의 load 이벤트 뒤 브라우저가 한가할 때(`requestIdleCallback`, 없으면 다음 작업) 바로 만들어 아래로 스크롤하지 않아도 준비한다. 댓글 앵커로 들어오면 즉시 만든다. 댓글은 바로 게시하므로 작성·미리보기 탭은 숨긴다. giscus에는 수정·삭제가 없어 댓글의 시간을 누르면 GitHub 토론에서 고칠 수 있다고 안내한다. 로그인 반환값은 주소에서 제거하고 저장소가 차단되면 현재 화면에서만 유지한다. 로그아웃·세션 만료를 로드된 댓글에 반영한다. 실패 시 재시도와 GitHub 링크를 제공하며 댓글이 없는 상태는 오류가 아니다.
+댓글은 giscus로 `config/site.json`의 저장소·Comments 분류에 고정 글 ID를 연결한다. 글의 `comments: true`일 때만 표시한다. 글 상세는 페이지가 한가할 때 iframe을 만들고, Blog 피드는 `댓글 N개` 단추를 누를 때만 펼친다. 운영 빌드의 댓글 테마는 사이트의 `/theme/assets/giscus.css`이고, HTTPS origin이 없는 미리보기는 `comments.themeUrl`이 없으면 giscus 기본 `light` 테마를 쓴다(`src/layouts/comments.js`의 `commentThemeUrl`).
 
-### 검증
+## Vault 동기화
 
-`npm run check:product`는 승인 범위·목록·검색·댓글·발행 출력 계약을 검사한다. `npm run check:tokens`는 공통 디자인 소유권을 검사한다. 화면 변경은 넓은 화면과 작은 화면에서 키보드·터치·움직임 줄이기를 별도로 확인한다. 자동 검사를 화면 승인이나 운영 배포로 해석하지 않는다.
+`npm run content:sync -- <vault-root>`는 `<vault-root>/tooling/dist/publication.json`(`version: 1`, `files`)에 적힌 파일만 가져온다. 항목마다 Vault 상대 `source`, 저장소 상대 `target`, `sha256`을 갖는다. 원고 트리를 탐색하지 않는다.
 
-### 발행 자산 검증
+- 가져오는 대상: `content/home.md`, `content/pages/tech.md`, `content/interviews/`, `content/blog/`, `content/assets/`, `content/media/`, `config/`의 `site`, `tags`, `search`, `cs`, `tech`, `blog` JSON.
+- 해시가 다른 입력, 중복 경로·ID·slug, 경로 이탈, 심볼릭 링크, 승인 없이 바뀐 기존 사본이 있으면 아무것도 바꾸지 않고 멈춘다.
+- 목록에서 빠진 기존 사본은 같은 동기화에서 지운다.
+- 결과로 `config/approved-content.json`(파일과 SHA-256)과 `config/publication-manifest.json`을 갱신한다.
+- 동시 실행은 `.content-sync.lock`으로 막는다. 복원까지 실패하면 `.content-sync-*/recovery.json`, 이전 파일, 잠금을 남기고 위치를 오류에 적는다. 이때 기록된 파일을 대조해 복구한 뒤 `npm run content:check`를 실행한다.
 
-HTML의 이미지·링크·poster, CSS의 상대 URL·import와 실제 런타임 참조를 따라 자산을 수집한다. 경로 이탈·누락 자산·필수 고지 누락은 오류다. 참조한 글꼴·브랜드 로고·미디어와 고지만 발행한다. 테마의 제작용 JSON·소스 CSS·렌더러는 배포하지 않는다. 복사 전에 정본 파일의 해시를 검사한다.
+`npm run content:check`는 승인 목록과 현재 파일 집합·해시가 일치하는지 검사한다. 빌드도 시작할 때 같은 검사를 한다.
 
-공통 CSS는 정본 해시를 검증한 뒤 사용 선택자와 변수의 의존 관계를 보존해 발행용 CSS로 만든다. 동적 상태·글꼴·keyframes를 유지하고 선언 값은 바꾸지 않는다. 토큰 CSS와 giscus CSS의 정본 사본을 직접 수정하지 않는다. 산출물 해시를 스타일 URL에 사용한다. 사이트는 라이트로 고정이라 토큰 CSS에서 다크 블록을 뺀다(`compileStyles`의 `scheme: 'light'`). 관리 화면(작성·출간) 스타일은 관리자만 쓰므로 공개 CSS(`/theme/publication.css`)에서 빼고 관리 CSS(`/theme/admin.css`)로 따로 싣는다. 관리 CSS는 전체 페이지·스크립트 기준이라 공개 CSS를 포함하며, `/admin/` 로그인 화면이 직접 싣고 다른 페이지에서는 관리 로더가 로그인 토큰을 확인한 뒤 편집 기능보다 먼저 불러온다.
+## 배포
 
-본문·카드 그림 가운데 폭 720px보다 큰 정지 그림은 720·1360px webp 사본을 만들어 `srcset`·`sizes`로 화면 폭에 맞는 사본을 고르게 하고, 확대 창은 `data-full`의 원본을 연다. 움직이는 GIF는 같은 크기의 webp로 바꿔 용량만 줄인다. 모든 그림에 원본 가로·세로를 적어 불러오는 동안 글이 밀리지 않게 하고, 첫 화면 표지(`loading="eager"`)는 `fetchpriority="high"`로 먼저 받는다. 검색 결과 카드는 가장 작은 사본을 쓴다. 관련 패키지 버전과 전이 의존성은 `package.json`, `package-lock.json`이 정한다.
-
-공통 조작 아이콘은 `ControlIcon`을 사용한다. 홈 전용 기술 로고는 [기술 로고](home-content.md#기술-로고)의 출처·바이트·고지 계약을 따른다. 글 아이콘 제거를 공통 조작 아이콘 제거로 해석하지 않는다.
-
-### 블로그 전체 목록
-
-`/search/`는 전체 글의 카드 목록·검색·태그 필터다. `q`, 반복 `tag`, `page`로 조건을 복원한다. 필터가 없는 목록은 정적 HTML로 읽을 수 있다. `/blog/`는 같은 글의 본문을 최초 발행일 내림차순으로 보여 준다. 같은 날짜는 ID 순서로 고정한다. `/blog/page/<번호>/`의 다음 본문을 이어 읽으며 전체 글 보기 링크는 Search로 이동한다. 별도 `/blog/all/`은 발행하지 않는다.
-
-썸네일은 선택이다. 직접 지정한 이미지는 카드와 상세에서 같은 원본과 대체 설명을 사용한다. 지정하지 않으면 Search 카드에서 제목 표지를 자동으로 표시한다. 자동 표지는 HTML과 공통 CSS로 렌더하며 이미지 파일이나 OG 이미지를 생성하지 않는다. Blog 피드와 상세에는 자동 표지를 반복하지 않는다. 선택 `position: { x: 50, y: 50 }`은 카드 자르기 위치의 백분율이며 각 값은 0~100의 유한한 숫자다. 생략하면 가운데다. 원본 크기는 `config/image-sizes.json`의 `thumbnail.src` 키로 찾고 모르면 임의의 크기를 쓰지 않는다. 상세는 원래 비율을 유지하며 이미지 없는 글에 빈 영역을 넣지 않는다.
-
-### 목록 댓글 수
-
-빌드에서 GitHub CLI 인증으로 설정한 저장소·Comments 분류의 토론과 댓글을 읽는다. giscus strict 매핑과 같은 글 ID의 SHA-1로 연결한다. 댓글 수는 최상위 댓글과 답글의 합이며 모든 페이지를 읽는다. 토론이 없는 것으로 확인된 경우만 0개를 표시한다. 인증 없음·네트워크 오류·불완전한 페이지·중복 매핑이면 숫자 대신 댓글 링크를 표시하고 본문 빌드는 계속한다. 보고서의 `commentsStatus`로 수집 결과를 구분한다. 숫자는 빌드 당시 값이며 인증 정보와 토론 본문은 브라우저로 보내지 않는다.
-
-### 디자인 수정
-
-디자인 정본은 `src/design/`이다. [스타일 수정 지도](styles.md#디자인-수정)의 생성·검사를 거쳐 화면 변경과 같은 PR로 반영한다. 생성 결과 `src/design/dist/`를 직접 고치지 않는다.
-
-### 문서와 블로그 탐색
-
-공개 경로는 `/search/`, `/blog/`, `/blog/page/<번호>/`, `/blog/<slug>/`, `/blog/feed.xml`이다. `/docs/`, `/projects/`, `/tags/`, `/blog/all/`, 옛 위키·분야 경로를 생성하지 않는다.
-
-검색어의 각 낱말과 선택 태그는 AND다. 검색 토글을 누르면 현재 검색어·다른 태그를 유지하며 해당 태그를 선택하거나 해제하고 첫 페이지로 이동한다. 마지막 조건을 지우면 `/search/` 전체 목록이다. 한글 조합 중에는 제출하지 않는다. 뒤로가기에서는 URL 조건과 검색 입력·결과·위치를 복원한다.
-
-검색어를 입력하면 입력 칸 아래에 실시간 추천 목록(`role=listbox`: 연관 검색어, 태그, 글 최대 20편, 전체 결과 보기)이 겹쳐 뜨고, 같은 검색어로 주소와 아래 결과 목록도 함께 갱신한다. 목록은 정해진 높이까지만 보이고 나머지는 목록 안에서 스크롤한다. 위아래 화살표로 항목을 옮기고 Enter로 열며 Esc, 목록 밖 누름, 검색 영역 밖으로의 초점 이동으로 닫는다. 결과를 기다리는 동안에는 지금 보이는 목록을 그대로 두고 `aria-busy`만 표시한다. 태그 주소(`/search/?tag=C`)로 처음 들어올 때나 한글 조합 중에도 "불러오는 중" 같은 중간 안내 카드로 바꾸지 않는다.
-
-검색 색인의 본문(`text`)은 Markdown 원문이 아니라 렌더링한 HTML에서 읽는 글자만 꺼낸다. 작성 문법 기호, 수식 내부 표기, 단추 글자, 각주 되돌아가기 표시는 넣지 않는다.
-
-검색은 Worker를 우선 사용하며 Worker 실패 시 같은 모델로 현재 요청을 처리한다. JSON과 gzip 색인은 같은 데이터에서 만들고 gzip 전송·해제·형식 실패 시 JSON으로 복구한다. 실패한 요청은 캐시하지 않는다. 버전은 색인 SHA-256으로 확인하며 손상·저장소 차단·배포 중 버전 불일치는 오류 또는 직접 읽기로 처리한다. 늦은 이전 응답은 버리고 로딩 실패를 빈 결과와 구분해 재시도를 제공한다.
-
-글 상세의 자동 관련 글은 현재 글을 제외한 발행 Blog 글 중 태그를 하나 이상 공유하는 후보만 고른다. 최초 발행일 최신순·같은 날짜의 ID 순으로 최대 4편을 표시한다. 후보가 없으면 영역을 생략한다. `category` 일치로 추천하지 않으며 관련 없는 글로 채우지 않는다. 본문에서 작성자가 지정한 관련 카드 문법은 유지한다.
-
-### 문서 파일과 공유 태그
-
-고정 `id`는 댓글 식별자이고 `slug`는 공개 주소다. 파일 이동으로 둘을 바꾸지 않는다. 공개 빌드는 `content/blog/`의 하위 Markdown을 읽으며 폴더로 분류·계층을 추측하지 않는다.
-
-태그는 기술·산책·독서·회고 같은 임의 문자열 배열이다. 등록 목록은 필수가 아니며 `config/tags.json`은 표시 이름·별칭을 보완한다. 카드 태그는 기본으로 숨긴다. 본문 태그는 `/search/?tag=...`로 이동한다. 검색 필터는 같은 URL 조건을 토글로 선택하거나 해제한다. 본문 태그는 공통 `medium` 크기를 사용한다. 여러 태그와 검색어의 조건은 [기록 탐색과 화면 구성](knowledge-navigation.md)을 따른다.
-
-### 원문과 공개 승인
-
-현재 `config/approved-content.json`의 `origin`은 `vault`다. 홈 원고·문서·블로그와 승인 목록에 포함된 작성 설정·자산은 Vault에서 관리한다. 홈페이지의 사본을 직접 수정하지 않고 [Vault 발행 입력](#vault-발행-입력) 절의 명령으로 동기화한다.
-
-승인 사본 동기화는 대상 저장소의 `.content-sync.lock`으로 동시 실행을 막고 모든 사본과 두 목록을 별도 경로에 먼저 준비한다. 교체와 최종 검증이 실패하면 이미 바꾼 파일과 삭제한 사본을 이전 상태로 복원한다. 복원 자체가 실패하면 `.content-sync-*/recovery.json`, 이전 파일과 잠금을 남기고 위치를 오류에 표시한다. 이 경우 기록된 대상·이전 파일을 대조하여 복구한 뒤 `content:check`를 실행한다. 강제 종료도 잠금을 남길 수 있으므로 `owner.json`의 실행이 끝났는지와 준비 경로를 먼저 확인하며 실행 중인 잠금을 제거하지 않는다. 파일 여러 개를 교체하는 짧은 구간과 강제 종료까지 하나의 원자적 파일 시스템 작업으로 보장하지는 않는다.
-
-문서 원문은 별도의 비공개 자료 저장소에서 관리한다. `content/docs/`와 `content/blog/`의 Markdown은 공개 승인된 사본이며 직접 편집하지 않는다. 가져오기는 [Vault 발행 입력](#vault-발행-입력)의 `content:sync-vault`만 사용하고 `content:check`로 현재 사본을 검증한다. 기존 공개 사본이 수동으로 바뀌었으면 덮어쓰거나 삭제하지 않고 중단한다. 승인되지 않은 파일, 경로 이탈과 심볼릭 링크도 거부한다. 공개 저장소에는 가져온 파일과 검증용 해시만 남아 비공개 저장소에 접근하지 않고도 빌드할 수 있다. 승인 사본을 사용하는 빌드는 매번 집합과 해시를 검사한다. 합성 데모 모드는 이 입력과 분리한다.
-
-```sh
-npm run content:check
-```
-
-### 댓글 테마 배포
-
-HTTPS origin이 있으면 댓글은 같은 공개 사이트의 `/theme/assets/giscus.css`를 디자인 해시 주소로 읽는다. origin이 없거나 HTTP인 미리보기는 giscus 서버가 읽을 공개 주소가 없으므로 `comments.themeUrl`이 없으면 giscus 기본 `light` 테마를 쓴다. 주소 선택은 `src/comments.mjs`의 `commentThemeUrl`이 담당한다.
-
-미리보기의 CSS 주소를 직접 정하려면 `config/site.json`의 `comments.themeUrl`에 같은 공통 CSS를 제공하는 공개 HTTPS 주소를 지정한다. 외부 주소는 [giscus 사용자 테마 계약](https://github.com/giscus/giscus/blob/main/ADVANCED-USAGE.md#data-theme)에 따라 익명 CORS로 CSS를 제공해야 한다. 확인할 때는 공개 응답과 현재 CSS의 SHA-256, HTTP 상태·MIME·CORS 및 실제 iframe의 계산 스타일을 대조한다.
-
-### 문서 렌더러 연결
-
-본문 발행은 `parseArticle`에서 문서 렌더러의 `parseDocument`를 호출한 뒤 프로젝트 제목·생성 장면·상대 경로를 정리한다. 해석 결과는 페이지별로 보관하며 `renderArticle`이 같은 결과를 `renderDocument`에 전달한다. 소개 문단은 원래 inline 토큰으로 렌더하고 각주 환경을 본문과 공유한다. 소개와 본문의 자산·런타임 목록은 합치고 수식 여부는 어느 한쪽에 있어도 유지한다.
-
-문법·출력 오류 진단은 파일을 발행하기 전에 예외로 바꾼다. 승인 원고 확인, front matter, 검색·댓글, 경로와 출력 저장은 홈페이지가 소유한다. 문서 렌더러의 오류 HTML을 정상 발행 결과로 받아들이지 않는다. 수식 감지와 KaTeX 자산도 렌더러의 공개 함수를 사용해 렌더러와 같은 버전을 싣는다. 홈페이지 자산의 존재와 이미지 크기 조회는 `document-assets.mjs`가 제공한다.
-
-문서 렌더러는 이 저장소의 `src/document`에 있다. 계약은 [문서 렌더러](document-renderer.md)에 있다. 렌더러는 `src/design/dist/`를 읽는다. `article-renderer.mjs`는 렌더러의 `DEFAULT_THEME_FILES.root`가 홈페이지의 디자인 생성 결과 위치와 같은지 확인한다. 검증과 배포 워크플로는 `npm ci`만으로 설치하며 비공개 저장소나 배포 키를 쓰지 않는다. 배포에는 `dist/site`만 업로드한다.
-
-### 발행 링크 검사
-
-`publicationLinks(html, route, origin)`는 최종 HTML의 `a[href]`, `area[href]`를 페이지 경로 기준으로 해석해 같은 출처는 경로·쿼리·앵커, 외부는 전체 URL로 반환한다. 기본 origin은 검사 전용 `https://publication.invalid`다. 실제 사이트의 절대 주소까지 내부로 검사하려면 해당 origin을 전달한다. 잘못된 URL은 오류로 발행을 막는다. JavaScript 실행 후 추가되는 링크는 정적 수집 범위 밖이다.
-
-### Vault 발행 입력
-
-`npm run content:sync-vault -- <vault-root>`는 `tooling/dist/publication.json`의 `version: 1`, `files` 목록만 소비한다. 각 항목은 Vault 상대 `source`, 홈페이지 상대 `target`, 동일 바이트의 `sha256`을 갖는다. 문서의 선택 `id`, `slug`, `url`은 원고 메타데이터와 대조한다. 원고 트리 전체를 탐색하거나 목록이 없을 때 옛 승인 입력으로 복귀하지 않는다.
-
-홈은 `homepage/home.md`, 주제 설정은 `homepage/pages/tech.md`이며 홈페이지의 `content/` 아래 같은 상대 위치로 가져온다. 홈이 참조하는 각 절도 목록에 있어야 한다. `docs/`는 `content/docs/`, `publish/`는 `content/blog/`로 가져온다. 문서는 명시적인 공개 지정과 기존 문서 ID·slug·종류 계약을 확인한다. 비공개·초안·예약 원고, 중복 경로·ID·slug, 경로 이탈·심볼릭 링크, 해시가 달라진 입력은 반영 전에 거부한다. 비공개 링크·임베드의 의미 검사는 발행 목록 생성기와 기존 홈페이지 렌더 검증이 맡는다.
-
-자산 텍스트는 `-NOTICE.txt`·`-LICENSE.txt` 고지만 허용한다.
-
-작성 설정은 `site`, `tags`, `search`, `cs`, `tech`, `blog`의 JSON 여섯 개만 받는다. 이미지 치수·자산 목록·프로젝트 문서 연결·승인 정보는 생성 정보로 유지한다. 미리보기 호스트가 `assets.size`를 제공하면 `config/image-sizes.json`을 읽지 않고 그 콜백을 사용한다.
-
-동기화는 기존 잠금·복구 트랜잭션을 사용한다. 목록에서 제거된 기존 관리 파일은 같은 트랜잭션으로 제거하며, 직접 수정된 생성 사본이 있으면 중단한다. 승인 스냅샷에 없는 기존 파일의 바이트가 발행 목록과 다르면 덮어쓰지 않고 중단한다.
-
-승인 스냅샷의 `origin: vault`가 발행 입력 소유권을 나타내며 다른 origin의 스냅샷은 거부한다. 주제 설정은 `content/pages/tech.md`에서 읽는다. 동기화는 생성 사본의 해시를 검사하며 원본 Vault를 수정하거나 배포하지 않는다.
-
-운영 배포 전에는 Vault의 발행 내보내기에 `--production`을 지정해 최신 목록을 만든 뒤 동기화한다. 관리 지침은 원고로 읽지 않으며 `example: true`인 예시는 운영 목록에서 제외한다. 공개를 철회한 문서와 제외한 예시는 동기화할 때 기존 관리 사본에서도 제거된다. 공개 Blog 글이 하나도 없으면 `content/blog/` 폴더가 없어도 빈 글 집합으로 빌드한다. 승인된 위키 입력은 개인 호스트용으로 보존하며 공개 빌드가 발견하면 중단한다. 외부 프로젝트 문서를 별도 경로로 추가하지 않는다.
-
-### 요구사항
-
-| 요구사항 | 검증 계획 |
-|---|---|
-| 발행 목록에 있는 바이트만 가져오고 회수 항목도 반영한다. | [`vault-publication.test.mjs`](../../src/vault-publication.test.mjs)의 `syncVaultPublication_copies_only_listed_bytes_and_tracks_home_config_and_revocation` |
-| 링크·앵커·ID 오류가 나면 기존 발행 결과를 유지한다. | [`publication-output.test.mjs`](../../src/publication-output.test.mjs)의 `broken_links_anchors_and_duplicate_ids_preserve_the_previous_publication` |
-
-합성 예제의 댓글 기능이 꺼져 있으면 카드에 링크 없는 0개를 표시한다. 실제 글의 댓글 수는 성공한 토론 조회 결과만 사용한다. 조회 실패는 숫자를 추측하지 않고 댓글 보기 링크를 유지한다. 카드의 댓글 표시 설정이 꺼져 있으면 숫자도 숨긴다.
-
-추천 검색어는 빌드마다 발행 대상 글의 태그와 선택 `keywords`를 집계해 세 개를 고른다. 등록한 표시 이름과 별칭을 같은 키워드로 묶는다. 대소문자와 한글 정규화 차이를 무시하고, 같은 글에서는 한 번만 센다. 글 수 내림차순, 동률이면 최근 발행일, 다시 동률이면 표시 이름순이다. 운영 빌드의 초안·미래 글·합성 예제는 집계하지 않는다. 후보가 세 개보다 적으면 있는 것만 표시하며 고정 검색어로 채우지 않는다. `build-report.json`의 `recommendations`는 선택한 키워드와 글 수를 기록한다.
-
-Search 태그 토글은 선택 태그의 교집합 조건으로 글을 찾는다. 후보는 페이지를 나누기 전 전체 검색 결과의 태그 합집합이며, 선택된 태그는 항상 후보에 남긴다. 단추를 다시 누르면 그 태그만 해제하고 후보를 다시 계산한다. URL은 검색어와 선택 태그를 유지하며 토글 시 페이지를 첫 쪽으로 돌린다. 브라우저 뒤로가기로 이전 선택을 복원한다.
+`.github/workflows/deploy.yml`은 `main`에서 수동 실행한다. `npm ci`, `npm test` 뒤 `SITE_ORIGIN`을 지정해 운영 빌드를 만들고 `dist/site`를 GitHub Pages에 올린다. `VAULT_TOKEN`이 있으면 Vault의 `publish`와 `assets`만 받아 `content/assets/`에 더하고 `--blog-root .vault/publish`로 빌드한다. 로컬 빌드 성공은 배포 완료가 아니다.

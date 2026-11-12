@@ -1,52 +1,43 @@
 # homepage
 
-개인 사이트의 콘텐츠, 조립 코드와 디자인 정본(`src/design/`)을 소유한다. 원문은 비공개 자료 저장소에 있다. 다른 저장소의 디자인 패키지에 의존하지 않는다.
-
-설계와 작성 안내는 [문서 목록](docs/README.md)에 있다.
-
-## 필수 디자인 제약
-
-- 화면 코드는 `src/design/`의 토큰·CSS·아이콘·공통 구성 요소·동작을 상속한다. 화면 표현값의 하드코딩과 요소별 마크업·CSS·상태 처리의 재구현은 금지다. 같은 토큰을 읽는 복사 구현도 허용하지 않는다.
-- 새 공통 표현은 `src/design/`의 소유 구성 요소에서 구현한 뒤 가져와 조립한다. 제품 차이는 그 구성 요소의 속성·변형으로 필요한 부분만 재정의한다. 페이지별 보정이나 검사 예외로 결함을 숨기지 않는다.
-- 갤러리 선택 줄의 선택·호버·초점·키보드·전환·움직임 줄이기는 공통 계약을 사용한다. 문서 본문의 탭 문법과 도표 문법은 두지 않는다. 도표는 이미지로 넣는다.
-- Things의 대응 요소와 홈페이지를 실제 크기로 비교해 글자·아이콘·정렬·간격이 자연스럽게 이어지는지 검수한다. 의도된 제품 차이 외의 불일치는 공통 소유 지점에서 수정한다. 자동 검사만으로 디자인 완료를 선언하지 않는다.
+Markdown 글과 JSON 설정으로 개인 홈과 Blog를 정적 HTML로 만들어 GitHub Pages에 배포하는 저장소다. 원문은 비공개 Vault에 있고 이 저장소에는 승인 사본만 있다. 설계와 사용 안내는 [문서 목록](docs/README.md)에 있다.
 
 ## 구성
 
-- `content/home.md`, `content/interviews/index.md`, `content/pages/tech.md`: Vault에서 승인받아 가져오는 홈 원고
-- `config/`: 승인된 작성 설정과 빌드가 관리하는 승인·자산 목록
-- `src/`: 콘텐츠 해석, 검색·댓글, 경로와 페이지 조립
-- `src/document/`: 내부 문서 렌더러. `parser/`(HTML·테마·DOM을 모르는 해석), `renderer/`(HTML·자산·runtime 출력), `theme/`(디자인 생성 결과 연결), `preview/`(관리 화면 브라우저 번들 진입점), `test/`(합성 입력 시험)
-- `src/design/`: 디자인 정본. `tokens/`(값), `styles/`(CSS), `ui/`(구성 요소·브라우저 동작·검사기), `assets/`(아이콘·글꼴과 출처), `scripts/`(생성), `test/`(디자인 시험). 생성 결과 `src/design/dist/`는 Git 밖이며 `npm ci`·`npm run build:design`이 만든다. 코드는 `#design/*`(`package.json`의 `imports`)로 읽는다. 아이콘을 고칠 때는 `src/design/assets/icons/AGENTS.md`의 검수 절차를 따른다
-- `package.json`: 외부 디자인 패키지 의존성을 두지 않는다
-- `content/blog/`: 공개 Blog의 승인 사본. 직접 수정 금지
-- `content/docs/`: 옛 위키 입력 자리(현재 없음). 공개 빌드는 발행하지 않으며 승인된 문서가 있으면 중단
-- `content/assets/`, `content/media/`: 사용 중인 콘텐츠 자산과 고지
-- `docs/`: 현재 구현의 설계와 사용 안내
-- `scripts/`: 검사. 산출물은 Git 밖 `dist/site/`
+- `config/`: 작성 설정(`site`, `blog`, `search`, `tags`, `admin`)과 승인·자산 목록
+- `content/`: 홈 원고(`home.md`, `pages/tech.md`, `interviews/index.md`), Blog 글(`blog/`), 그림·영상(`assets/`, `media/`)
+- `src/build/`: 빌드 진입점 `index.js`(`buildSite`), 출력·링크·자산·그림·스크립트·메타데이터, 미리보기 서버 `serve.js`
+- `src/content/`: 글·front matter·홈·설정 읽기와 검증
+- `src/layouts/`: 페이지 조립
+- `src/client/`: 브라우저 스크립트(`site.js`, `comments.js`, `blog-list.js`, `search/`)
+- `src/admin/`: 관리자 로더와 글 작성 화면
+- `src/vault/`: Vault 승인 사본 동기화와 검사
+- `src/lib/`: 형식·검색·해시·검증 공용 함수
+- `src/document/`: Markdown 문서 렌더러(`parser/`, `renderer/`, `theme/`, `preview/`)
+- `src/design/`: 디자인 시스템. `tokens/tokens.json`, `styles/`, `ui/`(구성 요소와 `runtime/`), `assets/`, `build/`(생성기). 생성 결과 `src/design/dist/`는 Git 밖이며 `npm ci`와 `npm run build`가 만든다. 코드는 `#design/ui/index.js`(`package.json`의 `imports`)로 읽는다
+- `test/`: `build`, `markdown`, `posts`, `search` 시험
+- `workers/admin-auth/`: 관리자 OAuth 로그인 중계
+- `docs/`: 설계와 사용 안내
 
 ## 명령
 
-Validate와 Deploy는 `ubuntu-24.04`의 Node 22에서 실행한다. 문서 렌더러(`src/document`)의 최소 Node 조건 `>=22.12.0`과 기존 `site (22)` 검사 이름을 유지한다. 별도로 측정한 Node 20 호환 실행을 설치 지원 선언으로 바꾸지 않는다. Action 자체는 Node 24 기반 공식 release의 SHA로 고정한다(2026-10-19 확인). 배포 실행 조건과 권한은 바꾸지 않는다.
-
 ```sh
-npm run build:design   # src/design → src/design/dist (아래 명령과 npm ci가 먼저 실행)
-npm run build:site
-npm run check:product  # 사이트·문서 렌더러·디자인 시험
-npm run check:tokens
+npm ci                                  # 의존성 설치와 디자인 생성
+npm run dev                             # 빌드 후 http://127.0.0.1:8796
+npm run build                           # dist/site 생성. 운영은 -- --production
+npm test                                # 디자인 생성 후 test/*.test.js
+npm run content:sync -- <vault-root>    # Vault 승인 파일 가져오기
+npm run content:check                   # 승인 사본 해시 검사
 ```
+
+CI는 Node 22에서 `npm ci`, `npm test`를 실행한다(`.github/workflows/validate.yml`). 배포는 `.github/workflows/deploy.yml`이다.
 
 ## 규칙
 
-- 한국어로 소통하고 이모지를 쓰지 않는다. 저장소 관리 문서의 작업 언어는 한국어다.
-- GitHub 이슈에 완료 조건을 정하고 이슈당 브랜치와 PR 하나를 사용한다. 사용자의 병합 권한 안에서 작업한다.
-- 커밋은 `type(scope): 한글 설명` 형식과 사용자 Git 작성자를 사용한다. 작성 도구 표시나 트레일러를 남기지 않는다.
-- 색·글꼴·간격·시간·공통 CSS·아이콘·UI 구성 요소·공통 동작은 `src/design/`에서 정의한다. 같은 요소를 화면 코드에서 다시 구현하지 않는다.
-- 컴포넌트는 `#design/ui/index.mjs`에서 가져온다. 공통 마크업이 필요하면 `src/design/ui/`에 구성 요소를 추가한다.
-- 디자인 이름은 Tailwind의 `color`, `text`, `spacing`, `radius`, `font`, `duration` 계열을 따른다. 프로젝트 이름을 토큰 이름으로 쓰지 않는다.
-- 비공개 Vault 원문을 수정하고 명시적으로 승인한 뒤 `content:sync-vault`로 가져온다. 홈 원고와 승인 목록의 작성 설정·자산도 사본이며 직접 수정하지 않는다. 승인 목록에 없는 파일은 공개하지 않는다.
-- 공개 글은 Blog 하나다. 목록·검색·태그는 `/search/`, 최근 본문 피드는 `/blog/`, 상세는 `/blog/<slug>/`, RSS는 `/blog/feed.xml`이다. 공개 분류·문서 계층·글 아이콘을 요구하지 않는다.
-- 태그는 기술·산책·독서·회고 같은 임의 문자열이다. `config/tags.json`은 표시 이름·별칭이며 허용 목록이 아니다.
-- 루트에는 도구가 요구하는 메타데이터와 README·AGENTS·문서 색인만 둔다. 미사용 코드·자산·산출물은 보관용 폴더를 만들어 남기지 않는다.
-- 커밋 전 명령 절의 검사를 모두 통과한다. 화면 변경은 실제 내부 URL에서 확인하고 작업용 Chrome 탭을 닫는다.
-- Things와의 비교는 공식 화면의 실제 동작을 근거로 한다. 개인 사이트의 의도된 확장을 원본 기능으로 설명하지 않는다.
+- 한국어로 소통하고 이모지를 쓰지 않는다.
+- 커밋은 `type(scope): 한글 설명` 형식과 사용자 Git 작성자를 사용한다. 커밋, 트레일러, 주석 어디에도 AI 작성 흔적을 남기지 않는다.
+- `content/blog/`와 Vault 승인 사본(홈 원고, `config/`의 작성 설정, 승인 목록)은 직접 수정하지 않는다. Vault 원문을 고치고 승인한 뒤 `npm run content:sync`로 가져온다.
+- 사이트는 라이트 모드로 고정한다. 다크 모드와 도표 기능을 다시 넣지 않는다. 도표는 그림으로 넣는다.
+- 색·글꼴·간격·시간 같은 화면 값은 `src/design/tokens/tokens.json`의 토큰으로만 쓴다. 공통 마크업은 `src/design/ui/`의 구성 요소로 만들고 화면 코드에서 다시 구현하지 않는다.
+- 화면 변경은 실제 브라우저에서 1440, 1100, 390, 320px 폭으로 확인하고 작업용 탭을 닫는다.
+- 커밋 전 `npm test`를 통과한다.

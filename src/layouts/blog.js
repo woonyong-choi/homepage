@@ -1,0 +1,43 @@
+import * as ui from '#design/ui/index.js';
+import { paginate, dateLabel } from '../lib/format.js';
+import { loadBlogLayout } from '../content/settings.js';
+import { dateLine, tagLinks, searchBox } from './page.js';
+import { searchUrl } from '../lib/search.js';
+import { postArticle, thumbnailImage } from './post.js';
+import { commentsSection } from './comments.js';
+import { collectionNavigation } from './pagination.js';
+
+export function blogCard(post, tags = {}, level = 2, card = loadBlogLayout().blog.card) {
+  const image = post.cardImage ?? post.thumbnail;
+  const cover = card.media === 'image' && image ? ui.trusted(thumbnailImage({ thumbnail: image })) : undefined;
+  return String(ui.BlogCard({ href: post.route, title: post.title, showTitle: card.title, level, cover, automaticCover: card.media === 'image', description: card.description ? post.description : '', tagItems: (card.tags ? post.tags : []).map(tag => ({ href: searchUrl({ tags: [tag] }), label: tags[tag]?.label ?? tag })), author: card.author || undefined, publishedAt: card.date ? post.publishedAt : undefined, dateLabel: dateLabel(post.publishedAt), commentsHref: card.comments && post.comments ? `${post.route}#comments` : undefined, commentCount: card.comments ? post.commentCount : undefined }));
+}
+
+export function searchListing(posts, tags, { layout = loadBlogLayout() } = {}) {
+  const cards = ui.CardGroup({ columns: layout.blog.collection.columns, cards: posts.map(post => ui.trusted(blogCard(post, tags, 2, layout.blog.card))) });
+  const filters = ui.TagFilter({ tags: Object.entries(tags).map(([id, value]) => ({ id, label: value.label, selected: false })) });
+  return `<main id="main" class="app-shell" data-search-page data-columns="${layout.blog.collection.columns}" data-page-size="${layout.blog.collection.rows === null ? 'all' : layout.blog.collection.columns * layout.blog.collection.rows}" data-card="${ui.escape(JSON.stringify(layout.blog.card))}">${searchBox({ large: true, filters, config: layout.search.box })}<h1 class="app-sr">${ui.escape(layout.search.title)}</h1><div data-full-results>${posts.length ? cards : '<p class="app-empty">아직 발행한 글이 없습니다.</p>'}</div>${ui.PageLinks({ label: '블로그 페이지', resultPages: true })}</main>`;
+}
+
+export function blogFeed(posts, tags, page, { commentConfig, commentTheme, layout = loadBlogLayout() } = {}) {
+  const result = paginate(posts, page, layout.blog.feedSize);
+  const returnRoute = result.page === 1 ? '/blog/' : `/blog/page/${result.page}/`;
+  return `<main id="main"><h1 class="app-sr">${ui.escape(layout.blog.title)}</h1>${posts.length ? `<div${layout.blog.autoLoad ? ' data-blog-list="feed"' : ''}><div class="app-blog-feed-items">${result.items.map(post => feedArticle(post, tags, commentConfig, commentTheme, returnRoute, layout.blog.card.author)).join('')}</div><div class="app-shell">${pagination(result, '/blog/', true)}<p class="app-caption" data-blog-status role="status"></p></div></div>` : `<div class="app-shell">${emptyBlog()}</div>`}${posts.length ? `<div class="app-shell">${ui.ListLink({ href: '/search/', text: layout.blog.archiveLabel })}</div>` : ''}</main>`;
+}
+
+function pagination(result, route, feed = false) {
+  return collectionNavigation(result, route, {
+    label: '블로그 페이지', before: feed ? '최신 글' : '이전', after: feed ? '이전 글' : '다음',
+    summary: feed ? `${result.page} / ${result.totalPages}` : undefined,
+  });
+}
+
+function feedArticle(post, tags, commentConfig, commentTheme, returnRoute, byline) {
+  const updated = post.updatedAt && post.updatedAt !== post.publishedAt ? dateLine({ updatedAt: post.updatedAt }) : '';
+  const comments = commentsSection(post, commentConfig, commentTheme, { preview: true, returnRoute });
+  return `<div class="app-blog-slice"><div class="app-shell">${postArticle(post, { tags: tagLinks(post, tags), footer: updated, after: comments, byline })}</div></div>`;
+}
+
+function emptyBlog() {
+  return '<p class="app-empty">아직 발행한 글이 없습니다. <a href="/search/">전체 글 보기</a></p>';
+}
