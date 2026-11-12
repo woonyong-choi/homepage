@@ -38,18 +38,6 @@ export function parseIconSvg(text) {
   return { viewBox: parsed.viewBox, body: svgBody(parsed) };
 }
 
-/** 주어진 정사각 격자로 원본을 맞춘다. 같은 문서의 각 삽입에는 서로 다른 prefix를 쓴다. */
-export function iconBody(text, { size, prefix, monochrome = false } = {}) {
-  if (!Number.isFinite(size) || size <= 0) throw new TypeError('icon size must be finite and positive');
-  const parsed = parseSvg(text);
-  const [x, y, width, height] = parsed.viewBox;
-  const scale = size / Math.max(width, height);
-  const tx = (size - width * scale) / 2 - x * scale;
-  const ty = (size - height * scale) / 2 - y * scale;
-  if (!(scale > 0) || ![scale, tx, ty].every(Number.isFinite)) throw new Error('icon viewBox cannot fit the requested size');
-  const body = svgBody(parsed, { prefix: iconPrefix(prefix), monochrome });
-  return scale === 1 && tx === 0 && ty === 0 ? body : `<g transform="translate(${tx} ${ty}) scale(${scale})">${body}</g>`;
-}
 
 /** 검증한 원본 좌표로 장식용 SVG를 만든다. 크기는 사용하는 구성 요소가 정한다. */
 export function renderSvgIcon(text, { className = '', prefix, monochrome = false } = {}) {

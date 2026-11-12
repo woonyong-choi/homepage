@@ -13,9 +13,6 @@ export function SearchBox({ combobox = true, large = false, query = '', action, 
   return out(`<section class="app-search app-public-search${large ? ' is-prominent' : ''}" data-public-search aria-label="${escape(labels.region)}"><form action="${safeUrl(action)}" role="search">${TextInput({ id: 'site-query', name: 'q', label: labels.input, value: query, placeholder: labels.placeholder, autocomplete: 'off', size: large ? 'large' : 'medium', surface: 'field', icon: ControlIcon('search', 'app-input-icon'), action: out(`<button class="app-search-clear" type="button" data-clear-query aria-label="${escape(labels.clear)}" hidden>${ControlIcon('clear')}</button>`), role: combobox ? 'combobox' : 'searchbox', controls: combobox ? 'search-suggestions' : undefined })}</form><div class="app-search-panel" id="search-suggestions" role="listbox" hidden></div><p class="app-sr" data-search-status role="status" aria-live="polite"></p>${suggestions.length ? `<p class="app-search-frequent"><span>${escape(labels.suggestions)}</span>${suggestions.map(query => `<button class="app-tag is-quiet" type="button" data-query="${escape(query)}">${escape(query)}</button>`).join('')}</p>` : ''}${filters === undefined ? '' : slot(filters, 'filters')}${fallback ? `<noscript>${slot(fallback, 'fallback')}</noscript>` : ''}</section>`);
 }
 
-export function DocumentArticle({ title, icon, lead, metadata, body, after }) {
-  return out(`<article class="app-document"><header class="app-document-header"><h1 class="app-article-title">${icon ? slot(icon, 'icon') : ''}${escape(title)}</h1></header><p class="app-article-lead app-document-lead">${slot(lead, 'lead')}</p><div class="app-document-metadata">${slot(metadata, 'metadata')}</div><div class="app-prose app-document-body">${slot(body, 'body')}</div>${after ? slot(after, 'after') : ''}</article>`);
-}
 
 // ---- 소개·목록·홈 구성 요소 ----
 
@@ -110,14 +107,6 @@ export function DocumentLayout({ navigation, outline, content }) {
   return out(`<div class="app-document-layout" data-document-layout>${navigation ? `<aside class="app-document-sidebar">${slot(navigation, 'navigation')}</aside>` : ''}${outline ? `<aside class="app-document-outline">${slot(outline, 'outline')}</aside>` : ''}<div class="app-document-content">${slot(content, 'content')}</div></div>`);
 }
 
-export function DocumentNavigation({ label, nodes }) {
-  function item(node) {
-    const current = node.current ? ' class="is-selected" aria-current="page"' : '';
-    const title = node.href && !node.children?.length ? `<a href="${safeUrl(node.href)}"${current}>${escape(node.title)}</a>` : `<span${current}>${escape(node.title)}</span>`;
-    return node.children?.length ? `<li><details${node.open ? ' open' : ''}><summary title="하위 문서 접기·펼치기">${title}</summary><ul>${node.children.map(item).join('')}</ul></details></li>` : `<li>${title}</li>`;
-  }
-  return out(`<details class="app-document-nav" data-document-panel><summary aria-label="${escape(label)} 하위 문서"><span>${escape(label)}</span></summary><nav aria-label="${escape(label)} 하위 문서"><ul>${nodes.map(item).join('')}</ul></nav></details>`);
-}
 
 export function DocumentOutline({ sections }) {
   if (!sections.length) return out('');
@@ -128,12 +117,6 @@ export function DocumentOutline({ sections }) {
   return out(`<details class="app-document-nav" data-document-panel><summary aria-label="본문 목차"><span>목차</span></summary><nav aria-label="본문 목차"><ol>${sections.map(section => `<li${section.level === 3 ? ' class="is-subsection"' : ''}><a href="#${escape(section.id)}" data-heading-level="${section.level}">${escape(section.title)}</a></li>`).join('')}</ol></nav></details>`);
 }
 
-/** 같은 주제에서 이어 읽을 문서. 없는 방향은 빈 링크를 만들지 않는다. */
-export function DocumentPager({ label, before, after }) {
-  if (!before && !after) return out('');
-  const link = (page, rel, direction) => page ? String(Card({ ...page, variant: 'related', rel, label: `${direction} 문서: ${page.title}` })) : '';
-  return out(`<nav class="app-document-pager app-related-grid" aria-label="${escape(label)} 문서 이동">${link(before, 'prev', '이전')}${link(after, 'next', '다음')}</nav>`);
-}
 
 /** 블로그 글 한 편의 틀(피드와 상세 공통). 본문·도입문·꼬리말은 슬롯이다. */
 /** `byline: { name, avatar }`이 있으면 날짜를 제목 위 대신 도입문 아래의 글쓴이 줄에 둔다. 목록 카드의 글쓴이 줄과 같은 순서다. */
