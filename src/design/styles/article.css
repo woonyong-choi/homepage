@@ -66,5 +66,5 @@
   .app-document-outline > .app-document-nav > nav { padding: 0; }
   .app-document-outline .app-document-nav > summary { display: none; }
   .app-document-outline .app-document-nav::details-content { content-visibility: visible; block-size: auto; }
-  .app-document-outline { position: sticky; top: var(--spacing-gap-lg); max-height: calc(100vh - 2 * var(--spacing-gap-lg)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  .app-document-outline { margin-top: calc(var(--spacing-12) + var(--spacing-post-header-top)); position: sticky; top: var(--spacing-gap-lg); max-height: calc(100vh - 2 * var(--spacing-gap-lg)); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 }
